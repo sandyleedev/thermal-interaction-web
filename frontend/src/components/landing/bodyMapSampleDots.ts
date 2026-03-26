@@ -1,3 +1,5 @@
+import { BODY_MAP_OUTLINE_PATH_D } from "@/components/landing/bodyMapOutlinePath";
+
 const VIEW = { x: 0, y: -4, w: 88.593706, h: 215.19324 };
 const INNER_TX = -59.365521;
 
@@ -21,10 +23,51 @@ function mulberry32(seed: number) {
   };
 }
 
+/** Circles are siblings of the path under `g`; map path-local sample to parent `g` space. */
+function localPointToParentGroup(
+  path: SVGPathElement,
+  pl: SVGPoint,
+): { x: number; y: number } {
+  const svg = path.ownerSVGElement;
+  const g = path.parentElement;
+  if (!svg || !g || !(g instanceof SVGGElement)) {
+    return { x: pl.x, y: pl.y };
+  }
+  const ctmPath = path.getCTM();
+  const ctmG = g.getCTM();
+  if (!ctmPath || !ctmG) {
+    return { x: pl.x, y: pl.y };
+  }
+  const pVp = pl.matrixTransform(ctmPath);
+  const pG = pVp.matrixTransform(ctmG.inverse());
+  return { x: pG.x, y: pG.y };
+}
+
+function pointInsideSilhouette(
+  silhouette: SVGPathElement,
+  path: SVGPathElement,
+  pl: SVGPoint,
+  svg: SVGSVGElement,
+): boolean {
+  const ctmPath = path.getCTM();
+  const ctmSil = silhouette.getCTM();
+  if (!ctmPath || !ctmSil) return true;
+  const pVp = pl.matrixTransform(ctmPath);
+  const pSil = pVp.matrixTransform(ctmSil.inverse());
+  const test = svg.createSVGPoint();
+  test.x = pSil.x;
+  test.y = pSil.y;
+  return silhouette.isPointInFill(test);
+}
+
 function runWithBodyPartPathInTempSvg<T>(
   pathD: string,
   pathTransform: string | undefined,
-  fn: (ctx: { path: SVGPathElement; svg: SVGSVGElement }) => T,
+  fn: (ctx: {
+    path: SVGPathElement;
+    silhouette: SVGPathElement;
+    svg: SVGSVGElement;
+  }) => T,
 ): T | null {
   if (typeof document === "undefined") return null;
 
@@ -38,17 +81,25 @@ function runWithBodyPartPathInTempSvg<T>(
   const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
   g.setAttribute("transform", `translate(${INNER_TX})`);
 
+  const silhouette = document.createElementNS(
+    "http://www.w3.org/2000/svg",
+    "path",
+  );
+  silhouette.setAttribute("d", BODY_MAP_OUTLINE_PATH_D);
+  silhouette.setAttribute("fill", "#000");
+
   const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
   path.setAttribute("d", pathD);
   if (pathTransform) path.setAttribute("transform", pathTransform);
 
+  g.appendChild(silhouette);
   g.appendChild(path);
   svg.appendChild(g);
   wrapper.appendChild(svg);
   document.body.appendChild(wrapper);
 
   try {
-    return fn({ path, svg });
+    return fn({ path, silhouette, svg });
   } finally {
     document.body.removeChild(wrapper);
   }
@@ -67,7 +118,7 @@ export function getBodyPartPathBBoxArea(
 }
 
 /**
- * Rejection sample dot positions inside an SVG path (same structure as BodyMap layer).
+ * Rejection sample inside part path and body silhouette; output coords match BodyMap `<circle cx cy>` (parent `g` space).
  */
 export function sampleDotsInBodyPartPath(
   pathD: string,
@@ -79,7 +130,7 @@ export function sampleDotsInBodyPartPath(
   const sampled = runWithBodyPartPathInTempSvg(
     pathD,
     pathTransform,
-    ({ path, svg }) => {
+    ({ path, silhouette, svg }) => {
       const bbox = path.getBBox();
       const out: { x: number; y: number }[] = [];
       const pt = svg.createSVGPoint();
@@ -102,9 +153,9 @@ export function sampleDotsInBodyPartPath(
           const y = bbox.y + rnd() * bbox.height;
           pt.x = x;
           pt.y = y;
-          if (path.isPointInFill(pt)) {
-            out.push({ x, y });
-          }
+          if (!path.isPointInFill(pt)) continue;
+          if (!pointInsideSilhouette(silhouette, path, pt, svg)) continue;
+          out.push(localPointToParentGroup(path, pt));
         }
         if (out.length >= dotCount || attemptLimit >= attemptCap) {
           break;
