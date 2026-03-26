@@ -29,6 +29,13 @@ export function BodyMapPanel() {
           >
             Blur heat
           </button>
+          <button
+            type="button"
+            className={variant === "thermal" ? "is-active" : undefined}
+            onClick={() => setVariant("thermal")}
+          >
+            Thermal
+          </button>
         </div>
       </div>
       <div className="panel-content panel-content-center">

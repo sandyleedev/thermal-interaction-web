@@ -6,7 +6,10 @@ import {
   useState,
   type PointerEvent,
 } from "react";
-import { BODY_MAP_OUTLINE_PATH_D } from "@/components/landing/bodyMapOutlinePath";
+import {
+  BODY_MAP_OUTLINE_PATH_D,
+  BODY_MAP_VIEW,
+} from "@/components/landing/bodyMapOutlinePath";
 import {
   BODY_MAP_COUNT_VISUAL_WEIGHT,
   BODY_MAP_DENSITY_VISUAL_WEIGHT,
@@ -15,6 +18,10 @@ import {
   sampleDotsInMergedBodyPartPaths,
   type BodySubpath,
 } from "@/components/landing/bodyMapSampleDots";
+import {
+  thermalFillForShare,
+  thermalTorsoRadialStops,
+} from "@/components/landing/bodyMapThermalColor";
 
 type TooltipState = { label: string; count: number; x: number; y: number };
 
@@ -23,6 +30,13 @@ const BODY_MAP_DOT_FILL_OPACITY = 0.2;
 
 /** Inner `g` translate (path data + clip live in this space). */
 const BODY_MAP_INNER_TX = -59.365521;
+
+/** Outer user-space pivot (~ silhouette center); uniform scale grows the figure inside the viewBox without `slice`. */
+const BODY_MAP_SCALE_PIVOT_OX = 44.2;
+const BODY_MAP_SCALE_PIVOT_OY = 101;
+const BODY_MAP_CONTENT_SCALE = 1.1;
+
+const BODY_MAP_UNIFORM_SCALE_TRANSFORM = `translate(${BODY_MAP_SCALE_PIVOT_OX} ${BODY_MAP_SCALE_PIVOT_OY}) scale(${BODY_MAP_CONTENT_SCALE}) translate(${-BODY_MAP_SCALE_PIVOT_OX} ${-BODY_MAP_SCALE_PIVOT_OY})`;
 
 type BodyPart = {
   id: string;
@@ -135,11 +149,11 @@ const DEFAULT_PAPER_COUNTS: Record<string, number> = {
   feet: 69,
 };
 
-export type BodyMapVariant = "dots" | "blur";
+export type BodyMapVariant = "dots" | "blur" | "thermal";
 
 export type BodyMapProps = {
   paperCountsByPart?: Record<string, number>;
-  /** dots: point cloud (area-normalized density). blur: soft filled heat per region. */
+  /** dots: density cloud. blur: single-color soft heat. thermal: blue→red colormap. */
   variant?: BodyMapVariant;
 };
 
@@ -153,6 +167,7 @@ export function BodyMap({
   const softFillFilterId = `body-map-soft-fill-${uid}`;
   const heatmapBlurId = `body-map-heat-blur-${uid}`;
   const torsoHeatRadialId = `body-map-torso-heat-radial-${uid}`;
+  const torsoThermalRadialId = `body-map-torso-thermal-radial-${uid}`;
 
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const [hoveredPartId, setHoveredPartId] = useState<string | null>(null);
@@ -204,6 +219,18 @@ export function BodyMap({
     return { densities, maxD, blends, maxBlend };
   }, [partPaperMap, partBBoxArea]);
 
+  const torsoThermalShare = useMemo(() => {
+    if (!visualMetrics) return 0;
+    return visualMetrics.maxBlend > 0
+      ? (visualMetrics.blends.torso ?? 0) / visualMetrics.maxBlend
+      : 0;
+  }, [visualMetrics]);
+
+  const torsoThermalStops = useMemo(
+    () => thermalTorsoRadialStops(torsoThermalShare),
+    [torsoThermalShare],
+  );
+
   useLayoutEffect(() => {
     let cancelled = false;
     const areas: Record<string, number> = {};
@@ -220,8 +247,13 @@ export function BodyMap({
 
   useLayoutEffect(() => {
     let cancelled = false;
-    if (!partBBoxArea || !visualMetrics || variant === "blur") {
-      if (variant === "blur") {
+    if (
+      !partBBoxArea ||
+      !visualMetrics ||
+      variant === "blur" ||
+      variant === "thermal"
+    ) {
+      if (variant === "blur" || variant === "thermal") {
         queueMicrotask(() => {
           if (!cancelled) setDotsByPartId({});
         });
@@ -278,27 +310,30 @@ export function BodyMap({
 
   return (
     <div className="body-map-root">
-      <svg
-        className="body-map-svg"
-        width="100%"
-        height="100%"
-        viewBox="0 -4 88.593706 215.19324"
-        preserveAspectRatio="xMidYMid meet"
-        role="img"
-        aria-label={
-          variant === "blur"
-            ? "Body map: blurred pink intensity blends total papers and papers-per-area across body regions."
-            : "Body map: pink dots blend total paper count and area-normalized density across regions."
-        }
-      >
+      <div className="body-map-svg-wrap">
+        <svg
+          className="body-map-svg"
+          width="100%"
+          height="100%"
+          viewBox={`${BODY_MAP_VIEW.x} ${BODY_MAP_VIEW.y} ${BODY_MAP_VIEW.w} ${BODY_MAP_VIEW.h}`}
+          preserveAspectRatio="xMidYMax meet"
+          role="img"
+          aria-label={
+            variant === "blur"
+              ? "Body map: blurred pink intensity blends total papers and papers-per-area across body regions."
+              : variant === "thermal"
+                ? "Body map: thermal-style color heat from blue through green and yellow to red, blending count and density."
+                : "Body map: pink dots blend total paper count and area-normalized density across regions."
+          }
+        >
         <defs>
           <linearGradient
             id={hoverGradientId}
             gradientUnits="userSpaceOnUse"
             x1={10}
-            y1={-4}
+            y1={BODY_MAP_VIEW.y}
             x2={78}
-            y2={215}
+            y2={BODY_MAP_VIEW.y + BODY_MAP_VIEW.h}
           >
             <stop offset="0%" stopColor="#e0f2fe" stopOpacity={0.75} />
             <stop offset="50%" stopColor="#bae6fd" stopOpacity={0.65} />
@@ -357,17 +392,39 @@ export function BodyMap({
               stopOpacity={0.06}
             />
           </radialGradient>
+          {variant === "thermal" && visualMetrics ? (
+            <radialGradient
+              id={torsoThermalRadialId}
+              gradientUnits="objectBoundingBox"
+              cx="0.5"
+              cy="0.4"
+              r="1.05"
+            >
+              {torsoThermalStops.map((s, i) => (
+                <stop
+                  key={`torso-th-${i}`}
+                  offset={s.offset}
+                  stopColor={s.stopColor}
+                  stopOpacity={s.stopOpacity}
+                />
+              ))}
+            </radialGradient>
+          ) : null}
           <clipPath id={clipPathId} clipPathUnits="userSpaceOnUse">
-            <path transform={`translate(${BODY_MAP_INNER_TX})`} d={BODY_MAP_OUTLINE_PATH_D} />
+            <path
+              transform={`translate(${BODY_MAP_INNER_TX})`}
+              d={BODY_MAP_OUTLINE_PATH_D}
+            />
           </clipPath>
         </defs>
 
+        <g transform={BODY_MAP_UNIFORM_SCALE_TRANSFORM}>
         <g clipPath={`url(#${clipPathId})`}>
           <rect
-            x={0}
-            y={-4}
-            width={88.593706}
-            height={215.19324}
+            x={BODY_MAP_VIEW.x}
+            y={BODY_MAP_VIEW.y}
+            width={BODY_MAP_VIEW.w}
+            height={BODY_MAP_VIEW.h}
             fill="#0f172a"
           />
           <g
@@ -395,6 +452,35 @@ export function BodyMap({
                       transform={sp.transform}
                       fill={heatFill}
                       fillOpacity={fillOpacity}
+                    />
+                  ));
+                })}
+              </g>
+            ) : null}
+            {variant === "thermal" && visualMetrics ? (
+              <g filter={`url(#${heatmapBlurId})`} pointerEvents="none">
+                {BODY_PARTS.flatMap((part) => {
+                  const share =
+                    visualMetrics.maxBlend > 0
+                      ? (visualMetrics.blends[part.id] ?? 0) /
+                        visualMetrics.maxBlend
+                      : 0;
+                  const { fill, fillOpacity } = thermalFillForShare(share);
+                  const heatFill =
+                    part.id === "torso"
+                      ? `url(#${torsoThermalRadialId})`
+                      : fill;
+                  return part.subpaths.map((sp, i) => (
+                    <path
+                      key={`heat-thermal-${part.id}-${i}`}
+                      d={sp.d}
+                      transform={sp.transform}
+                      fill={heatFill}
+                      fillOpacity={
+                        part.id === "torso"
+                          ? Math.min(1, 0.12 + share * 0.68)
+                          : fillOpacity
+                      }
                     />
                   ));
                 })}
@@ -447,9 +533,16 @@ export function BodyMap({
         </g>
 
         <g transform={`translate(${BODY_MAP_INNER_TX})`} pointerEvents="none">
-          <path d={BODY_MAP_OUTLINE_PATH_D} fill="none" stroke="#94a3b8" strokeWidth={0.55} />
+          <path
+            d={BODY_MAP_OUTLINE_PATH_D}
+            fill="none"
+            stroke="#94a3b8"
+            strokeWidth={0.55}
+          />
         </g>
-      </svg>
+        </g>
+        </svg>
+      </div>
 
       {tooltip ? (
         <div
@@ -463,11 +556,15 @@ export function BodyMap({
           </div>
         </div>
       ) : null}
-      <p className="body-map-hint">
-        {variant === "blur"
-          ? "Intensity mixes total papers and papers-per-area so large high-count regions read stronger than small patches that only look hot by area."
-          : "Dots use the same mix: mostly total volume, partly density—hover for exact paper counts."}
-      </p>
+      <div className="body-map-hint-slot">
+        <p className="body-map-hint">
+          {variant === "blur"
+            ? "Intensity mixes total papers and papers-per-area so large high-count regions read stronger than small patches that only look hot by area."
+            : variant === "thermal"
+              ? "Same blend as blur heat, shown as a thermal-style scale: cooler blues where intensity is lower, warmer reds where it is higher."
+              : "Dots use the same mix: mostly total volume, partly density—hover for exact paper counts."}
+        </p>
+      </div>
     </div>
   );
 }

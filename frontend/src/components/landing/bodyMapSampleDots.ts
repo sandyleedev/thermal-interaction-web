@@ -1,6 +1,4 @@
-import { BODY_MAP_OUTLINE_PATH_D } from "@/components/landing/bodyMapOutlinePath";
-
-const VIEW = { x: 0, y: -4, w: 88.593706, h: 215.19324 };
+import { BODY_MAP_OUTLINE_PATH_D, BODY_MAP_VIEW } from "@/components/landing/bodyMapOutlinePath";
 const INNER_TX = -59.365521;
 
 function hashStringToSeed(s: string): number {
@@ -76,7 +74,10 @@ function runWithBodyPartPathInTempSvg<T>(
     "position:fixed;left:-9999px;top:0;width:1px;height:1px;overflow:hidden;visibility:hidden;pointer-events:none";
 
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("viewBox", `${VIEW.x} ${VIEW.y} ${VIEW.w} ${VIEW.h}`);
+  svg.setAttribute(
+    "viewBox",
+    `${BODY_MAP_VIEW.x} ${BODY_MAP_VIEW.y} ${BODY_MAP_VIEW.w} ${BODY_MAP_VIEW.h}`,
+  );
 
   const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
   g.setAttribute("transform", `translate(${INNER_TX})`);
