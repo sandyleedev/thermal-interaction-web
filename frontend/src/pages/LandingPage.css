@@ -152,13 +152,6 @@
   font-weight: 600;
 }
 
-.body-map-tooltip-meta {
-  margin-top: 0.15rem;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: #cbd5e1;
-}
-
 .landing-right {
   flex: 1;
   display: flex;

@@ -10,28 +10,23 @@ import {
   BODY_MAP_OUTLINE_PATH_D,
   BODY_MAP_VIEW,
 } from "@/components/landing/bodyMapOutlinePath";
+import { type BodySubpath } from "@/components/landing/bodyMapSampleDots";
+import { DEFAULT_PAPER_COUNTS } from "@/components/landing/bodyMapMockData";
 import {
-  BODY_MAP_COUNT_VISUAL_WEIGHT,
-  BODY_MAP_DENSITY_VISUAL_WEIGHT,
-  getMergedBodyPartBBoxArea,
-  paperCountToDotCountFromBlendShare,
-  sampleDotsInMergedBodyPartPaths,
-  type BodySubpath,
-} from "@/components/landing/bodyMapSampleDots";
-import {
-  thermalFillForShare,
-  thermalTorsoRadialStops,
-} from "@/components/landing/bodyMapThermalColor";
+  countToPerceptualNormalized,
+  generateDotsForRegion,
+  mapCountToColor,
+} from "@/components/landing/bodyMapVisualization";
 
 type TooltipState = { label: string; count: number; x: number; y: number };
 
-const BODY_MAP_HEAT_FILL = "#fda4af";
-const BODY_MAP_DOT_FILL_OPACITY = 0.2;
+const BODY_MAP_DOT_FILL = "#fda4af";
+const BODY_MAP_DOT_FILL_OPACITY = 0.35;
+const BODY_MAP_DOT_RADIUS = 1.25;
 
 /** Inner `g` translate (path data + clip live in this space). */
 const BODY_MAP_INNER_TX = -59.365521;
 
-/** Outer user-space pivot (~ silhouette center); uniform scale grows the figure inside the viewBox without `slice`. */
 const BODY_MAP_SCALE_PIVOT_OX = 44.2;
 const BODY_MAP_SCALE_PIVOT_OY = 101;
 const BODY_MAP_CONTENT_SCALE = 1.12;
@@ -139,45 +134,32 @@ const BODY_PARTS: BodyPart[] = [
   },
 ];
 
-/** Mock paper counts for density heatmap prototype (replace with API data later). */
-const DEFAULT_PAPER_COUNTS: Record<string, number> = {
-  head: 96,
-  torso: 210,
-  arms: 80,
-  legs: 120,
-  hands: 223,
-  feet: 69,
-};
+export type BodyMapVariant = "countHeatmap" | "rawDots";
 
-export type BodyMapVariant = "dots" | "blur" | "thermal";
-
-export type BodyMapProps = {
+type BodyMapProps = {
   paperCountsByPart?: Record<string, number>;
-  /** dots: density cloud. blur: single-color soft heat. thermal: blue→red colormap. */
   variant?: BodyMapVariant;
 };
 
+/** Softer glow spread (sqrt-normalized); matches earlier soft-blurred heatmap look. */
+function heatmapRegionFillOpacity(perceptualT: number): number {
+  return Math.min(1, 0.14 + perceptualT * 0.78);
+}
+
 export function BodyMap({
   paperCountsByPart = DEFAULT_PAPER_COUNTS,
-  variant = "dots",
+  variant = "countHeatmap",
 }: BodyMapProps) {
   const uid = useId().replace(/:/g, "");
   const clipPathId = `body-map-silhouette-${uid}`;
   const hoverGradientId = `body-map-hover-sky-${uid}`;
   const softFillFilterId = `body-map-soft-fill-${uid}`;
   const heatmapBlurId = `body-map-heat-blur-${uid}`;
-  const torsoHeatRadialId = `body-map-torso-heat-radial-${uid}`;
-  const torsoThermalRadialId = `body-map-torso-thermal-radial-${uid}`;
-
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const [hoveredPartId, setHoveredPartId] = useState<string | null>(null);
   const [dotsByPartId, setDotsByPartId] = useState<
     Record<string, { x: number; y: number }[]>
   >({});
-  const [partBBoxArea, setPartBBoxArea] = useState<Record<
-    string,
-    number
-  > | null>(null);
 
   const paperCountsKey = useMemo(
     () => JSON.stringify(paperCountsByPart),
@@ -193,71 +175,19 @@ export function BodyMap({
     return m;
   }, [paperCountsKey]);
 
-  /** Blend max-normalized count + density so small-area parts do not always “win” visually. */
-  const visualMetrics = useMemo(() => {
-    if (!partBBoxArea) return null;
-    const densities: Record<string, number> = {};
-    const papersById: Record<string, number> = {};
-    for (const p of BODY_PARTS) {
-      const c = partPaperMap[p.id] ?? 0;
-      papersById[p.id] = c;
-      const a = Math.max(partBBoxArea[p.id] ?? 1, 1e-9);
-      densities[p.id] = c / a;
-    }
-    const maxD = Math.max(1e-12, ...Object.values(densities));
-    const maxPapers = Math.max(1e-12, ...Object.values(papersById));
-    const blends: Record<string, number> = {};
-    for (const p of BODY_PARTS) {
-      const c = papersById[p.id] ?? 0;
-      const countShare = c / maxPapers;
-      const densityShare = densities[p.id] / maxD;
-      blends[p.id] =
-        BODY_MAP_COUNT_VISUAL_WEIGHT * countShare +
-        BODY_MAP_DENSITY_VISUAL_WEIGHT * densityShare;
-    }
-    const maxBlend = Math.max(1e-12, ...Object.values(blends));
-    return { densities, maxD, blends, maxBlend };
-  }, [partPaperMap, partBBoxArea]);
-
-  const torsoThermalShare = useMemo(() => {
-    if (!visualMetrics) return 0;
-    return visualMetrics.maxBlend > 0
-      ? (visualMetrics.blends.torso ?? 0) / visualMetrics.maxBlend
-      : 0;
-  }, [visualMetrics]);
-
-  const torsoThermalStops = useMemo(
-    () => thermalTorsoRadialStops(torsoThermalShare),
-    [torsoThermalShare],
-  );
+  const countColorDomain = useMemo((): [number, number] => {
+    const counts = BODY_PARTS.map((p) => partPaperMap[p.id] ?? 0);
+    const minC = Math.min(...counts);
+    const maxC = Math.max(...counts);
+    return [minC, maxC];
+  }, [partPaperMap]);
 
   useLayoutEffect(() => {
     let cancelled = false;
-    const areas: Record<string, number> = {};
-    for (const part of BODY_PARTS) {
-      areas[part.id] = getMergedBodyPartBBoxArea(part.subpaths);
-    }
-    queueMicrotask(() => {
-      if (!cancelled) setPartBBoxArea(areas);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useLayoutEffect(() => {
-    let cancelled = false;
-    if (
-      !partBBoxArea ||
-      !visualMetrics ||
-      variant === "blur" ||
-      variant === "thermal"
-    ) {
-      if (variant === "blur" || variant === "thermal") {
-        queueMicrotask(() => {
-          if (!cancelled) setDotsByPartId({});
-        });
-      }
+    if (variant !== "rawDots") {
+      queueMicrotask(() => {
+        if (!cancelled) setDotsByPartId({});
+      });
       return () => {
         cancelled = true;
       };
@@ -266,13 +196,7 @@ export function BodyMap({
     const next: Record<string, { x: number; y: number }[]> = {};
     for (const part of BODY_PARTS) {
       const papers = paperCountForPart(part.id, counts);
-      const blend = visualMetrics.blends[part.id] ?? 0;
-      const n = paperCountToDotCountFromBlendShare(
-        papers,
-        blend,
-        visualMetrics.maxBlend,
-      );
-      next[part.id] = sampleDotsInMergedBodyPartPaths(part.subpaths, n);
+      next[part.id] = generateDotsForRegion(part.subpaths, papers);
     }
     queueMicrotask(() => {
       if (!cancelled) setDotsByPartId(next);
@@ -280,7 +204,7 @@ export function BodyMap({
     return () => {
       cancelled = true;
     };
-  }, [paperCountsKey, partBBoxArea, variant, visualMetrics]);
+  }, [paperCountsKey, variant]);
 
   const handlePartEnter = useCallback(
     (part: BodyPart) => {
@@ -308,6 +232,11 @@ export function BodyMap({
     setTooltip(null);
   }, []);
 
+  const ariaLabel =
+    variant === "countHeatmap"
+      ? "Body map: soft heatmap — colour encodes paper count per region (square-root scale); tooltip shows exact counts."
+      : "Body map: one dot per paper, placed randomly within each body region.";
+
   return (
     <div className="body-map-root">
       <div className="body-map-svg-wrap">
@@ -318,229 +247,144 @@ export function BodyMap({
           viewBox={`${BODY_MAP_VIEW.x} ${BODY_MAP_VIEW.y} ${BODY_MAP_VIEW.w} ${BODY_MAP_VIEW.h}`}
           preserveAspectRatio="xMidYMax meet"
           role="img"
-          aria-label={
-            variant === "blur"
-              ? "Body map: blurred pink intensity blends total papers and papers-per-area across body regions."
-              : variant === "thermal"
-                ? "Body map: thermal-style color heat from blue through green and yellow to red, blending count and density."
-                : "Body map: pink dots blend total paper count and area-normalized density across regions."
-          }
+          aria-label={ariaLabel}
         >
-        <defs>
-          <linearGradient
-            id={hoverGradientId}
-            gradientUnits="userSpaceOnUse"
-            x1={10}
-            y1={BODY_MAP_VIEW.y}
-            x2={78}
-            y2={BODY_MAP_VIEW.y + BODY_MAP_VIEW.h}
-          >
-            <stop offset="0%" stopColor="#e0f2fe" stopOpacity={0.75} />
-            <stop offset="50%" stopColor="#bae6fd" stopOpacity={0.65} />
-            <stop offset="100%" stopColor="#7dd3fc" stopOpacity={0.55} />
-          </linearGradient>
-          <filter
-            id={softFillFilterId}
-            x="-50%"
-            y="-50%"
-            width="200%"
-            height="200%"
-            colorInterpolationFilters="sRGB"
-          >
-            <feGaussianBlur in="SourceGraphic" stdDeviation="2.6" />
-          </filter>
-          <filter
-            id={heatmapBlurId}
-            x="-65%"
-            y="-65%"
-            width="230%"
-            height="230%"
-            colorInterpolationFilters="sRGB"
-          >
-            <feGaussianBlur in="SourceGraphic" stdDeviation="7.2" />
-          </filter>
-          <radialGradient
-            id={torsoHeatRadialId}
-            gradientUnits="objectBoundingBox"
-            cx="0.5"
-            cy="0.4"
-            r="1.05"
-          >
-            <stop
-              offset="0%"
-              stopColor={BODY_MAP_HEAT_FILL}
-              stopOpacity={0.72}
-            />
-            <stop
-              offset="38%"
-              stopColor={BODY_MAP_HEAT_FILL}
-              stopOpacity={0.62}
-            />
-            <stop
-              offset="62%"
-              stopColor={BODY_MAP_HEAT_FILL}
-              stopOpacity={0.45}
-            />
-            <stop
-              offset="85%"
-              stopColor={BODY_MAP_HEAT_FILL}
-              stopOpacity={0.2}
-            />
-            <stop
-              offset="100%"
-              stopColor={BODY_MAP_HEAT_FILL}
-              stopOpacity={0.06}
-            />
-          </radialGradient>
-          {variant === "thermal" && visualMetrics ? (
-            <radialGradient
-              id={torsoThermalRadialId}
-              gradientUnits="objectBoundingBox"
-              cx="0.5"
-              cy="0.4"
-              r="1.05"
+          <defs>
+            <linearGradient
+              id={hoverGradientId}
+              gradientUnits="userSpaceOnUse"
+              x1={10}
+              y1={BODY_MAP_VIEW.y}
+              x2={78}
+              y2={BODY_MAP_VIEW.y + BODY_MAP_VIEW.h}
             >
-              {torsoThermalStops.map((s, i) => (
-                <stop
-                  key={`torso-th-${i}`}
-                  offset={s.offset}
-                  stopColor={s.stopColor}
-                  stopOpacity={s.stopOpacity}
-                />
-              ))}
-            </radialGradient>
-          ) : null}
-          <clipPath id={clipPathId} clipPathUnits="userSpaceOnUse">
-            <path
-              transform={`translate(${BODY_MAP_INNER_TX})`}
-              d={BODY_MAP_OUTLINE_PATH_D}
-            />
-          </clipPath>
-        </defs>
+              <stop offset="0%" stopColor="#e0f2fe" stopOpacity={0.75} />
+              <stop offset="50%" stopColor="#bae6fd" stopOpacity={0.65} />
+              <stop offset="100%" stopColor="#7dd3fc" stopOpacity={0.55} />
+            </linearGradient>
+            <filter
+              id={softFillFilterId}
+              x="-50%"
+              y="-50%"
+              width="200%"
+              height="200%"
+              colorInterpolationFilters="sRGB"
+            >
+              <feGaussianBlur in="SourceGraphic" stdDeviation="2.6" />
+            </filter>
+            <filter
+              id={heatmapBlurId}
+              x="-65%"
+              y="-65%"
+              width="230%"
+              height="230%"
+              colorInterpolationFilters="sRGB"
+            >
+              <feGaussianBlur in="SourceGraphic" stdDeviation="7.2" />
+            </filter>
+            <clipPath id={clipPathId} clipPathUnits="userSpaceOnUse">
+              <path
+                transform={`translate(${BODY_MAP_INNER_TX})`}
+                d={BODY_MAP_OUTLINE_PATH_D}
+              />
+            </clipPath>
+          </defs>
 
-        <g transform={BODY_MAP_UNIFORM_SCALE_TRANSFORM}>
-        <g clipPath={`url(#${clipPathId})`}>
-          <rect
-            x={BODY_MAP_VIEW.x}
-            y={BODY_MAP_VIEW.y}
-            width={BODY_MAP_VIEW.w}
-            height={BODY_MAP_VIEW.h}
-            fill="#0f172a"
-          />
-          <g
-            id="layer1"
-            transform={`translate(${BODY_MAP_INNER_TX})`}
-            style={{ mixBlendMode: "screen" }}
-          >
-            {variant === "blur" && visualMetrics ? (
-              <g filter={`url(#${heatmapBlurId})`} pointerEvents="none">
-                {BODY_PARTS.flatMap((part) => {
-                  const share =
-                    visualMetrics.maxBlend > 0
-                      ? (visualMetrics.blends[part.id] ?? 0) /
-                        visualMetrics.maxBlend
-                      : 0;
-                  const fillOpacity = Math.min(1, 0.1 + share * 0.72);
-                  const heatFill =
-                    part.id === "torso"
-                      ? `url(#${torsoHeatRadialId})`
-                      : BODY_MAP_HEAT_FILL;
-                  return part.subpaths.map((sp, i) => (
+          <g transform={BODY_MAP_UNIFORM_SCALE_TRANSFORM}>
+            <g clipPath={`url(#${clipPathId})`}>
+              <rect
+                x={BODY_MAP_VIEW.x}
+                y={BODY_MAP_VIEW.y}
+                width={BODY_MAP_VIEW.w}
+                height={BODY_MAP_VIEW.h}
+                fill="#0f172a"
+              />
+              <g
+                id="layer1"
+                transform={`translate(${BODY_MAP_INNER_TX})`}
+                style={
+                  variant === "countHeatmap"
+                    ? { mixBlendMode: "screen" }
+                    : undefined
+                }
+              >
+                {variant === "countHeatmap" ? (
+                  <g filter={`url(#${heatmapBlurId})`} pointerEvents="none">
+                    {BODY_PARTS.flatMap((part) => {
+                      const c = partPaperMap[part.id] ?? 0;
+                      const t = countToPerceptualNormalized(c, countColorDomain);
+                      const fill = mapCountToColor(c, countColorDomain);
+                      const fillOpacity = heatmapRegionFillOpacity(t);
+                      return part.subpaths.map((sp, i) => (
+                        <path
+                          key={`heat-count-${part.id}-${i}`}
+                          d={sp.d}
+                          transform={sp.transform}
+                          fill={fill}
+                          fillOpacity={fillOpacity}
+                        />
+                      ));
+                    })}
+                  </g>
+                ) : null}
+                {variant === "rawDots"
+                  ? BODY_PARTS.flatMap((part) => {
+                      const dots = dotsByPartId[part.id] ?? [];
+                      return dots.map((p, i) => (
+                        <circle
+                          key={`${part.id}-dot-${i}`}
+                          cx={p.x}
+                          cy={p.y}
+                          r={BODY_MAP_DOT_RADIUS}
+                          fill={BODY_MAP_DOT_FILL}
+                          fillOpacity={BODY_MAP_DOT_FILL_OPACITY}
+                          pointerEvents="none"
+                        />
+                      ));
+                    })
+                  : null}
+                {BODY_PARTS.flatMap((part) =>
+                  part.subpaths.map((sp, i) => (
                     <path
-                      key={`heat-blur-${part.id}-${i}`}
+                      key={`${part.id}-hit-${i}`}
+                      id={`${part.id}-hit-${i}`}
                       d={sp.d}
                       transform={sp.transform}
-                      fill={heatFill}
-                      fillOpacity={fillOpacity}
-                    />
-                  ));
-                })}
-              </g>
-            ) : null}
-            {variant === "thermal" && visualMetrics ? (
-              <g filter={`url(#${heatmapBlurId})`} pointerEvents="none">
-                {BODY_PARTS.flatMap((part) => {
-                  const share =
-                    visualMetrics.maxBlend > 0
-                      ? (visualMetrics.blends[part.id] ?? 0) /
-                        visualMetrics.maxBlend
-                      : 0;
-                  const { fill, fillOpacity } = thermalFillForShare(share);
-                  const heatFill =
-                    part.id === "torso"
-                      ? `url(#${torsoThermalRadialId})`
-                      : fill;
-                  return part.subpaths.map((sp, i) => (
-                    <path
-                      key={`heat-thermal-${part.id}-${i}`}
-                      d={sp.d}
-                      transform={sp.transform}
-                      fill={heatFill}
-                      fillOpacity={
-                        part.id === "torso"
-                          ? Math.min(1, 0.12 + share * 0.68)
-                          : fillOpacity
+                      fill={
+                        hoveredPartId === part.id
+                          ? `url(#${hoverGradientId})`
+                          : "transparent"
                       }
+                      fillOpacity={hoveredPartId === part.id ? 0.78 : 1}
+                      filter={
+                        hoveredPartId === part.id
+                          ? `url(#${softFillFilterId})`
+                          : undefined
+                      }
+                      stroke="none"
+                      pointerEvents="all"
+                      style={{ cursor: "pointer" }}
+                      onPointerEnter={handlePartEnter(part)}
+                      onPointerMove={handlePartMove}
+                      onPointerLeave={handlePartLeave}
                     />
-                  ));
-                })}
+                  )),
+                )}
               </g>
-            ) : null}
-            {variant === "dots"
-              ? BODY_PARTS.flatMap((part) => {
-                  const dots = dotsByPartId[part.id] ?? [];
-                  return dots.map((p, i) => (
-                    <circle
-                      key={`${part.id}-dot-${i}`}
-                      cx={p.x}
-                      cy={p.y}
-                      r={1.7}
-                      fill={BODY_MAP_HEAT_FILL}
-                      fillOpacity={BODY_MAP_DOT_FILL_OPACITY}
-                      pointerEvents="none"
-                    />
-                  ));
-                })
-              : null}
-            {BODY_PARTS.flatMap((part) =>
-              part.subpaths.map((sp, i) => (
-                <path
-                  key={`${part.id}-hit-${i}`}
-                  id={`${part.id}-hit-${i}`}
-                  d={sp.d}
-                  transform={sp.transform}
-                  fill={
-                    hoveredPartId === part.id
-                      ? `url(#${hoverGradientId})`
-                      : "transparent"
-                  }
-                  fillOpacity={hoveredPartId === part.id ? 0.78 : 1}
-                  filter={
-                    hoveredPartId === part.id
-                      ? `url(#${softFillFilterId})`
-                      : undefined
-                  }
-                  stroke="none"
-                  pointerEvents="all"
-                  style={{ cursor: "pointer" }}
-                  onPointerEnter={handlePartEnter(part)}
-                  onPointerMove={handlePartMove}
-                  onPointerLeave={handlePartLeave}
-                />
-              )),
-            )}
-          </g>
-        </g>
+            </g>
 
-        <g transform={`translate(${BODY_MAP_INNER_TX})`} pointerEvents="none">
-          <path
-            d={BODY_MAP_OUTLINE_PATH_D}
-            fill="none"
-            stroke="#94a3b8"
-            strokeWidth={0.55}
-          />
-        </g>
-        </g>
+            <g
+              transform={`translate(${BODY_MAP_INNER_TX})`}
+              pointerEvents="none"
+            >
+              <path
+                d={BODY_MAP_OUTLINE_PATH_D}
+                fill="none"
+                stroke="#94a3b8"
+                strokeWidth={0.55}
+              />
+            </g>
+          </g>
         </svg>
       </div>
 
@@ -550,9 +394,8 @@ export function BodyMap({
           role="tooltip"
           style={{ left: tooltip.x + 12, top: tooltip.y + 12 }}
         >
-          <div className="body-map-tooltip-title">{tooltip.label}</div>
-          <div className="body-map-tooltip-meta">
-            {tooltip.count.toLocaleString()} papers
+          <div className="body-map-tooltip-title">
+            {tooltip.label}: {tooltip.count.toLocaleString()} papers
           </div>
         </div>
       ) : null}

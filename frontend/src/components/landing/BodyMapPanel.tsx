@@ -1,10 +1,8 @@
 import { useState } from "react";
-import BodyMap, {
-  type BodyMapVariant,
-} from "@/components/landing/BodyMap";
+import BodyMap, { type BodyMapVariant } from "@/components/landing/BodyMap";
 
 export function BodyMapPanel() {
-  const [variant, setVariant] = useState<BodyMapVariant>("dots");
+  const [variant, setVariant] = useState<BodyMapVariant>("countHeatmap");
 
   return (
     <aside className="landing-panel landing-body-map">
@@ -17,24 +15,19 @@ export function BodyMapPanel() {
         <div className="body-map-mode-switch">
           <button
             type="button"
-            className={variant === "dots" ? "is-active" : undefined}
-            onClick={() => setVariant("dots")}
+            className={variant === "rawDots" ? "is-active" : undefined}
+            onClick={() => setVariant("rawDots")}
           >
             Dots
           </button>
           <button
             type="button"
-            className={variant === "blur" ? "is-active" : undefined}
-            onClick={() => setVariant("blur")}
+            className={
+              variant === "countHeatmap" ? "is-active" : undefined
+            }
+            onClick={() => setVariant("countHeatmap")}
           >
-            Blur heat
-          </button>
-          <button
-            type="button"
-            className={variant === "thermal" ? "is-active" : undefined}
-            onClick={() => setVariant("thermal")}
-          >
-            Thermal
+            Heatmap
           </button>
         </div>
       </div>

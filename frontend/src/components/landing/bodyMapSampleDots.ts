@@ -107,7 +107,7 @@ function runWithBodyPartPathInTempSvg<T>(
 }
 
 /** Axis-aligned bbox area of the part path (proxy for region size; same coords as BodyMap). */
-export function getBodyPartPathBBoxArea(
+function getBodyPartPathBBoxArea(
   pathD: string,
   pathTransform: string | undefined,
 ): number {
@@ -121,7 +121,7 @@ export function getBodyPartPathBBoxArea(
 /**
  * Rejection sample inside part path and body silhouette; output coords match BodyMap `<circle cx cy>` (parent `g` space).
  */
-export function sampleDotsInBodyPartPath(
+function sampleDotsInBodyPartPath(
   pathD: string,
   pathTransform: string | undefined,
   dotCount: number,
@@ -172,18 +172,6 @@ export function sampleDotsInBodyPartPath(
 
 export type BodySubpath = { d: string; transform?: string };
 
-/** Sum of bbox areas for disjoint subpaths (combined region size proxy). */
-export function getMergedBodyPartBBoxArea(
-  subpaths: readonly BodySubpath[],
-): number {
-  if (subpaths.length === 0) return 1e-9;
-  let sum = 0;
-  for (const sp of subpaths) {
-    sum += getBodyPartPathBBoxArea(sp.d, sp.transform);
-  }
-  return Math.max(sum, 1e-9);
-}
-
 /**
  * Split dot budget across subpaths by bbox area, then sample each (stable, deterministic).
  */
@@ -220,29 +208,4 @@ export function sampleDotsInMergedBodyPartPaths(
     );
   }
   return out;
-}
-
-/**
- * How much total paper count vs papers-per-area drives dot opacity / count.
- * Pure density favors small regions (e.g. head); a strong count term keeps
- * high-volume parts (e.g. torso) visually dominant.
- */
-export const BODY_MAP_COUNT_VISUAL_WEIGHT = 0.62;
-export const BODY_MAP_DENSITY_VISUAL_WEIGHT = 0.38;
-
-/**
- * Dot budget from a precomputed blend share (0..1 after dividing by max blend across parts).
- */
-export function paperCountToDotCountFromBlendShare(
-  paperCount: number,
-  blendForPart: number,
-  maxBlendAcrossParts: number,
-): number {
-  if (paperCount <= 0) return 0;
-  const maxB = Math.max(maxBlendAcrossParts, 1e-12);
-  const share = Math.min(1, blendForPart / maxB);
-  return Math.min(
-    300,
-    Math.max(8, Math.round(share * 248 + 4.2 * Math.sqrt(paperCount))),
-  );
 }
