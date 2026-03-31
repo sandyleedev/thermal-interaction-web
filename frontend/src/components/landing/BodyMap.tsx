@@ -34,7 +34,7 @@ const BODY_MAP_INNER_TX = -59.365521;
 /** Outer user-space pivot (~ silhouette center); uniform scale grows the figure inside the viewBox without `slice`. */
 const BODY_MAP_SCALE_PIVOT_OX = 44.2;
 const BODY_MAP_SCALE_PIVOT_OY = 101;
-const BODY_MAP_CONTENT_SCALE = 1.1;
+const BODY_MAP_CONTENT_SCALE = 1.12;
 
 const BODY_MAP_UNIFORM_SCALE_TRANSFORM = `translate(${BODY_MAP_SCALE_PIVOT_OX} ${BODY_MAP_SCALE_PIVOT_OY}) scale(${BODY_MAP_CONTENT_SCALE}) translate(${-BODY_MAP_SCALE_PIVOT_OX} ${-BODY_MAP_SCALE_PIVOT_OY})`;
 
@@ -556,15 +556,6 @@ export function BodyMap({
           </div>
         </div>
       ) : null}
-      <div className="body-map-hint-slot">
-        <p className="body-map-hint">
-          {variant === "blur"
-            ? "Intensity mixes total papers and papers-per-area so large high-count regions read stronger than small patches that only look hot by area."
-            : variant === "thermal"
-              ? "Same blend as blur heat, shown as a thermal-style scale: cooler blues where intensity is lower, warmer reds where it is higher."
-              : "Dots use the same mix: mostly total volume, partly density—hover for exact paper counts."}
-        </p>
-      </div>
     </div>
   );
 }
