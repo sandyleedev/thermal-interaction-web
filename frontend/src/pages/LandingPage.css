@@ -191,3 +191,154 @@
   letter-spacing: -0.01em;
   color: #525252;
 }
+
+/* —— Panel 2: temperature range (dark) —— */
+.landing-temperature-panel {
+  background: #0f172a;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+.landing-temperature-panel .panel-title {
+  color: #f1f5f9;
+  text-align: center;
+}
+
+.landing-temperature-panel .panel-content {
+  padding: 0.35rem 0.35rem 0;
+}
+
+.temperature-panel-content {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.temperature-panel-plot {
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.temperature-distribution-svg {
+  display: block;
+  width: 100%;
+  max-width: 126px;
+  border-radius: 4px;
+}
+
+.temperature-kde-line {
+  stroke: rgba(248, 250, 252, 0.45);
+  stroke-width: 1.25;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.temperature-slider-column {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.35rem;
+  align-items: stretch;
+}
+
+.temperature-slider-track {
+  position: relative;
+  width: 22px;
+  flex-shrink: 0;
+  border-radius: 11px;
+  overflow: visible;
+}
+
+.temperature-slider-track-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 11px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Fixed colormap for -10…100 °C: top = hot, bottom = cold (not relative to selection). */
+.temperature-slider-track-gradient {
+  position: absolute;
+  inset: 0;
+  border-radius: 11px;
+  background: linear-gradient(
+    to bottom,
+    #dc2626 0%,
+    #ea580c 11%,
+    #f97316 22%,
+    #fbbf24 33%,
+    #eab308 44%,
+    #84cc16 55%,
+    #22c55e 66%,
+    #14b8a6 77%,
+    #0ea5e9 88%,
+    #1e3a8a 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.temperature-slider-track-dim {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: rgba(15, 23, 42, 0.88);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.temperature-slider-handle {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  border-radius: 50% 50% 50% 0;
+  cursor: grab;
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  pointer-events: auto;
+}
+
+.temperature-slider-handle:active {
+  cursor: grabbing;
+}
+
+.temperature-slider-handle-low {
+  background: linear-gradient(145deg, #fde68a, #fbbf24);
+}
+
+.temperature-slider-handle-high {
+  background: linear-gradient(145deg, #fb923c, #ea580c);
+}
+
+.temperature-slider-ticks {
+  position: relative;
+  width: 2rem;
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #94a3b8;
+  letter-spacing: -0.02em;
+}
+
+.temperature-slider-tick {
+  position: absolute;
+  right: 0;
+  line-height: 1;
+}
+
+.temperature-panel-summary {
+  margin: 0.5rem 0 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #94a3b8;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
