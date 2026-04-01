@@ -159,26 +159,69 @@
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  padding: 0.5rem 1rem 0.75rem;
-  gap: 0.5rem;
+  padding: 0.35rem 1rem 0.75rem;
+  gap: 0.4rem;
 }
 
 .landing-filters {
   display: flex;
+  flex-direction: row;
+  align-items: stretch;
   gap: 0.5rem;
   flex: 0 0 auto;
-}
-
-.landing-filters > * {
-  flex: 1;
   min-width: 0;
 }
 
-.landing-results {
-  flex: 1;
+.landing-filters-col {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Narrower Panel 2; Panels 3+4 share the wider right column (~2 : 5). */
+.landing-filters-col-left {
+  flex: 2 1 0;
+  min-width: 0;
+  max-width: 360px;
+}
+
+.landing-filters-col-right {
+  flex: 5 1 0;
+  min-width: 0;
   min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
+  gap: 0.5rem;
+}
+
+/* Panels 3 & 4: equal height within the right column */
+.landing-filters-col-right > * {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.landing-filters-col-right .panel-content {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.landing-filters-col-right .panel-inline-text {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.landing-results {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.landing-results .panel-content {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: auto;
 }
 
 .landing-panel {
@@ -192,20 +235,31 @@
   color: #525252;
 }
 
+.landing-panel > .panel-title {
+  margin: 0 0 0.45rem;
+  padding: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  color: inherit;
+}
+
 /* —— Panel 2: temperature range (dark) —— */
 .landing-temperature-panel {
   background: #0f172a;
   border-color: #334155;
   color: #cbd5e1;
+  padding: 0.45rem 0.55rem 0.55rem;
 }
 
-.landing-temperature-panel .panel-title {
+.landing-temperature-panel > .panel-title {
   color: #f1f5f9;
   text-align: center;
 }
 
 .landing-temperature-panel .panel-content {
-  padding: 0.35rem 0.35rem 0;
+  padding: 0.1rem 0.15rem 0;
 }
 
 .temperature-panel-content {
@@ -335,7 +389,7 @@
 }
 
 .temperature-panel-summary {
-  margin: 0.5rem 0 0;
+  margin: 0.3rem 0 0;
   font-size: 0.7rem;
   font-weight: 600;
   color: #94a3b8;

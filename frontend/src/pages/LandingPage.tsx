@@ -16,9 +16,13 @@ export function LandingPage() {
         </div>
         <div className="landing-right">
           <div className="landing-filters">
-            <TemperaturePanel />
-            <DurationPanel />
-            <OtherFiltersPanel />
+            <div className="landing-filters-col landing-filters-col-left">
+              <TemperaturePanel />
+            </div>
+            <div className="landing-filters-col landing-filters-col-right">
+              <DurationPanel />
+              <OtherFiltersPanel />
+            </div>
           </div>
           <ResultsPanel />
         </div>
