@@ -1,4 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  insetDimLeftWidth,
+  insetDimRightLeftEdge,
+  thumbCenterLeftCalc,
+} from "@/components/range-slider/horizontalRangeTrackInset";
 import { MOCK_PAPER_TEMP_RANGES } from "./temperaturePanelMockData";
 import { buildKdePathsHorizontal, jitter11 } from "./temperaturePanelDensity";
 import {
@@ -161,23 +166,19 @@ export function TemperaturePanelHorizontal() {
               <div className="temperature-slider-track-gradient temperature-slider-track-gradient--horizontal" />
               <div
                 className="temperature-slider-track-dim temperature-slider-track-dim--horizontal"
-                style={{
-                  left: 0,
-                  width: `${rangeLeft * 100}%`,
-                }}
+                style={insetDimLeftWidth(rangeLeft)}
               />
               <div
-                className="temperature-slider-track-dim temperature-slider-track-dim--horizontal"
+                className="temperature-slider-track-dim temperature-slider-track-dim--horizontal temperature-slider-track-dim--horizontal-right"
                 style={{
-                  left: `${(rangeLeft + rangeWidth) * 100}%`,
-                  width: `${Math.max(0, 1 - rangeLeft - rangeWidth) * 100}%`,
+                  left: insetDimRightLeftEdge(rangeLeft, rangeWidth),
                 }}
               />
             </div>
             <button
               type="button"
               className="temperature-slider-handle temperature-slider-handle-low temperature-slider-handle--horizontal"
-              style={{ left: `${nLow * 100}%` }}
+              style={{ left: thumbCenterLeftCalc(nLow) }}
               aria-label={`Minimum temperature ${Math.round(filterLow)} degrees Celsius`}
               onPointerDown={(e) => {
                 e.preventDefault();
@@ -188,7 +189,7 @@ export function TemperaturePanelHorizontal() {
             <button
               type="button"
               className="temperature-slider-handle temperature-slider-handle-high temperature-slider-handle--horizontal"
-              style={{ left: `${nHigh * 100}%` }}
+              style={{ left: thumbCenterLeftCalc(nHigh) }}
               aria-label={`Maximum temperature ${Math.round(filterHigh)} degrees Celsius`}
               onPointerDown={(e) => {
                 e.preventDefault();
@@ -202,7 +203,7 @@ export function TemperaturePanelHorizontal() {
               <span
                 key={t}
                 className="temperature-slider-tick temperature-slider-tick--horizontal"
-                style={{ left: `${tempToNorm(t) * 100}%` }}
+                style={{ left: thumbCenterLeftCalc(tempToNorm(t)) }}
               >
                 {t}°
               </span>

@@ -1,3 +1,5 @@
+import { clientXToInsetNorm } from "@/components/range-slider/horizontalRangeTrackInset";
+
 /** Global °C domain for the temperature filter panel. */
 export const TEMP_AXIS_MIN = -10;
 export const TEMP_AXIS_MAX = 100;
@@ -57,9 +59,7 @@ export function clientXToTemp(
   minC = TEMP_AXIS_MIN,
   maxC = TEMP_AXIS_MAX,
 ): number {
-  const w = rect.width;
-  if (w <= 0) return clampTemp(minC);
-  const ratio = (clientX - rect.left) / w;
+  const ratio = clientXToInsetNorm(clientX, rect);
   const t = minC + ratio * (maxC - minC);
   return clampTemp(t);
 }
