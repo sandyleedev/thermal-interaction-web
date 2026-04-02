@@ -18,7 +18,7 @@ export function LandingPageDemo2() {
           <BodyMapPanel />
         </div>
         <div className="landing-demo2-col landing-demo2-col-center">
-          <TemperaturePanelHorizontal />
+          <TemperaturePanelHorizontal compact />
           <DurationPanel />
           <OtherFiltersPanel />
         </div>

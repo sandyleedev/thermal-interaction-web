@@ -1,8 +1,9 @@
 /**
  * Horizontal range thumbs use width 20px and translateX(-50%). Inset the draggable
- * axis by half the thumb width so centers at 0% / 100% stay inside the track pill.
+ * axis so min/max centers stay mostly inside the pill; slightly less than half width
+ * (8px vs 10px) reduces visible “dead” margin at the ends without much overflow.
  */
-export const HORIZONTAL_RANGE_THUMB_INSET_PX = 10;
+export const HORIZONTAL_RANGE_THUMB_INSET_PX = 8;
 export const HORIZONTAL_RANGE_THUMB_WIDTH_PX =
   HORIZONTAL_RANGE_THUMB_INSET_PX * 2;
 

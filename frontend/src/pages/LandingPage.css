@@ -272,11 +272,13 @@
 
 .landing-temperature-panel > .panel-title {
   color: inherit;
-  text-align: center;
+  text-align: left;
+  /* Tighter than default .panel-title: plot sits right below, less “air” */
+  margin-bottom: 0.26rem;
 }
 
 .landing-temperature-panel .panel-content {
-  padding: 0.15rem 0.15rem 0;
+  padding: 0.04rem 0.15rem 0;
 }
 
 .temperature-panel-content {
@@ -423,6 +425,11 @@
   color: #64748b;
   letter-spacing: -0.02em;
   text-align: center;
+}
+
+/* Same placement as Panel 3 filter line (inside .panel-content) */
+.temperature-panel-content > .temperature-panel-summary {
+  margin: 0.15rem 0 0;
 }
 
 /* —— Panel 3: duration range (log scale, neutral track; aligns with Panel 2 layout) —— */
@@ -572,6 +579,44 @@
   text-align: center;
 }
 
+/* Demo 2: shorter Panel 2 plot; card padding = default .landing-panel (match Panel 3) */
+.landing-temperature-panel.landing-temperature-panel--compact .panel-content {
+  padding: 0.04rem 0.05rem 0;
+}
+
+.landing-temperature-panel.landing-temperature-panel--compact
+  .temperature-panel-content--horizontal {
+  gap: 0.22rem;
+}
+
+.landing-temperature-panel.landing-temperature-panel--compact
+  .temperature-slider-row--horizontal {
+  gap: 0.2rem;
+}
+
+.landing-temperature-panel.landing-temperature-panel--compact
+  .temperature-slider-ticks--horizontal {
+  height: 0.82rem;
+  font-size: 0.58rem;
+}
+
+.landing-temperature-panel.landing-temperature-panel--compact .temperature-panel-summary {
+  margin-top: 0.1rem;
+  font-size: 0.65rem;
+}
+
+.landing-demo2-col-center > .landing-panel.landing-temperature-panel--compact {
+  flex: 0 0 auto;
+  min-height: 0;
+}
+
+.landing-demo2-col-center
+  > .landing-panel.landing-temperature-panel--compact
+  .panel-content {
+  flex: 0 0 auto;
+  min-height: 0;
+}
+
 /* —— Panel 2 horizontal (shares colors / handles with vertical) —— */
 .temperature-panel-content--horizontal {
   flex-direction: column;
@@ -713,6 +758,11 @@
   overflow: hidden;
 }
 
+/* Center column: slider tooltips sit above thumbs and extend past the card; avoid clipping. */
+.landing-demo2-col.landing-demo2-col-center {
+  overflow: visible;
+}
+
 .landing-demo2-col-left {
   padding: 0.45rem 0.65rem 0.65rem 0;
   border-right: 1px solid #e5e5e5;
@@ -734,6 +784,11 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+
+.landing-demo2-col-center > .landing-panel.landing-temperature-panel,
+.landing-demo2-col-center > .landing-panel.landing-duration-panel {
+  overflow: visible;
 }
 
 .landing-demo2-col-center > .landing-panel .panel-content {

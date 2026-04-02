@@ -165,7 +165,11 @@ export function TemperaturePanel() {
                 dragRef.current = "low";
                 document.body.style.cursor = "grabbing";
               }}
-            />
+            >
+              <span className="duration-slider-tooltip" aria-hidden>
+                {Math.round(filterLow)}°C
+              </span>
+            </button>
             <button
               type="button"
               className="temperature-slider-handle temperature-slider-handle-high"
@@ -176,7 +180,11 @@ export function TemperaturePanel() {
                 dragRef.current = "high";
                 document.body.style.cursor = "grabbing";
               }}
-            />
+            >
+              <span className="duration-slider-tooltip" aria-hidden>
+                {Math.round(filterHigh)}°C
+              </span>
+            </button>
           </div>
           <div className="temperature-slider-ticks" style={{ height: TRACK_H }}>
             {tickLabels.map((t) => (
@@ -192,10 +200,10 @@ export function TemperaturePanel() {
             ))}
           </div>
         </div>
+        <p className="temperature-panel-summary">
+          Filter: {Math.round(filterLow)}°C – {Math.round(filterHigh)}°C
+        </p>
       </div>
-      <p className="temperature-panel-summary">
-        Filter: {Math.round(filterLow)}°C – {Math.round(filterHigh)}°C
-      </p>
     </section>
   );
 }

@@ -15,11 +15,6 @@ import {
 } from "./temperaturePanelUtils";
 
 const PLOT_W = 320;
-const PLOT_H = 88;
-const PAD = { left: 10, right: 10, top: 6, bottom: 10 };
-const INNER_W = PLOT_W - PAD.left - PAD.right;
-const DOT_JITTER_X = 6;
-const DOT_JITTER_Y = 12;
 const TRACK_H = 22;
 
 function hashId(id: string): number {
@@ -32,11 +27,27 @@ function hashId(id: string): number {
 
 type DragHandle = "low" | "high" | null;
 
+export type TemperaturePanelHorizontalProps = {
+  /** Shorter plot and tighter chrome (e.g. Demo 2 center column). */
+  compact?: boolean;
+};
+
 /**
  * Panel 2 horizontal layout: same data/utils/styles as {@link TemperaturePanel},
  * with a bottom horizontal range slider (cold left → hot right).
  */
-export function TemperaturePanelHorizontal() {
+export function TemperaturePanelHorizontal({
+  compact = false,
+}: TemperaturePanelHorizontalProps = {}) {
+  const PLOT_H = compact ? 58 : 88;
+  const PAD = compact
+    ? { left: 10, right: 10, top: 3, bottom: 7 }
+    : { left: 10, right: 10, top: 6, bottom: 10 };
+  const INNER_W = PLOT_W - PAD.left - PAD.right;
+  const dotJitterX = compact ? 4 : 6;
+  const dotJitterY = compact ? 7 : 12;
+  const dotLift = compact ? 10 : 16;
+
   const trackRef = useRef<HTMLDivElement>(null);
   const rangeRef = useRef({ low: 18, high: 55 });
   const [filterLow, setFilterLow] = useState(18);
@@ -57,7 +68,7 @@ export function TemperaturePanelHorizontal() {
   const kdePaths = useMemo(
     () =>
       buildKdePathsHorizontal(centerTemps, PLOT_W, PLOT_H, PAD),
-    [centerTemps],
+    [centerTemps, compact],
   );
 
   const moveDrag = useCallback((e: PointerEvent) => {
@@ -104,7 +115,17 @@ export function TemperaturePanelHorizontal() {
   const baselineY = PLOT_H - PAD.bottom;
 
   return (
-    <section className="landing-panel landing-panel-top landing-temperature-panel landing-temperature-panel--horizontal">
+    <section
+      className={[
+        "landing-panel",
+        "landing-panel-top",
+        "landing-temperature-panel",
+        "landing-temperature-panel--horizontal",
+        compact && "landing-temperature-panel--compact",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
       <h2 className="panel-title">Panel 2</h2>
       <div className="panel-content temperature-panel-content temperature-panel-content--horizontal">
         <div className="temperature-panel-plot temperature-panel-plot--horizontal">
@@ -125,11 +146,11 @@ export function TemperaturePanelHorizontal() {
               const cx =
                 PAD.left +
                 tempToX(mid, INNER_W) +
-                jitter11(hashId(p.id), i) * DOT_JITTER_X;
+                jitter11(hashId(p.id), i) * dotJitterX;
               const cy =
                 baselineY -
-                16 +
-                jitter11(hashId(p.id) + 41, i) * DOT_JITTER_Y;
+                dotLift +
+                jitter11(hashId(p.id) + 41, i) * dotJitterY;
               const active = rangeOverlapsFilter(
                 p.minC,
                 p.maxC,
@@ -185,7 +206,11 @@ export function TemperaturePanelHorizontal() {
                 dragRef.current = "low";
                 document.body.style.cursor = "grabbing";
               }}
-            />
+            >
+              <span className="duration-slider-tooltip" aria-hidden>
+                {Math.round(filterLow)}°C
+              </span>
+            </button>
             <button
               type="button"
               className="temperature-slider-handle temperature-slider-handle-high temperature-slider-handle--horizontal"
@@ -196,7 +221,11 @@ export function TemperaturePanelHorizontal() {
                 dragRef.current = "high";
                 document.body.style.cursor = "grabbing";
               }}
-            />
+            >
+              <span className="duration-slider-tooltip" aria-hidden>
+                {Math.round(filterHigh)}°C
+              </span>
+            </button>
           </div>
           <div className="temperature-slider-ticks temperature-slider-ticks--horizontal">
             {tickLabels.map((t) => (
@@ -210,10 +239,10 @@ export function TemperaturePanelHorizontal() {
             ))}
           </div>
         </div>
+        <p className="temperature-panel-summary">
+          Filter: {Math.round(filterLow)}°C – {Math.round(filterHigh)}°C
+        </p>
       </div>
-      <p className="temperature-panel-summary">
-        Filter: {Math.round(filterLow)}°C – {Math.round(filterHigh)}°C
-      </p>
     </section>
   );
 }
