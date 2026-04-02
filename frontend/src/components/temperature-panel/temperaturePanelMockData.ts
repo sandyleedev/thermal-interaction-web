@@ -21,11 +21,46 @@ function randBetween(a: number, b: number): number {
   return a + rnd() * (b - a);
 }
 
+/** Triangular-ish noise in roughly [-spread, spread]. */
+function clusterJitter(spread: number): number {
+  return (rnd() + rnd() + rnd() - 1.5) * (spread / 1.2);
+}
+
+/**
+ * Study midpoint °C: three common lab bands + a broad “elsewhere” draw so KDE keeps
+ * peaks but shoulders/tails are not empty.
+ */
+function sampleStudyCenterC(): number {
+  const u = rnd();
+  let center: number;
+  if (u < 0.26) {
+    center = 22 + clusterJitter(10);
+  } else if (u < 0.52) {
+    center = 46 + clusterJitter(11);
+  } else if (u < 0.74) {
+    center = 71 + clusterJitter(13);
+  } else if (u < 0.88) {
+    /* Uniform between clusters / extremes */
+    center = randBetween(-4, 94);
+  } else {
+    /* Light shoulders: mild pull toward mid-gaps without new sharp peaks */
+    const gapPick = rnd();
+    if (gapPick < 0.45) {
+      center = randBetween(2, 14);
+    } else if (gapPick < 0.78) {
+      center = randBetween(32, 40);
+    } else {
+      center = randBetween(58, 66);
+    }
+  }
+  return Math.min(95, Math.max(-5, center));
+}
+
 /** Build a plausible spread of ranges across -10…100 °C. */
 export function buildMockPaperTempRanges(count: number): PaperTempRange[] {
   const papers: PaperTempRange[] = [];
   for (let i = 0; i < count; i++) {
-    const center = randBetween(-5, 95);
+    const center = sampleStudyCenterC();
     const halfSpan = randBetween(2, 18);
     let minC = center - halfSpan;
     let maxC = center + halfSpan;
@@ -43,4 +78,4 @@ export function buildMockPaperTempRanges(count: number): PaperTempRange[] {
 }
 
 export const MOCK_PAPER_TEMP_RANGES: PaperTempRange[] =
-  buildMockPaperTempRanges(72);
+  buildMockPaperTempRanges(88);

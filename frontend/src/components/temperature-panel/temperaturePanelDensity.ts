@@ -1,6 +1,7 @@
 import {
   TEMP_AXIS_MAX,
   TEMP_AXIS_MIN,
+  tempToX,
   tempToY,
 } from "./temperaturePanelUtils";
 
@@ -77,6 +78,61 @@ export function buildKdePaths(
     areaD += ` L ${xs[i].toFixed(2)} ${points[i].y.toFixed(2)}`;
   }
   areaD += ` L ${kdeRight.toFixed(2)} ${yLast.toFixed(2)} Z`;
+
+  return {
+    lineD: lineParts.join(" "),
+    areaD,
+  };
+}
+
+/**
+ * Horizontal KDE: x = temperature (cold left → hot right), y = density upward.
+ */
+export function buildKdePathsHorizontal(
+  samples: readonly number[],
+  plotWidth: number,
+  plotHeight: number,
+  padding: { left: number; right: number; top: number; bottom: number },
+  options?: { bandwidth?: number; steps?: number },
+): KdePathResult {
+  const bandwidth = options?.bandwidth ?? 5.5;
+  const steps = options?.steps ?? 72;
+  const innerW = plotWidth - padding.left - padding.right;
+  const innerH = plotHeight - padding.top - padding.bottom;
+  const baselineY = plotHeight - padding.bottom;
+
+  const points: { x: number; density: number }[] = [];
+  for (let i = 0; i <= steps; i++) {
+    const tempC =
+      TEMP_AXIS_MIN + (i / steps) * (TEMP_AXIS_MAX - TEMP_AXIS_MIN);
+    const x = padding.left + tempToX(tempC, innerW);
+    const density = kdeAt(tempC, samples, bandwidth);
+    points.push({ x, density });
+  }
+
+  let maxD = 1e-12;
+  for (const p of points) {
+    maxD = Math.max(maxD, p.density);
+  }
+
+  const yScale = Math.max(4, innerH - 6) * 0.92;
+  const lineParts: string[] = [];
+  for (let i = 0; i < points.length; i++) {
+    const y = baselineY - (points[i].density / maxD) * yScale;
+    const cmd = i === 0 ? "M" : "L";
+    lineParts.push(`${cmd} ${points[i].x.toFixed(2)} ${y.toFixed(2)}`);
+  }
+
+  const x0 = points[0].x;
+  const xLast = points[points.length - 1].x;
+  const y0 = baselineY - (points[0].density / maxD) * yScale;
+  const yb = baselineY;
+  let areaD = `M ${x0.toFixed(2)} ${yb.toFixed(2)} L ${x0.toFixed(2)} ${y0.toFixed(2)}`;
+  for (let i = 1; i < points.length; i++) {
+    const yi = baselineY - (points[i].density / maxD) * yScale;
+    areaD += ` L ${points[i].x.toFixed(2)} ${yi.toFixed(2)}`;
+  }
+  areaD += ` L ${xLast.toFixed(2)} ${yb.toFixed(2)} Z`;
 
   return {
     lineD: lineParts.join(" "),

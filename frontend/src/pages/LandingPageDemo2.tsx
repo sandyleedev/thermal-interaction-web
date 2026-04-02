@@ -3,7 +3,7 @@ import { DurationPanel } from "@/components/duration-panel/DurationPanel";
 import { Header } from "@/components/landing/Header";
 import { OtherFiltersPanel } from "@/components/landing/OtherFiltersPanel";
 import { ResultsPanel } from "@/components/landing/ResultsPanel";
-import { TemperaturePanel } from "@/components/temperature-panel/TemperaturePanel";
+import { TemperaturePanelHorizontal } from "@/components/temperature-panel/TemperaturePanelHorizontal";
 import "@/pages/LandingPage.css";
 
 /**
@@ -18,7 +18,7 @@ export function LandingPageDemo2() {
           <BodyMapPanel />
         </div>
         <div className="landing-demo2-col landing-demo2-col-center">
-          <TemperaturePanel />
+          <TemperaturePanelHorizontal />
           <DurationPanel />
           <OtherFiltersPanel />
         </div>

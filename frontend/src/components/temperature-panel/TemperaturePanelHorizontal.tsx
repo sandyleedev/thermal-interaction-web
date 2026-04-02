@@ -1,20 +1,21 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MOCK_PAPER_TEMP_RANGES } from "./temperaturePanelMockData";
-import { buildKdePaths, jitter11 } from "./temperaturePanelDensity";
+import { buildKdePathsHorizontal, jitter11 } from "./temperaturePanelDensity";
 import {
-  clientYToTemp,
+  clientXToTemp,
   rangeOverlapsFilter,
   tempToCoolWarmColor,
-  tempToY,
+  tempToNorm,
+  tempToX,
 } from "./temperaturePanelUtils";
 
-const TRACK_H = 240;
-const PLOT_W = 118;
-const PLOT_H = TRACK_H;
-/** Dots live left of this x; KDE strip is to the right. */
-const DOT_ZONE_RIGHT = 76;
-const DOT_CENTER_X = 36;
-const DOT_JITTER_MAX = 24;
+const PLOT_W = 320;
+const PLOT_H = 88;
+const PAD = { left: 10, right: 10, top: 6, bottom: 10 };
+const INNER_W = PLOT_W - PAD.left - PAD.right;
+const DOT_JITTER_X = 6;
+const DOT_JITTER_Y = 12;
+const TRACK_H = 22;
 
 function hashId(id: string): number {
   let h = 0;
@@ -26,7 +27,11 @@ function hashId(id: string): number {
 
 type DragHandle = "low" | "high" | null;
 
-export function TemperaturePanel() {
+/**
+ * Panel 2 horizontal layout: same data/utils/styles as {@link TemperaturePanel},
+ * with a bottom horizontal range slider (cold left → hot right).
+ */
+export function TemperaturePanelHorizontal() {
   const trackRef = useRef<HTMLDivElement>(null);
   const rangeRef = useRef({ low: 18, high: 55 });
   const [filterLow, setFilterLow] = useState(18);
@@ -45,7 +50,8 @@ export function TemperaturePanel() {
   );
 
   const kdePaths = useMemo(
-    () => buildKdePaths(centerTemps, PLOT_H, PLOT_W, DOT_ZONE_RIGHT),
+    () =>
+      buildKdePathsHorizontal(centerTemps, PLOT_W, PLOT_H, PAD),
     [centerTemps],
   );
 
@@ -53,7 +59,7 @@ export function TemperaturePanel() {
     const el = trackRef.current;
     if (!el || !dragRef.current) return;
     const rect = el.getBoundingClientRect();
-    const t = clientYToTemp(e.clientY, rect);
+    const t = clientXToTemp(e.clientX, rect);
     const { low, high } = rangeRef.current;
     if (dragRef.current === "low") {
       const next = Math.min(t, high - 0.5);
@@ -84,25 +90,25 @@ export function TemperaturePanel() {
     };
   }, [moveDrag, endDrag]);
 
-  const yLow = tempToY(filterLow, TRACK_H);
-  const yHigh = tempToY(filterHigh, TRACK_H);
-  const activeTop = Math.min(yLow, yHigh);
-  const activeH = Math.abs(yHigh - yLow);
+  const nLow = tempToNorm(filterLow);
+  const nHigh = tempToNorm(filterHigh);
+  const rangeLeft = Math.min(nLow, nHigh);
+  const rangeWidth = Math.abs(nHigh - nLow);
 
   const tickLabels = [100, 75, 50, 25, 0, -10];
+  const baselineY = PLOT_H - PAD.bottom;
 
   return (
-    <section className="landing-panel landing-panel-top landing-temperature-panel">
+    <section className="landing-panel landing-panel-top landing-temperature-panel landing-temperature-panel--horizontal">
       <h2 className="panel-title">Panel 2</h2>
-      <div className="panel-content temperature-panel-content">
-        <div className="temperature-panel-plot">
+      <div className="panel-content temperature-panel-content temperature-panel-content--horizontal">
+        <div className="temperature-panel-plot temperature-panel-plot--horizontal">
           <svg
-            className="temperature-distribution-svg"
+            className="temperature-distribution-svg temperature-distribution-svg--horizontal"
             viewBox={`0 0 ${PLOT_W} ${PLOT_H}`}
-            width="100%"
-            height={PLOT_H}
+            preserveAspectRatio="xMidYMid meet"
             role="img"
-            aria-label="Paper count distribution by study temperature (midpoint of each paper range), with density curve"
+            aria-label="Paper count distribution by study temperature, horizontal axis"
           >
             <path
               d={kdePaths.lineD}
@@ -111,21 +117,31 @@ export function TemperaturePanel() {
             />
             {papers.map((p, i) => {
               const mid = (p.minC + p.maxC) / 2;
-              const cy = tempToY(mid, PLOT_H);
+              const cx =
+                PAD.left +
+                tempToX(mid, INNER_W) +
+                jitter11(hashId(p.id), i) * DOT_JITTER_X;
+              const cy =
+                baselineY -
+                16 +
+                jitter11(hashId(p.id) + 41, i) * DOT_JITTER_Y;
               const active = rangeOverlapsFilter(
                 p.minC,
                 p.maxC,
                 filterLow,
                 filterHigh,
               );
-              const rawX =
-                DOT_CENTER_X + jitter11(hashId(p.id), i) * DOT_JITTER_MAX;
-              const cx = Math.min(DOT_ZONE_RIGHT - 6, Math.max(8, rawX));
               return (
                 <circle
                   key={p.id}
-                  cx={cx}
-                  cy={cy}
+                  cx={Math.min(
+                    PLOT_W - PAD.right - 2,
+                    Math.max(PAD.left + 2, cx),
+                  )}
+                  cy={Math.min(
+                    baselineY - 2,
+                    Math.max(PAD.top + 2, cy),
+                  )}
                   r={2.1}
                   fill={tempToCoolWarmColor(mid)}
                   fillOpacity={active ? 0.92 : 0.44}
@@ -135,30 +151,33 @@ export function TemperaturePanel() {
           </svg>
         </div>
 
-        <div className="temperature-slider-column">
+        <div className="temperature-slider-row temperature-slider-row--horizontal">
           <div
             ref={trackRef}
-            className="temperature-slider-track"
+            className="temperature-slider-track temperature-slider-track--horizontal"
             style={{ height: TRACK_H }}
           >
-            <div className="temperature-slider-track-fill">
-              <div className="temperature-slider-track-gradient" />
+            <div className="temperature-slider-track-fill temperature-slider-track-fill--horizontal">
+              <div className="temperature-slider-track-gradient temperature-slider-track-gradient--horizontal" />
               <div
-                className="temperature-slider-track-dim"
-                style={{ top: 0, height: activeTop }}
+                className="temperature-slider-track-dim temperature-slider-track-dim--horizontal"
+                style={{
+                  left: 0,
+                  width: `${rangeLeft * 100}%`,
+                }}
               />
               <div
-                className="temperature-slider-track-dim"
+                className="temperature-slider-track-dim temperature-slider-track-dim--horizontal"
                 style={{
-                  top: activeTop + activeH,
-                  height: Math.max(0, TRACK_H - activeTop - activeH),
+                  left: `${(rangeLeft + rangeWidth) * 100}%`,
+                  width: `${Math.max(0, 1 - rangeLeft - rangeWidth) * 100}%`,
                 }}
               />
             </div>
             <button
               type="button"
-              className="temperature-slider-handle temperature-slider-handle-low"
-              style={{ top: yLow - 10 }}
+              className="temperature-slider-handle temperature-slider-handle-low temperature-slider-handle--horizontal"
+              style={{ left: `${nLow * 100}%` }}
               aria-label={`Minimum temperature ${Math.round(filterLow)} degrees Celsius`}
               onPointerDown={(e) => {
                 e.preventDefault();
@@ -168,8 +187,8 @@ export function TemperaturePanel() {
             />
             <button
               type="button"
-              className="temperature-slider-handle temperature-slider-handle-high"
-              style={{ top: yHigh - 10 }}
+              className="temperature-slider-handle temperature-slider-handle-high temperature-slider-handle--horizontal"
+              style={{ left: `${nHigh * 100}%` }}
               aria-label={`Maximum temperature ${Math.round(filterHigh)} degrees Celsius`}
               onPointerDown={(e) => {
                 e.preventDefault();
@@ -178,14 +197,12 @@ export function TemperaturePanel() {
               }}
             />
           </div>
-          <div className="temperature-slider-ticks" style={{ height: TRACK_H }}>
+          <div className="temperature-slider-ticks temperature-slider-ticks--horizontal">
             {tickLabels.map((t) => (
               <span
                 key={t}
-                className="temperature-slider-tick"
-                style={{
-                  top: tempToY(t, TRACK_H) - 6,
-                }}
+                className="temperature-slider-tick temperature-slider-tick--horizontal"
+                style={{ left: `${tempToNorm(t) * 100}%` }}
               >
                 {t}°
               </span>

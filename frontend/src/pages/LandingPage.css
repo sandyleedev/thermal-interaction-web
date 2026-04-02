@@ -259,21 +259,20 @@
   color: inherit;
 }
 
-/* —— Panel 2: temperature range (dark) —— */
+/* —— Panel 2: temperature range (light) —— */
 .landing-temperature-panel {
-  background: #0f172a;
-  border-color: #334155;
-  color: #cbd5e1;
-  padding: 0.45rem 0.55rem 0.55rem;
+  background: #fff;
+  border-color: #e8e8e8;
+  color: #525252;
 }
 
 .landing-temperature-panel > .panel-title {
-  color: #f1f5f9;
+  color: inherit;
   text-align: center;
 }
 
 .landing-temperature-panel .panel-content {
-  padding: 0.1rem 0.15rem 0;
+  padding: 0.15rem 0.15rem 0;
 }
 
 .temperature-panel-content {
@@ -297,10 +296,11 @@
 }
 
 .temperature-kde-line {
-  stroke: rgba(248, 250, 252, 0.45);
+  stroke: #64748b;
   stroke-width: 1.25;
   stroke-linejoin: round;
   stroke-linecap: round;
+  opacity: 0.9;
 }
 
 .temperature-slider-column {
@@ -316,6 +316,7 @@
   flex-shrink: 0;
   border-radius: 11px;
   overflow: visible;
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.08);
 }
 
 .temperature-slider-track-fill {
@@ -353,15 +354,22 @@
   position: absolute;
   left: 0;
   right: 0;
-  background: rgba(15, 23, 42, 0.88);
+  /* Light panel: heavy slate (e.g. 0.88) reads nearly black on the rainbow track. */
+  background: rgba(15, 23, 42, 0.42);
   pointer-events: none;
   z-index: 1;
 }
 
+/* Used by vertical + horizontal handles; --horizontal overrides only translate part below. */
 .temperature-slider-handle {
+  --temperature-handle-rotate: -44deg;
+  /* Negative = nudge handle upward (screen Y). */
+  --temperature-handle-nudge-y: -2px;
   position: absolute;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(var(--temperature-handle-nudge-y))
+    rotate(var(--temperature-handle-rotate));
+  transform-origin: center center;
   width: 20px;
   height: 20px;
   margin: 0;
@@ -370,7 +378,9 @@
   border-radius: 50% 50% 50% 0;
   cursor: grab;
   z-index: 2;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  box-shadow:
+    0 1px 3px rgba(15, 23, 42, 0.2),
+    0 0 0 1px rgba(15, 23, 42, 0.12);
   pointer-events: auto;
 }
 
@@ -379,11 +389,11 @@
 }
 
 .temperature-slider-handle-low {
-  background: linear-gradient(145deg, #fde68a, #fbbf24);
+  background: linear-gradient(145deg, #38bdf8, #2563eb);
 }
 
 .temperature-slider-handle-high {
-  background: linear-gradient(145deg, #fb923c, #ea580c);
+  background: linear-gradient(145deg, #fca5a5, #dc2626);
 }
 
 .temperature-slider-ticks {
@@ -392,7 +402,7 @@
   flex-shrink: 0;
   font-size: 0.65rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: #64748b;
   letter-spacing: -0.02em;
 }
 
@@ -406,9 +416,97 @@
   margin: 0.3rem 0 0;
   font-size: 0.7rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: #64748b;
   letter-spacing: -0.02em;
   text-align: center;
+}
+
+/* —— Panel 2 horizontal (shares colors / handles with vertical) —— */
+.temperature-panel-content--horizontal {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.45rem;
+}
+
+.temperature-panel-plot--horizontal {
+  width: 100%;
+  min-width: 0;
+}
+
+.temperature-distribution-svg--horizontal {
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.temperature-slider-row--horizontal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.temperature-slider-track--horizontal {
+  width: 100%;
+  min-width: 0;
+  min-height: 22px;
+  border-radius: 11px;
+  overflow: visible;
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.08);
+}
+
+.temperature-slider-track-fill--horizontal {
+  border-radius: 11px;
+}
+
+/* Cold left → hot right (inverse of vertical track) */
+.temperature-slider-track-gradient--horizontal {
+  position: absolute;
+  inset: 0;
+  border-radius: 11px;
+  background: linear-gradient(
+    to right,
+    #1e3a8a 0%,
+    #0ea5e9 12%,
+    #14b8a6 23%,
+    #22c55e 34%,
+    #84cc16 44%,
+    #eab308 55%,
+    #fbbf24 66%,
+    #f97316 77%,
+    #ea580c 88%,
+    #dc2626 100%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.temperature-slider-track-dim--horizontal {
+  right: auto;
+  min-height: 100%;
+}
+
+.temperature-slider-handle--horizontal {
+  top: 50%;
+  transform: translate(-50%, calc(-50% + var(--temperature-handle-nudge-y)))
+    rotate(var(--temperature-handle-rotate));
+}
+
+.temperature-slider-ticks--horizontal {
+  position: relative;
+  width: 100%;
+  height: 0.95rem;
+  flex-shrink: 0;
+  font-size: 0.62rem;
+}
+
+.temperature-slider-tick--horizontal {
+  right: auto;
+  transform: translateX(-50%);
+  line-height: 1.1;
+  white-space: nowrap;
 }
 
 /* —— Info page —— */
@@ -442,7 +540,10 @@
 .landing-demo2-main {
   display: grid;
   /* Narrower cols 1–2 (body map + filters); wider col 3 (results). */
-  grid-template-columns: minmax(220px, 0.72fr) minmax(220px, 0.82fr) minmax(280px, 1.46fr);
+  grid-template-columns: minmax(220px, 0.72fr) minmax(220px, 0.82fr) minmax(
+      280px,
+      1.46fr
+    );
   gap: 0.45rem;
   padding: 0.35rem 0.85rem 0.65rem;
   align-items: stretch;

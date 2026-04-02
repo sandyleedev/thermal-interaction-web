@@ -29,6 +29,41 @@ export function clientYToTemp(
   return clampTemp(t);
 }
 
+/** Map °C to x (0 = left = cold/min, width = right = hot/max). */
+export function tempToX(
+  tempC: number,
+  width: number,
+  minC = TEMP_AXIS_MIN,
+  maxC = TEMP_AXIS_MAX,
+): number {
+  const t = clampTemp(tempC);
+  return ((t - minC) / (maxC - minC)) * width;
+}
+
+/** Normalized position in [0, 1] along the axis (min → max). */
+export function tempToNorm(
+  tempC: number,
+  minC = TEMP_AXIS_MIN,
+  maxC = TEMP_AXIS_MAX,
+): number {
+  const t = clampTemp(tempC);
+  return (t - minC) / (maxC - minC);
+}
+
+/** Map client X inside track rect to °C (left = minC, right = maxC). */
+export function clientXToTemp(
+  clientX: number,
+  rect: DOMRect,
+  minC = TEMP_AXIS_MIN,
+  maxC = TEMP_AXIS_MAX,
+): number {
+  const w = rect.width;
+  if (w <= 0) return clampTemp(minC);
+  const ratio = (clientX - rect.left) / w;
+  const t = minC + ratio * (maxC - minC);
+  return clampTemp(t);
+}
+
 /** Cold (blue) → warm (red) for scatter / line accents. */
 export function tempToCoolWarmColor(tempC: number): string {
   const u = Math.min(
