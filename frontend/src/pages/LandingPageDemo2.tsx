@@ -6,24 +6,23 @@ import { ResultsPanel } from "@/components/landing/ResultsPanel";
 import { TemperaturePanel } from "@/components/temperature-panel/TemperaturePanel";
 import "@/pages/LandingPage.css";
 
-export function LandingPage() {
+/**
+ * Same panels as Demo 1; three-column layout: body map | temp + duration + other filters | results.
+ */
+export function LandingPageDemo2() {
   return (
     <div className="landing-root">
       <Header />
-      <div className="landing-main" id="main">
-        <div className="landing-left">
+      <div className="landing-main landing-demo2-main" id="main">
+        <div className="landing-demo2-col landing-demo2-col-left">
           <BodyMapPanel />
         </div>
-        <div className="landing-right">
-          <div className="landing-filters">
-            <div className="landing-filters-col landing-filters-col-left">
-              <TemperaturePanel />
-            </div>
-            <div className="landing-filters-col landing-filters-col-right">
-              <DurationPanel />
-              <OtherFiltersPanel />
-            </div>
-          </div>
+        <div className="landing-demo2-col landing-demo2-col-center">
+          <TemperaturePanel />
+          <DurationPanel />
+          <OtherFiltersPanel />
+        </div>
+        <div className="landing-demo2-col landing-demo2-col-right">
           <ResultsPanel />
         </div>
       </div>

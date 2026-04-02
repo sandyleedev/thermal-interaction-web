@@ -1,11 +1,27 @@
+import { NavLink } from "react-router-dom";
+
 export function Header() {
   return (
     <header className="landing-header">
       <nav aria-label="Main">
-        <a href="#main">(main)</a>
-        <a href="#feature-1">(feature 1)</a>
-        <a href="#feature-2">(feature 2)</a>
-        <a href="#info">(info)</a>
+        <NavLink
+          to="/demo1"
+          className={({ isActive }) => (isActive ? "is-active" : undefined)}
+        >
+          Demo 1
+        </NavLink>
+        <NavLink
+          to="/demo2"
+          className={({ isActive }) => (isActive ? "is-active" : undefined)}
+        >
+          Demo 2
+        </NavLink>
+        <NavLink
+          to="/info"
+          className={({ isActive }) => (isActive ? "is-active" : undefined)}
+        >
+          Info
+        </NavLink>
       </nav>
     </header>
   );
