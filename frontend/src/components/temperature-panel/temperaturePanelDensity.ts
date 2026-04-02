@@ -2,7 +2,7 @@ import {
   TEMP_AXIS_MAX,
   TEMP_AXIS_MIN,
   tempToY,
-} from "@/components/landing/temperaturePanelUtils";
+} from "./temperaturePanelUtils";
 
 const INV_SQRT_2PI = 1 / Math.sqrt(2 * Math.PI);
 

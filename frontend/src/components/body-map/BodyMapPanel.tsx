@@ -1,5 +1,5 @@
 import { useState } from "react";
-import BodyMap, { type BodyMapVariant } from "@/components/landing/BodyMap";
+import BodyMap, { type BodyMapVariant } from "./BodyMap";
 
 export function BodyMapPanel() {
   const [variant, setVariant] = useState<BodyMapVariant>("countHeatmap");

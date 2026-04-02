@@ -9,14 +9,14 @@ import {
 import {
   BODY_MAP_OUTLINE_PATH_D,
   BODY_MAP_VIEW,
-} from "@/components/landing/bodyMapOutlinePath";
-import { type BodySubpath } from "@/components/landing/bodyMapSampleDots";
-import { DEFAULT_PAPER_COUNTS } from "@/components/landing/bodyMapMockData";
+} from "./bodyMapOutlinePath";
+import { type BodySubpath } from "./bodyMapSampleDots";
+import { DEFAULT_PAPER_COUNTS } from "./bodyMapMockData";
 import {
   countToPerceptualNormalized,
   generateDotsForRegion,
   mapCountToColor,
-} from "@/components/landing/bodyMapVisualization";
+} from "./bodyMapVisualization";
 
 type TooltipState = { label: string; count: number; x: number; y: number };
 

@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { MOCK_PAPER_TEMP_RANGES } from "@/components/landing/temperaturePanelMockData";
+import { MOCK_PAPER_TEMP_RANGES } from "./temperaturePanelMockData";
 import {
   buildKdePaths,
   jitter11,
-} from "@/components/landing/temperaturePanelDensity";
+} from "./temperaturePanelDensity";
 import {
   clientYToTemp,
   rangeOverlapsFilter,
   tempToCoolWarmColor,
   tempToY,
-} from "@/components/landing/temperaturePanelUtils";
+} from "./temperaturePanelUtils";
 
 const TRACK_H = 240;
 const PLOT_W = 118;

@@ -1,7 +1,7 @@
 import {
   sampleDotsInMergedBodyPartPaths,
   type BodySubpath,
-} from "@/components/landing/bodyMapSampleDots";
+} from "./bodyMapSampleDots";
 
 /**
  * Standard heatmap-style sequential ramp: blue → green → yellow → orange → red

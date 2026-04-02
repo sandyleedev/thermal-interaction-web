@@ -1,4 +1,4 @@
-import { BODY_MAP_OUTLINE_PATH_D, BODY_MAP_VIEW } from "@/components/landing/bodyMapOutlinePath";
+import { BODY_MAP_OUTLINE_PATH_D, BODY_MAP_VIEW } from "./bodyMapOutlinePath";
 const INNER_TX = -59.365521;
 
 function hashStringToSeed(s: string): number {

@@ -1,9 +1,9 @@
-import { BodyMapPanel } from "@/components/landing/BodyMapPanel";
-import { DurationPanel } from "@/components/landing/DurationPanel";
+import { BodyMapPanel } from "@/components/body-map/BodyMapPanel";
+import { DurationPanel } from "@/components/duration-panel/DurationPanel";
 import { Header } from "@/components/landing/Header";
 import { OtherFiltersPanel } from "@/components/landing/OtherFiltersPanel";
 import { ResultsPanel } from "@/components/landing/ResultsPanel";
-import { TemperaturePanel } from "@/components/landing/TemperaturePanel";
+import { TemperaturePanel } from "@/components/temperature-panel/TemperaturePanel";
 import "@/pages/LandingPage.css";
 
 export function LandingPage() {
