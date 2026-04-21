@@ -7,7 +7,7 @@ import {
  * Standard heatmap-style sequential ramp: blue → green → yellow → orange → red
  * (low → high on the sqrt-scaled count domain).
  */
-const COUNT_COLOR_STOPS = [
+export const HEATMAP_COUNT_COLOR_STOPS = [
   "#313695",
   "#4575b4",
   "#74add1",
@@ -48,7 +48,7 @@ function rgbToHex({ r, g, b }: Rgb): string {
     .join("")}`;
 }
 
-const COUNT_RGB_STOPS: Rgb[] = COUNT_COLOR_STOPS.map((h) => hexToRgb(h));
+const COUNT_RGB_STOPS: Rgb[] = HEATMAP_COUNT_COLOR_STOPS.map((h) => hexToRgb(h));
 
 /** Piecewise linear RGB ramp (replaces d3 scaleSequential + interpolateRgbBasis). */
 function interpolateHeatmapColor(t: number): string {
@@ -97,6 +97,56 @@ export function mapCountToColor(
   const sv = sqrtCount(paperCount);
   const t = s1 <= s0 ? 0.5 : (sv - s0) / (s1 - s0);
   return interpolateHeatmapColor(Math.min(1, Math.max(0, t)));
+}
+
+const HEATMAP_LEGEND_BUCKET_COUNT = 4;
+
+export type HeatmapColorLegendItem = {
+  /** Fill at the midpoint of this paper-count band (same ramp as the map). */
+  color: string;
+  /** Paper-count range label (10-aligned edges from 0). */
+  rangeLabel: string;
+};
+
+function formatPaperRange(lo: number, hi: number): string {
+  const a = Math.round(lo);
+  const b = Math.round(hi);
+  if (a >= b) return a.toLocaleString();
+  return `${a.toLocaleString()}–${b.toLocaleString()}`;
+}
+
+/**
+ * Four-band legend from 0 to a 10-aligned upper bound derived from data max.
+ * Boundaries fall on multiples of 10; band colour uses {@link mapCountToColor}
+ * at the numeric midpoint (with the map’s actual min–max domain).
+ */
+export function buildHeatmapColorLegendItems(
+  domain: [number, number],
+): HeatmapColorLegendItem[] {
+  const [d0, d1] = domain;
+  const maxC = Math.max(d0, d1);
+
+  let hi = Math.ceil(Math.max(0, maxC) / 10) * 10;
+  if (hi < 40) hi = 40;
+
+  const quarter = hi / HEATMAP_LEGEND_BUCKET_COUNT;
+  let step = Math.round(quarter / 10) * 10;
+  if (step < 10) step = 10;
+
+  const items: HeatmapColorLegendItem[] = [];
+  for (let i = 0; i < HEATMAP_LEGEND_BUCKET_COUNT; i++) {
+    const c0 = Math.min(i * step, hi);
+    const c1 =
+      i === HEATMAP_LEGEND_BUCKET_COUNT - 1
+        ? hi
+        : Math.min((i + 1) * step, hi);
+    const mid = (c0 + c1) / 2;
+    items.push({
+      color: mapCountToColor(mid, domain),
+      rangeLabel: formatPaperRange(c0, c1),
+    });
+  }
+  return items;
 }
 
 /** Cap per region so very large counts stay performant (tweak for production data). */

@@ -13,6 +13,7 @@ import {
 import { type BodySubpath } from "./bodyMapSampleDots";
 import { DEFAULT_PAPER_COUNTS } from "./bodyMapMockData";
 import {
+  buildHeatmapColorLegendItems,
   countToPerceptualNormalized,
   generateDotsForRegion,
   mapCountToColor,
@@ -181,6 +182,11 @@ export function BodyMap({
     const maxC = Math.max(...counts);
     return [minC, maxC];
   }, [partPaperMap]);
+
+  const heatmapColorLegend = useMemo(
+    () => buildHeatmapColorLegendItems(countColorDomain),
+    [countColorDomain],
+  );
 
   useLayoutEffect(() => {
     let cancelled = false;
@@ -387,6 +393,31 @@ export function BodyMap({
           </g>
         </svg>
       </div>
+
+      {variant === "countHeatmap" ? (
+        <div className="body-map-heatmap-legend">
+          <ul
+            className="body-map-heatmap-legend-swatches"
+            aria-label="Paper count ranges by colour"
+          >
+            {heatmapColorLegend.map((item, i) => (
+              <li key={i} className="body-map-heatmap-legend-item">
+                <span
+                  className="body-map-heatmap-legend-swatch"
+                  style={{ backgroundColor: item.color }}
+                />
+                <span className="body-map-heatmap-legend-label">
+                  {item.rangeLabel}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p className="body-map-heatmap-legend-caption">
+            Papers per region in four bands from 0 with 10-paper edges; colours follow
+            the map’s square-root scale. Hover for exact counts.
+          </p>
+        </div>
+      ) : null}
 
       {tooltip ? (
         <div
