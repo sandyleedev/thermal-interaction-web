@@ -5,25 +5,11 @@ import {
   thumbCenterLeftCalc,
 } from "@/components/range-slider/horizontalRangeTrackInset";
 import { MOCK_PAPER_TEMP_RANGES } from "./temperaturePanelMockData";
-import { buildKdePathsHorizontal, jitter11 } from "./temperaturePanelDensity";
-import {
-  clientXToTemp,
-  rangeOverlapsFilter,
-  tempToCoolWarmColor,
-  tempToNorm,
-  tempToX,
-} from "./temperaturePanelUtils";
+import { buildKdePathsHorizontal } from "./temperaturePanelDensity";
+import { clientXToTemp, tempToNorm } from "./temperaturePanelUtils";
 
 const PLOT_W = 320;
 const TRACK_H = 22;
-
-function hashId(id: string): number {
-  let h = 0;
-  for (let i = 0; i < id.length; i++) {
-    h = (Math.imul(31, h) + id.charCodeAt(i)) | 0;
-  }
-  return h >>> 0;
-}
 
 type DragHandle = "low" | "high" | null;
 
@@ -43,10 +29,6 @@ export function TemperaturePanelHorizontal({
   const PAD = compact
     ? { left: 10, right: 10, top: 3, bottom: 7 }
     : { left: 10, right: 10, top: 6, bottom: 10 };
-  const INNER_W = PLOT_W - PAD.left - PAD.right;
-  const dotJitterX = compact ? 4 : 6;
-  const dotJitterY = compact ? 7 : 12;
-  const dotLift = compact ? 10 : 16;
 
   const trackRef = useRef<HTMLDivElement>(null);
   const rangeRef = useRef({ low: 18, high: 55 });
@@ -111,8 +93,9 @@ export function TemperaturePanelHorizontal({
   const rangeLeft = Math.min(nLow, nHigh);
   const rangeWidth = Math.abs(nHigh - nLow);
 
+  const handlesClose = rangeWidth < 0.14;
+
   const tickLabels = [100, 75, 50, 25, 0, -10];
-  const baselineY = PLOT_H - PAD.bottom;
 
   return (
     <section
@@ -126,7 +109,7 @@ export function TemperaturePanelHorizontal({
         .filter(Boolean)
         .join(" ")}
     >
-      <h2 className="panel-title">Panel 2</h2>
+      <h2 className="panel-title">Temperature</h2>
       <div className="panel-content temperature-panel-content temperature-panel-content--horizontal">
         <div className="temperature-panel-plot temperature-panel-plot--horizontal">
           <svg
@@ -134,46 +117,13 @@ export function TemperaturePanelHorizontal({
             viewBox={`0 0 ${PLOT_W} ${PLOT_H}`}
             preserveAspectRatio="xMidYMid meet"
             role="img"
-            aria-label="Paper count distribution by study temperature, horizontal axis"
+            aria-label="Paper count density by study temperature (KDE curve), horizontal axis"
           >
             <path
               d={kdePaths.lineD}
               className="temperature-kde-line"
               fill="none"
             />
-            {papers.map((p, i) => {
-              const mid = (p.minC + p.maxC) / 2;
-              const cx =
-                PAD.left +
-                tempToX(mid, INNER_W) +
-                jitter11(hashId(p.id), i) * dotJitterX;
-              const cy =
-                baselineY -
-                dotLift +
-                jitter11(hashId(p.id) + 41, i) * dotJitterY;
-              const active = rangeOverlapsFilter(
-                p.minC,
-                p.maxC,
-                filterLow,
-                filterHigh,
-              );
-              return (
-                <circle
-                  key={p.id}
-                  cx={Math.min(
-                    PLOT_W - PAD.right - 2,
-                    Math.max(PAD.left + 2, cx),
-                  )}
-                  cy={Math.min(
-                    baselineY - 2,
-                    Math.max(PAD.top + 2, cy),
-                  )}
-                  r={2.1}
-                  fill={tempToCoolWarmColor(mid)}
-                  fillOpacity={active ? 0.92 : 0.44}
-                />
-              );
-            })}
           </svg>
         </div>
 
@@ -196,36 +146,72 @@ export function TemperaturePanelHorizontal({
                 }}
               />
             </div>
-            <button
-              type="button"
-              className="temperature-slider-handle temperature-slider-handle-low temperature-slider-handle--horizontal"
+            <div
+              className={[
+                "range-slider-thumb-stack",
+                "range-slider-thumb-stack--horizontal",
+                "range-slider-thumb-stack--low",
+                handlesClose && "range-slider-thumb-stack--spread",
+              ]
+                .filter(Boolean)
+                .join(" ")}
               style={{ left: thumbCenterLeftCalc(nLow) }}
-              aria-label={`Minimum temperature ${Math.round(filterLow)} degrees Celsius`}
-              onPointerDown={(e) => {
-                e.preventDefault();
-                dragRef.current = "low";
-                document.body.style.cursor = "grabbing";
-              }}
             >
-              <span className="duration-slider-tooltip" aria-hidden>
+              <button
+                type="button"
+                className="temperature-slider-handle temperature-slider-handle-low temperature-slider-handle--horizontal"
+                aria-label={`Minimum temperature ${Math.round(filterLow)} degrees Celsius`}
+                onPointerDown={(e) => {
+                  e.preventDefault();
+                  dragRef.current = "low";
+                  document.body.style.cursor = "grabbing";
+                }}
+              />
+              <span
+                className={[
+                  "range-slider-value-pill",
+                  handlesClose && "range-slider-value-pill--spread-low",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                aria-hidden
+              >
                 {Math.round(filterLow)}°C
               </span>
-            </button>
-            <button
-              type="button"
-              className="temperature-slider-handle temperature-slider-handle-high temperature-slider-handle--horizontal"
+            </div>
+            <div
+              className={[
+                "range-slider-thumb-stack",
+                "range-slider-thumb-stack--horizontal",
+                "range-slider-thumb-stack--high",
+                handlesClose && "range-slider-thumb-stack--spread",
+              ]
+                .filter(Boolean)
+                .join(" ")}
               style={{ left: thumbCenterLeftCalc(nHigh) }}
-              aria-label={`Maximum temperature ${Math.round(filterHigh)} degrees Celsius`}
-              onPointerDown={(e) => {
-                e.preventDefault();
-                dragRef.current = "high";
-                document.body.style.cursor = "grabbing";
-              }}
             >
-              <span className="duration-slider-tooltip" aria-hidden>
+              <button
+                type="button"
+                className="temperature-slider-handle temperature-slider-handle-high temperature-slider-handle--horizontal"
+                aria-label={`Maximum temperature ${Math.round(filterHigh)} degrees Celsius`}
+                onPointerDown={(e) => {
+                  e.preventDefault();
+                  dragRef.current = "high";
+                  document.body.style.cursor = "grabbing";
+                }}
+              />
+              <span
+                className={[
+                  "range-slider-value-pill",
+                  handlesClose && "range-slider-value-pill--spread-high",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                aria-hidden
+              >
                 {Math.round(filterHigh)}°C
               </span>
-            </button>
+            </div>
           </div>
           <div className="temperature-slider-ticks temperature-slider-ticks--horizontal">
             {tickLabels.map((t) => (
@@ -239,9 +225,6 @@ export function TemperaturePanelHorizontal({
             ))}
           </div>
         </div>
-        <p className="temperature-panel-summary">
-          Filter: {Math.round(filterLow)}°C – {Math.round(filterHigh)}°C
-        </p>
       </div>
     </section>
   );

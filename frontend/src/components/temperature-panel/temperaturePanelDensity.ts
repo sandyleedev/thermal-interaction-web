@@ -34,18 +34,25 @@ export type KdePathResult = {
 /**
  * Smooth KDE polyline + closed area (for fill) in SVG coords.
  * `dotZoneRight` is the x where the KDE strip starts; density extends to `plotWidth`.
+ * Optional `kdeStripInsetPx` narrows the horizontal density span (Demo 1 tighter curve).
  */
 export function buildKdePaths(
   samples: readonly number[],
   plotHeight: number,
   plotWidth: number,
   dotZoneRight: number,
-  options?: { bandwidth?: number; steps?: number },
+  options?: {
+    bandwidth?: number;
+    steps?: number;
+    /** Symmetric inset from strip edges into which density maps (px). */
+    kdeStripInsetPx?: number;
+  },
 ): KdePathResult {
   const bandwidth = options?.bandwidth ?? 5.5;
   const steps = options?.steps ?? 72;
-  const kdeLeft = dotZoneRight + 2;
-  const kdeRight = plotWidth - 2;
+  const inset = Math.max(0, options?.kdeStripInsetPx ?? 0);
+  const kdeLeft = dotZoneRight + 2 + inset;
+  const kdeRight = plotWidth - 2 - inset;
 
   const points: { y: number; density: number }[] = [];
   for (let i = 0; i <= steps; i++) {

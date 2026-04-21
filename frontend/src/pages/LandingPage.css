@@ -241,15 +241,15 @@
   flex-direction: column;
 }
 
-/* Narrower Panel 2; Panels 3+4 share the wider right column (~2 : 5). */
+/* Panel 2 compact; Panels 3+4 get more horizontal space (~1.35 : 5.65). */
 .landing-filters-col-left {
-  flex: 2 1 0;
+  flex: 1.35 1 0;
   min-width: 0;
-  max-width: 360px;
+  max-width: 300px;
 }
 
 .landing-filters-col-right {
-  flex: 5 1 0;
+  flex: 5.65 1 0;
   min-width: 0;
   min-height: 0;
   gap: 0.5rem;
@@ -264,7 +264,10 @@
 }
 
 .landing-filters-col-right > .landing-duration-panel {
-  flex: 0 0 auto;
+  min-width: 0;
+  /* Don’t inherit min-height:0 from .landing-filters-col-right > * — it shrinks the panel and clips the slider */
+  min-height: min-content;
+  overflow: visible;
 }
 
 .landing-filters-col-right .panel-content {
@@ -346,7 +349,7 @@
 .temperature-distribution-svg {
   display: block;
   width: 100%;
-  max-width: 126px;
+  max-width: 96px;
   border-radius: 4px;
 }
 
@@ -362,12 +365,13 @@
   display: flex;
   flex-shrink: 0;
   gap: 0.35rem;
-  align-items: stretch;
+  align-items: flex-start;
 }
 
 .temperature-slider-track {
   position: relative;
   width: 22px;
+  flex: 0 0 auto;
   flex-shrink: 0;
   border-radius: 11px;
   overflow: visible;
@@ -415,27 +419,93 @@
   z-index: 1;
 }
 
-/* Used by vertical + horizontal handles; --horizontal overrides only translate part below. */
-.temperature-slider-handle {
-  --temperature-handle-rotate: -44deg;
-  /* Negative = nudge handle upward (screen Y). */
-  --temperature-handle-nudge-y: -2px;
+/* Wrapper: positions handle on track; value pill is absolutely placed above the knob. */
+.range-slider-thumb-stack {
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%) translateY(var(--temperature-handle-nudge-y))
-    rotate(var(--temperature-handle-rotate));
-  transform-origin: center center;
-  width: 20px;
-  height: 20px;
+  display: block;
+  pointer-events: none;
+}
+
+.range-slider-thumb-stack > .temperature-slider-handle {
+  pointer-events: auto;
+  position: relative;
+  left: auto;
+  top: auto;
   margin: 0;
-  padding: 0;
-  border: 2px solid rgba(255, 255, 255, 0.95);
-  border-radius: 50% 50% 50% 0;
-  cursor: grab;
+}
+
+.range-slider-thumb-stack--horizontal {
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.range-slider-thumb-stack--horizontal.range-slider-thumb-stack--low {
   z-index: 2;
-  box-shadow:
-    0 1px 3px rgba(15, 23, 42, 0.2),
-    0 0 0 1px rgba(15, 23, 42, 0.12);
+}
+
+.range-slider-thumb-stack--horizontal.range-slider-thumb-stack--high {
+  z-index: 3;
+}
+
+.range-slider-thumb-stack--vertical {
+  transform: translate(-50%, -50%);
+}
+
+.range-slider-thumb-stack--vertical.range-slider-thumb-stack--low {
+  z-index: 2;
+}
+
+.range-slider-thumb-stack--vertical.range-slider-thumb-stack--high {
+  z-index: 3;
+}
+
+.range-slider-value-pill {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  z-index: 5;
+  padding: 0.14rem 0.4rem;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  color: #334155;
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  border-radius: 999px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  transform: translateX(-50%);
+  transform-origin: center bottom;
+}
+
+.range-slider-thumb-stack--spread .range-slider-value-pill--spread-low {
+  transform: translateX(calc(-50% - 16px));
+}
+
+.range-slider-thumb-stack--spread .range-slider-value-pill--spread-high {
+  transform: translateX(calc(-50% + 16px));
+}
+
+.range-slider-thumb-stack--vertical.range-slider-thumb-stack--spread
+  .range-slider-value-pill--spread-low {
+  transform: translate(calc(-50% - 14px), -3px);
+}
+
+.range-slider-thumb-stack--vertical.range-slider-thumb-stack--spread
+  .range-slider-value-pill--spread-high {
+  transform: translate(calc(-50% + 14px), 3px);
+}
+
+/* Used by vertical + horizontal handles */
+.temperature-slider-handle {
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  flex-shrink: 0;
+  border-radius: 50%;
+  cursor: grab;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.07);
   pointer-events: auto;
 }
 
@@ -444,46 +514,54 @@
 }
 
 .temperature-slider-handle-low {
-  background: linear-gradient(145deg, #38bdf8, #2563eb);
+  background: #ffffff;
+  border: 1px solid rgba(37, 99, 235, 0.42);
 }
 
 .temperature-slider-handle-high {
-  background: linear-gradient(145deg, #fca5a5, #dc2626);
+  background: #ffffff;
+  border: 1px solid rgba(220, 38, 38, 0.42);
 }
 
 .temperature-slider-ticks {
   position: relative;
   width: 2rem;
-  flex-shrink: 0;
+  flex: 0 0 auto;
   font-size: 0.65rem;
   font-weight: 600;
   color: #64748b;
   letter-spacing: -0.02em;
+  overflow: visible;
 }
 
 .temperature-slider-tick {
   position: absolute;
-  right: 0;
-  line-height: 1;
-}
-
-.temperature-panel-summary {
-  margin: 0.3rem 0 0;
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #64748b;
-  letter-spacing: -0.02em;
+  left: 50%;
   text-align: center;
+  line-height: 1;
+  transform: translate(-50%, -50%);
 }
 
-/* Same placement as Panel 3 filter line (inside .panel-content) */
-.temperature-panel-content > .temperature-panel-summary {
-  margin: 0.15rem 0 0;
+/* Pin axis endpoints to the track top/bottom (same pixel range as the gradient bar). */
+.temperature-slider-tick--axis-max {
+  top: 0;
+  bottom: auto;
+  transform: translateX(-50%);
+}
+
+.temperature-slider-tick--axis-min {
+  top: auto;
+  bottom: 0;
+  transform: translateX(-50%);
 }
 
 /* —— Panel 3: duration range (log scale, neutral track; aligns with Panel 2 layout) —— */
 .landing-duration-panel .panel-content {
   padding: 0.15rem 0.15rem 0;
+}
+
+.landing-filters-col-right .landing-duration-panel .panel-content {
+  padding: 0.28rem 0.45rem 0.12rem;
 }
 
 .duration-panel-content {
@@ -499,12 +577,23 @@
   gap: 0.28rem;
   width: 100%;
   min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding-top: 1.15rem;
+}
+
+.landing-filters-col-right .landing-duration-panel .duration-slider-row {
+  padding-top: 1.35rem;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 .duration-slider-track {
   position: relative;
   width: 100%;
+  max-width: 100%;
   min-height: 22px;
+  box-sizing: border-box;
   overflow: visible;
 }
 
@@ -563,42 +652,10 @@
   width: auto;
 }
 
-/* Same geometry as Panel 2 (.temperature-slider-handle--horizontal); neutral fills */
-.duration-slider-handle--neutral.temperature-slider-handle-low {
-  background: linear-gradient(145deg, #ebeef3, #9ca3af);
-}
-
+.duration-slider-handle--neutral.temperature-slider-handle-low,
 .duration-slider-handle--neutral.temperature-slider-handle-high {
-  background: linear-gradient(145deg, #dde1e8, #6b7280);
-}
-
-.duration-slider-tooltip {
-  position: absolute;
-  bottom: calc(100% + 9px);
-  left: 50%;
-  z-index: 5;
-  padding: 0.2rem 0.42rem;
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: #f8fafc;
-  background: rgba(51, 65, 85, 0.94);
-  border-radius: 5px;
-  white-space: nowrap;
-  pointer-events: none;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
-  transform: translateX(-50%) rotate(calc(0deg - var(--temperature-handle-rotate)));
-  transform-origin: center bottom;
-}
-
-.duration-slider-tooltip::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -3px;
-  border: 3px solid transparent;
-  border-top-color: rgba(51, 65, 85, 0.94);
+  background: #ffffff;
+  border-color: rgba(71, 85, 105, 0.38);
 }
 
 .duration-slider-ticks {
@@ -617,15 +674,6 @@
   transform: translateX(-50%);
   line-height: 1.1;
   white-space: nowrap;
-}
-
-.duration-panel-summary {
-  margin: 0.15rem 0 0;
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #64748b;
-  letter-spacing: -0.02em;
-  text-align: center;
 }
 
 /* Demo 2: shorter Panel 2 plot; card padding = default .landing-panel (match Panel 3) */
@@ -647,11 +695,6 @@
   .temperature-slider-ticks--horizontal {
   height: 0.82rem;
   font-size: 0.58rem;
-}
-
-.landing-temperature-panel.landing-temperature-panel--compact .temperature-panel-summary {
-  margin-top: 0.1rem;
-  font-size: 0.65rem;
 }
 
 .landing-demo2-col-center > .landing-panel.landing-temperature-panel--compact {
@@ -691,6 +734,7 @@
   gap: 0.3rem;
   width: 100%;
   min-width: 0;
+  padding-top: 1.15rem;
 }
 
 .temperature-slider-track--horizontal {
@@ -736,12 +780,6 @@
 .temperature-slider-track-dim.temperature-slider-track-dim--horizontal.temperature-slider-track-dim--horizontal-right {
   right: 0;
   width: auto;
-}
-
-.temperature-slider-handle--horizontal {
-  top: 50%;
-  transform: translate(-50%, calc(-50% + var(--temperature-handle-nudge-y)))
-    rotate(var(--temperature-handle-rotate));
 }
 
 .temperature-slider-ticks--horizontal {
@@ -850,7 +888,9 @@
   flex: 0 0 auto;
 }
 
-.landing-demo2-col-center > .landing-panel.landing-duration-panel .panel-content {
+.landing-demo2-col-center
+  > .landing-panel.landing-duration-panel
+  .panel-content {
   flex: 0 0 auto;
 }
 

@@ -72,9 +72,11 @@ export function DurationPanel() {
   const rangeLeft = Math.min(nLow, nHigh);
   const rangeWidth = Math.abs(nHigh - nLow);
 
+  const handlesClose = rangeWidth < 0.14;
+
   return (
     <section className="landing-panel landing-panel-top landing-duration-panel">
-      <h2 className="panel-title">Panel 3</h2>
+      <h2 className="panel-title">Duration</h2>
       <div className="panel-content duration-panel-content">
         <div className="duration-slider-row">
           <div
@@ -107,36 +109,72 @@ export function DurationPanel() {
                 style={{ left: insetDimRightLeftEdge(rangeLeft, rangeWidth) }}
               />
             </div>
-            <button
-              type="button"
-              className="temperature-slider-handle temperature-slider-handle-low temperature-slider-handle--horizontal duration-slider-handle--neutral"
+            <div
+              className={[
+                "range-slider-thumb-stack",
+                "range-slider-thumb-stack--horizontal",
+                "range-slider-thumb-stack--low",
+                handlesClose && "range-slider-thumb-stack--spread",
+              ]
+                .filter(Boolean)
+                .join(" ")}
               style={{ left: thumbCenterLeftCalc(nLow) }}
-              aria-label={`Minimum duration ${formatDurationForUi(filterLowS)}`}
-              onPointerDown={(e) => {
-                e.preventDefault();
-                dragRef.current = "low";
-                document.body.style.cursor = "grabbing";
-              }}
             >
-              <span className="duration-slider-tooltip" aria-hidden>
+              <button
+                type="button"
+                className="temperature-slider-handle temperature-slider-handle-low temperature-slider-handle--horizontal duration-slider-handle--neutral"
+                aria-label={`Minimum duration ${formatDurationForUi(filterLowS)}`}
+                onPointerDown={(e) => {
+                  e.preventDefault();
+                  dragRef.current = "low";
+                  document.body.style.cursor = "grabbing";
+                }}
+              />
+              <span
+                className={[
+                  "range-slider-value-pill",
+                  handlesClose && "range-slider-value-pill--spread-low",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                aria-hidden
+              >
                 {formatDurationForUi(filterLowS)}
               </span>
-            </button>
-            <button
-              type="button"
-              className="temperature-slider-handle temperature-slider-handle-high temperature-slider-handle--horizontal duration-slider-handle--neutral"
+            </div>
+            <div
+              className={[
+                "range-slider-thumb-stack",
+                "range-slider-thumb-stack--horizontal",
+                "range-slider-thumb-stack--high",
+                handlesClose && "range-slider-thumb-stack--spread",
+              ]
+                .filter(Boolean)
+                .join(" ")}
               style={{ left: thumbCenterLeftCalc(nHigh) }}
-              aria-label={`Maximum duration ${formatDurationForUi(filterHighS)}`}
-              onPointerDown={(e) => {
-                e.preventDefault();
-                dragRef.current = "high";
-                document.body.style.cursor = "grabbing";
-              }}
             >
-              <span className="duration-slider-tooltip" aria-hidden>
+              <button
+                type="button"
+                className="temperature-slider-handle temperature-slider-handle-high temperature-slider-handle--horizontal duration-slider-handle--neutral"
+                aria-label={`Maximum duration ${formatDurationForUi(filterHighS)}`}
+                onPointerDown={(e) => {
+                  e.preventDefault();
+                  dragRef.current = "high";
+                  document.body.style.cursor = "grabbing";
+                }}
+              />
+              <span
+                className={[
+                  "range-slider-value-pill",
+                  handlesClose && "range-slider-value-pill--spread-high",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                aria-hidden
+              >
                 {formatDurationForUi(filterHighS)}
               </span>
-            </button>
+            </div>
           </div>
           <div className="duration-slider-ticks">
             {DURATION_MAJOR_TICKS.map(({ s, label }) => (
@@ -150,10 +188,6 @@ export function DurationPanel() {
             ))}
           </div>
         </div>
-        <p className="duration-panel-summary">
-          Filter: {formatDurationForUi(filterLowS)} –{" "}
-          {formatDurationForUi(filterHighS)}
-        </p>
       </div>
     </section>
   );

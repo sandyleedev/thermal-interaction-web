@@ -6,7 +6,7 @@ export function BodyMapPanel() {
 
   return (
     <aside className="landing-panel landing-body-map">
-      <h2 className="panel-title">Panel 1</h2>
+      <h2 className="panel-title">Body map</h2>
       <div
         className="body-map-toolbar"
         role="group"

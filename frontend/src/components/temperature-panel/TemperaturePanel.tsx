@@ -1,28 +1,24 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { MOCK_PAPER_TEMP_RANGES } from "./temperaturePanelMockData";
-import { buildKdePaths, jitter11 } from "./temperaturePanelDensity";
+import { buildKdePaths } from "./temperaturePanelDensity";
 import {
   clientYToTemp,
-  rangeOverlapsFilter,
-  tempToCoolWarmColor,
+  TEMP_AXIS_MAX,
+  TEMP_AXIS_MIN,
+  tempToNorm,
   tempToY,
 } from "./temperaturePanelUtils";
 
 const TRACK_H = 240;
-const PLOT_W = 118;
+/** Tight plot width (scatter zone removed on Demo 1). */
+const PLOT_W = 88;
 const PLOT_H = TRACK_H;
-/** Dots live left of this x; KDE strip is to the right. */
-const DOT_ZONE_RIGHT = 76;
-const DOT_CENTER_X = 36;
-const DOT_JITTER_MAX = 24;
-
-function hashId(id: string): number {
-  let h = 0;
-  for (let i = 0; i < id.length; i++) {
-    h = (Math.imul(31, h) + id.charCodeAt(i)) | 0;
-  }
-  return h >>> 0;
-}
+/** KDE density strip starts just right of this x ({@link buildKdePaths}). */
+const DOT_ZONE_RIGHT = 10;
+const KDE_STRIP_LEFT = DOT_ZONE_RIGHT + 2;
+const KDE_STRIP_RIGHT = PLOT_W - 2;
+/** Horizontal mirror pivot for the vertical-panel density curve (Demo 1). */
+const KDE_FLIP_CX = (KDE_STRIP_LEFT + KDE_STRIP_RIGHT) / 2;
 
 type DragHandle = "low" | "high" | null;
 
@@ -45,7 +41,10 @@ export function TemperaturePanel() {
   );
 
   const kdePaths = useMemo(
-    () => buildKdePaths(centerTemps, PLOT_H, PLOT_W, DOT_ZONE_RIGHT),
+    () =>
+      buildKdePaths(centerTemps, PLOT_H, PLOT_W, DOT_ZONE_RIGHT, {
+        kdeStripInsetPx: 12,
+      }),
     [centerTemps],
   );
 
@@ -89,11 +88,14 @@ export function TemperaturePanel() {
   const activeTop = Math.min(yLow, yHigh);
   const activeH = Math.abs(yHigh - yLow);
 
+  const handlesClose =
+    Math.abs(tempToNorm(filterLow) - tempToNorm(filterHigh)) < 0.14;
+
   const tickLabels = [100, 75, 50, 25, 0, -10];
 
   return (
     <section className="landing-panel landing-panel-top landing-temperature-panel">
-      <h2 className="panel-title">Panel 2</h2>
+      <h2 className="panel-title">Temperature</h2>
       <div className="panel-content temperature-panel-content">
         <div className="temperature-panel-plot">
           <svg
@@ -102,36 +104,17 @@ export function TemperaturePanel() {
             width="100%"
             height={PLOT_H}
             role="img"
-            aria-label="Paper count distribution by study temperature (midpoint of each paper range), with density curve"
+            aria-label="Paper count density by study temperature (KDE curve)"
           >
-            <path
-              d={kdePaths.lineD}
-              className="temperature-kde-line"
-              fill="none"
-            />
-            {papers.map((p, i) => {
-              const mid = (p.minC + p.maxC) / 2;
-              const cy = tempToY(mid, PLOT_H);
-              const active = rangeOverlapsFilter(
-                p.minC,
-                p.maxC,
-                filterLow,
-                filterHigh,
-              );
-              const rawX =
-                DOT_CENTER_X + jitter11(hashId(p.id), i) * DOT_JITTER_MAX;
-              const cx = Math.min(DOT_ZONE_RIGHT - 6, Math.max(8, rawX));
-              return (
-                <circle
-                  key={p.id}
-                  cx={cx}
-                  cy={cy}
-                  r={2.1}
-                  fill={tempToCoolWarmColor(mid)}
-                  fillOpacity={active ? 0.92 : 0.44}
-                />
-              );
-            })}
+            <g
+              transform={`translate(${KDE_FLIP_CX}, 0) scale(-1, 1) translate(${-KDE_FLIP_CX}, 0)`}
+            >
+              <path
+                d={kdePaths.lineD}
+                className="temperature-kde-line"
+                fill="none"
+              />
+            </g>
           </svg>
         </div>
 
@@ -155,54 +138,95 @@ export function TemperaturePanel() {
                 }}
               />
             </div>
-            <button
-              type="button"
-              className="temperature-slider-handle temperature-slider-handle-low"
-              style={{ top: yLow - 10 }}
-              aria-label={`Minimum temperature ${Math.round(filterLow)} degrees Celsius`}
-              onPointerDown={(e) => {
-                e.preventDefault();
-                dragRef.current = "low";
-                document.body.style.cursor = "grabbing";
-              }}
+            <div
+              className={[
+                "range-slider-thumb-stack",
+                "range-slider-thumb-stack--vertical",
+                "range-slider-thumb-stack--low",
+                handlesClose && "range-slider-thumb-stack--spread",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              style={{ top: yLow, left: "50%" }}
             >
-              <span className="duration-slider-tooltip" aria-hidden>
+              <button
+                type="button"
+                className="temperature-slider-handle temperature-slider-handle-low"
+                aria-label={`Minimum temperature ${Math.round(filterLow)} degrees Celsius`}
+                onPointerDown={(e) => {
+                  e.preventDefault();
+                  dragRef.current = "low";
+                  document.body.style.cursor = "grabbing";
+                }}
+              />
+              <span
+                className={[
+                  "range-slider-value-pill",
+                  handlesClose && "range-slider-value-pill--spread-low",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                aria-hidden
+              >
                 {Math.round(filterLow)}°C
               </span>
-            </button>
-            <button
-              type="button"
-              className="temperature-slider-handle temperature-slider-handle-high"
-              style={{ top: yHigh - 10 }}
-              aria-label={`Maximum temperature ${Math.round(filterHigh)} degrees Celsius`}
-              onPointerDown={(e) => {
-                e.preventDefault();
-                dragRef.current = "high";
-                document.body.style.cursor = "grabbing";
-              }}
+            </div>
+            <div
+              className={[
+                "range-slider-thumb-stack",
+                "range-slider-thumb-stack--vertical",
+                "range-slider-thumb-stack--high",
+                handlesClose && "range-slider-thumb-stack--spread",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              style={{ top: yHigh, left: "50%" }}
             >
-              <span className="duration-slider-tooltip" aria-hidden>
+              <button
+                type="button"
+                className="temperature-slider-handle temperature-slider-handle-high"
+                aria-label={`Maximum temperature ${Math.round(filterHigh)} degrees Celsius`}
+                onPointerDown={(e) => {
+                  e.preventDefault();
+                  dragRef.current = "high";
+                  document.body.style.cursor = "grabbing";
+                }}
+              />
+              <span
+                className={[
+                  "range-slider-value-pill",
+                  handlesClose && "range-slider-value-pill--spread-high",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                aria-hidden
+              >
                 {Math.round(filterHigh)}°C
               </span>
-            </button>
+            </div>
           </div>
           <div className="temperature-slider-ticks" style={{ height: TRACK_H }}>
             {tickLabels.map((t) => (
               <span
                 key={t}
-                className="temperature-slider-tick"
-                style={{
-                  top: tempToY(t, TRACK_H) - 6,
-                }}
+                className={[
+                  "temperature-slider-tick",
+                  t === TEMP_AXIS_MAX && "temperature-slider-tick--axis-max",
+                  t === TEMP_AXIS_MIN && "temperature-slider-tick--axis-min",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                style={
+                  t === TEMP_AXIS_MAX || t === TEMP_AXIS_MIN
+                    ? undefined
+                    : { top: tempToY(t, TRACK_H) }
+                }
               >
                 {t}°
               </span>
             ))}
           </div>
         </div>
-        <p className="temperature-panel-summary">
-          Filter: {Math.round(filterLow)}°C – {Math.round(filterHigh)}°C
-        </p>
       </div>
     </section>
   );
