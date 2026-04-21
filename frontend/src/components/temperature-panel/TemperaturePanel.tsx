@@ -22,10 +22,21 @@ const KDE_FLIP_CX = (KDE_STRIP_LEFT + KDE_STRIP_RIGHT) / 2;
 
 type DragHandle = "low" | "high" | null;
 
-export function TemperaturePanel() {
+export type TemperaturePanelProps = {
+  /**
+   * Passed to the density SVG. Use `"none"` when the plot is narrower than {@link PLOT_W}px so the
+   * curve still fills {@link TRACK_H}px vertically (same Y scale as the slider); default `meet` would
+   * letterbox and shorten the curve.
+   */
+  densityPreserveAspectRatio?: string;
+};
+
+export function TemperaturePanel({
+  densityPreserveAspectRatio = "xMidYMid meet",
+}: TemperaturePanelProps = {}) {
   const trackRef = useRef<HTMLDivElement>(null);
   const {
-    filteredPapers,
+    temperatureDensityPapers,
     tempLowC,
     tempHighC,
     setTempRange,
@@ -40,8 +51,9 @@ export function TemperaturePanel() {
   }, [filterLow, filterHigh]);
 
   const centerTemps = useMemo(
-    () => filteredPapers.map((p) => (p.minC + p.maxC) / 2),
-    [filteredPapers],
+    () =>
+      temperatureDensityPapers.map((p) => (p.minC + p.maxC) / 2),
+    [temperatureDensityPapers],
   );
 
   const kdePaths = useMemo(
@@ -107,6 +119,7 @@ export function TemperaturePanel() {
             viewBox={`0 0 ${PLOT_W} ${PLOT_H}`}
             width="100%"
             height={PLOT_H}
+            preserveAspectRatio={densityPreserveAspectRatio}
             role="img"
             aria-label="Paper count density by study temperature (KDE curve)"
           >

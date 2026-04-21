@@ -82,6 +82,32 @@ export function filterResearchPapers(
 }
 
 /**
+ * Same as {@link filterResearchPapers} but ignores the temperature range filter.
+ * Used for KDE reference curves so moving the slider does not reshuffle the density shape.
+ */
+export function filterResearchPapersIgnoringTemperature(
+  papers: readonly ResearchPaper[],
+  durationLowS: number,
+  durationHighS: number,
+  other: OtherFilterSelections,
+): ResearchPaper[] {
+  return papers.filter((p) => {
+    if (
+      !durationRangeOverlapsFilter(
+        p.durationMinS,
+        p.durationMaxS,
+        durationLowS,
+        durationHighS,
+      )
+    ) {
+      return false;
+    }
+    if (!paperMatchesOtherFilters(p, other)) return false;
+    return true;
+  });
+}
+
+/**
  * Papers after temp/duration and all “other” filters except one category (no constraint on that facet).
  */
 export function filterPapersExceptOtherCategory(

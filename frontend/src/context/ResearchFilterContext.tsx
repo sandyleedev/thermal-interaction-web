@@ -10,6 +10,7 @@ import { emptyOtherFilterSelections } from "@/lib/research/otherFilterVocab";
 import type { OtherFilterCategory } from "@/lib/research/otherFilterVocab";
 import {
   filterResearchPapers,
+  filterResearchPapersIgnoringTemperature,
   otherFilterOptionCounts,
   type OtherFilterSelections,
 } from "@/lib/research/filterResearchPapers";
@@ -27,6 +28,8 @@ type ResearchFilterContextValue = {
   totalPaperCount: number;
   /** Paper counts per region across the entire dataset (fixed heatmap legend / colour domain). */
   globalPaperCountsByBodyRegion: Record<string, number>;
+  /** Duration + other filters only; KDE curve uses this so it stays stable when the temperature range moves. */
+  temperatureDensityPapers: ResearchPaper[];
   filteredPapers: ResearchPaper[];
   filteredPaperCount: number;
   /** Paper counts per merged body region for the filtered set. */
@@ -120,6 +123,17 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
     ],
   );
 
+  const temperatureDensityPapers = useMemo(
+    () =>
+      filterResearchPapersIgnoringTemperature(
+        ALL_RESEARCH_PAPERS,
+        durationLowS,
+        durationHighS,
+        otherSelections,
+      ),
+    [durationLowS, durationHighS, otherSelections],
+  );
+
   const optionCounts = useMemo(
     () =>
       otherFilterOptionCounts(
@@ -148,6 +162,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
     (): ResearchFilterContextValue => ({
       totalPaperCount: ALL_RESEARCH_PAPERS.length,
       globalPaperCountsByBodyRegion: GLOBAL_BODY_COUNTS_INITIAL,
+      temperatureDensityPapers,
       filteredPapers,
       filteredPaperCount: filteredPapers.length,
       paperCountsByBodyRegion,
@@ -163,6 +178,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       clearOtherFilters,
     }),
     [
+      temperatureDensityPapers,
       filteredPapers,
       paperCountsByBodyRegion,
       optionCounts,

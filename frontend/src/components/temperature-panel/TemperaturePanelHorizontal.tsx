@@ -32,7 +32,7 @@ export function TemperaturePanelHorizontal({
 
   const trackRef = useRef<HTMLDivElement>(null);
   const {
-    filteredPapers,
+    temperatureDensityPapers,
     tempLowC,
     tempHighC,
     setTempRange,
@@ -47,8 +47,9 @@ export function TemperaturePanelHorizontal({
   }, [filterLow, filterHigh]);
 
   const centerTemps = useMemo(
-    () => filteredPapers.map((p) => (p.minC + p.maxC) / 2),
-    [filteredPapers],
+    () =>
+      temperatureDensityPapers.map((p) => (p.minC + p.maxC) / 2),
+    [temperatureDensityPapers],
   );
 
   const kdePaths = useMemo(

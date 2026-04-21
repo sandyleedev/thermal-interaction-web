@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ResearchFilterProvider } from "@/context/ResearchFilterContext";
 import { LandingPage } from "@/pages/LandingPage";
 import { LandingPageDemo2 } from "@/pages/LandingPageDemo2";
+import { LandingPageDemo3 } from "@/pages/LandingPageDemo3";
 import { InfoPage } from "@/pages/InfoPage";
 
 function App() {
@@ -22,6 +23,14 @@ function App() {
           element={
             <ResearchFilterProvider>
               <LandingPageDemo2 />
+            </ResearchFilterProvider>
+          }
+        />
+        <Route
+          path="/demo3"
+          element={
+            <ResearchFilterProvider>
+              <LandingPageDemo3 />
             </ResearchFilterProvider>
           }
         />

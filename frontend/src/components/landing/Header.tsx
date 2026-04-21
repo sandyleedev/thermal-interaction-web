@@ -17,6 +17,12 @@ export function Header() {
           Demo 2
         </NavLink>
         <NavLink
+          to="/demo3"
+          className={({ isActive }) => (isActive ? "is-active" : undefined)}
+        >
+          Demo 3
+        </NavLink>
+        <NavLink
           to="/info"
           className={({ isActive }) => (isActive ? "is-active" : undefined)}
         >

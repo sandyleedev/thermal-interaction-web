@@ -1132,3 +1132,161 @@
   flex: 1 1 0;
   min-height: 0;
 }
+
+/* —— Demo 3: same three columns as Demo 2; filter panel = temp | duration row + Other filters —— */
+
+.landing-demo3-filters {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+/*
+ * Top row: compact Temperature column + Duration takes remaining width (readable ticks).
+ */
+.landing-demo3-filters-top {
+  display: grid;
+  /* Compact Temperature (~8.75–9.65rem): narrow card but enough room so KDE + slider + ° ticks stay inside */
+  grid-template-columns: minmax(8.75rem, 9.65rem) minmax(0, 1fr);
+  gap: 0.45rem;
+  align-items: start;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.landing-demo3-filters-top-temperature {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.landing-demo3-filters-top-temperature .landing-temperature-panel {
+  position: relative;
+  overflow: visible;
+}
+
+/* Room for °C pills + spread offsets; compact horizontal rhythm inside narrow column */
+.landing-demo3-filters-top-temperature .landing-temperature-panel .panel-content {
+  padding: 2rem 0.22rem 0.46rem 0.18rem;
+}
+
+.landing-demo3-filters-top-temperature .temperature-panel-content {
+  gap: 0.42rem;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+/* Same TRACK_H as slider; width < PLOT_W uses none in TSX so Y maps 1:1 without letterboxing */
+.landing-demo3-filters-top-temperature .temperature-panel-plot {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: stretch;
+  align-self: flex-start;
+}
+
+.landing-demo3-filters-top-temperature .temperature-distribution-svg {
+  width: 62px;
+  max-width: 62px;
+  height: 240px;
+  flex-shrink: 0;
+}
+
+.landing-demo3-filters-top-temperature .temperature-slider-column {
+  gap: 0.24rem;
+}
+
+.landing-demo3-filters-top-temperature .temperature-slider-ticks {
+  width: 2rem;
+  padding-right: 0.03rem;
+  box-sizing: content-box;
+}
+
+.landing-demo3-filters-top-temperature .temperature-slider-tick--axis-max {
+  top: 0.38rem;
+  bottom: auto;
+  transform: translate(-50%, 0);
+}
+
+.landing-demo3-filters-top-temperature .temperature-slider-tick--axis-min {
+  bottom: 0.38rem;
+  top: auto;
+  transform: translate(-50%, 0);
+}
+
+.landing-demo3-filters-top-duration {
+  min-width: 0;
+  min-height: 0;
+}
+
+/* Single baseline for all log ticks; slightly smaller type + tight tracking to reduce overlap */
+.landing-demo3-filters-top-duration .duration-slider-ticks {
+  height: 1rem;
+  font-size: 0.52rem;
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+.landing-demo3-filters-top-duration .duration-slider-tick {
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.landing-demo3-filters-top-duration .duration-slider-row {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.landing-demo3-filters-top-duration .landing-duration-panel {
+  overflow: visible;
+}
+
+.landing-demo3-filters-top .landing-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+.landing-demo3-filters-top-duration .landing-duration-panel .panel-content {
+  flex: 0 0 auto;
+  min-height: 0;
+  /* Slightly trim horizontal padding so the log track + tick band use more of the wider column */
+  padding-left: 0.1rem;
+  padding-right: 0.1rem;
+}
+
+.landing-demo3-filters > .landing-other-filters-panel {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.landing-demo3-filters > .landing-other-filters-panel .other-filters-panel-content {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+@media (max-width: 720px) {
+  .landing-demo3-filters-top {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .landing-demo3-filters-top-temperature {
+    width: 100%;
+    max-width: 9.65rem;
+    min-width: 0;
+    align-self: center;
+  }
+
+  .landing-demo3-filters-top-duration {
+    width: 100%;
+  }
+}

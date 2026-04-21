@@ -11,7 +11,6 @@ const LOG_SPAN = LOG_MAX - LOG_MIN;
 /** Major ticks: readable units on a log axis (1s … 1wk). */
 export const DURATION_MAJOR_TICKS = [
   { s: 1, label: "1s" },
-  { s: 5, label: "5s" },
   { s: 10, label: "10s" },
   { s: 60, label: "1min" },
   { s: 600, label: "10min" },
