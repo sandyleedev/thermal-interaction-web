@@ -13,9 +13,10 @@ import {
 import { type BodySubpath } from "./bodyMapSampleDots";
 import { DEFAULT_PAPER_COUNTS } from "./bodyMapMockData";
 import {
-  buildHeatmapColorLegendItems,
+  buildGlobalHeatmapScaleFromFullDatasetCounts,
   countToPerceptualNormalized,
   generateDotsForRegion,
+  getRegionCountForBodyMapPart,
   mapCountToColor,
 } from "./bodyMapVisualization";
 
@@ -39,24 +40,6 @@ type BodyPart = {
   label: string;
   subpaths: BodySubpath[];
 };
-
-function paperCountForPart(
-  partId: string,
-  raw: Record<string, number>,
-): number {
-  switch (partId) {
-    case "arms":
-      return raw.arms ?? (raw.leftArm ?? 0) + (raw.rightArm ?? 0);
-    case "legs":
-      return raw.legs ?? (raw.leftLeg ?? 0) + (raw.rightLeg ?? 0);
-    case "hands":
-      return raw.hands ?? (raw.leftHand ?? 0) + (raw.rightHand ?? 0);
-    case "feet":
-      return raw.feet ?? (raw.leftFoot ?? 0) + (raw.rightFoot ?? 0);
-    default:
-      return raw[partId] ?? 0;
-  }
-}
 
 const BODY_PARTS: BodyPart[] = [
   {
@@ -139,6 +122,11 @@ export type BodyMapVariant = "countHeatmap" | "rawDots";
 
 type BodyMapProps = {
   paperCountsByPart?: Record<string, number>;
+  /**
+   * Full-dataset region counts used only for the fixed heatmap colour domain and legend.
+   * When omitted, `paperCountsByPart` is used (e.g. static mock without filter context).
+   */
+  heatmapScaleReferenceCounts?: Record<string, number>;
   variant?: BodyMapVariant;
 };
 
@@ -149,6 +137,7 @@ function heatmapRegionFillOpacity(perceptualT: number): number {
 
 export function BodyMap({
   paperCountsByPart = DEFAULT_PAPER_COUNTS,
+  heatmapScaleReferenceCounts,
   variant = "countHeatmap",
 }: BodyMapProps) {
   const uid = useId().replace(/:/g, "");
@@ -171,22 +160,20 @@ export function BodyMap({
     const raw = JSON.parse(paperCountsKey) as Record<string, number>;
     const m: Record<string, number> = {};
     for (const p of BODY_PARTS) {
-      m[p.id] = paperCountForPart(p.id, raw);
+      m[p.id] = getRegionCountForBodyMapPart(p.id, raw);
     }
     return m;
   }, [paperCountsKey]);
 
-  const countColorDomain = useMemo((): [number, number] => {
-    const counts = BODY_PARTS.map((p) => partPaperMap[p.id] ?? 0);
-    const minC = Math.min(...counts);
-    const maxC = Math.max(...counts);
-    return [minC, maxC];
-  }, [partPaperMap]);
+  const rawForGlobalHeatmapScale =
+    heatmapScaleReferenceCounts ?? paperCountsByPart;
 
-  const heatmapColorLegend = useMemo(
-    () => buildHeatmapColorLegendItems(countColorDomain),
-    [countColorDomain],
-  );
+  const { colorDomain: countColorDomain, legendItems: heatmapColorLegend } =
+    useMemo(
+      () =>
+        buildGlobalHeatmapScaleFromFullDatasetCounts(rawForGlobalHeatmapScale),
+      [rawForGlobalHeatmapScale],
+    );
 
   useLayoutEffect(() => {
     let cancelled = false;
@@ -201,7 +188,7 @@ export function BodyMap({
     const counts = JSON.parse(paperCountsKey) as Record<string, number>;
     const next: Record<string, { x: number; y: number }[]> = {};
     for (const part of BODY_PARTS) {
-      const papers = paperCountForPart(part.id, counts);
+      const papers = getRegionCountForBodyMapPart(part.id, counts);
       next[part.id] = generateDotsForRegion(part.subpaths, papers);
     }
     queueMicrotask(() => {
@@ -240,7 +227,7 @@ export function BodyMap({
 
   const ariaLabel =
     variant === "countHeatmap"
-      ? "Body map: soft heatmap — colour encodes paper count per region (square-root scale); tooltip shows exact counts."
+      ? "Body map: soft heatmap — colour encodes paper count per region on a fixed full-dataset scale (square root); tooltip shows exact counts for the current filter."
       : "Body map: one dot per paper, placed randomly within each body region.";
 
   return (
@@ -413,8 +400,8 @@ export function BodyMap({
             ))}
           </ul>
           <p className="body-map-heatmap-legend-caption">
-            Papers per region in four bands from 0 with 10-paper edges; colours follow
-            the map’s square-root scale. Hover for exact counts.
+            Legend thresholds are fixed from the full dataset (quantile bands); colours use
+            the same absolute square-root scale. Hover for exact region counts.
           </p>
         </div>
       ) : null}

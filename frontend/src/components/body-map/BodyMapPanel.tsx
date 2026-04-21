@@ -4,7 +4,8 @@ import BodyMap, { type BodyMapVariant } from "./BodyMap";
 
 export function BodyMapPanel() {
   const [variant, setVariant] = useState<BodyMapVariant>("countHeatmap");
-  const { paperCountsByBodyRegion } = useResearchFilter();
+  const { paperCountsByBodyRegion, globalPaperCountsByBodyRegion } =
+    useResearchFilter();
 
   return (
     <aside className="landing-panel landing-body-map">
@@ -37,6 +38,7 @@ export function BodyMapPanel() {
         <BodyMap
           variant={variant}
           paperCountsByPart={paperCountsByBodyRegion}
+          heatmapScaleReferenceCounts={globalPaperCountsByBodyRegion}
         />
       </div>
     </aside>

@@ -17,10 +17,16 @@ import {
   ALL_RESEARCH_PAPERS,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
+import {
+  TEMP_AXIS_MAX,
+  TEMP_AXIS_MIN,
+} from "@/components/temperature-panel/temperaturePanelUtils";
 
 type ResearchFilterContextValue = {
   /** Full dataset size (constant for mock). */
   totalPaperCount: number;
+  /** Paper counts per region across the entire dataset (fixed heatmap legend / colour domain). */
+  globalPaperCountsByBodyRegion: Record<string, number>;
   filteredPapers: ResearchPaper[];
   filteredPaperCount: number;
   /** Paper counts per merged body region for the filtered set. */
@@ -42,7 +48,8 @@ const ResearchFilterContext = createContext<
   ResearchFilterContextValue | undefined
 >(undefined);
 
-const DEFAULT_TEMP: [number, number] = [18, 55];
+/** Full axis span (-10…100 °C), same as the temperature sliders. */
+const DEFAULT_TEMP: [number, number] = [TEMP_AXIS_MIN, TEMP_AXIS_MAX];
 const DEFAULT_DURATION: [number, number] = [10, 3600];
 
 function aggregateBodyCounts(
@@ -54,6 +61,8 @@ function aggregateBodyCounts(
   }
   return raw;
 }
+
+const GLOBAL_BODY_COUNTS_INITIAL = aggregateBodyCounts(ALL_RESEARCH_PAPERS);
 
 export function ResearchFilterProvider({ children }: { children: ReactNode }) {
   const [tempLowC, setTempLowC] = useState(DEFAULT_TEMP[0]);
@@ -138,6 +147,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
   const value = useMemo(
     (): ResearchFilterContextValue => ({
       totalPaperCount: ALL_RESEARCH_PAPERS.length,
+      globalPaperCountsByBodyRegion: GLOBAL_BODY_COUNTS_INITIAL,
       filteredPapers,
       filteredPaperCount: filteredPapers.length,
       paperCountsByBodyRegion,

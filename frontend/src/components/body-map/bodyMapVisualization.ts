@@ -101,52 +101,228 @@ export function mapCountToColor(
 
 const HEATMAP_LEGEND_BUCKET_COUNT = 4;
 
+/** Canonical order for merged body-map regions (matches BodyMap BODY_PARTS ids). */
+export const BODY_MAP_REGION_IDS = [
+  "head",
+  "torso",
+  "arms",
+  "legs",
+  "hands",
+  "feet",
+] as const;
+
 export type HeatmapColorLegendItem = {
   /** Fill at the midpoint of this paper-count band (same ramp as the map). */
   color: string;
-  /** Paper-count range label (10-aligned edges from 0). */
+  /** Paper-count range label */
   rangeLabel: string;
 };
 
-function formatPaperRange(lo: number, hi: number): string {
-  const a = Math.round(lo);
+/** Same limb merge rules as the body map silhouette (arms/legs/hands/feet keys). */
+export function getRegionCountForBodyMapPart(
+  partId: string,
+  raw: Record<string, number>,
+): number {
+  switch (partId) {
+    case "arms":
+      return raw.arms ?? (raw.leftArm ?? 0) + (raw.rightArm ?? 0);
+    case "legs":
+      return raw.legs ?? (raw.leftLeg ?? 0) + (raw.rightLeg ?? 0);
+    case "hands":
+      return raw.hands ?? (raw.leftHand ?? 0) + (raw.rightHand ?? 0);
+    case "feet":
+      return raw.feet ?? (raw.leftFoot ?? 0) + (raw.rightFoot ?? 0);
+    default:
+      return raw[partId] ?? 0;
+  }
+}
+
+function quantileSorted(sortedAsc: readonly number[], q: number): number {
+  const n = sortedAsc.length;
+  if (n === 0) return 0;
+  if (n === 1) return sortedAsc[0];
+  const pos = q * (n - 1);
+  const lo = Math.floor(pos);
+  const hi = Math.ceil(pos);
+  const f = pos - lo;
+  return sortedAsc[lo] * (1 - f) + sortedAsc[hi] * f;
+}
+
+function clampInt(n: number, lo: number, hi: number): number {
+  return Math.min(hi, Math.max(lo, Math.round(n)));
+}
+
+function formatClosedRange(lo: number, hi: number): string {
+  const a = Math.max(0, Math.round(lo));
   const b = Math.round(hi);
   if (a >= b) return a.toLocaleString();
   return `${a.toLocaleString()}–${b.toLocaleString()}`;
 }
 
+/** Empty range, or a single integer (awkward standalone “13” label). */
+function isNarrowBin(b: { lo: number; hi: number }): boolean {
+  if (b.lo > b.hi) return true;
+  return b.hi === b.lo;
+}
+
+type LegendBin = { lo: number; hi: number };
+
 /**
- * Four-band legend from 0 to a 10-aligned upper bound derived from data max.
- * Boundaries fall on multiples of 10; band colour uses {@link mapCountToColor}
- * at the numeric midpoint (with the map’s actual min–max domain).
+ * Quantile edges → four contiguous candidate bins on [0, maxVal].
+ * May include empty or single-value bins; {@link postProcessLegendBins} fixes that.
  */
-export function buildHeatmapColorLegendItems(
-  domain: [number, number],
-): HeatmapColorLegendItem[] {
-  const [d0, d1] = domain;
-  const maxC = Math.max(d0, d1);
+function quantileEdgesToBins(
+  e1: number,
+  e2: number,
+  e3: number,
+  maxVal: number,
+): LegendBin[] {
+  return [
+    { lo: 0, hi: e1 },
+    { lo: e1 + 1, hi: e2 },
+    { lo: e2 + 1, hi: e3 },
+    { lo: e3 + 1, hi: maxVal },
+  ];
+}
 
-  let hi = Math.ceil(Math.max(0, maxC) / 10) * 10;
-  if (hi < 40) hi = 40;
-
-  const quarter = hi / HEATMAP_LEGEND_BUCKET_COUNT;
-  let step = Math.round(quarter / 10) * 10;
-  if (step < 10) step = 10;
-
-  const items: HeatmapColorLegendItem[] = [];
-  for (let i = 0; i < HEATMAP_LEGEND_BUCKET_COUNT; i++) {
-    const c0 = Math.min(i * step, hi);
-    const c1 =
-      i === HEATMAP_LEGEND_BUCKET_COUNT - 1
-        ? hi
-        : Math.min((i + 1) * step, hi);
-    const mid = (c0 + c1) / 2;
-    items.push({
-      color: mapCountToColor(mid, domain),
-      rangeLabel: formatPaperRange(c0, c1),
-    });
+function mergeNarrowBinsOnce(stack: LegendBin[]): LegendBin[] {
+  const next: LegendBin[] = [];
+  let i = 0;
+  while (i < stack.length) {
+    const cur = stack[i];
+    if (!isNarrowBin(cur)) {
+      next.push(cur);
+      i += 1;
+      continue;
+    }
+    if (i + 1 < stack.length) {
+      next.push({ lo: cur.lo, hi: stack[i + 1].hi });
+      i += 2;
+      continue;
+    }
+    if (next.length > 0) {
+      const prev = next.pop()!;
+      next.push({ lo: prev.lo, hi: Math.max(prev.hi, cur.hi) });
+      i += 1;
+      continue;
+    }
+    next.push(cur);
+    i += 1;
   }
-  return items;
+  return next;
+}
+
+/**
+ * Merge narrow / empty bins (prefer merging forward). Repeat until stable.
+ * May yield fewer than four bins (clearer labels).
+ */
+function postProcessLegendBins(bins: LegendBin[]): LegendBin[] {
+  let stack = [...bins];
+  let guard = 0;
+  while (guard++ < 12) {
+    if (!stack.some(isNarrowBin)) break;
+    const merged = mergeNarrowBinsOnce(stack);
+    const unchanged =
+      merged.length === stack.length &&
+      merged.every(
+        (b, j) =>
+          stack[j] !== undefined && b.lo === stack[j].lo && b.hi === stack[j].hi,
+      );
+    if (unchanged) break;
+    stack = merged;
+  }
+
+  const valid = stack.filter((b) => b.lo <= b.hi);
+  return valid.length > 0 ? valid : [{ lo: 0, hi: 0 }];
+}
+
+function binsToLegendItems(
+  bins: LegendBin[],
+  colorDomain: [number, number],
+): HeatmapColorLegendItem[] {
+  const mid = (a: number, b: number) => (a + b) / 2;
+  return bins.map((b) => ({
+    color: mapCountToColor(mid(b.lo, b.hi), colorDomain),
+    rangeLabel: formatClosedRange(b.lo, b.hi),
+  }));
+}
+
+export type GlobalHeatmapScale = {
+  /** Fixed domain [0, globalMax] for sqrt colour mapping (full dataset). */
+  colorDomain: [number, number];
+  legendItems: HeatmapColorLegendItem[];
+};
+
+/**
+ * Builds a stable heatmap legend and colour domain from **full-dataset** region counts only.
+ * Quantile splits on the six regional totals; falls back to uniform bins if thresholds collapse.
+ * Filtered counts are mapped later with {@link mapCountToColor}(count, colorDomain).
+ */
+function resolveQuantileEdges(
+  sortedAsc: readonly number[],
+  maxVal: number,
+): [number, number, number] {
+  let e1 = clampInt(Math.round(quantileSorted(sortedAsc, 0.25)), 0, maxVal);
+  let e2 = clampInt(Math.round(quantileSorted(sortedAsc, 0.5)), 0, maxVal);
+  let e3 = clampInt(Math.round(quantileSorted(sortedAsc, 0.75)), 0, maxVal);
+
+  const quantilesOk = e1 < e2 && e2 < e3 && e3 <= maxVal;
+  if (!quantilesOk) {
+    const step = Math.max(1, Math.ceil(maxVal / HEATMAP_LEGEND_BUCKET_COUNT));
+    e1 = Math.min(step, maxVal);
+    e2 = Math.min(2 * step, maxVal);
+    e3 = Math.min(3 * step, maxVal);
+  }
+
+  if (e2 <= e1) e2 = Math.min(e1 + 1, maxVal);
+  if (e3 <= e2) e3 = Math.min(e2 + 1, maxVal);
+
+  if (!(e1 < e2 && e2 < e3)) {
+    if (maxVal <= 1) {
+      return [0, 0, maxVal];
+    }
+    const step = Math.max(1, Math.ceil(maxVal / HEATMAP_LEGEND_BUCKET_COUNT));
+    return [
+      Math.min(step, maxVal),
+      Math.min(2 * step, maxVal),
+      Math.min(3 * step, maxVal),
+    ];
+  }
+
+  return [e1, e2, e3];
+}
+
+export function buildGlobalHeatmapScaleFromFullDatasetCounts(
+  rawGlobal: Record<string, number>,
+): GlobalHeatmapScale {
+  const counts = BODY_MAP_REGION_IDS.map((id) =>
+    getRegionCountForBodyMapPart(id, rawGlobal),
+  );
+  const maxVal = Math.max(0, ...counts);
+  const colorDomain: [number, number] =
+    maxVal <= 0 ? ([0, 1] as [number, number]) : ([0, maxVal] as [number, number]);
+
+  if (maxVal <= 0) {
+    const zeroColor = mapCountToColor(0, colorDomain);
+    return {
+      colorDomain,
+      legendItems: Array.from({ length: HEATMAP_LEGEND_BUCKET_COUNT }, () => ({
+        color: zeroColor,
+        rangeLabel: "0",
+      })),
+    };
+  }
+
+  const sorted = [...counts].sort((a, b) => a - b);
+  const [e1, e2, e3] = resolveQuantileEdges(sorted, maxVal);
+  const rawBins = quantileEdgesToBins(e1, e2, e3, maxVal);
+  const cleanedBins = postProcessLegendBins(rawBins);
+  const legendItems = binsToLegendItems(cleanedBins, colorDomain);
+
+  return {
+    colorDomain,
+    legendItems,
+  };
 }
 
 /** Cap per region so very large counts stay performant (tweak for production data). */
