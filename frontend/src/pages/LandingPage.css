@@ -226,7 +226,7 @@
   gap: 0.4rem;
 }
 
-/* Demo 1: filters row and results share vertical space so Duration + Other filters can scroll together. */
+/* Demo 1: filters row and results share vertical space; only Other filters body scrolls inside the right column. */
 .landing-right > .landing-filters {
   flex: 1 1 0;
   min-height: 0;
@@ -269,12 +269,11 @@
   flex-direction: column;
 }
 
-/* Demo 1: Duration + Other filters — single vertical scroll */
+/* Demo 1: Duration fixed at top of stack; only Other filters body scrolls */
 .landing-filters-scroll-stack {
   flex: 1 1 0;
   min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -299,13 +298,16 @@
 }
 
 .landing-filters-scroll-stack > .landing-other-filters-panel {
-  overflow: visible;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .landing-filters-scroll-stack .landing-other-filters-panel .other-filters-panel-content {
-  flex: 0 0 auto;
+  flex: 1 1 0;
+  min-height: 0;
   overflow-x: hidden;
-  overflow-y: visible;
+  overflow-y: auto;
 }
 
 .landing-results {
@@ -1038,6 +1040,8 @@
       280px,
       1.46fr
     );
+  /* One row fills viewport height so the center column can shrink; scroll stays inside Other filters only. */
+  grid-template-rows: minmax(0, 1fr);
   gap: 0.45rem;
   padding: 0.35rem 0.85rem 0.65rem;
   align-items: stretch;
@@ -1072,12 +1076,11 @@
   min-height: 0;
 }
 
-/* Demo 2: Temperature + Duration + Other filters — single vertical scroll */
+/* Demo 2: Temperature + Duration fixed; only Other filters body scrolls */
 .landing-demo2-filters-scroll {
   flex: 1 1 0;
   min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
@@ -1096,8 +1099,9 @@
 }
 
 .landing-demo2-filters-scroll > .landing-panel.landing-other-filters-panel {
-  flex: 0 0 auto;
-  overflow: visible;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .landing-demo2-filters-scroll > .landing-panel .panel-content {
@@ -1113,9 +1117,10 @@
 }
 
 .landing-demo2-filters-scroll .landing-other-filters-panel .other-filters-panel-content {
-  flex: 0 0 auto;
+  flex: 1 1 0;
+  min-height: 0;
   overflow-x: hidden;
-  overflow-y: visible;
+  overflow-y: auto;
 }
 
 .landing-demo2-col-right {
