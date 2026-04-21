@@ -81,7 +81,9 @@ export function DurationPanel() {
   const handlesClose = rangeWidth < 0.14;
 
   return (
-    <section className="landing-panel landing-panel-top landing-duration-panel">
+    <section
+      className="landing-panel landing-panel-top landing-duration-panel"
+    >
       <h2 className="panel-title">Duration</h2>
       <div className="panel-content duration-panel-content">
         <div className="duration-slider-row">

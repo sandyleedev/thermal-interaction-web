@@ -19,6 +19,21 @@ export function tempToY(
   return ((maxC - t) / (maxC - minC)) * height;
 }
 
+/**
+ * Vertical temperature panel — **upper thumb only** (Demo 1 / Demo 3).
+ * Positive values move the top value pill **down** (toward the handle, away from the title) when the
+ * knob is near the track top. Capped so the fixed CSS gap can still keep the knob visible.
+ */
+export function verticalTopThumbBaseTranslateYPx(
+  thumbCenterYPx: number,
+  opts?: { edgePx?: number; maxTowardHandlePx?: number },
+): number {
+  const edge = opts?.edgePx ?? 30;
+  const maxToward = opts?.maxTowardHandlePx ?? 4;
+  if (thumbCenterYPx >= edge) return 0;
+  return Math.min(maxToward, edge - thumbCenterYPx);
+}
+
 /** Map client Y inside track rect to °C (top of rect = maxC). */
 export function clientYToTemp(
   clientY: number,

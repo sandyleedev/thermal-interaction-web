@@ -22,7 +22,7 @@ export function LandingPage() {
             <div className="landing-filters-col landing-filters-col-right">
               <div className="landing-filters-scroll-stack">
                 <DurationPanel />
-                <OtherFiltersPanel />
+                <OtherFiltersPanel categoryLayout="dropdownGrid" />
               </div>
             </div>
           </div>

@@ -26,6 +26,18 @@ export const OTHER_FILTER_SECTION_TITLES: Record<OtherFilterCategory, string> =
     actuationMethods: "Actuation methods",
   };
 
+/** Compact labels for Demo 1 category dropdown grid buttons. */
+export const OTHER_FILTER_CATEGORY_GRID_LABELS: Record<
+  OtherFilterCategory,
+  string
+> = {
+  senses: "Senses",
+  purposes: "Purposes",
+  materials: "Materials",
+  thermalModes: "Thermal transfer",
+  actuationMethods: "Actuation",
+};
+
 export const OTHER_FILTER_OPTIONS: Record<OtherFilterCategory, FilterOption[]> =
   {
     senses: [
