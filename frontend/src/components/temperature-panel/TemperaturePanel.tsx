@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { MOCK_PAPER_TEMP_RANGES } from "./temperaturePanelMockData";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { buildKdePaths } from "./temperaturePanelDensity";
 import {
   clientYToTemp,
@@ -24,20 +24,24 @@ type DragHandle = "low" | "high" | null;
 
 export function TemperaturePanel() {
   const trackRef = useRef<HTMLDivElement>(null);
-  const rangeRef = useRef({ low: 18, high: 55 });
-  const [filterLow, setFilterLow] = useState(18);
-  const [filterHigh, setFilterHigh] = useState(55);
+  const {
+    filteredPapers,
+    tempLowC,
+    tempHighC,
+    setTempRange,
+  } = useResearchFilter();
+  const filterLow = tempLowC;
+  const filterHigh = tempHighC;
+  const rangeRef = useRef({ low: filterLow, high: filterHigh });
   const dragRef = useRef<DragHandle>(null);
 
   useEffect(() => {
     rangeRef.current = { low: filterLow, high: filterHigh };
   }, [filterLow, filterHigh]);
 
-  const papers = MOCK_PAPER_TEMP_RANGES;
-
   const centerTemps = useMemo(
-    () => papers.map((p) => (p.minC + p.maxC) / 2),
-    [papers],
+    () => filteredPapers.map((p) => (p.minC + p.maxC) / 2),
+    [filteredPapers],
   );
 
   const kdePaths = useMemo(
@@ -57,13 +61,13 @@ export function TemperaturePanel() {
     if (dragRef.current === "low") {
       const next = Math.min(t, high - 0.5);
       rangeRef.current = { low: next, high };
-      setFilterLow(next);
+      setTempRange(next, high);
     } else {
       const next = Math.max(t, low + 0.5);
       rangeRef.current = { low, high: next };
-      setFilterHigh(next);
+      setTempRange(low, next);
     }
-  }, []);
+  }, [setTempRange]);
 
   const endDrag = useCallback(() => {
     dragRef.current = null;

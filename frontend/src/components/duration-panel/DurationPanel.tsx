@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { useResearchFilter } from "@/context/ResearchFilterContext";
 import {
   insetDimLeftWidth,
   insetDimRightLeftEdge,
@@ -21,9 +22,14 @@ type DragHandle = "low" | "high" | null;
 
 export function DurationPanel() {
   const trackRef = useRef<HTMLDivElement>(null);
-  const rangeRef = useRef({ low: 10, high: 3600 });
-  const [filterLowS, setFilterLowS] = useState(10);
-  const [filterHighS, setFilterHighS] = useState(3600);
+  const {
+    durationLowS,
+    durationHighS,
+    setDurationRange,
+  } = useResearchFilter();
+  const filterLowS = durationLowS;
+  const filterHighS = durationHighS;
+  const rangeRef = useRef({ low: filterLowS, high: filterHighS });
   const dragRef = useRef<DragHandle>(null);
 
   useEffect(() => {
@@ -40,14 +46,14 @@ export function DurationPanel() {
       const maxLow = high / DURATION_MIN_RATIO;
       const next = Math.min(Math.max(DURATION_MIN_S, t), maxLow);
       rangeRef.current = { low: next, high };
-      setFilterLowS(next);
+      setDurationRange(next, high);
     } else {
       const minHigh = low * DURATION_MIN_RATIO;
       const next = Math.max(Math.min(DURATION_MAX_S, t), minHigh);
       rangeRef.current = { low, high: next };
-      setFilterHighS(next);
+      setDurationRange(low, next);
     }
-  }, []);
+  }, [setDurationRange]);
 
   const endDrag = useCallback(() => {
     dragRef.current = null;

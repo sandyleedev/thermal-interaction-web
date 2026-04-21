@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useResearchFilter } from "@/context/ResearchFilterContext";
 import BodyMap, { type BodyMapVariant } from "./BodyMap";
 
 export function BodyMapPanel() {
   const [variant, setVariant] = useState<BodyMapVariant>("countHeatmap");
+  const { paperCountsByBodyRegion } = useResearchFilter();
 
   return (
     <aside className="landing-panel landing-body-map">
@@ -32,7 +34,10 @@ export function BodyMapPanel() {
         </div>
       </div>
       <div className="panel-content panel-content-center">
-        <BodyMap variant={variant} />
+        <BodyMap
+          variant={variant}
+          paperCountsByPart={paperCountsByBodyRegion}
+        />
       </div>
     </aside>
   );

@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useResearchFilter } from "@/context/ResearchFilterContext";
 import {
   insetDimLeftWidth,
   insetDimRightLeftEdge,
   thumbCenterLeftCalc,
 } from "@/components/range-slider/horizontalRangeTrackInset";
-import { MOCK_PAPER_TEMP_RANGES } from "./temperaturePanelMockData";
 import { buildKdePathsHorizontal } from "./temperaturePanelDensity";
 import { clientXToTemp, tempToNorm } from "./temperaturePanelUtils";
 
@@ -31,20 +31,24 @@ export function TemperaturePanelHorizontal({
     : { left: 10, right: 10, top: 6, bottom: 10 };
 
   const trackRef = useRef<HTMLDivElement>(null);
-  const rangeRef = useRef({ low: 18, high: 55 });
-  const [filterLow, setFilterLow] = useState(18);
-  const [filterHigh, setFilterHigh] = useState(55);
+  const {
+    filteredPapers,
+    tempLowC,
+    tempHighC,
+    setTempRange,
+  } = useResearchFilter();
+  const filterLow = tempLowC;
+  const filterHigh = tempHighC;
+  const rangeRef = useRef({ low: filterLow, high: filterHigh });
   const dragRef = useRef<DragHandle>(null);
 
   useEffect(() => {
     rangeRef.current = { low: filterLow, high: filterHigh };
   }, [filterLow, filterHigh]);
 
-  const papers = MOCK_PAPER_TEMP_RANGES;
-
   const centerTemps = useMemo(
-    () => papers.map((p) => (p.minC + p.maxC) / 2),
-    [papers],
+    () => filteredPapers.map((p) => (p.minC + p.maxC) / 2),
+    [filteredPapers],
   );
 
   const kdePaths = useMemo(
@@ -62,13 +66,13 @@ export function TemperaturePanelHorizontal({
     if (dragRef.current === "low") {
       const next = Math.min(t, high - 0.5);
       rangeRef.current = { low: next, high };
-      setFilterLow(next);
+      setTempRange(next, high);
     } else {
       const next = Math.max(t, low + 0.5);
       rangeRef.current = { low, high: next };
-      setFilterHigh(next);
+      setTempRange(low, next);
     }
-  }, []);
+  }, [setTempRange]);
 
   const endDrag = useCallback(() => {
     dragRef.current = null;

@@ -20,8 +20,10 @@ export function LandingPage() {
               <TemperaturePanel />
             </div>
             <div className="landing-filters-col landing-filters-col-right">
-              <DurationPanel />
-              <OtherFiltersPanel />
+              <div className="landing-filters-scroll-stack">
+                <DurationPanel />
+                <OtherFiltersPanel />
+              </div>
             </div>
           </div>
           <ResultsPanel />
