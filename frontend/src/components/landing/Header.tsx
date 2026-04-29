@@ -5,22 +5,10 @@ export function Header() {
     <header className="landing-header">
       <nav aria-label="Main">
         <NavLink
-          to="/demo1"
-          className={({ isActive }) => (isActive ? "is-active" : undefined)}
-        >
-          Demo 1
-        </NavLink>
-        <NavLink
           to="/demo2"
           className={({ isActive }) => (isActive ? "is-active" : undefined)}
         >
-          Demo 2
-        </NavLink>
-        <NavLink
-          to="/demo3"
-          className={({ isActive }) => (isActive ? "is-active" : undefined)}
-        >
-          Demo 3
+          Main
         </NavLink>
         <NavLink
           to="/info"
