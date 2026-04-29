@@ -1,5 +1,5 @@
 import { BODY_MAP_OUTLINE_PATH_D, BODY_MAP_VIEW } from "./bodyMapOutlinePath";
-const INNER_TX = -59.365521;
+const INNER_TX = 0;
 
 function hashStringToSeed(s: string): number {
   let h = 0;

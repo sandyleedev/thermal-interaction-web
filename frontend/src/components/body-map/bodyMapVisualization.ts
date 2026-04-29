@@ -104,6 +104,7 @@ const HEATMAP_LEGEND_BUCKET_COUNT = 4;
 /** Canonical order for merged body-map regions (matches BodyMap BODY_PARTS ids). */
 export const BODY_MAP_REGION_IDS = [
   "head",
+  "neck",
   "torso",
   "arms",
   "legs",

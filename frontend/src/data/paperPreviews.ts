@@ -118,6 +118,7 @@ function formatDurationRange(minS: number, maxS: number): string {
 function bodyRegionLabel(region: ResearchPaper["bodyRegion"]): string {
   const map: Record<string, string> = {
     head: "Head",
+    neck: "Neck",
     torso: "Torso",
     arms: "Arms",
     legs: "Legs",

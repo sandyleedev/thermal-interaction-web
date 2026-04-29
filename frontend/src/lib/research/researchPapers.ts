@@ -8,6 +8,7 @@ import {
 /** Primary body region for aggregation on the body map (merged limbs). */
 export type BodyRegionId =
   | "head"
+  | "neck"
   | "torso"
   | "arms"
   | "legs"
@@ -94,8 +95,10 @@ export function buildResearchPapers(): ResearchPaper[] {
   return MOCK_PAPER_TEMP_RANGES.map((p, index) => {
     const rnd = mulberry32(index * 0x9e3779b9 + 0x243f6a88);
     const { durationMinS, durationMaxS } = buildDurationRange(rnd);
-    const bodyRegion =
-      BODY_REGIONS[Math.floor(rnd() * BODY_REGIONS.length)] ?? "torso";
+    const forcedNeck = index === 0 || index === 1;
+    const bodyRegion = forcedNeck
+      ? "neck"
+      : (BODY_REGIONS[Math.floor(rnd() * BODY_REGIONS.length)] ?? "torso");
 
     const senses = paperTagsForCategory("senses", rnd);
     const purposes = paperTagsForCategory("purposes", rnd);
