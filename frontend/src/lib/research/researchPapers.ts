@@ -10,10 +10,14 @@ export type BodyRegionId =
   | "head"
   | "neck"
   | "torso"
-  | "arms"
-  | "legs"
-  | "hands"
-  | "feet";
+  | "arm"
+  | "wrist"
+  | "hand"
+  | "leg"
+  | "ankle"
+  | "foot";
+
+export type FootSubpartId = "general" | "sole" | "toes";
 
 export type ResearchPaper = {
   id: string;
@@ -22,6 +26,7 @@ export type ResearchPaper = {
   durationMinS: number;
   durationMaxS: number;
   bodyRegion: BodyRegionId;
+  footSubpart: FootSubpartId | null;
   senses: string[];
   purposes: string[];
   materials: string[];
@@ -31,11 +36,14 @@ export type ResearchPaper = {
 
 const BODY_REGIONS: BodyRegionId[] = [
   "head",
+  "neck",
   "torso",
-  "arms",
-  "legs",
-  "hands",
-  "feet",
+  "arm",
+  "wrist",
+  "hand",
+  "leg",
+  "ankle",
+  "foot",
 ];
 
 function mulberry32(seed: number) {
@@ -99,6 +107,10 @@ export function buildResearchPapers(): ResearchPaper[] {
     const bodyRegion = forcedNeck
       ? "neck"
       : (BODY_REGIONS[Math.floor(rnd() * BODY_REGIONS.length)] ?? "torso");
+    const footSubpart: FootSubpartId | null =
+      bodyRegion === "foot"
+        ? (["general", "sole", "toes"][index % 3] as FootSubpartId)
+        : null;
 
     const senses = paperTagsForCategory("senses", rnd);
     const purposes = paperTagsForCategory("purposes", rnd);
@@ -113,6 +125,7 @@ export function buildResearchPapers(): ResearchPaper[] {
       durationMinS,
       durationMaxS,
       bodyRegion,
+      footSubpart,
       senses,
       purposes,
       materials,

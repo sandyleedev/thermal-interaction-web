@@ -4,12 +4,18 @@ import {
   type OtherFilterCategory,
 } from "@/lib/research/otherFilterVocab";
 import {
+  type BodyRegionId,
+  type FootSubpartId,
   OPTION_IDS_BY_CATEGORY,
   type ResearchPaper,
   paperFieldForCategory,
 } from "@/lib/research/researchPapers";
 
 export type OtherFilterSelections = Record<OtherFilterCategory, readonly string[]>;
+export type BodyMapSelection = {
+  bodyRegion: BodyRegionId | null;
+  footSubpart: FootSubpartId | null;
+};
 
 export function durationRangeOverlapsFilter(
   minS: number,
@@ -52,6 +58,17 @@ export function paperMatchesOtherFiltersExceptCategory(
   return true;
 }
 
+export function paperMatchesBodyMapSelection(
+  paper: ResearchPaper,
+  selection?: BodyMapSelection,
+): boolean {
+  if (!selection?.bodyRegion) return true;
+  if (paper.bodyRegion !== selection.bodyRegion) return false;
+  if (selection.bodyRegion !== "foot") return true;
+  if (!selection.footSubpart) return true;
+  return paper.footSubpart === selection.footSubpart;
+}
+
 export function filterResearchPapers(
   papers: readonly ResearchPaper[],
   tempLowC: number,
@@ -59,6 +76,7 @@ export function filterResearchPapers(
   durationLowS: number,
   durationHighS: number,
   other: OtherFilterSelections,
+  bodyMapSelection?: BodyMapSelection,
 ): ResearchPaper[] {
   return papers.filter((p) => {
     if (
@@ -77,6 +95,7 @@ export function filterResearchPapers(
       return false;
     }
     if (!paperMatchesOtherFilters(p, other)) return false;
+    if (!paperMatchesBodyMapSelection(p, bodyMapSelection)) return false;
     return true;
   });
 }
@@ -90,6 +109,7 @@ export function filterResearchPapersIgnoringTemperature(
   durationLowS: number,
   durationHighS: number,
   other: OtherFilterSelections,
+  bodyMapSelection?: BodyMapSelection,
 ): ResearchPaper[] {
   return papers.filter((p) => {
     if (
@@ -103,6 +123,7 @@ export function filterResearchPapersIgnoringTemperature(
       return false;
     }
     if (!paperMatchesOtherFilters(p, other)) return false;
+    if (!paperMatchesBodyMapSelection(p, bodyMapSelection)) return false;
     return true;
   });
 }
@@ -118,6 +139,7 @@ export function filterPapersExceptOtherCategory(
   durationHighS: number,
   selections: OtherFilterSelections,
   skipCategory: OtherFilterCategory,
+  bodyMapSelection?: BodyMapSelection,
 ): ResearchPaper[] {
   return papers.filter((p) => {
     if (!rangeOverlapsFilter(p.minC, p.maxC, tempLowC, tempHighC)) {
@@ -136,6 +158,7 @@ export function filterPapersExceptOtherCategory(
     if (!paperMatchesOtherFiltersExceptCategory(p, selections, skipCategory)) {
       return false;
     }
+    if (!paperMatchesBodyMapSelection(p, bodyMapSelection)) return false;
     return true;
   });
 }
@@ -153,6 +176,7 @@ export function otherFilterOptionCounts(
   durationLowS: number,
   durationHighS: number,
   selections: OtherFilterSelections,
+  bodyMapSelection?: BodyMapSelection,
 ): Record<OtherFilterCategory, Record<string, number>> {
   const out = {} as Record<OtherFilterCategory, Record<string, number>>;
   for (const cat of OTHER_FILTER_CATEGORY_ORDER) {
@@ -164,6 +188,7 @@ export function otherFilterOptionCounts(
       durationHighS,
       selections,
       cat,
+      bodyMapSelection,
     );
     const optionIds = OPTION_IDS_BY_CATEGORY[cat];
     const m: Record<string, number> = {};

@@ -120,10 +120,12 @@ function bodyRegionLabel(region: ResearchPaper["bodyRegion"]): string {
     head: "Head",
     neck: "Neck",
     torso: "Torso",
-    arms: "Arms",
-    legs: "Legs",
-    hands: "Hands",
-    feet: "Feet",
+    arm: "Arm",
+    wrist: "Wrist",
+    hand: "Hand",
+    leg: "Leg",
+    ankle: "Ankle",
+    foot: "Foot",
   };
   return map[region] ?? region;
 }

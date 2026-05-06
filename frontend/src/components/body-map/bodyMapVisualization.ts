@@ -106,10 +106,12 @@ export const BODY_MAP_REGION_IDS = [
   "head",
   "neck",
   "torso",
-  "arms",
-  "legs",
-  "hands",
-  "feet",
+  "arm",
+  "wrist",
+  "hand",
+  "leg",
+  "ankle",
+  "foot",
 ] as const;
 
 export type HeatmapColorLegendItem = {
@@ -119,20 +121,24 @@ export type HeatmapColorLegendItem = {
   rangeLabel: string;
 };
 
-/** Same limb merge rules as the body map silhouette (arms/legs/hands/feet keys). */
+/** Same limb merge rules as the body map silhouette (left/right -> merged key). */
 export function getRegionCountForBodyMapPart(
   partId: string,
   raw: Record<string, number>,
 ): number {
   switch (partId) {
-    case "arms":
-      return raw.arms ?? (raw.leftArm ?? 0) + (raw.rightArm ?? 0);
-    case "legs":
-      return raw.legs ?? (raw.leftLeg ?? 0) + (raw.rightLeg ?? 0);
-    case "hands":
-      return raw.hands ?? (raw.leftHand ?? 0) + (raw.rightHand ?? 0);
-    case "feet":
-      return raw.feet ?? (raw.leftFoot ?? 0) + (raw.rightFoot ?? 0);
+    case "arm":
+      return raw.arm ?? (raw.leftArm ?? 0) + (raw.rightArm ?? 0);
+    case "wrist":
+      return raw.wrist ?? (raw.leftWrist ?? 0) + (raw.rightWrist ?? 0);
+    case "hand":
+      return raw.hand ?? (raw.leftHand ?? 0) + (raw.rightHand ?? 0);
+    case "leg":
+      return raw.leg ?? (raw.leftLeg ?? 0) + (raw.rightLeg ?? 0);
+    case "ankle":
+      return raw.ankle ?? (raw.leftAnkle ?? 0) + (raw.rightAnkle ?? 0);
+    case "foot":
+      return raw.foot ?? (raw.leftFoot ?? 0) + (raw.rightFoot ?? 0);
     default:
       return raw[partId] ?? 0;
   }

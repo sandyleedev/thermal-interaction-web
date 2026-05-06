@@ -9,6 +9,7 @@ import {
 import { emptyOtherFilterSelections } from "@/lib/research/otherFilterVocab";
 import type { OtherFilterCategory } from "@/lib/research/otherFilterVocab";
 import {
+  type BodyMapSelection,
   filterResearchPapers,
   filterResearchPapersIgnoringTemperature,
   otherFilterOptionCounts,
@@ -16,6 +17,8 @@ import {
 } from "@/lib/research/filterResearchPapers";
 import {
   ALL_RESEARCH_PAPERS,
+  type BodyRegionId,
+  type FootSubpartId,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
 import {
@@ -34,8 +37,16 @@ type ResearchFilterContextValue = {
   filteredPaperCount: number;
   /** Paper counts per merged body region for the filtered set. */
   paperCountsByBodyRegion: Record<string, number>;
+  paperCountsByFootSubpart: Record<FootSubpartId, number>;
   /** Per-option counts: pool excludes that facet’s selections; sibling counts stay stable within a section. */
   optionCounts: ReturnType<typeof otherFilterOptionCounts>;
+  selectedBodyRegion: BodyRegionId | null;
+  selectedFootSubpart: FootSubpartId | null;
+  setBodyMapSelection: (
+    bodyRegion: BodyRegionId | null,
+    footSubpart?: FootSubpartId | null,
+  ) => void;
+  clearBodyMapSelection: () => void;
   tempLowC: number;
   tempHighC: number;
   setTempRange: (lowC: number, highC: number) => void;
@@ -55,14 +66,24 @@ const ResearchFilterContext = createContext<
 const DEFAULT_TEMP: [number, number] = [TEMP_AXIS_MIN, TEMP_AXIS_MAX];
 const DEFAULT_DURATION: [number, number] = [10, 3600];
 
-function aggregateBodyCounts(
-  papers: readonly ResearchPaper[],
-): Record<string, number> {
+function aggregateBodyCounts(papers: readonly ResearchPaper[]): Record<string, number> {
   const raw: Record<string, number> = {};
   for (const p of papers) {
     raw[p.bodyRegion] = (raw[p.bodyRegion] ?? 0) + 1;
   }
   return raw;
+}
+
+function aggregateFootSubpartCounts(
+  papers: readonly ResearchPaper[],
+): Record<FootSubpartId, number> {
+  const out: Record<FootSubpartId, number> = { general: 0, sole: 0, toes: 0 };
+  for (const p of papers) {
+    if (p.bodyRegion !== "foot") continue;
+    const sub = p.footSubpart ?? "general";
+    out[sub] += 1;
+  }
+  return out;
 }
 
 const GLOBAL_BODY_COUNTS_INITIAL = aggregateBodyCounts(ALL_RESEARCH_PAPERS);
@@ -75,6 +96,19 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
   const [otherSelections, setOtherSelections] = useState<
     Record<OtherFilterCategory, string[]>
   >(() => emptyOtherFilterSelections());
+  const [selectedBodyRegion, setSelectedBodyRegion] = useState<BodyRegionId | null>(
+    null,
+  );
+  const [selectedFootSubpart, setSelectedFootSubpart] =
+    useState<FootSubpartId | null>(null);
+
+  const bodyMapSelection: BodyMapSelection = useMemo(
+    () => ({
+      bodyRegion: selectedBodyRegion,
+      footSubpart: selectedBodyRegion === "foot" ? selectedFootSubpart : null,
+    }),
+    [selectedBodyRegion, selectedFootSubpart],
+  );
 
   const setTempRange = useCallback((lowC: number, highC: number) => {
     setTempLowC(lowC);
@@ -104,6 +138,23 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
     setOtherSelections(emptyOtherFilterSelections());
   }, []);
 
+  const setBodyMapSelection = useCallback(
+    (bodyRegion: BodyRegionId | null, footSubpart?: FootSubpartId | null) => {
+      setSelectedBodyRegion(bodyRegion);
+      if (bodyRegion !== "foot") {
+        setSelectedFootSubpart(null);
+        return;
+      }
+      setSelectedFootSubpart(footSubpart ?? null);
+    },
+    [],
+  );
+
+  const clearBodyMapSelection = useCallback(() => {
+    setSelectedBodyRegion(null);
+    setSelectedFootSubpart(null);
+  }, []);
+
   const filteredPapers = useMemo(
     () =>
       filterResearchPapers(
@@ -113,6 +164,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
         durationLowS,
         durationHighS,
         otherSelections,
+        bodyMapSelection,
       ),
     [
       tempLowC,
@@ -120,6 +172,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       durationLowS,
       durationHighS,
       otherSelections,
+      bodyMapSelection,
     ],
   );
 
@@ -130,8 +183,9 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
         durationLowS,
         durationHighS,
         otherSelections,
+        bodyMapSelection,
       ),
-    [durationLowS, durationHighS, otherSelections],
+    [durationLowS, durationHighS, otherSelections, bodyMapSelection],
   );
 
   const optionCounts = useMemo(
@@ -143,6 +197,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
         durationLowS,
         durationHighS,
         otherSelections,
+        bodyMapSelection,
       ),
     [
       tempLowC,
@@ -150,11 +205,16 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       durationLowS,
       durationHighS,
       otherSelections,
+      bodyMapSelection,
     ],
   );
 
   const paperCountsByBodyRegion = useMemo(
     () => aggregateBodyCounts(filteredPapers),
+    [filteredPapers],
+  );
+  const paperCountsByFootSubpart = useMemo(
+    () => aggregateFootSubpartCounts(filteredPapers),
     [filteredPapers],
   );
 
@@ -166,7 +226,12 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       filteredPapers,
       filteredPaperCount: filteredPapers.length,
       paperCountsByBodyRegion,
+      paperCountsByFootSubpart,
       optionCounts,
+      selectedBodyRegion,
+      selectedFootSubpart,
+      setBodyMapSelection,
+      clearBodyMapSelection,
       tempLowC,
       tempHighC,
       setTempRange,
@@ -181,7 +246,12 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       temperatureDensityPapers,
       filteredPapers,
       paperCountsByBodyRegion,
+      paperCountsByFootSubpart,
       optionCounts,
+      selectedBodyRegion,
+      selectedFootSubpart,
+      setBodyMapSelection,
+      clearBodyMapSelection,
       tempLowC,
       tempHighC,
       setTempRange,
