@@ -48,7 +48,9 @@ function rgbToHex({ r, g, b }: Rgb): string {
     .join("")}`;
 }
 
-const COUNT_RGB_STOPS: Rgb[] = HEATMAP_COUNT_COLOR_STOPS.map((h) => hexToRgb(h));
+const COUNT_RGB_STOPS: Rgb[] = HEATMAP_COUNT_COLOR_STOPS.map((h) =>
+  hexToRgb(h),
+);
 
 /** Piecewise linear RGB ramp (replaces d3 scaleSequential + interpolateRgbBasis). */
 function interpolateHeatmapColor(t: number): string {
@@ -233,7 +235,9 @@ function postProcessLegendBins(bins: LegendBin[]): LegendBin[] {
       merged.length === stack.length &&
       merged.every(
         (b, j) =>
-          stack[j] !== undefined && b.lo === stack[j].lo && b.hi === stack[j].hi,
+          stack[j] !== undefined &&
+          b.lo === stack[j].lo &&
+          b.hi === stack[j].hi,
       );
     if (unchanged) break;
     stack = merged;
@@ -307,7 +311,9 @@ export function buildGlobalHeatmapScaleFromFullDatasetCounts(
   );
   const maxVal = Math.max(0, ...counts);
   const colorDomain: [number, number] =
-    maxVal <= 0 ? ([0, 1] as [number, number]) : ([0, maxVal] as [number, number]);
+    maxVal <= 0
+      ? ([0, 1] as [number, number])
+      : ([0, maxVal] as [number, number]);
 
   if (maxVal <= 0) {
     const zeroColor = mapCountToColor(0, colorDomain);

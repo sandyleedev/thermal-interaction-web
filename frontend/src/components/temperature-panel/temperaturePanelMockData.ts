@@ -78,4 +78,4 @@ export function buildMockPaperTempRanges(count: number): PaperTempRange[] {
 }
 
 export const MOCK_PAPER_TEMP_RANGES: PaperTempRange[] =
-  buildMockPaperTempRanges(88);
+  buildMockPaperTempRanges(200);
