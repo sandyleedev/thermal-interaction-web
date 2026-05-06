@@ -14,13 +14,12 @@ const TRACK_H = 22;
 type DragHandle = "low" | "high" | null;
 
 export type TemperaturePanelHorizontalProps = {
-  /** Shorter plot and tighter chrome (e.g. Demo 2 center column). */
+  /** Shorter plot and tighter chrome for compact center column usage. */
   compact?: boolean;
 };
 
 /**
- * Panel 2 horizontal layout: same data/utils/styles as {@link TemperaturePanel},
- * with a bottom horizontal range slider (cold left → hot right).
+ * Horizontal temperature panel with a bottom range slider (cold left -> hot right).
  */
 export function TemperaturePanelHorizontal({
   compact = false,

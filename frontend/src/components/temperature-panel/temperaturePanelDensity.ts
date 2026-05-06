@@ -34,7 +34,7 @@ export type KdePathResult = {
 /**
  * Smooth KDE polyline + closed area (for fill) in SVG coords.
  * `dotZoneRight` is the x where the KDE strip starts; density extends to `plotWidth`.
- * Optional `kdeStripInsetPx` narrows the horizontal density span (Demo 1 tighter curve).
+ * Optional `kdeStripInsetPx` narrows the horizontal density span.
  */
 export function buildKdePaths(
   samples: readonly number[],

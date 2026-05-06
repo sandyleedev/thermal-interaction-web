@@ -1,5 +1,4 @@
 .landing-root {
-  /* Thumb → value-label gap for Temperature + Duration sliders on every landing demo */
   --range-slider-value-pill-gap: 5px;
   height: 100%;
   display: flex;
@@ -254,7 +253,7 @@
   gap: 0.4rem;
 }
 
-/* Demo 1: filters row and results share vertical space; Other filters scroll is either internal (legacy) or stack-level (collapsible). */
+/* Filters row and results share vertical space; Other filters can scroll in-panel. */
 .landing-right > .landing-filters {
   flex: 1 1 0;
   min-height: 0;
@@ -284,7 +283,7 @@
   align-self: stretch;
 }
 
-/* Demo 1: stretch Temperature card to match right column (Duration + Other filters) height */
+/* Stretch temperature card to match right-side filter stack height. */
 .landing-filters-col-left > .landing-temperature-panel {
   flex: 1 1 0;
   min-height: 0;
@@ -312,7 +311,9 @@
   padding-bottom: 0.35rem;
 }
 
-.landing-filters-col-left > .landing-temperature-panel .temperature-panel-visual-wrap {
+.landing-filters-col-left
+  > .landing-temperature-panel
+  .temperature-panel-visual-wrap {
   flex: 0 0 auto;
   width: 100%;
   max-width: 100%;
@@ -326,7 +327,9 @@
   min-height: min-content;
 }
 
-.landing-filters-col-left > .landing-temperature-panel .temperature-panel-content {
+.landing-filters-col-left
+  > .landing-temperature-panel
+  .temperature-panel-content {
   flex: 0 0 auto;
 }
 
@@ -338,7 +341,7 @@
   flex-direction: column;
 }
 
-/* Demo 1: Duration at top of stack; Other filters body scrolls inside stack */
+/* Duration sits above Other filters inside the stack. */
 .landing-filters-scroll-stack {
   flex: 1 1 0;
   min-height: 0;
@@ -372,7 +375,9 @@
   overflow: hidden;
 }
 
-.landing-filters-scroll-stack .landing-other-filters-panel .other-filters-panel-content {
+.landing-filters-scroll-stack
+  .landing-other-filters-panel
+  .other-filters-panel-content {
   flex: 1 1 0;
   min-height: 0;
   overflow-x: hidden;
@@ -419,7 +424,7 @@
 }
 
 /* —— Panel 2: temperature range (light) —— */
-/* Value pills: vertical (Demo 1, Demo 3) + horizontal compact (Demo 2) use
+/* Value pills: vertical + horizontal compact use
    --range-slider-value-pill-gap on .landing-root, same token as Duration. */
 .landing-temperature-panel {
   --temperature-panel-track-h: 240px;
@@ -428,7 +433,7 @@
   color: #525252;
 }
 
-/* Demo 1 / Demo 3 vertical slider only: fixed pill–handle gap (Demo 2 horizontal keeps root token). */
+/* Vertical slider only: fixed pill–handle gap (horizontal keeps root token). */
 .landing-temperature-panel:not(.landing-temperature-panel--horizontal) {
   --range-slider-value-pill-gap: 8px;
 }
@@ -444,7 +449,7 @@
   padding: 0.04rem 0.15rem 0;
 }
 
-/* Inner shell for KDE + slider (Demo 1 adds vertical padding via column-specific rules) */
+/* Inner shell for KDE + slider. */
 .temperature-panel-visual-wrap {
   overflow: visible;
 }
@@ -896,7 +901,8 @@
 
 .other-filters-info-wrap:hover .other-filters-info-tooltip,
 .other-filters-info-wrap:focus-within .other-filters-info-tooltip,
-.other-filters-info-wrap.other-filters-info-wrap--open .other-filters-info-tooltip {
+.other-filters-info-wrap.other-filters-info-wrap--open
+  .other-filters-info-tooltip {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
@@ -937,10 +943,6 @@
   gap: 0;
 }
 
-.landing-other-filters-panel--dropdown-grid .other-filters-panel-content {
-  gap: 0;
-}
-
 .landing-other-filters-panel--flat-sections .other-filters-panel-content {
   gap: 0.55rem;
 }
@@ -960,101 +962,6 @@
   letter-spacing: -0.015em;
   color: #64748b;
   text-transform: uppercase;
-}
-
-/* Demo 1: 2-column category dropdown triggers + chip panels */
-.other-filters-dropdown-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 0.42rem 0.5rem;
-  align-items: start;
-}
-
-.other-filters-dropdown-cell {
-  display: flex;
-  flex-direction: column;
-  gap: 0.38rem;
-  min-width: 0;
-}
-
-.other-filters-category-trigger {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.38rem;
-  margin: 0;
-  padding: 0.34rem 0.48rem;
-  font: inherit;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  color: #334155;
-  text-align: left;
-  background: #f8fafc;
-  border: 1px solid rgba(148, 163, 184, 0.52);
-  border-radius: 6px;
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
-  transition:
-    background 120ms ease,
-    border-color 120ms ease,
-    box-shadow 120ms ease,
-    color 120ms ease;
-}
-
-.other-filters-category-trigger:hover {
-  background: #ffffff;
-  border-color: rgba(100, 116, 139, 0.42);
-  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06);
-}
-
-.other-filters-category-trigger:focus-visible {
-  outline: 2px solid rgba(56, 189, 248, 0.55);
-  outline-offset: 2px;
-}
-
-.other-filters-category-trigger-label {
-  flex: 1 1 auto;
-  min-width: 0;
-  line-height: 1.25;
-}
-
-.other-filters-category-trigger-chevron {
-  flex-shrink: 0;
-  font-size: 0.62rem;
-  color: #64748b;
-  line-height: 1;
-}
-
-.other-filters-category-trigger--open {
-  background: #ffffff;
-  border-color: rgba(59, 130, 246, 0.42);
-  box-shadow:
-    0 0 0 1px rgba(59, 130, 246, 0.08),
-    0 2px 6px rgba(15, 23, 42, 0.06);
-}
-
-.other-filters-category-overlay-panel {
-  box-sizing: border-box;
-  padding: 0.42rem 0.48rem;
-  background: #ffffff;
-  border: 1px solid rgba(203, 213, 225, 0.96);
-  border-radius: 8px;
-  box-shadow:
-    0 14px 36px rgba(15, 23, 42, 0.14),
-    0 6px 14px rgba(15, 23, 42, 0.07);
-  max-height: min(340px, 72vh);
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-.other-filters-category-overlay-panel .other-filters-chip-row {
-  margin: 0;
-}
-
-.other-filters-dropdown-grid-spacer {
-  min-height: 0;
 }
 
 .other-filters-chip-row {
@@ -1148,7 +1055,7 @@
   color: #94a3b8;
 }
 
-/* Demo 2: shorter Panel 2 plot; card padding = default .landing-panel (match Panel 3) */
+/* Shorter center-column temperature plot in compact mode. */
 .landing-temperature-panel.landing-temperature-panel--compact .panel-content {
   padding: 0.04rem 0.05rem 0;
 }
@@ -1169,12 +1076,12 @@
   font-size: 0.58rem;
 }
 
-.landing-demo2-filters-scroll > .landing-panel.landing-temperature-panel--compact {
+.landing-filters-scroll > .landing-panel.landing-temperature-panel--compact {
   flex: 0 0 auto;
   min-height: 0;
 }
 
-.landing-demo2-filters-scroll
+.landing-filters-scroll
   > .landing-panel.landing-temperature-panel--compact
   .panel-content {
   flex: 0 0 auto;
@@ -1296,8 +1203,8 @@
   color: #64748b;
 }
 
-/* —— Demo 2: three columns (panel 1 | 2+3+4 | 5) —— */
-.landing-demo2-main {
+/* —— Main three-column layout (body map | filters | results) —— */
+.landing-layout-main {
   display: grid;
   /* Narrower cols 1–2 (body map + filters); wider col 3 (results). */
   grid-template-columns: minmax(220px, 0.72fr) minmax(220px, 0.82fr) minmax(
@@ -1311,7 +1218,7 @@
   align-items: stretch;
 }
 
-.landing-demo2-col {
+.landing-layout-col {
   min-width: 0;
   min-height: 0;
   display: flex;
@@ -1320,28 +1227,28 @@
 }
 
 /* Center column: slider tooltips sit above thumbs and extend past the card; avoid clipping. */
-.landing-demo2-col.landing-demo2-col-center {
+.landing-layout-col.landing-layout-col-center {
   overflow: visible;
 }
 
-.landing-demo2-col-left {
+.landing-layout-col-left {
   padding: 0.45rem 0.65rem 0.65rem 0;
   border-right: 1px solid #e5e5e5;
 }
 
-.landing-demo2-col-left .landing-body-map {
+.landing-layout-col-left .landing-body-map {
   flex: 1 1 0;
   min-height: 0;
 }
 
-.landing-demo2-col-center {
+.landing-layout-col-center {
   gap: 0;
   padding: 0.25rem 0;
   min-height: 0;
 }
 
-/* Demo 2: Temperature + Duration fixed; only Other filters body scrolls */
-.landing-demo2-filters-scroll {
+/* Temperature + Duration stay fixed; Other filters body scrolls. */
+.landing-filters-scroll {
   flex: 1 1 0;
   min-height: 0;
   overflow: hidden;
@@ -1350,313 +1257,51 @@
   gap: 0.4rem;
 }
 
-.landing-demo2-filters-scroll > .landing-panel {
+.landing-filters-scroll > .landing-panel {
   flex: 0 0 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
 }
 
-.landing-demo2-filters-scroll > .landing-panel.landing-temperature-panel,
-.landing-demo2-filters-scroll > .landing-panel.landing-duration-panel {
+.landing-filters-scroll > .landing-panel.landing-temperature-panel,
+.landing-filters-scroll > .landing-panel.landing-duration-panel {
   overflow: visible;
 }
 
-.landing-demo2-filters-scroll > .landing-panel.landing-other-filters-panel {
+.landing-filters-scroll > .landing-panel.landing-other-filters-panel {
   flex: 1 1 0;
   min-height: 0;
   overflow: hidden;
 }
 
-.landing-demo2-filters-scroll > .landing-panel .panel-content {
+.landing-filters-scroll > .landing-panel .panel-content {
   flex: 0 1 auto;
   min-height: 0;
   min-width: 0;
 }
 
-.landing-demo2-filters-scroll
-  > .landing-panel.landing-duration-panel
-  .panel-content {
+.landing-filters-scroll > .landing-panel.landing-duration-panel .panel-content {
   flex: 0 0 auto;
 }
 
-.landing-demo2-filters-scroll .landing-other-filters-panel .other-filters-panel-content {
+.landing-filters-scroll
+  .landing-other-filters-panel
+  .other-filters-panel-content {
   flex: 1 1 0;
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
 }
 
-.landing-demo2-col-right {
+.landing-layout-col-right {
   padding: 0.35rem 0 0.65rem 0.65rem;
   border-left: 1px solid #e5e5e5;
 }
 
-.landing-demo2-col-right .landing-results {
+.landing-layout-col-right .landing-results {
   flex: 1 1 0;
   min-height: 0;
-}
-
-/* —— Demo 3: same three columns as Demo 2; filter panel = temp | duration row + Other filters —— */
-
-.landing-demo3-filters {
-  flex: 1 1 0;
-  min-height: 0;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  gap: 0.32rem;
-}
-
-/*
- * Top: compact auto-height grid — Temperature spans two rows; Duration + Senses sized to content.
- */
-.landing-demo3-filters-top {
-  display: grid;
-  grid-template-columns: minmax(7.35rem, 8.35rem) minmax(0, 1fr);
-  grid-template-rows: auto auto;
-  gap: 0.42rem;
-  align-items: stretch;
-  flex: 0 0 auto;
-  min-width: 0;
-  min-height: 0;
-}
-
-.landing-demo3-filters-top-temperature {
-  grid-column: 1;
-  grid-row: 1 / -1;
-  min-width: 0;
-  max-width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  align-self: stretch;
-  min-height: 0;
-  padding-top: 0;
-}
-
-.landing-demo3-filters-top-duration-wrap {
-  grid-column: 2;
-  grid-row: 1;
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.landing-demo3-filters-top-senses-wrap {
-  grid-column: 2;
-  grid-row: 2;
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.landing-demo3-filters-top-duration-wrap .landing-duration-panel,
-.landing-demo3-filters-top-senses-wrap .landing-demo3-senses-panel {
-  flex: 0 0 auto;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-/* Senses card: same panel shell as Duration; chip area grows with the row */
-.landing-demo3-senses-panel {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  background: #fff;
-  border-color: #e8e8e8;
-  color: #525252;
-}
-
-.landing-demo3-senses-panel > .panel-title {
-  color: inherit;
-  text-align: left;
-  margin-bottom: 0.26rem;
-  flex-shrink: 0;
-}
-
-.landing-demo3-senses-panel .landing-demo3-senses-panel-content {
-  flex: 0 0 auto;
-  min-height: 0;
-  padding: 0.06rem 0.45rem 0.35rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-}
-
-.landing-demo3-senses-chip-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  justify-items: start;
-  align-items: center;
-  gap: 0.26rem 0.32rem;
-  width: 100%;
-}
-
-@media (max-width: 520px) {
-  .landing-demo3-senses-chip-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-.landing-demo3-filters-top-temperature .landing-temperature-panel {
-  position: relative;
-  overflow: visible;
-}
-
-/* Compact card; tighter horizontal rhythm */
-.landing-demo3-filters-top-temperature .landing-temperature-panel .panel-content {
-  padding: 1.35rem 0.1rem 0.48rem 0.08rem;
-}
-
-.landing-demo3-filters-top-temperature .temperature-panel-content {
-  gap: 0.28rem;
-  align-items: flex-start;
-  justify-content: center;
-}
-
-/* Same TRACK_H as slider; width < PLOT_W uses none in TSX so Y maps 1:1 without letterboxing */
-.landing-demo3-filters-top-temperature .temperature-panel-plot {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: stretch;
-  align-self: flex-start;
-}
-
-.landing-demo3-filters-top-temperature .temperature-distribution-svg {
-  width: 52px;
-  max-width: 52px;
-  height: var(--temperature-panel-track-h, 240px);
-  flex-shrink: 0;
-}
-
-.landing-demo3-filters-top-temperature .temperature-slider-column {
-  gap: 0.16rem;
-}
-
-.landing-demo3-filters-top-temperature .temperature-slider-ticks {
-  width: 1.68rem;
-  padding-right: 0;
-  padding-bottom: 0.12rem;
-  box-sizing: content-box;
-}
-
-.landing-demo3-filters-top-temperature .temperature-slider-tick--axis-max {
-  top: 0.38rem;
-  bottom: auto;
-  transform: translate(-50%, 0);
-}
-
-/* Cold end: -10° at outer bottom; 0° shifted up so labels do not collide */
-.landing-demo3-filters-top-temperature .temperature-slider-tick[data-tick-key="0"] {
-  transform: translate(-50%, calc(-50% - 9px));
-}
-
-.landing-demo3-filters-top-temperature .temperature-slider-tick--axis-min[data-tick-key="-10"] {
-  top: auto;
-  bottom: 0;
-  transform: translate(-50%, 18%);
-}
-
-/* Single baseline for all log ticks; slightly smaller type + tight tracking to reduce overlap */
-.landing-demo3-filters-top-duration-wrap .duration-slider-ticks {
-  height: 1rem;
-  font-size: 0.52rem;
-  font-weight: 600;
-  letter-spacing: -0.06em;
-  font-variant-numeric: tabular-nums;
-}
-
-.landing-demo3-filters-top-duration-wrap .duration-slider-tick {
-  top: 0;
-  transform: translateX(-50%);
-}
-
-.landing-demo3-filters-top-duration-wrap .duration-slider-row {
-  padding-left: 0;
-  padding-right: 0;
-}
-
-.landing-demo3-filters-top-duration-wrap .landing-duration-panel {
-  overflow: visible;
-}
-
-.landing-demo3-filters-top .landing-panel {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  min-width: 0;
-}
-
-.landing-demo3-filters-top-duration-wrap .landing-duration-panel .panel-content {
-  flex: 0 0 auto;
-  min-height: 0;
-  padding: 0.08rem 0.1rem 0.06rem;
-}
-
-.landing-demo3-filters-top-duration-wrap .landing-duration-panel > .panel-title {
-  margin-bottom: 0.2rem;
-}
-
-.landing-demo3-senses-panel > .panel-title {
-  margin-bottom: 0.2rem;
-}
-
-.landing-demo3-filters > .landing-other-filters-panel {
-  flex: 1 1 0;
-  min-height: 0;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.landing-demo3-filters > .landing-other-filters-panel .other-filters-panel-content {
-  flex: 1 1 0;
-  min-height: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-/* Demo 3: denser chrome above scroll area; exploration list gets remaining height */
-.landing-demo3-filters > .landing-other-filters-panel--demo3 .other-filters-panel-header {
-  padding-bottom: 0;
-}
-
-.landing-demo3-filters > .landing-other-filters-panel--demo3 .other-filters-panel-content {
-  padding-top: 0.02rem;
-}
-
-@media (max-width: 720px) {
-  .landing-demo3-filters-top {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
-    align-items: stretch;
-  }
-
-  .landing-demo3-filters-top-temperature {
-    grid-column: 1;
-    grid-row: 1;
-    width: 100%;
-    max-width: 8.35rem;
-    min-width: 0;
-    align-self: center;
-    justify-content: flex-start;
-  }
-
-  .landing-demo3-filters-top-duration-wrap {
-    grid-column: 1;
-    grid-row: 2;
-    width: 100%;
-  }
-
-  .landing-demo3-filters-top-senses-wrap {
-    grid-column: 1;
-    grid-row: 3;
-    width: 100%;
-  }
 }
 
 /* —— Results paper list (mock previews) + placeholder thumbnails + paper detail —— */
@@ -1665,13 +1310,9 @@
   height: 72px;
   flex-shrink: 0;
   border-radius: 8px;
-  background: linear-gradient(
-    155deg,
-    #e8eef5 0%,
-    #cbd5e1 48%,
-    #94a3b8 100%
-  );
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35),
+  background: linear-gradient(155deg, #e8eef5 0%, #cbd5e1 48%, #94a3b8 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
     0 1px 2px rgba(15, 23, 42, 0.08);
   display: flex;
   align-items: center;
@@ -1718,7 +1359,9 @@
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   background: #fff;
-  transition: background 0.14s ease, border-color 0.14s ease,
+  transition:
+    background 0.14s ease,
+    border-color 0.14s ease,
     box-shadow 0.14s ease;
   color: inherit;
   text-decoration: none;

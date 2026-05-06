@@ -5,7 +5,7 @@ export function Header() {
     <header className="landing-header">
       <nav aria-label="Main">
         <NavLink
-          to="/demo2"
+          to="/"
           className={({ isActive }) => (isActive ? "is-active" : undefined)}
         >
           Main

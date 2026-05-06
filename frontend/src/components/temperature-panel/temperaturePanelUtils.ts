@@ -20,7 +20,7 @@ export function tempToY(
 }
 
 /**
- * Vertical temperature panel — **upper thumb only** (Demo 1 / Demo 3).
+ * Vertical temperature panel — **upper thumb only**.
  * Positive values move the top value pill **down** (toward the handle, away from the title) when the
  * knob is near the track top. Capped so the fixed CSS gap can still keep the knob visible.
  */
