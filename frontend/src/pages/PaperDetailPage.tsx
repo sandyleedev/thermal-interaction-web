@@ -8,7 +8,7 @@ export function PaperDetailPage() {
   const paper = paperId ? getPaperPreviewById(paperId) : undefined;
 
   if (!paperId) {
-    return <Navigate to="/demo1" replace />;
+    return <Navigate to="/" replace />;
   }
 
   if (!paper) {
@@ -16,8 +16,8 @@ export function PaperDetailPage() {
       <div className="paper-detail-page paper-detail-page--bare">
         <div className="paper-detail paper-detail--missing">
           <p className="paper-detail__missing-msg">Paper not found.</p>
-          <Link to="/demo1" className="paper-detail__back">
-            Back to Demo 1
+          <Link to="/" className="paper-detail__back">
+            Back to results
           </Link>
         </div>
       </div>
@@ -28,7 +28,7 @@ export function PaperDetailPage() {
     <div className="paper-detail-page">
       <div className="paper-detail">
         <header className="paper-detail__header">
-        <Link to="/demo1" className="paper-detail__back">
+        <Link to="/" className="paper-detail__back">
           ← Back to results
         </Link>
         <div className="paper-detail__hero">
