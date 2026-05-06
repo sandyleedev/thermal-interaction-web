@@ -7,6 +7,8 @@ import {
   useState,
   type PointerEvent,
 } from "react";
+import { contourDensity, geoPath } from "d3";
+import type { ContourMultiPolygon } from "d3-contour";
 import { BODY_MAP_OUTLINE_PATH_D, BODY_MAP_VIEW } from "./bodyMapOutlinePath";
 import { type BodySubpath } from "./bodyMapSampleDots";
 import {
@@ -22,9 +24,6 @@ import {
 type TooltipState = { label: string; count: number; x: number; y: number };
 type BodyMapViewMode = "full" | "feetDetail";
 
-const BODY_MAP_DOT_FILL = "#fda4af";
-const BODY_MAP_DOT_FILL_OPACITY = 0.62;
-const BODY_MAP_DOT_RADIUS = 7.8;
 const HEATMAP_DOT_RADIUS = 45;
 const HEATMAP_DOT_OPACITY_MIN = 0.18;
 const HEATMAP_DOT_OPACITY_MAX = 0.46;
@@ -70,7 +69,6 @@ type DensityAnchor = {
   y: number;
   spreadX: number;
   spreadY: number;
-  weight?: number;
 };
 
 const BODY_PARTS: BodyPart[] = [
@@ -206,38 +204,32 @@ const FOOT_SUBPARTS: FootSubpart[] = [
 ];
 
 const REGION_DENSITY_ANCHORS: Record<BodyRegionId, DensityAnchor[]> = {
-  head: [{ x: 418, y: 198, spreadX: 22, spreadY: 24 }],
-  neck: [{ x: 418, y: 305, spreadX: 18, spreadY: 14 }],
-  torso: [
-    { x: 418, y: 470, spreadX: 64, spreadY: 56, weight: 1.2 },
-    { x: 418, y: 620, spreadX: 72, spreadY: 68, weight: 1 },
-    { x: 418, y: 760, spreadX: 62, spreadY: 56, weight: 0.9 },
-  ],
+  head: [{ x: 418, y: 198, spreadX: 20, spreadY: 22 }],
+  neck: [{ x: 418, y: 305, spreadX: 14, spreadY: 12 }],
+  torso: [{ x: 418, y: 610, spreadX: 84, spreadY: 120 }],
   arm: [
-    { x: 275, y: 600, spreadX: 34, spreadY: 52, weight: 1 },
-    { x: 560, y: 600, spreadX: 34, spreadY: 52, weight: 1 },
+    { x: 275, y: 600, spreadX: 34, spreadY: 56 },
+    { x: 560, y: 600, spreadX: 34, spreadY: 56 },
   ],
   wrist: [
-    { x: 175, y: 810, spreadX: 20, spreadY: 24, weight: 1 },
-    { x: 660, y: 810, spreadX: 20, spreadY: 24, weight: 1 },
+    { x: 175, y: 810, spreadX: 16, spreadY: 18 },
+    { x: 660, y: 810, spreadX: 16, spreadY: 18 },
   ],
   hand: [
-    { x: 140, y: 900, spreadX: 24, spreadY: 24, weight: 1 },
-    { x: 700, y: 900, spreadX: 24, spreadY: 24, weight: 1 },
+    { x: 140, y: 900, spreadX: 22, spreadY: 24 },
+    { x: 700, y: 900, spreadX: 22, spreadY: 24 },
   ],
   leg: [
-    { x: 335, y: 1080, spreadX: 34, spreadY: 88, weight: 1 },
-    { x: 500, y: 1080, spreadX: 34, spreadY: 88, weight: 1 },
-    { x: 335, y: 1320, spreadX: 28, spreadY: 82, weight: 0.9 },
-    { x: 500, y: 1320, spreadX: 28, spreadY: 82, weight: 0.9 },
+    { x: 345, y: 1180, spreadX: 32, spreadY: 76 },
+    { x: 492, y: 1180, spreadX: 32, spreadY: 76 },
   ],
   ankle: [
-    { x: 350, y: 1555, spreadX: 18, spreadY: 18, weight: 1 },
-    { x: 486, y: 1555, spreadX: 18, spreadY: 18, weight: 1 },
+    { x: 350, y: 1555, spreadX: 14, spreadY: 14 },
+    { x: 486, y: 1555, spreadX: 14, spreadY: 14 },
   ],
   foot: [
-    { x: 352, y: 1655, spreadX: 24, spreadY: 20, weight: 1 },
-    { x: 484, y: 1655, spreadX: 24, spreadY: 20, weight: 1 },
+    { x: 352, y: 1655, spreadX: 28, spreadY: 24 },
+    { x: 484, y: 1655, spreadX: 28, spreadY: 24 },
   ],
 };
 
@@ -264,7 +256,7 @@ type BodyMapProps = {
 function interpolateHeatmapTone(t: number): string {
   const u = Math.min(1, Math.max(0, t));
   const c0 = { r: 219, g: 234, b: 254 }; // soft blue
-  const c1 = { r: 30, g: 58, b: 95 }; // deep slate blue
+  const c1 = { r: 17, g: 37, b: 74 }; // deep navy
   const lerp = (a: number, b: number) => Math.round(a + (b - a) * u);
   return `rgb(${lerp(c0.r, c1.r)}, ${lerp(c0.g, c1.g)}, ${lerp(c0.b, c1.b)})`;
 }
@@ -307,32 +299,67 @@ function gaussianRandom(rnd: () => number): number {
   return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
 }
 
-function pickAnchor(anchors: DensityAnchor[], rnd: () => number): DensityAnchor {
-  const totalW = anchors.reduce((acc, a) => acc + (a.weight ?? 1), 0);
-  const r = rnd() * (totalW || 1);
-  let cum = 0;
-  for (const a of anchors) {
-    cum += a.weight ?? 1;
-    if (r <= cum) return a;
+function allocateAcrossAnchors(total: number, anchorCount: number): number[] {
+  if (anchorCount <= 0) return [];
+  const base = Math.floor(total / anchorCount);
+  const remainder = total % anchorCount;
+  return Array.from({ length: anchorCount }, (_, i) =>
+    i < remainder ? base + 1 : base,
+  );
+}
+
+function buildPath2D(subpaths: BodySubpath[]): Path2D {
+  const path = new Path2D();
+  for (const subpath of subpaths) {
+    path.addPath(new Path2D(subpath.d));
   }
-  return anchors[anchors.length - 1];
+  return path;
+}
+
+function createPathPointTester(path: Path2D): ((x: number, y: number) => boolean) | null {
+  if (typeof document === "undefined") return null;
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+  return (x: number, y: number) => ctx.isPointInPath(path, x, y);
 }
 
 function generateAnchoredGaussianDots(
   regionId: BodyRegionId,
+  regionSubpaths: BodySubpath[],
   dotCount: number,
 ): { x: number; y: number }[] {
   if (dotCount <= 0) return [];
   const anchors = REGION_DENSITY_ANCHORS[regionId];
   if (!anchors?.length) return [];
   const rnd = mulberry32(hashStringToSeed(`${regionId}:${dotCount}`));
+  const bodyPath = new Path2D(BODY_MAP_OUTLINE_PATH_D);
+  const regionPath = buildPath2D(regionSubpaths);
+  const isInBody = createPathPointTester(bodyPath);
+  const isInRegion = createPathPointTester(regionPath);
+  const pointsPerAnchor = allocateAcrossAnchors(dotCount, anchors.length);
   const out: { x: number; y: number }[] = [];
-  for (let i = 0; i < dotCount; i++) {
-    const a = pickAnchor(anchors, rnd);
-    out.push({
-      x: a.x + gaussianRandom(rnd) * a.spreadX,
-      y: a.y + gaussianRandom(rnd) * a.spreadY,
-    });
+  for (let anchorIndex = 0; anchorIndex < anchors.length; anchorIndex++) {
+    const anchor = anchors[anchorIndex];
+    const n = pointsPerAnchor[anchorIndex] ?? 0;
+    for (let i = 0; i < n; i++) {
+      let accepted: { x: number; y: number } | null = null;
+      for (let attempt = 0; attempt < 80; attempt++) {
+        const x = anchor.x + gaussianRandom(rnd) * anchor.spreadX;
+        const y = anchor.y + gaussianRandom(rnd) * anchor.spreadY;
+        const bodyPass = isInBody ? isInBody(x, y) : true;
+        const regionPass = isInRegion ? isInRegion(x, y) : true;
+        if (bodyPass && regionPass) {
+          accepted = { x, y };
+          break;
+        }
+      }
+      if (accepted) {
+        out.push(accepted);
+      } else {
+        out.push({ x: anchor.x, y: anchor.y });
+      }
+    }
   }
   return out;
 }
@@ -353,6 +380,8 @@ export function BodyMap({
   const hoverGradientId = `body-map-hover-sky-${uid}`;
   const softFillFilterId = `body-map-soft-fill-${uid}`;
   const heatLegendGradientId = `body-map-heat-legend-${uid}`;
+  const rawDotsLegendGradientId = `body-map-raw-dots-legend-${uid}`;
+  const rawDotsSoftBlurId = `body-map-raw-dots-soft-blur-${uid}`;
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const [hoveredPartId, setHoveredPartId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<BodyMapViewMode>("full");
@@ -409,26 +438,51 @@ export function BodyMap({
     const mid = lo + (hi - lo) / 2;
     return [lo, mid, hi].map((v) => Math.round(v));
   }, [countColorDomain]);
-
-  const bodyBaseTint = useMemo(() => {
-    const currentTotal = Object.values(partPaperMap).reduce(
-      (acc, n) => acc + n,
+  const rawDotsContoursByPart = useMemo<
+    { partId: BodyRegionId; contours: ContourMultiPolygon[] }[]
+  >(() => {
+    if (variant !== "rawDots") return [];
+    const parts =
+      viewMode === "feetDetail"
+        ? BODY_PARTS.filter((part) => part.id === "foot")
+        : BODY_PARTS;
+    const density = contourDensity<{ x: number; y: number }>()
+      .x((d: { x: number; y: number }) => d.x)
+      .y((d: { x: number; y: number }) => d.y)
+      .size([BODY_MAP_VIEW.w, BODY_MAP_VIEW.y + BODY_MAP_VIEW.h])
+      .bandwidth(36)
+      .thresholds(28);
+    return parts
+      .map((part) => {
+        const points = dotsByPartId[part.id] ?? [];
+        if (points.length < 2) return null;
+        const contours = density(points);
+        return { partId: part.id, contours };
+      })
+      .filter(
+        (
+          entry,
+        ): entry is {
+          partId: BodyRegionId;
+          contours: ContourMultiPolygon[];
+        } => entry !== null,
+      );
+  }, [dotsByPartId, variant, viewMode]);
+  const rawDotsGlobalContourMaxValue = useMemo(() => {
+    return Math.max(
       0,
-    );
-    const referenceTotal = Math.max(
-      1,
-      BODY_PARTS.reduce(
-        (acc, p) =>
-          acc + getRegionCountForBodyMapPart(p.id, rawForGlobalHeatmapScale),
-        0,
+      ...rawDotsContoursByPart.flatMap((entry) =>
+        entry.contours.map((contour: ContourMultiPolygon) => contour.value ?? 0),
       ),
     );
-    const t = Math.min(1, Math.max(0, currentTotal / referenceTotal));
-    return {
-      fill: interpolateHeatmapTone(t * 0.8),
-      opacity: 0.18 + 0.2 * t,
-    };
-  }, [partPaperMap, rawForGlobalHeatmapScale]);
+  }, [rawDotsContoursByPart]);
+  const rawDotsContourPath = useMemo(() => geoPath(), []);
+  const rawDotsLegendTicks = useMemo(() => {
+    const lo = countColorDomain[0];
+    const hi = countColorDomain[1];
+    const mid = lo + (hi - lo) / 2;
+    return [lo, mid, hi].map((v) => Math.round(v));
+  }, [countColorDomain]);
 
   useLayoutEffect(() => {
     let cancelled = false;
@@ -441,8 +495,8 @@ export function BodyMap({
           ? heatmapDotsForCount(papers)
           : papers;
       next[part.id] =
-        variant === "countHeatmap"
-          ? generateAnchoredGaussianDots(part.id, dotsToRender)
+        variant === "rawDots"
+          ? generateAnchoredGaussianDots(part.id, part.subpaths, dotsToRender)
           : generateDotsForRegion(part.subpaths, dotsToRender);
     }
     queueMicrotask(() => {
@@ -562,6 +616,16 @@ export function BodyMap({
               <stop offset="50%" stopColor="#bae6fd" stopOpacity={0.65} />
               <stop offset="100%" stopColor="#7dd3fc" stopOpacity={0.55} />
             </linearGradient>
+            <linearGradient
+              id={rawDotsLegendGradientId}
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
+              <stop offset="0%" stopColor="#dbeafe" />
+              <stop offset="100%" stopColor="#11254a" />
+            </linearGradient>
             <filter
               id={softFillFilterId}
               x="-50%"
@@ -571,6 +635,16 @@ export function BodyMap({
               colorInterpolationFilters="sRGB"
             >
               <feGaussianBlur in="SourceGraphic" stdDeviation="6.8" />
+            </filter>
+            <filter
+              id={rawDotsSoftBlurId}
+              x="-40%"
+              y="-40%"
+              width="180%"
+              height="180%"
+              colorInterpolationFilters="sRGB"
+            >
+              <feGaussianBlur in="SourceGraphic" stdDeviation="4" />
             </filter>
             <clipPath id={clipPathId} clipPathUnits="userSpaceOnUse">
               <path
@@ -614,14 +688,7 @@ export function BodyMap({
                       key={`feet-base-${i}`}
                       d={sp.d}
                       transform={sp.transform}
-                      fill={
-                        variant === "countHeatmap"
-                          ? bodyBaseTint.fill
-                          : "#1e293b"
-                      }
-                      fillOpacity={
-                        variant === "countHeatmap" ? bodyBaseTint.opacity : 1
-                      }
+                      fill="transparent"
                     />
                   ))}
                 </g>
@@ -629,12 +696,7 @@ export function BodyMap({
                 <path
                   transform={`translate(${BODY_MAP_INNER_TX})`}
                   d={BODY_MAP_OUTLINE_PATH_D}
-                  fill={
-                    variant === "countHeatmap" ? bodyBaseTint.fill : "#1e293b"
-                  }
-                  fillOpacity={
-                    variant === "countHeatmap" ? bodyBaseTint.opacity : 1
-                  }
+                  fill="transparent"
                   pointerEvents="none"
                 />
               )}
@@ -670,24 +732,65 @@ export function BodyMap({
                     })}
                   </g>
                 ) : null}
-                {variant === "rawDots"
-                  ? BODY_PARTS.flatMap((part) => {
-                      if (viewMode === "feetDetail" && part.id !== "foot")
-                        return [];
-                      const dots = dotsByPartId[part.id] ?? [];
-                      return dots.map((p, i) => (
-                        <circle
-                          key={`${part.id}-dot-${i}`}
-                          cx={p.x}
-                          cy={p.y}
-                          r={BODY_MAP_DOT_RADIUS}
-                          fill={BODY_MAP_DOT_FILL}
-                          fillOpacity={BODY_MAP_DOT_FILL_OPACITY}
-                          pointerEvents="none"
-                        />
-                      ));
-                    })
-                  : null}
+                {variant === "rawDots" ? (
+                  <g
+                    pointerEvents="none"
+                    filter={`url(#${rawDotsSoftBlurId})`}
+                  >
+                    {rawDotsContoursByPart.flatMap((entry) => {
+                      const partCount = partPaperMap[entry.partId] ?? 0;
+                      const countStrength = countToPerceptualNormalized(
+                        partCount,
+                        countColorDomain,
+                      );
+                      const countBoost = 0.35 + Math.pow(countStrength, 0.9) * 0.65;
+                      const globalMax =
+                        rawDotsGlobalContourMaxValue <= 0
+                          ? 1
+                          : rawDotsGlobalContourMaxValue;
+                      return entry.contours.map(
+                        (contour: ContourMultiPolygon, i: number) => {
+                          const d = rawDotsContourPath(contour);
+                          if (!d) return null;
+                          const value = contour.value ?? 0;
+                          const normalized = Math.min(
+                            1,
+                            Math.max(0, value / globalMax),
+                          );
+                          const contrastAdjusted = Math.pow(normalized, 1.7);
+                          const opacity =
+                            (0.015 + contrastAdjusted * 0.9) * countBoost;
+                          return (
+                            <path
+                              key={`raw-density-${entry.partId}-${i}`}
+                              d={d}
+                              fill="#1e3a8a"
+                              fillOpacity={opacity}
+                              stroke="none"
+                              pointerEvents="none"
+                            />
+                          );
+                        },
+                      );
+                    })}
+                    {rawDotsContoursByPart.length === 0
+                      ? BODY_PARTS.flatMap((part) => {
+                          if (viewMode === "feetDetail" && part.id !== "foot") return [];
+                          const dots = dotsByPartId[part.id] ?? [];
+                          return dots.map((p, i) => (
+                            <circle
+                              key={`raw-fallback-dot-${part.id}-${i}`}
+                              cx={p.x}
+                              cy={p.y}
+                              r={3.8}
+                              fill="#1e3a8a"
+                              fillOpacity={0.42}
+                            />
+                          ));
+                        })
+                      : null}
+                  </g>
+                ) : null}
                 {viewMode === "feetDetail"
                   ? FOOT_SUBPARTS.flatMap((sub) =>
                       sub.subpaths.map((sp, i) => (
@@ -859,10 +962,40 @@ export function BodyMap({
       ) : null}
       {variant === "rawDots" ? (
         <div className="body-map-heatmap-legend">
+          <svg
+            width="100%"
+            height="18"
+            role="img"
+            aria-label="Density strength gradient legend"
+          >
+            <rect
+              x="0"
+              y="2"
+              width="100%"
+              height="10"
+              rx="5"
+              fill={`url(#${rawDotsLegendGradientId})`}
+            />
+          </svg>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              fontSize: "0.68rem",
+              color: "#64748b",
+              marginTop: "0.15rem",
+              fontVariantNumeric: "tabular-nums",
+            }}
+            aria-hidden
+          >
+            <span>{rawDotsLegendTicks[0].toLocaleString()}</span>
+            <span>{rawDotsLegendTicks[1].toLocaleString()}</span>
+            <span>{rawDotsLegendTicks[2].toLocaleString()}</span>
+          </div>
           <p className="body-map-heatmap-legend-caption">
-            Dot counts are fixed from the full dataset and plotted on the same
-            absolute paper-count basis; each dot represents one paper in a body
-            region. Hover for exact region counts.
+            Paper count (low to high): {countColorDomain[0].toLocaleString()} to{" "}
+            {countColorDomain[1].toLocaleString()}. Dots use d3 density
+            smoothing for visual clustering.
           </p>
         </div>
       ) : null}

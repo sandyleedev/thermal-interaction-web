@@ -25,19 +25,19 @@ export function BodyMapPanel() {
         <div className="body-map-mode-switch">
           <button
             type="button"
-            className={variant === "rawDots" ? "is-active" : undefined}
-            onClick={() => setVariant("rawDots")}
-          >
-            Dots
-          </button>
-          <button
-            type="button"
             className={
               variant === "countHeatmap" ? "is-active" : undefined
             }
             onClick={() => setVariant("countHeatmap")}
           >
-            Heatmap
+            1
+          </button>
+          <button
+            type="button"
+            className={variant === "rawDots" ? "is-active" : undefined}
+            onClick={() => setVariant("rawDots")}
+          >
+            2
           </button>
         </div>
       </div>
