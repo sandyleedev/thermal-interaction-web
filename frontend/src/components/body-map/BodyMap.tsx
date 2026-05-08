@@ -27,7 +27,7 @@ type BodyMapViewMode = "full" | "feetDetail";
 const HEATMAP_DOT_RADIUS = 45;
 const HEATMAP_DOT_OPACITY_MIN = 0.18;
 const HEATMAP_DOT_OPACITY_MAX = 0.46;
-const HEATMAP_DOT_RENDER_RATIO = 0.48;
+const HEATMAP_DOT_RENDER_RATIO = 0.78;
 /** Dev preview: allow density dots to spill outside silhouette. */
 const PREVIEW_HEATMAP_OVERFLOW = true;
 
@@ -623,8 +623,8 @@ export function BodyMap({
               x2="100%"
               y2="0%"
             >
-              <stop offset="0%" stopColor="#dbeafe" />
-              <stop offset="100%" stopColor="#11254a" />
+              <stop offset="0%" stopColor="#ffe4e6" />
+              <stop offset="100%" stopColor="#db2777" />
             </linearGradient>
             <filter
               id={softFillFilterId}
@@ -764,7 +764,7 @@ export function BodyMap({
                             <path
                               key={`raw-density-${entry.partId}-${i}`}
                               d={d}
-                              fill="#1e3a8a"
+                              fill="#db2777"
                               fillOpacity={opacity}
                               stroke="none"
                               pointerEvents="none"
@@ -783,7 +783,7 @@ export function BodyMap({
                               cx={p.x}
                               cy={p.y}
                               r={3.8}
-                              fill="#1e3a8a"
+                              fill="#db2777"
                               fillOpacity={0.42}
                             />
                           ));
