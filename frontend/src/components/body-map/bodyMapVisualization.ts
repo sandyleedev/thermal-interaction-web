@@ -113,7 +113,6 @@ export const BODY_MAP_REGION_IDS = [
   "hand",
   "leg",
   "ankle",
-  "foot",
 ] as const;
 
 export type HeatmapColorLegendItem = {
@@ -139,8 +138,6 @@ export function getRegionCountForBodyMapPart(
       return raw.leg ?? (raw.leftLeg ?? 0) + (raw.rightLeg ?? 0);
     case "ankle":
       return raw.ankle ?? (raw.leftAnkle ?? 0) + (raw.rightAnkle ?? 0);
-    case "foot":
-      return raw.foot ?? (raw.leftFoot ?? 0) + (raw.rightFoot ?? 0);
     default:
       return raw[partId] ?? 0;
   }

@@ -5,7 +5,6 @@ import {
 } from "@/lib/research/otherFilterVocab";
 import {
   type BodyRegionId,
-  type FootSubpartId,
   OPTION_IDS_BY_CATEGORY,
   type ResearchPaper,
   paperFieldForCategory,
@@ -13,8 +12,7 @@ import {
 
 export type OtherFilterSelections = Record<OtherFilterCategory, readonly string[]>;
 export type BodyMapSelection = {
-  bodyRegion: BodyRegionId | null;
-  footSubpart: FootSubpartId | null;
+  mainBodyPart: BodyRegionId | null;
 };
 
 export function durationRangeOverlapsFilter(
@@ -62,11 +60,8 @@ export function paperMatchesBodyMapSelection(
   paper: ResearchPaper,
   selection?: BodyMapSelection,
 ): boolean {
-  if (!selection?.bodyRegion) return true;
-  if (paper.bodyRegion !== selection.bodyRegion) return false;
-  if (selection.bodyRegion !== "foot") return true;
-  if (!selection.footSubpart) return true;
-  return paper.footSubpart === selection.footSubpart;
+  if (!selection?.mainBodyPart) return true;
+  return paper.mainBodyPart === selection.mainBodyPart;
 }
 
 export function filterResearchPapers(

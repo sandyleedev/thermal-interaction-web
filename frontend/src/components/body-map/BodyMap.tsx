@@ -1,6 +1,5 @@
 import {
   useCallback,
-  useEffect,
   useId,
   useLayoutEffect,
   useMemo,
@@ -18,11 +17,9 @@ import {
 } from "./bodyMapVisualization";
 import {
   type BodyRegionId,
-  type FootSubpartId,
 } from "@/lib/research/researchPapers";
 
 type TooltipState = { label: string; count: number; x: number; y: number };
-type BodyMapViewMode = "full" | "feetDetail";
 
 const HEATMAP_DOT_RADIUS = 45;
 const HEATMAP_DOT_OPACITY_MIN = 0.18;
@@ -40,17 +37,6 @@ const BODY_MAP_CONTENT_SCALE_X = 1.04;
 const BODY_MAP_CONTENT_SCALE_Y = 1;
 
 const BODY_MAP_UNIFORM_SCALE_TRANSFORM = `translate(${BODY_MAP_SCALE_PIVOT_OX} ${BODY_MAP_SCALE_PIVOT_OY}) scale(${BODY_MAP_CONTENT_SCALE_X} ${BODY_MAP_CONTENT_SCALE_Y}) translate(${-BODY_MAP_SCALE_PIVOT_OX} ${-BODY_MAP_SCALE_PIVOT_OY})`;
-const FEET_DETAIL_VIEW = {
-  x: 260,
-  y: 1520,
-  w: 320,
-  h: 250,
-} as const;
-const FOOT_SUBPART_BASE_FILL: Record<FootSubpartId, string> = {
-  general: "#38bdf8",
-  sole: "#22c55e",
-  toes: "#f59e0b",
-};
 
 type BodyPart = {
   id: BodyRegionId;
@@ -58,11 +44,6 @@ type BodyPart = {
   subpaths: BodySubpath[];
 };
 
-type FootSubpart = {
-  id: FootSubpartId;
-  label: string;
-  subpaths: BodySubpath[];
-};
 
 type DensityAnchor = {
   x: number;
@@ -159,49 +140,8 @@ const BODY_PARTS: BodyPart[] = [
       },
     ],
   },
-  {
-    id: "foot",
-    label: "Foot",
-    subpaths: [
-      {
-        d: "M 327.78516 1582.1152 C 327.20489 1586.7279 326.29296 1592.6601 324.92969 1600.4668 C 319.93669 1624.6478 320.01791 1609.6818 317.25391 1637.8848 C 313.79091 1651.8618 303.34137 1690.616 318.10938 1690.334 C 319.39538 1697.974 323.65023 1699.4909 327.86523 1697.0469 C 327.18123 1699.5019 329.24586 1701.3386 330.63086 1703.0566 C 335.44386 1704.3786 335.39098 1704.086 337.45898 1702.502 C 338.95398 1708.293 342.63203 1708.2441 344.20703 1708.6621 C 348.97503 1710.1381 350.11128 1697.425 350.98828 1692.502 C 351.84428 1692.456 352.69306 1692.406 353.53906 1692.373 C 352.46706 1695.524 346.37883 1708.205 356.17383 1709.207 C 363.82483 1710.445 364.71539 1709.377 368.90039 1705.418 C 375.89239 1698.408 374.31044 1696.4774 375.52344 1684.7324 C 375.71444 1682.3484 381.20753 1678.1518 376.39453 1647.0898 C 374.53953 1631.1378 375.56322 1649.78 376.69922 1611.375 C 377.04727 1595.8074 381.74501 1592.2202 382.92188 1582.1152 L 327.78516 1582.1152 z",
-      },
-      {
-        d: "M 454.375 1582.1152 C 455.55187 1592.2202 460.25156 1595.8074 460.59961 1611.375 C 461.73561 1649.78 462.75734 1631.1378 460.90234 1647.0898 C 456.08934 1678.1518 461.58439 1682.3484 461.77539 1684.7324 C 462.98839 1696.4774 461.40644 1698.408 468.39844 1705.418 C 472.58344 1709.377 473.474 1710.445 481.125 1709.207 C 490.92 1708.205 484.83177 1695.524 483.75977 1692.373 C 484.60577 1692.406 485.45455 1692.456 486.31055 1692.502 C 487.18755 1697.425 488.3238 1710.1381 493.0918 1708.6621 C 494.6668 1708.2441 498.34484 1708.293 499.83984 1702.502 C 501.90784 1704.086 501.85497 1704.3786 506.66797 1703.0566 C 508.05297 1701.3386 510.11759 1699.5019 509.43359 1697.0469 C 513.64859 1699.4909 517.90345 1697.974 519.18945 1690.334 C 533.95745 1690.616 523.50792 1651.8618 520.04492 1637.8848 C 517.28092 1609.6818 517.36019 1624.6478 512.36719 1600.4668 C 511.00391 1592.6601 510.09394 1586.7279 509.51367 1582.1152 L 454.375 1582.1152 z",
-      },
-    ],
-  },
 ];
 
-const FOOT_SUBPARTS: FootSubpart[] = [
-  {
-    id: "general",
-    label: "General foot",
-    subpaths: [
-      {
-        d: "M 280 1558 H 558 V 1638 H 280 Z",
-      },
-    ],
-  },
-  {
-    id: "sole",
-    label: "Sole",
-    subpaths: [
-      {
-        d: "M 280 1638 H 558 V 1685 H 280 Z",
-      },
-    ],
-  },
-  {
-    id: "toes",
-    label: "Toes",
-    subpaths: [
-      {
-        d: "M 280 1685 H 558 V 1718 H 280 Z",
-      },
-    ],
-  },
-];
 
 const REGION_DENSITY_ANCHORS: Record<BodyRegionId, DensityAnchor[]> = {
   head: [{ x: 418, y: 198, spreadX: 20, spreadY: 22 }],
@@ -227,30 +167,20 @@ const REGION_DENSITY_ANCHORS: Record<BodyRegionId, DensityAnchor[]> = {
     { x: 350, y: 1555, spreadX: 14, spreadY: 14 },
     { x: 486, y: 1555, spreadX: 14, spreadY: 14 },
   ],
-  foot: [
-    { x: 352, y: 1655, spreadX: 28, spreadY: 24 },
-    { x: 484, y: 1655, spreadX: 28, spreadY: 24 },
-  ],
 };
 
 export type BodyMapVariant = "countHeatmap" | "rawDots";
 
 type BodyMapProps = {
   paperCountsByPart?: Record<string, number>;
-  paperCountsByFootSubpart?: Record<FootSubpartId, number>;
   /**
    * Full-dataset region counts used only for the fixed heatmap colour domain and legend.
-   * When omitted, `paperCountsByPart` is used (e.g. static mock without filter context).
+   * When omitted, `paperCountsByPart` is used (e.g. static view without filter context).
    */
   heatmapScaleReferenceCounts?: Record<string, number>;
   variant?: BodyMapVariant;
   selectedBodyRegion?: BodyRegionId | null;
-  selectedFootSubpart?: FootSubpartId | null;
-  onSelectBodyRegion?: (
-    bodyRegion: BodyRegionId | null,
-    footSubpart?: FootSubpartId | null,
-  ) => void;
-  onClearBodySelection?: () => void;
+  onSelectBodyRegion?: (mainBodyPart: BodyRegionId | null) => void;
 };
 
 function interpolateHeatmapTone(t: number): string {
@@ -366,17 +296,13 @@ function generateAnchoredGaussianDots(
 
 export function BodyMap({
   paperCountsByPart = {},
-  paperCountsByFootSubpart = { general: 0, sole: 0, toes: 0 },
   heatmapScaleReferenceCounts,
   variant = "countHeatmap",
   selectedBodyRegion = null,
-  selectedFootSubpart = null,
   onSelectBodyRegion,
-  onClearBodySelection,
 }: BodyMapProps) {
   const uid = useId().replace(/:/g, "");
   const clipPathId = `body-map-silhouette-${uid}`;
-  const feetClipPathId = `body-map-feet-${uid}`;
   const hoverGradientId = `body-map-hover-sky-${uid}`;
   const softFillFilterId = `body-map-soft-fill-${uid}`;
   const heatLegendGradientId = `body-map-heat-legend-${uid}`;
@@ -384,9 +310,6 @@ export function BodyMap({
   const rawDotsSoftBlurId = `body-map-raw-dots-soft-blur-${uid}`;
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const [hoveredPartId, setHoveredPartId] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<BodyMapViewMode>("full");
-  const [hoveredFootSubpartId, setHoveredFootSubpartId] =
-    useState<FootSubpartId | null>(null);
   const [dotsByPartId, setDotsByPartId] = useState<
     Record<string, { x: number; y: number }[]>
   >({});
@@ -404,21 +327,6 @@ export function BodyMap({
     }
     return m;
   }, [paperCountsKey]);
-
-  const footSubpartCountMap = useMemo(
-    () => ({
-      general: paperCountsByFootSubpart.general ?? 0,
-      sole: paperCountsByFootSubpart.sole ?? 0,
-      toes: paperCountsByFootSubpart.toes ?? 0,
-    }),
-    [paperCountsByFootSubpart],
-  );
-
-  useEffect(() => {
-    if (selectedBodyRegion !== "foot") {
-      setViewMode("full");
-    }
-  }, [selectedBodyRegion]);
 
   const rawForGlobalHeatmapScale =
     heatmapScaleReferenceCounts ?? paperCountsByPart;
@@ -442,10 +350,7 @@ export function BodyMap({
     { partId: BodyRegionId; contours: ContourMultiPolygon[] }[]
   >(() => {
     if (variant !== "rawDots") return [];
-    const parts =
-      viewMode === "feetDetail"
-        ? BODY_PARTS.filter((part) => part.id === "foot")
-        : BODY_PARTS;
+    const parts = BODY_PARTS;
     const density = contourDensity<{ x: number; y: number }>()
       .x((d: { x: number; y: number }) => d.x)
       .y((d: { x: number; y: number }) => d.y)
@@ -467,7 +372,7 @@ export function BodyMap({
           contours: ContourMultiPolygon[];
         } => entry !== null,
       );
-  }, [dotsByPartId, variant, viewMode]);
+  }, [dotsByPartId, variant]);
   const rawDotsGlobalContourMaxValue = useMemo(() => {
     return Math.max(
       0,
@@ -530,48 +435,14 @@ export function BodyMap({
 
   const handlePartLeave = useCallback(() => {
     setHoveredPartId(null);
-    setHoveredFootSubpartId(null);
     setTooltip(null);
   }, []);
 
   const handlePartClick = useCallback(
     (part: BodyPart) => {
       return () => {
-        if (part.id === "foot") {
-          setViewMode("feetDetail");
-          onSelectBodyRegion?.("foot", selectedFootSubpart ?? null);
-          return;
-        }
-        onSelectBodyRegion?.(part.id, null);
+        onSelectBodyRegion?.(part.id);
       };
-    },
-    [onSelectBodyRegion, selectedFootSubpart],
-  );
-
-  const handleBackToFull = useCallback(() => {
-    setViewMode("full");
-    setHoveredFootSubpartId(null);
-    setHoveredPartId(null);
-    setTooltip(null);
-    onClearBodySelection?.();
-  }, [onClearBodySelection]);
-
-  const handleFootSubpartEnter = useCallback(
-    (sub: FootSubpart) => (e: PointerEvent<SVGPathElement>) => {
-      setHoveredFootSubpartId(sub.id);
-      setTooltip({
-        label: sub.label,
-        count: footSubpartCountMap[sub.id] ?? 0,
-        x: e.clientX,
-        y: e.clientY,
-      });
-    },
-    [footSubpartCountMap],
-  );
-
-  const handleFootSubpartClick = useCallback(
-    (sub: FootSubpart) => () => {
-      onSelectBodyRegion?.("foot", sub.id);
     },
     [onSelectBodyRegion],
   );
@@ -580,16 +451,12 @@ export function BodyMap({
     variant === "countHeatmap"
       ? "Body map: smooth density heatmap — overlapping dots encode paper concentration per region on a fixed full-dataset scale; tooltip shows exact counts for the current filter."
       : "Body map: one dot per paper, placed randomly within each body region.";
-  const mapTransform =
-    viewMode === "feetDetail"
-      ? "translate(0 0)"
-      : BODY_MAP_UNIFORM_SCALE_TRANSFORM;
-  const activeView =
-    viewMode === "feetDetail" ? FEET_DETAIL_VIEW : BODY_MAP_VIEW;
+  const mapTransform = BODY_MAP_UNIFORM_SCALE_TRANSFORM;
+  const activeView = BODY_MAP_VIEW;
   const activeClipPath =
     variant === "countHeatmap" && PREVIEW_HEATMAP_OVERFLOW
       ? undefined
-      : `url(#${viewMode === "feetDetail" ? feetClipPathId : clipPathId})`;
+      : `url(#${clipPathId})`;
 
   return (
     <div className="body-map-root">
@@ -652,19 +519,6 @@ export function BodyMap({
                 d={BODY_MAP_OUTLINE_PATH_D}
               />
             </clipPath>
-            <clipPath id={feetClipPathId} clipPathUnits="userSpaceOnUse">
-              <g transform={`translate(${BODY_MAP_INNER_TX})`}>
-                {(BODY_PARTS.find((p) => p.id === "foot")?.subpaths ?? []).map(
-                  (sp, i) => (
-                    <path
-                      key={`feet-clip-${i}`}
-                      d={sp.d}
-                      transform={sp.transform}
-                    />
-                  ),
-                )}
-              </g>
-            </clipPath>
           </defs>
 
           <g transform={mapTransform}>
@@ -676,37 +530,16 @@ export function BodyMap({
                 height={BODY_MAP_VIEW.h}
                 fill="transparent"
               />
-              {viewMode === "feetDetail" ? (
-                <g
-                  transform={`translate(${BODY_MAP_INNER_TX})`}
-                  pointerEvents="none"
-                >
-                  {(
-                    BODY_PARTS.find((p) => p.id === "foot")?.subpaths ?? []
-                  ).map((sp, i) => (
-                    <path
-                      key={`feet-base-${i}`}
-                      d={sp.d}
-                      transform={sp.transform}
-                      fill="transparent"
-                    />
-                  ))}
-                </g>
-              ) : (
-                <path
-                  transform={`translate(${BODY_MAP_INNER_TX})`}
-                  d={BODY_MAP_OUTLINE_PATH_D}
-                  fill="transparent"
-                  pointerEvents="none"
-                />
-              )}
+              <path
+                transform={`translate(${BODY_MAP_INNER_TX})`}
+                d={BODY_MAP_OUTLINE_PATH_D}
+                fill="transparent"
+                pointerEvents="none"
+              />
               <g id="layer1" transform={`translate(${BODY_MAP_INNER_TX})`}>
                 {variant === "countHeatmap" ? (
                   <g pointerEvents="none" style={{ mixBlendMode: "multiply" }}>
-                    {(viewMode === "feetDetail"
-                      ? BODY_PARTS.filter((part) => part.id === "foot")
-                      : BODY_PARTS
-                    ).flatMap((part) => {
+                    {BODY_PARTS.flatMap((part) => {
                       const c = partPaperMap[part.id] ?? 0;
                       const t = countToPerceptualNormalized(
                         c,
@@ -775,7 +608,6 @@ export function BodyMap({
                     })}
                     {rawDotsContoursByPart.length === 0
                       ? BODY_PARTS.flatMap((part) => {
-                          if (viewMode === "feetDetail" && part.id !== "foot") return [];
                           const dots = dotsByPartId[part.id] ?? [];
                           return dots.map((p, i) => (
                             <circle
@@ -791,71 +623,38 @@ export function BodyMap({
                       : null}
                   </g>
                 ) : null}
-                {viewMode === "feetDetail"
-                  ? FOOT_SUBPARTS.flatMap((sub) =>
-                      sub.subpaths.map((sp, i) => (
-                        <path
-                          key={`${sub.id}-hit-${i}`}
-                          d={sp.d}
-                          transform={sp.transform}
-                          fill={FOOT_SUBPART_BASE_FILL[sub.id]}
-                          fillOpacity={
-                            hoveredFootSubpartId === sub.id ||
-                            selectedFootSubpart === sub.id
-                              ? 0.9
-                              : 0.56
-                          }
-                          filter={
-                            hoveredFootSubpartId === sub.id ||
-                            selectedFootSubpart === sub.id
-                              ? `url(#${softFillFilterId})`
-                              : undefined
-                          }
-                          stroke="none"
-                          pointerEvents="all"
-                          style={{ cursor: "pointer" }}
-                          onPointerEnter={handleFootSubpartEnter(sub)}
-                          onPointerMove={handlePartMove}
-                          onPointerLeave={handlePartLeave}
-                          onClick={handleFootSubpartClick(sub)}
-                        />
-                      )),
-                    )
-                  : BODY_PARTS.flatMap((part) =>
-                      part.subpaths.map((sp, i) => (
-                        <path
-                          key={`${part.id}-hit-${i}`}
-                          id={`${part.id}-hit-${i}`}
-                          d={sp.d}
-                          transform={sp.transform}
-                          fill={
-                            hoveredPartId === part.id ||
-                            selectedBodyRegion === part.id
-                              ? `url(#${hoverGradientId})`
-                              : "transparent"
-                          }
-                          fillOpacity={
-                            hoveredPartId === part.id ||
-                            selectedBodyRegion === part.id
-                              ? 0.78
-                              : 1
-                          }
-                          filter={
-                            hoveredPartId === part.id ||
-                            selectedBodyRegion === part.id
-                              ? `url(#${softFillFilterId})`
-                              : undefined
-                          }
-                          stroke="none"
-                          pointerEvents="all"
-                          style={{ cursor: "pointer" }}
-                          onPointerEnter={handlePartEnter(part)}
-                          onPointerMove={handlePartMove}
-                          onPointerLeave={handlePartLeave}
-                          onClick={handlePartClick(part)}
-                        />
-                      )),
-                    )}
+                {BODY_PARTS.flatMap((part) =>
+                  part.subpaths.map((sp, i) => (
+                    <path
+                      key={`${part.id}-hit-${i}`}
+                      id={`${part.id}-hit-${i}`}
+                      d={sp.d}
+                      transform={sp.transform}
+                      fill={
+                        hoveredPartId === part.id || selectedBodyRegion === part.id
+                          ? `url(#${hoverGradientId})`
+                          : "transparent"
+                      }
+                      fillOpacity={
+                        hoveredPartId === part.id || selectedBodyRegion === part.id
+                          ? 0.78
+                          : 1
+                      }
+                      filter={
+                        hoveredPartId === part.id || selectedBodyRegion === part.id
+                          ? `url(#${softFillFilterId})`
+                          : undefined
+                      }
+                      stroke="none"
+                      pointerEvents="all"
+                      style={{ cursor: "pointer" }}
+                      onPointerEnter={handlePartEnter(part)}
+                      onPointerMove={handlePartMove}
+                      onPointerLeave={handlePartLeave}
+                      onClick={handlePartClick(part)}
+                    />
+                  )),
+                )}
               </g>
             </g>
 
@@ -863,51 +662,21 @@ export function BodyMap({
               transform={`translate(${BODY_MAP_INNER_TX})`}
               pointerEvents="none"
             >
-              {viewMode === "feetDetail" ? (
-                (BODY_PARTS.find((p) => p.id === "foot")?.subpaths ?? []).map(
-                  (sp, i) => (
-                    <path
-                      key={`feet-outline-${i}`}
-                      d={sp.d}
-                      transform={sp.transform}
-                      fill="none"
-                      stroke="#1e293b"
-                      strokeOpacity={0.65}
-                      strokeWidth={1.1}
-                      vectorEffect="non-scaling-stroke"
-                      shapeRendering="geometricPrecision"
-                      strokeLinejoin="round"
-                      strokeLinecap="round"
-                    />
-                  ),
-                )
-              ) : (
-                <path
-                  d={BODY_MAP_OUTLINE_PATH_D}
-                  fill="none"
-                  stroke="#1e293b"
-                  strokeOpacity={0.65}
-                  strokeWidth={1.1}
-                  vectorEffect="non-scaling-stroke"
-                  shapeRendering="geometricPrecision"
-                  strokeLinejoin="round"
-                  strokeLinecap="round"
-                />
-              )}
+              <path
+                d={BODY_MAP_OUTLINE_PATH_D}
+                fill="none"
+                stroke="#1e293b"
+                strokeOpacity={0.65}
+                strokeWidth={1.1}
+                vectorEffect="non-scaling-stroke"
+                shapeRendering="geometricPrecision"
+                strokeLinejoin="round"
+                strokeLinecap="round"
+              />
             </g>
           </g>
         </svg>
       </div>
-      {viewMode === "feetDetail" ? (
-        <button
-          type="button"
-          className="body-map-detail-back"
-          onClick={handleBackToFull}
-          aria-label="Back to full body map"
-        >
-          ←
-        </button>
-      ) : null}
 
       {variant === "countHeatmap" ? (
         <div className="body-map-heatmap-legend">

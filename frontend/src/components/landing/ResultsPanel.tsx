@@ -4,6 +4,28 @@ import { resolvePaperPreview } from "@/data/paperPreviews";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { PaperThumbnailPlaceholder } from "@/components/landing/PaperThumbnailPlaceholder";
 
+function lastNameOf(author: string): string {
+  const name = author.trim();
+  if (!name) return "";
+  if (name.includes(",")) {
+    const [last] = name.split(",");
+    return last.trim();
+  }
+  const parts = name.split(/\s+/);
+  return parts[parts.length - 1] ?? name;
+}
+
+function listAuthorsLabel(authors: string): string {
+  const parsed = authors
+    .split(";")
+    .map((a) => a.trim())
+    .filter(Boolean);
+  if (parsed.length <= 2) {
+    return parsed.map(lastNameOf).join(", ");
+  }
+  return `${lastNameOf(parsed[0])} et al.`;
+}
+
 export function ResultsPanel() {
   const { filteredPapers, filteredPaperCount, totalPaperCount } =
     useResearchFilter();
@@ -34,19 +56,22 @@ export function ResultsPanel() {
                 className="results-paper-card"
               >
                 <div className="results-paper-card__thumb">
-                  <PaperThumbnailPlaceholder label={paper.title} />
+                  <PaperThumbnailPlaceholder
+                    label={paper.title}
+                    imageUrls={paper.thumbnailUrls}
+                  />
                 </div>
                 <div className="results-paper-card__body">
                   <h3 className="results-paper-card__title">{paper.title}</h3>
                   <p className="results-paper-card__meta">
-                    {paper.authors}
+                    {listAuthorsLabel(paper.authors)}
                     <span className="results-paper-card__meta-sep"> · </span>
-                    {paper.year}
+                    {paper.publicationYear}
                     <span className="results-paper-card__meta-sep"> · </span>
-                    {paper.journal}
+                    {paper.publicationVenue}
                   </p>
                   <div className="results-paper-card__tags">
-                    {paper.tags.slice(0, 5).map((tag, i) => (
+                    {paper.keywords.map((tag, i) => (
                       <span
                         key={`${paper.id}-tag-${i}-${tag}`}
                         className="results-paper-chip"

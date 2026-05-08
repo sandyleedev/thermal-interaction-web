@@ -32,14 +32,17 @@ export function PaperDetailPage() {
           ← Back to results
         </Link>
         <div className="paper-detail__hero">
-          <PaperThumbnailPlaceholder label={paper.title} />
+          <PaperThumbnailPlaceholder
+            label={paper.title}
+            imageUrls={paper.thumbnailUrls}
+          />
           <div className="paper-detail__titles">
             <h1 className="paper-detail__title">{paper.title}</h1>
             <p className="paper-detail__authors">{paper.authors}</p>
             <p className="paper-detail__meta-line">
-              <span>{paper.year}</span>
+              <span>{paper.publicationYear}</span>
               <span aria-hidden> · </span>
-              <span>{paper.journal}</span>
+              <span>{paper.publicationVenue}</span>
             </p>
           </div>
         </div>
@@ -48,7 +51,7 @@ export function PaperDetailPage() {
         <dl className="paper-detail__facts">
         <div className="paper-detail__fact">
           <dt>Body region</dt>
-          <dd>{paper.bodyRegion}</dd>
+          <dd>{paper.mainBodyPart}</dd>
         </div>
         <div className="paper-detail__fact">
           <dt>Thermal transfer</dt>
@@ -65,7 +68,7 @@ export function PaperDetailPage() {
         </dl>
 
         <section className="paper-detail__tags">
-        {paper.tags.map((t) => (
+        {paper.keywords.map((t) => (
           <span key={t} className="paper-detail__tag">
             {t}
           </span>

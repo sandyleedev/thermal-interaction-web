@@ -1,9 +1,10 @@
 .landing-root {
   --range-slider-value-pill-gap: 5px;
-  height: 100%;
+  min-height: 100%;
+  height: auto;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .landing-header {
@@ -38,10 +39,10 @@
 }
 
 .landing-main {
-  flex: 1;
+  flex: 1 1 auto;
   display: flex;
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
   background: #fafafa;
 }
 
@@ -370,18 +371,18 @@
 }
 
 .landing-filters-scroll-stack > .landing-other-filters-panel {
-  flex: 1 1 0;
-  min-height: 0;
-  overflow: hidden;
+  flex: 0 0 auto;
+  min-height: auto;
+  overflow: visible;
 }
 
 .landing-filters-scroll-stack
   .landing-other-filters-panel
   .other-filters-panel-content {
-  flex: 1 1 0;
-  min-height: 0;
+  flex: 0 0 auto;
+  min-height: auto;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: visible;
 }
 
 .landing-results {
@@ -977,10 +978,10 @@
 }
 
 .landing-other-filters-panel .other-filters-panel-content {
-  flex: 1 1 0;
-  min-height: 0;
+  flex: 0 0 auto;
+  min-height: auto;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: visible;
   padding: 0.08rem 0 0;
   margin: 0;
   display: flex;
@@ -1281,7 +1282,7 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Center column: slider tooltips sit above thumbs and extend past the card; avoid clipping. */
@@ -1307,9 +1308,9 @@
 
 /* Temperature + Duration stay fixed; Other filters body scrolls. */
 .landing-filters-scroll {
-  flex: 1 1 0;
-  min-height: 0;
-  overflow: hidden;
+  flex: 0 0 auto;
+  min-height: auto;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
@@ -1328,9 +1329,9 @@
 }
 
 .landing-filters-scroll > .landing-panel.landing-other-filters-panel {
-  flex: 1 1 0;
-  min-height: 0;
-  overflow: hidden;
+  flex: 0 0 auto;
+  min-height: auto;
+  overflow: visible;
 }
 
 .landing-filters-scroll > .landing-panel .panel-content {
@@ -1346,10 +1347,10 @@
 .landing-filters-scroll
   .landing-other-filters-panel
   .other-filters-panel-content {
-  flex: 1 1 0;
-  min-height: 0;
+  flex: 0 0 auto;
+  min-height: auto;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: visible;
 }
 
 .landing-layout-col-right {
@@ -1362,11 +1363,12 @@
   min-height: 0;
 }
 
-/* —— Results paper list (mock previews) + placeholder thumbnails + paper detail —— */
+/* —— Results paper list + placeholder thumbnails + paper detail —— */
 .paper-thumb-placeholder {
   width: 72px;
   height: 72px;
   flex-shrink: 0;
+  overflow: hidden;
   border-radius: 8px;
   background: linear-gradient(155deg, #e8eef5 0%, #cbd5e1 48%, #94a3b8 100%);
   box-shadow:
@@ -1375,6 +1377,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  object-fit: cover;
 }
 
 .paper-thumb-placeholder__frame {
