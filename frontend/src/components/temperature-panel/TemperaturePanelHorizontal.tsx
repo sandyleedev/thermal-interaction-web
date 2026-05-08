@@ -1,17 +1,50 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef } from "react";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
-import {
-  insetDimLeftWidth,
-  insetDimRightLeftEdge,
-  thumbCenterLeftCalc,
-} from "@/components/range-slider/horizontalRangeTrackInset";
 import { buildKdePathsHorizontal } from "./temperaturePanelDensity";
-import { clientXToTemp, tempToNorm } from "./temperaturePanelUtils";
+import {
+  rangeOverlapsFilter,
+  TEMP_AXIS_MAX,
+  TEMP_AXIS_MIN,
+  tempToNorm,
+} from "./temperaturePanelUtils";
 
 const PLOT_W = 320;
 const TRACK_H = 22;
+const SLIDER_EDGE_INSET_PX = 0;
 
 type DragHandle = "low" | "high" | null;
+
+function clamp01(v: number): number {
+  return Math.min(1, Math.max(0, v));
+}
+
+function normFromClientX(clientX: number, rect: DOMRect): number {
+  const w = rect.width - SLIDER_EDGE_INSET_PX * 2;
+  if (w <= 0) return 0.5;
+  return clamp01((clientX - rect.left - SLIDER_EDGE_INSET_PX) / w);
+}
+
+function sliderLeftForNorm(norm: number): string {
+  const n = clamp01(norm);
+  const i = SLIDER_EDGE_INSET_PX;
+  const w = i * 2;
+  return `calc(${i}px + (100% - ${w}px) * ${n})`;
+}
+
+function sliderRangeStyle(rangeLeft: number, rangeWidth: number): { left: string; width: string } {
+  const i = SLIDER_EDGE_INSET_PX;
+  const w = i * 2;
+  return {
+    left: `calc(${i}px + (100% - ${w}px) * ${clamp01(rangeLeft)})`,
+    width: `calc((100% - ${w}px) * ${clamp01(rangeWidth)})`,
+  };
+}
+
+function sliderRightEdge(rangeLeft: number, rangeWidth: number): string {
+  const i = SLIDER_EDGE_INSET_PX;
+  const w = i * 2;
+  return `calc(${i}px + (100% - ${w}px) * ${clamp01(rangeLeft + rangeWidth)})`;
+}
 
 export type TemperaturePanelHorizontalProps = {
   /** Shorter plot and tighter chrome for compact center column usage. */
@@ -24,6 +57,7 @@ export type TemperaturePanelHorizontalProps = {
 export function TemperaturePanelHorizontal({
   compact = false,
 }: TemperaturePanelHorizontalProps = {}) {
+  const violinClipId = useId().replace(/:/g, "");
   const PLOT_H = compact ? 58 : 88;
   const PAD = compact
     ? { left: 10, right: 10, top: 3, bottom: 7 }
@@ -61,7 +95,8 @@ export function TemperaturePanelHorizontal({
     const el = trackRef.current;
     if (!el || !dragRef.current) return;
     const rect = el.getBoundingClientRect();
-    const t = clientXToTemp(e.clientX, rect);
+    const n = normFromClientX(e.clientX, rect);
+    const t = TEMP_AXIS_MIN + n * (TEMP_AXIS_MAX - TEMP_AXIS_MIN);
     const { low, high } = rangeRef.current;
     if (dragRef.current === "low") {
       const next = Math.min(t, high - 0.5);
@@ -96,8 +131,29 @@ export function TemperaturePanelHorizontal({
   const nHigh = tempToNorm(filterHigh);
   const rangeLeft = Math.min(nLow, nHigh);
   const rangeWidth = Math.abs(nHigh - nLow);
+  const lowHandleNearEdge = nLow <= 0.02;
+  const highHandleNearEdge = nHigh >= 0.98;
 
   const handlesClose = rangeWidth < 0.14;
+  const temperatureAxisTotal = temperatureDensityPapers.length;
+  const temperatureAxisSelected = useMemo(
+    () =>
+      temperatureDensityPapers.filter((paper) =>
+        rangeOverlapsFilter(paper.minC, paper.maxC, filterLow, filterHigh),
+      ).length,
+    [temperatureDensityPapers, filterLow, filterHigh],
+  );
+  const temperatureSelectionRatioPct =
+    temperatureAxisTotal > 0 ? (temperatureAxisSelected / temperatureAxisTotal) * 100 : 0;
+  const innerW = PLOT_W - PAD.left - PAD.right;
+  const innerH = PLOT_H - PAD.top - PAD.bottom;
+  const violinSelectionX = PAD.left + innerW * rangeLeft;
+  const violinSelectionW = innerW * rangeWidth;
+  const violinLabelXRaw = violinSelectionX + violinSelectionW / 2;
+  const violinLabelX = Math.max(
+    PAD.left + 14,
+    Math.min(PLOT_W - PAD.right - 14, violinLabelXRaw),
+  );
 
   const tickLabels = [100, 75, 50, 25, 0, -10];
 
@@ -121,13 +177,36 @@ export function TemperaturePanelHorizontal({
             viewBox={`0 0 ${PLOT_W} ${PLOT_H}`}
             preserveAspectRatio="xMidYMid meet"
             role="img"
-            aria-label="Paper count density by study temperature (KDE curve), horizontal axis"
+            aria-label="Paper count density by study temperature (single-sided violin), horizontal axis"
           >
+            <defs>
+              <clipPath id={`temperature-violin-clip-${violinClipId}`}>
+                <path d={kdePaths.areaD} />
+              </clipPath>
+            </defs>
+            <path d={kdePaths.areaD} className="distribution-violin-area" />
+            <rect
+              x={violinSelectionX}
+              y={PAD.top}
+              width={Math.max(0, violinSelectionW)}
+              height={innerH}
+              className="distribution-violin-selection-fill"
+              clipPath={`url(#temperature-violin-clip-${violinClipId})`}
+            />
             <path
               d={kdePaths.lineD}
-              className="temperature-kde-line"
+              className="distribution-violin-line"
               fill="none"
             />
+            <text
+              x={violinLabelX}
+              y={PAD.top + innerH * 0.68}
+              className="distribution-violin-selection-label"
+              textAnchor="middle"
+              dominantBaseline="middle"
+            >
+              {Math.round(temperatureSelectionRatioPct)}%
+            </text>
           </svg>
         </div>
 
@@ -141,12 +220,14 @@ export function TemperaturePanelHorizontal({
               <div className="temperature-slider-track-gradient temperature-slider-track-gradient--horizontal" />
               <div
                 className="temperature-slider-track-dim temperature-slider-track-dim--horizontal"
-                style={insetDimLeftWidth(rangeLeft)}
+                style={{
+                  width: sliderRangeStyle(rangeLeft, rangeWidth).left,
+                }}
               />
               <div
                 className="temperature-slider-track-dim temperature-slider-track-dim--horizontal temperature-slider-track-dim--horizontal-right"
                 style={{
-                  left: insetDimRightLeftEdge(rangeLeft, rangeWidth),
+                  left: sliderRightEdge(rangeLeft, rangeWidth),
                 }}
               />
             </div>
@@ -159,7 +240,7 @@ export function TemperaturePanelHorizontal({
               ]
                 .filter(Boolean)
                 .join(" ")}
-              style={{ left: thumbCenterLeftCalc(nLow) }}
+              style={{ left: sliderLeftForNorm(nLow) }}
             >
               <button
                 type="button"
@@ -174,7 +255,11 @@ export function TemperaturePanelHorizontal({
               <span
                 className={[
                   "range-slider-value-pill",
-                  handlesClose && "range-slider-value-pill--spread-low",
+                  handlesClose &&
+                    !lowHandleNearEdge &&
+                    !highHandleNearEdge &&
+                    "range-slider-value-pill--spread-low",
+                  lowHandleNearEdge && "range-slider-value-pill--edge-left",
                 ]
                   .filter(Boolean)
                   .join(" ")}
@@ -192,7 +277,7 @@ export function TemperaturePanelHorizontal({
               ]
                 .filter(Boolean)
                 .join(" ")}
-              style={{ left: thumbCenterLeftCalc(nHigh) }}
+              style={{ left: sliderLeftForNorm(nHigh) }}
             >
               <button
                 type="button"
@@ -207,7 +292,11 @@ export function TemperaturePanelHorizontal({
               <span
                 className={[
                   "range-slider-value-pill",
-                  handlesClose && "range-slider-value-pill--spread-high",
+                  handlesClose &&
+                    !lowHandleNearEdge &&
+                    !highHandleNearEdge &&
+                    "range-slider-value-pill--spread-high",
+                  highHandleNearEdge && "range-slider-value-pill--edge-right",
                 ]
                   .filter(Boolean)
                   .join(" ")}
@@ -222,7 +311,7 @@ export function TemperaturePanelHorizontal({
               <span
                 key={t}
                 className="temperature-slider-tick temperature-slider-tick--horizontal"
-                style={{ left: thumbCenterLeftCalc(tempToNorm(t)) }}
+                style={{ left: sliderLeftForNorm(tempToNorm(t)) }}
               >
                 {t}°
               </span>

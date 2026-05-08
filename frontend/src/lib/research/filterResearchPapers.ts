@@ -129,6 +129,27 @@ export function filterResearchPapersIgnoringTemperature(
 }
 
 /**
+ * Same as {@link filterResearchPapers} but ignores the duration range filter.
+ * Used for duration slider range coverage labels.
+ */
+export function filterResearchPapersIgnoringDuration(
+  papers: readonly ResearchPaper[],
+  tempLowC: number,
+  tempHighC: number,
+  other: OtherFilterSelections,
+  bodyMapSelection?: BodyMapSelection,
+): ResearchPaper[] {
+  return papers.filter((p) => {
+    if (!rangeOverlapsFilter(p.minC, p.maxC, tempLowC, tempHighC)) {
+      return false;
+    }
+    if (!paperMatchesOtherFilters(p, other)) return false;
+    if (!paperMatchesBodyMapSelection(p, bodyMapSelection)) return false;
+    return true;
+  });
+}
+
+/**
  * Papers after temp/duration and all “other” filters except one category (no constraint on that facet).
  */
 export function filterPapersExceptOtherCategory(

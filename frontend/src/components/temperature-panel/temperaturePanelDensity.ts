@@ -29,6 +29,7 @@ export function kdeAt(
 export type KdePathResult = {
   lineD: string;
   areaD: string;
+  points: { x: number; y: number }[];
 };
 
 /**
@@ -89,6 +90,7 @@ export function buildKdePaths(
   return {
     lineD: lineParts.join(" "),
     areaD,
+    points: points.map((p, i) => ({ x: xs[i], y: p.y })),
   };
 }
 
@@ -124,10 +126,12 @@ export function buildKdePathsHorizontal(
 
   const yScale = Math.max(4, innerH - 6) * 0.92;
   const lineParts: string[] = [];
+  const linePoints: { x: number; y: number }[] = [];
   for (let i = 0; i < points.length; i++) {
     const y = baselineY - (points[i].density / maxD) * yScale;
     const cmd = i === 0 ? "M" : "L";
     lineParts.push(`${cmd} ${points[i].x.toFixed(2)} ${y.toFixed(2)}`);
+    linePoints.push({ x: points[i].x, y });
   }
 
   const x0 = points[0].x;
@@ -144,6 +148,7 @@ export function buildKdePathsHorizontal(
   return {
     lineD: lineParts.join(" "),
     areaD,
+    points: linePoints,
   };
 }
 

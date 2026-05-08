@@ -11,6 +11,7 @@ import type { OtherFilterCategory } from "@/lib/research/otherFilterVocab";
 import {
   type BodyMapSelection,
   filterResearchPapers,
+  filterResearchPapersIgnoringDuration,
   filterResearchPapersIgnoringTemperature,
   otherFilterOptionCounts,
   type OtherFilterSelections,
@@ -33,6 +34,8 @@ type ResearchFilterContextValue = {
   globalPaperCountsByBodyRegion: Record<string, number>;
   /** Duration + other filters only; KDE curve uses this so it stays stable when the temperature range moves. */
   temperatureDensityPapers: ResearchPaper[];
+  /** Temperature + other filters only; used for duration range coverage labels. */
+  durationDensityPapers: ResearchPaper[];
   filteredPapers: ResearchPaper[];
   filteredPaperCount: number;
   /** Paper counts per merged body region for the filtered set. */
@@ -187,6 +190,17 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       ),
     [durationLowS, durationHighS, otherSelections, bodyMapSelection],
   );
+  const durationDensityPapers = useMemo(
+    () =>
+      filterResearchPapersIgnoringDuration(
+        ALL_RESEARCH_PAPERS,
+        tempLowC,
+        tempHighC,
+        otherSelections,
+        bodyMapSelection,
+      ),
+    [tempLowC, tempHighC, otherSelections, bodyMapSelection],
+  );
 
   const optionCounts = useMemo(
     () =>
@@ -223,6 +237,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       totalPaperCount: ALL_RESEARCH_PAPERS.length,
       globalPaperCountsByBodyRegion: GLOBAL_BODY_COUNTS_INITIAL,
       temperatureDensityPapers,
+      durationDensityPapers,
       filteredPapers,
       filteredPaperCount: filteredPapers.length,
       paperCountsByBodyRegion,
@@ -244,6 +259,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
     }),
     [
       temperatureDensityPapers,
+      durationDensityPapers,
       filteredPapers,
       paperCountsByBodyRegion,
       paperCountsByFootSubpart,
