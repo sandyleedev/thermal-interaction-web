@@ -22,11 +22,9 @@ import {
 type TooltipState = { label: string; count: number; x: number; y: number };
 
 const HEATMAP_DOT_RADIUS = 45;
-const HEATMAP_DOT_OPACITY_MIN = 0.18;
-const HEATMAP_DOT_OPACITY_MAX = 0.46;
+const HEATMAP_DOT_OPACITY_MIN = 0.22;
+const HEATMAP_DOT_OPACITY_MAX = 0.52;
 const HEATMAP_DOT_RENDER_RATIO = 0.78;
-/** Dev preview: allow density dots to spill outside silhouette. */
-const PREVIEW_HEATMAP_OVERFLOW = true;
 
 /** Inner `g` translate (path data + clip live in this space). */
 const BODY_MAP_INNER_TX = 0;
@@ -183,10 +181,11 @@ type BodyMapProps = {
   onSelectBodyRegion?: (mainBodyPart: BodyRegionId | null) => void;
 };
 
-function interpolateHeatmapTone(t: number): string {
+/** Area view legend alignment: #ffe4e6 → #db2777 */
+function interpolatePinkDensityTone(t: number): string {
   const u = Math.min(1, Math.max(0, t));
-  const c0 = { r: 219, g: 234, b: 254 }; // soft blue
-  const c1 = { r: 17, g: 37, b: 74 }; // deep navy
+  const c0 = { r: 255, g: 228, b: 230 };
+  const c1 = { r: 219, g: 39, b: 119 };
   const lerp = (a: number, b: number) => Math.round(a + (b - a) * u);
   return `rgb(${lerp(c0.r, c1.r)}, ${lerp(c0.g, c1.g)}, ${lerp(c0.b, c1.b)})`;
 }
@@ -306,6 +305,7 @@ export function BodyMap({
   const hoverGradientId = `body-map-hover-sky-${uid}`;
   const softFillFilterId = `body-map-soft-fill-${uid}`;
   const heatLegendGradientId = `body-map-heat-legend-${uid}`;
+  const heatDotRadialGradientId = `body-map-heat-dot-radial-${uid}`;
   const rawDotsLegendGradientId = `body-map-raw-dots-legend-${uid}`;
   const rawDotsSoftBlurId = `body-map-raw-dots-soft-blur-${uid}`;
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
@@ -453,10 +453,7 @@ export function BodyMap({
       : "Body map: one dot per paper, placed randomly within each body region.";
   const mapTransform = BODY_MAP_UNIFORM_SCALE_TRANSFORM;
   const activeView = BODY_MAP_VIEW;
-  const activeClipPath =
-    variant === "countHeatmap" && PREVIEW_HEATMAP_OVERFLOW
-      ? undefined
-      : `url(#${clipPathId})`;
+  const activeClipPath = `url(#${clipPathId})`;
 
   return (
     <div className="body-map-root">
@@ -513,6 +510,18 @@ export function BodyMap({
             >
               <feGaussianBlur in="SourceGraphic" stdDeviation="4" />
             </filter>
+            <radialGradient
+              id={heatDotRadialGradientId}
+              gradientUnits="objectBoundingBox"
+              cx="0.5"
+              cy="0.5"
+              r="0.5"
+            >
+              <stop offset="0%" stopColor="#be185d" stopOpacity="1" />
+              <stop offset="38%" stopColor="#db2777" stopOpacity="0.72" />
+              <stop offset="72%" stopColor="#fb7185" stopOpacity="0.28" />
+              <stop offset="100%" stopColor="#ffe4e6" stopOpacity="0" />
+            </radialGradient>
             <clipPath id={clipPathId} clipPathUnits="userSpaceOnUse">
               <path
                 transform={`translate(${BODY_MAP_INNER_TX})`}
@@ -538,7 +547,7 @@ export function BodyMap({
               />
               <g id="layer1" transform={`translate(${BODY_MAP_INNER_TX})`}>
                 {variant === "countHeatmap" ? (
-                  <g pointerEvents="none" style={{ mixBlendMode: "multiply" }}>
+                  <g pointerEvents="none">
                     {BODY_PARTS.flatMap((part) => {
                       const c = partPaperMap[part.id] ?? 0;
                       const t = countToPerceptualNormalized(
@@ -547,7 +556,6 @@ export function BodyMap({
                       );
                       const tAdj = heatmapContrastT(t);
                       const dots = dotsByPartId[part.id] ?? [];
-                      const fill = interpolateHeatmapTone(tAdj);
                       const opacity =
                         HEATMAP_DOT_OPACITY_MIN +
                         (HEATMAP_DOT_OPACITY_MAX - HEATMAP_DOT_OPACITY_MIN) *
@@ -558,7 +566,7 @@ export function BodyMap({
                           cx={p.x}
                           cy={p.y}
                           r={HEATMAP_DOT_RADIUS}
-                          fill={fill}
+                          fill={`url(#${heatDotRadialGradientId})`}
                           fillOpacity={opacity}
                         />
                       ));
@@ -694,8 +702,8 @@ export function BodyMap({
                 x2="100%"
                 y2="0%"
               >
-                <stop offset="0%" stopColor={interpolateHeatmapTone(0)} />
-                <stop offset="100%" stopColor={interpolateHeatmapTone(1)} />
+                <stop offset="0%" stopColor={interpolatePinkDensityTone(0)} />
+                <stop offset="100%" stopColor={interpolatePinkDensityTone(1)} />
               </linearGradient>
             </defs>
             <rect
