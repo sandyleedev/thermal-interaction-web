@@ -6,24 +6,23 @@ import {
 import researchPapersJson from "@/data/researchPapers.json";
 
 export type {
-  BodyMapDetailParentId,
   BodyMapDetailRegion,
+  BodyMapParentRegion,
   BodyMapPlacementRegion,
   BodyMapRegion,
 } from "@/lib/research/bodyMapRegionUtils";
 
 export {
-  BODY_MAP_COARSE_REGION_IDS,
   BODY_MAP_L2_SUBREGIONS_BY_PARENT,
-  BODY_MAP_PHYSICAL_L1_IDS,
-  BODY_MAP_REGION_IDS,
-  bodyMapDetailKeysForPaper,
+  BODY_MAP_PARENT_REGIONS,
+  BODY_MAP_REGIONS,
+  bodyMapParentKeysForPaper,
   bodyMapPlacementRegionsForDetail,
   countPapersWithWholeBodyGeneral,
-  detailParentKeysForAggregatedCounts,
+  parentKeysForBodyMapAggregatedCounts,
   paperHasWholeBodyGeneralSite,
   paperMatchesBodyMapFineSelection,
-  paperTouchesBodyMapDetailParent,
+  paperTouchesBodyMapParent,
   resolveBodySite,
   WHOLE_BODY_GENERAL_COUNT_KEY,
 } from "@/lib/research/bodyMapRegionUtils";
@@ -32,7 +31,7 @@ export type BodySiteSide = "left" | "right" | "unspecified";
 
 /**
  * One measured / stimulated location on the body.
- * - `region` should be an L1 parent id (`head`, `arm`, …) or `wholeBody`.
+ * - `region` should be an L1 parent (`head`, `arm`, …) or `wholeBody`.
  * - `subregion` is the L2 slug (`forearm`, `palm`, …); use `general` when unknown.
  * - `side` is optional anatomical left/right when the paper reports it.
  */

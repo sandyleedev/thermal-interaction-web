@@ -22,7 +22,7 @@ import {
 } from "./bodyMapVisualization";
 import {
   WHOLE_BODY_GENERAL_COUNT_KEY,
-  type BodyMapDetailParentId,
+  type BodyMapParentRegion,
   type BodyMapPlacementRegion,
   type BodyMapRegion,
   type ResearchPaper,
@@ -57,7 +57,6 @@ type BodyPart = {
   subpaths: BodySubpath[];
 };
 
-
 type DensityAnchor = {
   x: number;
   y: number;
@@ -66,7 +65,6 @@ type DensityAnchor = {
 };
 
 const BODY_PARTS: BodyPart[] = getBodySilhouetteAsset().parts as BodyPart[];
-
 
 const REGION_DENSITY_ANCHORS: Record<BodyMapRegion, DensityAnchor[]> = {
   head: [{ x: 418, y: 198, spreadX: 20, spreadY: 22 }],
@@ -112,8 +110,8 @@ type BodyMapProps = {
    */
   heatmapScaleReferenceCounts?: Record<string, number>;
   variant?: BodyMapVariant;
-  selectedBodyRegion?: BodyMapDetailParentId | null;
-  onSelectBodyRegion?: (detailParent: BodyMapDetailParentId | null) => void;
+  selectedBodyRegion?: BodyMapParentRegion | null;
+  onSelectBodyRegion?: (parent: BodyMapParentRegion | null) => void;
 };
 
 /** Area view legend alignment: #ffe4e6 → #db2777 */
@@ -175,7 +173,9 @@ function buildPath2D(subpaths: BodySubpath[]): Path2D {
   return path;
 }
 
-function createPathPointTester(path: Path2D): ((x: number, y: number) => boolean) | null {
+function createPathPointTester(
+  path: Path2D,
+): ((x: number, y: number) => boolean) | null {
   if (typeof document === "undefined") return null;
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
@@ -184,14 +184,14 @@ function createPathPointTester(path: Path2D): ((x: number, y: number) => boolean
 }
 
 function generateAnchoredGaussianDots(
-  regionId: BodyMapRegion,
+  region: BodyMapRegion,
   regionSubpaths: BodySubpath[],
   dotCount: number,
 ): { x: number; y: number }[] {
   if (dotCount <= 0) return [];
-  const anchors = REGION_DENSITY_ANCHORS[regionId];
+  const anchors = REGION_DENSITY_ANCHORS[region];
   if (!anchors?.length) return [];
-  const rnd = mulberry32(hashStringToSeed(`${regionId}:${dotCount}`));
+  const rnd = mulberry32(hashStringToSeed(`${region}:${dotCount}`));
   const bodyPath = new Path2D(BODY_MAP_OUTLINE_PATH_D);
   const regionPath = buildPath2D(regionSubpaths);
   const isInBody = createPathPointTester(bodyPath);
@@ -334,7 +334,9 @@ export function BodyMap({
     return Math.max(
       0,
       ...rawDotsContoursByPart.flatMap((entry) =>
-        entry.contours.map((contour: ContourMultiPolygon) => contour.value ?? 0),
+        entry.contours.map(
+          (contour: ContourMultiPolygon) => contour.value ?? 0,
+        ),
       ),
     );
   }, [rawDotsContoursByPart]);
@@ -389,8 +391,7 @@ export function BodyMap({
     hoveredPartId === WHOLE_BODY_GENERAL_COUNT_KEY ||
     selectedBodyRegion === "wholeBody";
 
-  const wholeBodyRingHovered =
-    hoveredPartId === WHOLE_BODY_GENERAL_COUNT_KEY;
+  const wholeBodyRingHovered = hoveredPartId === WHOLE_BODY_GENERAL_COUNT_KEY;
 
   const clearPointerHover = useCallback(() => {
     setHoveredPartId(null);
@@ -401,7 +402,7 @@ export function BodyMap({
     (e: PointerEvent<SVGPathElement>) => {
       setHoveredPartId(WHOLE_BODY_GENERAL_COUNT_KEY);
       setTooltip({
-        label: "Whole body (general)",
+        label: "General",
         count: wholeBodyGeneralPaperCount,
         x: e.clientX,
         y: e.clientY,
@@ -622,17 +623,15 @@ export function BodyMap({
                   </g>
                 ) : null}
                 {variant === "rawDots" ? (
-                  <g
-                    pointerEvents="none"
-                    filter={`url(#${rawDotsSoftBlurId})`}
-                  >
+                  <g pointerEvents="none" filter={`url(#${rawDotsSoftBlurId})`}>
                     {rawDotsContoursByPart.flatMap((entry) => {
                       const partCount = partPaperMap[entry.partId] ?? 0;
                       const countStrength = countToPerceptualNormalized(
                         partCount,
                         countColorDomain,
                       );
-                      const countBoost = 0.35 + Math.pow(countStrength, 0.9) * 0.65;
+                      const countBoost =
+                        0.35 + Math.pow(countStrength, 0.9) * 0.65;
                       const globalMax =
                         rawDotsGlobalContourMaxValue <= 0
                           ? 1
@@ -687,17 +686,20 @@ export function BodyMap({
                       d={sp.d}
                       transform={sp.transform}
                       fill={
-                        hoveredPartId === part.id || selectedBodyRegion === part.id
+                        hoveredPartId === part.id ||
+                        selectedBodyRegion === part.id
                           ? `url(#${hoverGradientId})`
                           : "transparent"
                       }
                       fillOpacity={
-                        hoveredPartId === part.id || selectedBodyRegion === part.id
+                        hoveredPartId === part.id ||
+                        selectedBodyRegion === part.id
                           ? 0.78
                           : 1
                       }
                       filter={
-                        hoveredPartId === part.id || selectedBodyRegion === part.id
+                        hoveredPartId === part.id ||
+                        selectedBodyRegion === part.id
                           ? `url(#${softFillFilterId})`
                           : undefined
                       }
@@ -714,7 +716,10 @@ export function BodyMap({
               </g>
             </g>
 
-            <g transform={`translate(${BODY_MAP_INNER_TX})`} pointerEvents="auto">
+            <g
+              transform={`translate(${BODY_MAP_INNER_TX})`}
+              pointerEvents="auto"
+            >
               <path
                 d={BODY_MAP_OUTLINE_PATH_D}
                 fill="none"
@@ -726,7 +731,11 @@ export function BodyMap({
                 strokeLinecap="round"
                 pointerEvents="stroke"
                 mask={`url(#${wholeBodyRingMaskId})`}
-                filter={wholeBodyRingHovered ? `url(#${wholeBodyRingGlowFilterId})` : undefined}
+                filter={
+                  wholeBodyRingHovered
+                    ? `url(#${wholeBodyRingGlowFilterId})`
+                    : undefined
+                }
                 style={{ cursor: "pointer" }}
                 onPointerEnter={handleWholeBodyRingEnter}
                 onPointerMove={handlePartMove}
@@ -797,8 +806,8 @@ export function BodyMap({
           </div>
           <p className="body-map-heatmap-legend-caption">
             Paper density (low to high): {countColorDomain[0].toLocaleString()}{" "}
-            to {countColorDomain[1].toLocaleString()} papers. Hover regions or the
-            outer outline for counts (outline shows whole-body general).
+            to {countColorDomain[1].toLocaleString()} papers. Hover regions or
+            the outer outline for counts (outline shows whole-body general).
           </p>
         </div>
       ) : null}
@@ -836,8 +845,9 @@ export function BodyMap({
           </div>
           <p className="body-map-heatmap-legend-caption">
             Paper count (low to high): {countColorDomain[0].toLocaleString()} to{" "}
-            {countColorDomain[1].toLocaleString()}. Dots use d3 density smoothing
-            for visual clustering. Hover the outline for whole-body (general).
+            {countColorDomain[1].toLocaleString()}. Dots use d3 density
+            smoothing for visual clustering. Hover the outline for whole-body
+            (general).
           </p>
         </div>
       ) : null}

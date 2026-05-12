@@ -4,9 +4,9 @@ import {
   type OtherFilterCategory,
 } from "@/lib/research/otherFilterVocab";
 import {
-  type BodyMapDetailParentId,
+  type BodyMapParentRegion,
   paperMatchesBodyMapFineSelection,
-  paperTouchesBodyMapDetailParent,
+  paperTouchesBodyMapParent,
 } from "@/lib/research/bodyMapRegionUtils";
 import {
   OPTION_IDS_BY_CATEGORY,
@@ -23,8 +23,8 @@ export type OtherFilterSelections = Record<
  * Body-map facet. L1 is always used on the full-body map; L2 is reserved for the future zoomed SVG.
  */
 export type BodyMapSelection = {
-  /** L1 map filter: `BodyMapDetailParentId` (SVG row or `wholeBody`). */
-  coarseBodyRegion: BodyMapDetailParentId | null;
+  /** L1 map filter: `BodyMapParentRegion` (SVG row or `wholeBody`). */
+  coarseBodyRegion: BodyMapParentRegion | null;
   /**
    * Fine slice under `coarseBodyRegion` (Level 2). Ignored until the zoomed map exists.
    * When null/empty, only the coarse region filter applies.
@@ -80,7 +80,7 @@ export function paperMatchesBodyMapSelection(
   if (!selection?.coarseBodyRegion) return true;
   const fine = selection.fineSubregion?.trim();
   if (!fine) {
-    return paperTouchesBodyMapDetailParent(paper, selection.coarseBodyRegion);
+    return paperTouchesBodyMapParent(paper, selection.coarseBodyRegion);
   }
   return paperMatchesBodyMapFineSelection(
     paper,

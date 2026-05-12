@@ -1,6 +1,6 @@
-import { BODY_MAP_REGION_IDS } from "@/lib/research/bodyMapRegions";
+import { BODY_MAP_REGIONS } from "@/lib/research/bodyMapRegions";
 
-export { BODY_MAP_REGION_IDS };
+export { BODY_MAP_REGIONS };
 
 /**
  * Standard heatmap-style sequential ramp: blue → green → yellow → orange → red
@@ -109,12 +109,12 @@ export type HeatmapColorLegendItem = {
   rangeLabel: string;
 };
 
-/** Read count for one merged SVG part (keys from `bodyMapDetailKeysForPaper`). */
+/** Read count for one merged SVG part (keys from `bodyMapParentKeysForPaper`). */
 export function getRegionCountForBodyMapPart(
-  partId: string,
+  regionKey: string,
   raw: Record<string, number>,
 ): number {
-  return raw[partId] ?? 0;
+  return raw[regionKey] ?? 0;
 }
 
 function quantileSorted(sortedAsc: readonly number[], q: number): number {
@@ -277,8 +277,8 @@ function resolveQuantileEdges(
 export function buildGlobalHeatmapScaleFromFullDatasetCounts(
   rawGlobal: Record<string, number>,
 ): GlobalHeatmapScale {
-  const counts = BODY_MAP_REGION_IDS.map((id) =>
-    getRegionCountForBodyMapPart(id, rawGlobal),
+  const counts = BODY_MAP_REGIONS.map((region) =>
+    getRegionCountForBodyMapPart(region, rawGlobal),
   );
   const maxVal = Math.max(0, ...counts);
   const colorDomain: [number, number] =

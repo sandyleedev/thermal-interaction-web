@@ -18,10 +18,10 @@ import {
 } from "@/lib/research/filterResearchPapers";
 import {
   ALL_RESEARCH_PAPERS,
-  bodyMapDetailKeysForPaper,
+  bodyMapParentKeysForPaper,
   paperHasWholeBodyGeneralSite,
   WHOLE_BODY_GENERAL_COUNT_KEY,
-  type BodyMapDetailParentId,
+  type BodyMapParentRegion,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
 import {
@@ -44,14 +44,14 @@ type ResearchFilterContextValue = {
   paperCountsByBodyRegion: Record<string, number>;
   /** Per-option counts: pool excludes that facet’s selections; sibling counts stay stable within a section. */
   optionCounts: ReturnType<typeof otherFilterOptionCounts>;
-  /** L1 map filter: `BodyMapDetailParentId` (merged SVG row or `wholeBody`). */
-  selectedBodyRegion: BodyMapDetailParentId | null;
+  /** L1 map filter: `BodyMapParentRegion` (merged SVG row or `wholeBody`). */
+  selectedBodyRegion: BodyMapParentRegion | null;
   /**
    * L2 filter (subregion slug under `selectedBodyRegion`). Stays null until the zoomed map UI exists.
    * Wired through `bodyMapSelection` so list filters can be extended without another refactor.
    */
   selectedBodyFineSubregion: string | null;
-  setBodyMapSelection: (detailParent: BodyMapDetailParentId | null) => void;
+  setBodyMapSelection: (parent: BodyMapParentRegion | null) => void;
   /** Future L2 UI: set fine filter without clearing coarse. */
   setBodyMapFineSubregion: (fineSubregion: string | null) => void;
   clearBodyMapSelection: () => void;
@@ -77,7 +77,7 @@ const DEFAULT_DURATION: [number, number] = [10, 3600];
 function aggregateBodyCounts(papers: readonly ResearchPaper[]): Record<string, number> {
   const raw: Record<string, number> = {};
   for (const p of papers) {
-    for (const key of bodyMapDetailKeysForPaper(p)) {
+    for (const key of bodyMapParentKeysForPaper(p)) {
       raw[key] = (raw[key] ?? 0) + 1;
     }
     if (paperHasWholeBodyGeneralSite(p)) {
@@ -98,7 +98,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
   const [otherSelections, setOtherSelections] = useState<
     Record<OtherFilterCategory, string[]>
   >(() => emptyOtherFilterSelections());
-  const [selectedBodyRegion, setSelectedBodyRegion] = useState<BodyMapDetailParentId | null>(
+  const [selectedBodyRegion, setSelectedBodyRegion] = useState<BodyMapParentRegion | null>(
     null,
   );
   const [selectedBodyFineSubregion, setSelectedBodyFineSubregion] = useState<
@@ -141,8 +141,8 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
     setOtherSelections(emptyOtherFilterSelections());
   }, []);
 
-  const setBodyMapSelection = useCallback((detailParent: BodyMapDetailParentId | null) => {
-    setSelectedBodyRegion(detailParent);
+  const setBodyMapSelection = useCallback((parent: BodyMapParentRegion | null) => {
+    setSelectedBodyRegion(parent);
     setSelectedBodyFineSubregion(null);
   }, []);
 
