@@ -50,8 +50,8 @@ export function PaperDetailPage() {
 
         <dl className="paper-detail__facts">
         <div className="paper-detail__fact">
-          <dt>Body region</dt>
-          <dd>{paper.mainBodyPart}</dd>
+          <dt>Body sites</dt>
+          <dd>{paper.bodySitesSummary}</dd>
         </div>
         <div className="paper-detail__fact">
           <dt>Thermal transfer</dt>

@@ -7,6 +7,7 @@ export function BodyMapPanel() {
   const {
     paperCountsByBodyRegion,
     globalPaperCountsByBodyRegion,
+    filteredPapers,
     selectedBodyRegion,
     setBodyMapSelection,
   } = useResearchFilter();
@@ -42,6 +43,7 @@ export function BodyMapPanel() {
         <BodyMap
           variant={variant}
           paperCountsByPart={paperCountsByBodyRegion}
+          heatmapDotPapers={filteredPapers}
           heatmapScaleReferenceCounts={globalPaperCountsByBodyRegion}
           selectedBodyRegion={selectedBodyRegion}
           onSelectBodyRegion={setBodyMapSelection}

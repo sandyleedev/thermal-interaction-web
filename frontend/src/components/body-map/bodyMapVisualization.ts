@@ -1,7 +1,6 @@
-import {
-  sampleDotsInMergedBodyPartPaths,
-  type BodySubpath,
-} from "./bodyMapSampleDots";
+import { BODY_MAP_REGION_IDS } from "@/lib/research/bodyMapRegions";
+
+export { BODY_MAP_REGION_IDS };
 
 /**
  * Standard heatmap-style sequential ramp: blue → green → yellow → orange → red
@@ -103,18 +102,6 @@ export function mapCountToColor(
 
 const HEATMAP_LEGEND_BUCKET_COUNT = 4;
 
-/** Canonical order for merged body-map regions (matches BodyMap BODY_PARTS ids). */
-export const BODY_MAP_REGION_IDS = [
-  "head",
-  "neck",
-  "torso",
-  "arm",
-  "wrist",
-  "hand",
-  "leg",
-  "ankle",
-] as const;
-
 export type HeatmapColorLegendItem = {
   /** Fill at the midpoint of this paper-count band (same ramp as the map). */
   color: string;
@@ -122,25 +109,12 @@ export type HeatmapColorLegendItem = {
   rangeLabel: string;
 };
 
-/** Same limb merge rules as the body map silhouette (left/right -> merged key). */
+/** Read count for one merged SVG part (keys from `bodyMapDetailKeysForPaper`). */
 export function getRegionCountForBodyMapPart(
   partId: string,
   raw: Record<string, number>,
 ): number {
-  switch (partId) {
-    case "arm":
-      return raw.arm ?? (raw.leftArm ?? 0) + (raw.rightArm ?? 0);
-    case "wrist":
-      return raw.wrist ?? (raw.leftWrist ?? 0) + (raw.rightWrist ?? 0);
-    case "hand":
-      return raw.hand ?? (raw.leftHand ?? 0) + (raw.rightHand ?? 0);
-    case "leg":
-      return raw.leg ?? (raw.leftLeg ?? 0) + (raw.rightLeg ?? 0);
-    case "ankle":
-      return raw.ankle ?? (raw.leftAnkle ?? 0) + (raw.rightAnkle ?? 0);
-    default:
-      return raw[partId] ?? 0;
-  }
+  return raw[partId] ?? 0;
 }
 
 function quantileSorted(sortedAsc: readonly number[], q: number): number {
@@ -335,24 +309,3 @@ export function buildGlobalHeatmapScaleFromFullDatasetCounts(
   };
 }
 
-/** Cap per region so very large counts stay performant (tweak for production data). */
-const RAW_DOTS_MAX_PER_REGION = 500;
-
-type GenerateDotsForRegionOptions = {
-  maxDots?: number;
-};
-
-/**
- * Place dots inside merged region paths (silhouette-clipped sampling).
- * One dot per paper up to `maxDots`.
- */
-export function generateDotsForRegion(
-  subpaths: BodySubpath[],
-  paperCount: number,
-  options?: GenerateDotsForRegionOptions,
-): { x: number; y: number }[] {
-  const maxDots = options?.maxDots ?? RAW_DOTS_MAX_PER_REGION;
-  const n = Math.min(Math.max(0, Math.floor(paperCount)), maxDots);
-  if (n === 0) return [];
-  return sampleDotsInMergedBodyPartPaths(subpaths, n);
-}

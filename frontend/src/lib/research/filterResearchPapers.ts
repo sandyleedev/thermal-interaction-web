@@ -4,15 +4,32 @@ import {
   type OtherFilterCategory,
 } from "@/lib/research/otherFilterVocab";
 import {
-  type BodyRegionId,
+  type BodyMapDetailParentId,
+  paperMatchesBodyMapFineSelection,
+  paperTouchesBodyMapDetailParent,
+} from "@/lib/research/bodyMapRegionUtils";
+import {
   OPTION_IDS_BY_CATEGORY,
   type ResearchPaper,
   paperFieldForCategory,
 } from "@/lib/research/researchPapers";
 
-export type OtherFilterSelections = Record<OtherFilterCategory, readonly string[]>;
+export type OtherFilterSelections = Record<
+  OtherFilterCategory,
+  readonly string[]
+>;
+
+/**
+ * Body-map facet. L1 is always used on the full-body map; L2 is reserved for the future zoomed SVG.
+ */
 export type BodyMapSelection = {
-  mainBodyPart: BodyRegionId | null;
+  /** L1 map filter: `BodyMapDetailParentId` (SVG row or `wholeBody`). */
+  coarseBodyRegion: BodyMapDetailParentId | null;
+  /**
+   * Fine slice under `coarseBodyRegion` (Level 2). Ignored until the zoomed map exists.
+   * When null/empty, only the coarse region filter applies.
+   */
+  fineSubregion?: string | null;
 };
 
 export function durationRangeOverlapsFilter(
@@ -60,8 +77,16 @@ export function paperMatchesBodyMapSelection(
   paper: ResearchPaper,
   selection?: BodyMapSelection,
 ): boolean {
-  if (!selection?.mainBodyPart) return true;
-  return paper.mainBodyPart === selection.mainBodyPart;
+  if (!selection?.coarseBodyRegion) return true;
+  const fine = selection.fineSubregion?.trim();
+  if (!fine) {
+    return paperTouchesBodyMapDetailParent(paper, selection.coarseBodyRegion);
+  }
+  return paperMatchesBodyMapFineSelection(
+    paper,
+    selection.coarseBodyRegion,
+    fine,
+  );
 }
 
 export function filterResearchPapers(
@@ -74,9 +99,7 @@ export function filterResearchPapers(
   bodyMapSelection?: BodyMapSelection,
 ): ResearchPaper[] {
   return papers.filter((p) => {
-    if (
-      !rangeOverlapsFilter(p.minC, p.maxC, tempLowC, tempHighC)
-    ) {
+    if (!rangeOverlapsFilter(p.minC, p.maxC, tempLowC, tempHighC)) {
       return false;
     }
     if (

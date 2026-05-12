@@ -5,16 +5,42 @@ import {
 } from "@/lib/research/otherFilterVocab";
 import researchPapersJson from "@/data/researchPapers.json";
 
-/** Primary body region for aggregation on the body map (merged limbs). */
-export type BodyRegionId =
-  | "head"
-  | "neck"
-  | "torso"
-  | "arm"
-  | "wrist"
-  | "hand"
-  | "leg"
-  | "ankle";
+export type {
+  BodyMapDetailParentId,
+  BodyMapDetailRegion,
+  BodyMapPlacementRegion,
+  BodyMapRegion,
+} from "@/lib/research/bodyMapRegionUtils";
+
+export {
+  BODY_MAP_COARSE_REGION_IDS,
+  BODY_MAP_L2_SUBREGIONS_BY_PARENT,
+  BODY_MAP_PHYSICAL_L1_IDS,
+  BODY_MAP_REGION_IDS,
+  bodyMapDetailKeysForPaper,
+  bodyMapPlacementRegionsForDetail,
+  countPapersWithWholeBodyGeneral,
+  detailParentKeysForAggregatedCounts,
+  paperHasWholeBodyGeneralSite,
+  paperMatchesBodyMapFineSelection,
+  paperTouchesBodyMapDetailParent,
+  resolveBodySite,
+  WHOLE_BODY_GENERAL_COUNT_KEY,
+} from "@/lib/research/bodyMapRegionUtils";
+
+export type BodySiteSide = "left" | "right" | "unspecified";
+
+/**
+ * One measured / stimulated location on the body.
+ * - `region` should be an L1 parent id (`head`, `arm`, …) or `wholeBody`.
+ * - `subregion` is the L2 slug (`forearm`, `palm`, …); use `general` when unknown.
+ * - `side` is optional anatomical left/right when the paper reports it.
+ */
+export type BodySite = {
+  region: string;
+  subregion: string;
+  side?: BodySiteSide;
+};
 
 export type ResearchPaper = {
   id: string;
@@ -26,7 +52,7 @@ export type ResearchPaper = {
   maxC: number;
   durationMinS: number;
   durationMaxS: number;
-  mainBodyPart: BodyRegionId;
+  bodySites: BodySite[];
   senses: string[];
   materials: string[];
   thermalModes: string[];
@@ -36,6 +62,10 @@ export type ResearchPaper = {
 };
 export const ALL_RESEARCH_PAPERS: ResearchPaper[] =
   researchPapersJson as ResearchPaper[];
+
+export function normalizeBodySites(paper: ResearchPaper): BodySite[] {
+  return paper.bodySites ?? [];
+}
 
 export function paperFieldForCategory(
   paper: ResearchPaper,

@@ -1,5 +1,6 @@
 import {
   ALL_RESEARCH_PAPERS,
+  normalizeBodySites,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
 
@@ -10,7 +11,7 @@ export type PaperPreviewRecord = {
   authors: string;
   publicationYear: number;
   publicationVenue: string;
-  mainBodyPart: string;
+  bodySitesSummary: string;
   transferMode: string;
   temperatureRange: string;
   duration: string;
@@ -38,7 +39,7 @@ function formatDurationRange(minS: number, maxS: number): string {
   return `${formatSecondsBrief(minS)} – ${formatSecondsBrief(maxS)}`;
 }
 
-function mainBodyPartLabel(region: ResearchPaper["mainBodyPart"]): string {
+function taxonomyRegionLabel(region: string): string {
   const map: Record<string, string> = {
     head: "Head",
     neck: "Neck",
@@ -48,8 +49,29 @@ function mainBodyPartLabel(region: ResearchPaper["mainBodyPart"]): string {
     hand: "Hand",
     leg: "Leg",
     ankle: "Ankle",
+    wholeBody: "Whole body",
+    foot: "Foot",
   };
-  return map[region] ?? region;
+  return map[region] ?? titleCaseOption(region);
+}
+
+function formatBodySitesDisplay(p: ResearchPaper): string {
+  const sites = normalizeBodySites(p);
+  if (sites.length === 0) return "—";
+  return sites
+    .map((s) => {
+      const reg = taxonomyRegionLabel(s.region);
+      const sub =
+        s.subregion === "general"
+          ? "General"
+          : titleCaseOption(s.subregion.replace(/-/g, " "));
+      let line = `${reg} — ${sub}`;
+      if (s.side === "left" || s.side === "right") {
+        line += ` (${s.side === "left" ? "Left" : "Right"})`;
+      }
+      return line;
+    })
+    .join("; ");
 }
 
 function titleCaseOption(s: string): string {
@@ -63,7 +85,7 @@ function previewFromResearchPaper(p: ResearchPaper): PaperPreviewRecord {
   const tagCandidates = [
     ...p.senses.map(titleCaseOption),
     ...p.materials.map(titleCaseOption),
-    mainBodyPartLabel(p.mainBodyPart),
+    formatBodySitesDisplay(p),
     ...p.thermalModes.map(titleCaseOption),
   ];
   const keywords = [...new Set(tagCandidates.map((k) => k.trim()).filter(Boolean))];
@@ -73,7 +95,7 @@ function previewFromResearchPaper(p: ResearchPaper): PaperPreviewRecord {
     authors: p.authors?.trim() || "Unknown author",
     publicationYear: p.publicationYear ?? 2024,
     publicationVenue: p.publicationVenue?.trim() || "Unknown venue",
-    mainBodyPart: mainBodyPartLabel(p.mainBodyPart),
+    bodySitesSummary: formatBodySitesDisplay(p),
     transferMode: p.thermalModes.length ? p.thermalModes.join(", ") : "—",
     temperatureRange: `${Math.round(p.minC)}°C – ${Math.round(p.maxC)}°C`,
     duration: formatDurationRange(p.durationMinS, p.durationMaxS),
