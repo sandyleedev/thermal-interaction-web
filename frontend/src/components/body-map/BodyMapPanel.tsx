@@ -27,14 +27,14 @@ export function BodyMapPanel() {
             }
             onClick={() => setVariant("countHeatmap")}
           >
-            1
+            Dot view
           </button>
           <button
             type="button"
             className={variant === "rawDots" ? "is-active" : undefined}
             onClick={() => setVariant("rawDots")}
           >
-            2
+            Area view
           </button>
         </div>
       </div>
