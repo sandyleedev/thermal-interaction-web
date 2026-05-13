@@ -185,7 +185,7 @@ export function paperTouchesBodyMapParent(
   return false;
 }
 
-/** Head zoom map hit ids (outline `path1` uses `general`). */
+/** Head zoom map hit ids (general ring uses `general`). */
 export const HEAD_DETAIL_HIT_IDS = [
   "general",
   "forehead",

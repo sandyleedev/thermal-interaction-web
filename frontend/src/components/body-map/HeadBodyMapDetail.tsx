@@ -30,9 +30,10 @@ const HEATMAP_DOT_OPACITY_MIN = 0.22;
 const HEATMAP_DOT_OPACITY_MAX = 0.52;
 const MAX_HEATMAP_DOTS_PER_HIT = 500;
 
-/** Match {@link BodyMap} rawDots / d3-contour density estimator. */
-const HEAD_RAW_DOTS_DENSITY_BANDWIDTH = 36;
-const HEAD_RAW_DOTS_DENSITY_THRESHOLDS = 28;
+/** Finer grid + more thresholds smooth density contour edges in Area view. */
+const HEAD_RAW_DOTS_DENSITY_BANDWIDTH = 70;
+const HEAD_RAW_DOTS_DENSITY_CELL_SIZE = 2;
+const HEAD_RAW_DOTS_DENSITY_THRESHOLDS = 30;
 
 /** Fill hit ids in paint order (later = on top for pointer priority). */
 const HEAD_FILL_HIT_IDS = [
@@ -64,15 +65,27 @@ function heatmapContrastT(t: number): number {
 
 type TooltipState = { label: string; count: number; x: number; y: number };
 
-function parseHeadSubpartSvg(svgText: string): {
+/** Single asset: `head-subpart-outline-wide.svg` (head-face, head-outline, fine regions). */
+function parseHeadDetailWideSvg(svgText: string): {
   silhouetteD: string;
+  generalOutlineD: string;
+  maskFaceD: string;
   shapeByHit: Map<string, HeadShapeSpec>;
 } {
   const doc = new DOMParser().parseFromString(svgText, "image/svg+xml");
-  const silhouetteEl = doc.querySelector('path[id="path1"]');
-  const silhouetteD = silhouetteEl?.getAttribute("d")?.trim();
-  if (!silhouetteD) {
-    throw new Error('Head map SVG: expected path[id="path1"] silhouette.');
+  const faceD = doc
+    .querySelector('path[id="head-face"]')
+    ?.getAttribute("d")
+    ?.trim();
+  if (!faceD) {
+    throw new Error('Head map SVG: expected path[id="head-face"].');
+  }
+  const outlineD = doc
+    .querySelector('path[id="head-outline"]')
+    ?.getAttribute("d")
+    ?.trim();
+  if (!outlineD) {
+    throw new Error('Head map SVG: expected path[id="head-outline"].');
   }
 
   const shapeByHit = new Map<string, HeadShapeSpec>();
@@ -103,28 +116,11 @@ function parseHeadSubpartSvg(svgText: string): {
       });
     }
   }
-  return { silhouetteD, shapeByHit };
-}
-
-function parseHeadOutlineSvg(
-  svgText: string,
-  fallbackMaskFaceD: string,
-): { generalOutlineD: string; maskFaceD: string } {
-  const doc = new DOMParser().parseFromString(svgText, "image/svg+xml");
-  const outlineD = doc
-    .querySelector('path[id="head-outline"]')
-    ?.getAttribute("d")
-    ?.trim();
-  if (!outlineD) {
-    throw new Error('Head outline SVG: expected path[id="head-outline"].');
-  }
-  const faceD = doc
-    .querySelector('path[id="head-face"]')
-    ?.getAttribute("d")
-    ?.trim();
   return {
+    silhouetteD: faceD,
     generalOutlineD: outlineD,
-    maskFaceD: faceD ?? fallbackMaskFaceD,
+    maskFaceD: faceD,
+    shapeByHit,
   };
 }
 
@@ -149,9 +145,9 @@ export function HeadBodyMapDetail({
   const heatDotRadialGradientId = `head-detail-heat-radial-${uid}`;
   const generalRingMaskId = `head-detail-general-mask-${uid}`;
   const rawDotsSoftBlurId = `head-detail-raw-dots-soft-blur-${uid}`;
+  const areaMaskFeatherFilterId = `head-detail-area-mask-feather-${uid}`;
 
-  const [svgText, setSvgText] = useState<string | null>(null);
-  const [outlineSvgText, setOutlineSvgText] = useState<string | null>(null);
+  const [headWideSvgText, setHeadWideSvgText] = useState<string | null>(null);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const [hoveredHitId, setHoveredHitId] = useState<string | null>(null);
   const [dotsByHitId, setDotsByHitId] = useState<
@@ -160,27 +156,16 @@ export function HeadBodyMapDetail({
 
   useEffect(() => {
     let cancelled = false;
-    Promise.all([
-      fetch("/body-map/head-subpart.svg").then((r) => {
-        if (!r.ok) throw new Error(`main HTTP ${r.status}`);
+    fetch("/body-map/head-subpart-outline-wide.svg")
+      .then((r) => {
+        if (!r.ok) throw new Error(`head map HTTP ${r.status}`);
         return r.text();
-      }),
-      fetch("/body-map/head-subpart-outline-wide.svg").then((r) => {
-        if (!r.ok) throw new Error(`outline HTTP ${r.status}`);
-        return r.text();
-      }),
-    ])
-      .then(([main, outline]) => {
-        if (!cancelled) {
-          setSvgText(main);
-          setOutlineSvgText(outline);
-        }
+      })
+      .then((text) => {
+        if (!cancelled) setHeadWideSvgText(text);
       })
       .catch(() => {
-        if (!cancelled) {
-          setSvgText("");
-          setOutlineSvgText("");
-        }
+        if (!cancelled) setHeadWideSvgText("");
       });
     return () => {
       cancelled = true;
@@ -188,7 +173,7 @@ export function HeadBodyMapDetail({
   }, []);
 
   const headParse = useMemo(() => {
-    if (!svgText || !outlineSvgText) {
+    if (!headWideSvgText) {
       return {
         silhouetteD: "",
         generalOutlineD: "",
@@ -198,11 +183,9 @@ export function HeadBodyMapDetail({
       };
     }
     try {
-      const main = parseHeadSubpartSvg(svgText);
-      const outline = parseHeadOutlineSvg(outlineSvgText, main.silhouetteD);
+      const parsed = parseHeadDetailWideSvg(headWideSvgText);
       return {
-        ...main,
-        ...outline,
+        ...parsed,
         error: null as string | null,
       };
     } catch (e: unknown) {
@@ -215,7 +198,7 @@ export function HeadBodyMapDetail({
         error: msg,
       };
     }
-  }, [svgText, outlineSvgText]);
+  }, [headWideSvgText]);
 
   const {
     silhouetteD,
@@ -252,6 +235,7 @@ export function HeadBodyMapDetail({
       .x((d: { x: number; y: number }) => d.x)
       .y((d: { x: number; y: number }) => d.y)
       .size([vbW, vbY + vbH])
+      .cellSize(HEAD_RAW_DOTS_DENSITY_CELL_SIZE)
       .bandwidth(HEAD_RAW_DOTS_DENSITY_BANDWIDTH)
       .thresholds(HEAD_RAW_DOTS_DENSITY_THRESHOLDS);
     return HEAD_FILL_HIT_IDS.flatMap((hitId) => {
@@ -363,16 +347,15 @@ export function HeadBodyMapDetail({
             {headParseError}
           </p>
         ) : null}
-        {svgText === null || outlineSvgText === null ? (
+        {headWideSvgText === null ? (
           <p className="head-detail-loading">Loading head map…</p>
         ) : null}
-        {svgText === "" || outlineSvgText === "" ? (
+        {headWideSvgText === "" ? (
           <p className="head-detail-error" role="alert">
             Could not load head map SVG.
           </p>
         ) : null}
-        {svgText &&
-        outlineSvgText &&
+        {headWideSvgText &&
         silhouetteD &&
         generalOutlineD &&
         !headParseError ? (
@@ -422,13 +405,39 @@ export function HeadBodyMapDetail({
               </radialGradient>
               <filter
                 id={rawDotsSoftBlurId}
-                x="-40%"
-                y="-40%"
-                width="180%"
-                height="180%"
+                x="-70%"
+                y="-70%"
+                width="240%"
+                height="240%"
                 colorInterpolationFilters="sRGB"
               >
-                <feGaussianBlur in="SourceGraphic" stdDeviation="4" />
+                <feGaussianBlur in="SourceGraphic" stdDeviation="17" />
+              </filter>
+              <filter
+                id={areaMaskFeatherFilterId}
+                x="-70%"
+                y="-70%"
+                width="240%"
+                height="240%"
+                colorInterpolationFilters="sRGB"
+              >
+                <feMorphology
+                  in="SourceGraphic"
+                  operator="erode"
+                  radius="2.5"
+                  result="areaMaskInset"
+                />
+                <feGaussianBlur
+                  in="areaMaskInset"
+                  stdDeviation="14"
+                  result="areaMaskBlur"
+                />
+                <feComposite
+                  in="areaMaskBlur"
+                  in2="SourceGraphic"
+                  operator="in"
+                  result="areaMaskSoft"
+                />
               </filter>
               <mask
                 id={generalRingMaskId}
@@ -443,7 +452,7 @@ export function HeadBodyMapDetail({
                 <path d={maskFaceD} fill="black" />
                 {/*
                   Hide general-ring stroke anywhere it sits over fine subparts (cheek, ear, …),
-                  and over the face interior (head-face / path1) so the ring reads as an outer band only.
+                  and over the face interior (head-face) so the ring reads as an outer band only.
                 */}
                 {HEAD_FILL_HIT_IDS.map((hitId) => {
                   const spec = shapeByHit.get(hitId);
@@ -471,6 +480,43 @@ export function HeadBodyMapDetail({
                   );
                 })}
               </mask>
+              {HEAD_FILL_HIT_IDS.map((hitId) => {
+                const spec = shapeByHit.get(hitId);
+                if (!spec) return null;
+                const softMaskId = `head-detail-area-soft-${uid}-${hitId}`;
+                return (
+                  <mask
+                    key={softMaskId}
+                    id={softMaskId}
+                    maskUnits="userSpaceOnUse"
+                    maskContentUnits="userSpaceOnUse"
+                    x={0}
+                    y={0}
+                    width={vbW}
+                    height={vbH}
+                  >
+                    <rect x={0} y={0} width={vbW} height={vbH} fill="black" />
+                    {spec.kind === "path" ? (
+                      <path
+                        d={spec.d}
+                        transform={spec.transform}
+                        fill="white"
+                        filter={`url(#${areaMaskFeatherFilterId})`}
+                      />
+                    ) : (
+                      <ellipse
+                        cx={spec.cx}
+                        cy={spec.cy}
+                        rx={spec.rx}
+                        ry={spec.ry}
+                        transform={spec.transform}
+                        fill="white"
+                        filter={`url(#${areaMaskFeatherFilterId})`}
+                      />
+                    )}
+                  </mask>
+                );
+              })}
             </defs>
 
             <path
@@ -484,8 +530,9 @@ export function HeadBodyMapDetail({
             />
 
             {variant === "rawDots" ? (
-              <g pointerEvents="none" filter={`url(#${rawDotsSoftBlurId})`} aria-hidden>
-                {headRawDotsContoursByHit.flatMap((entry) => {
+              <g pointerEvents="none" aria-hidden>
+                {headRawDotsContoursByHit.map((entry) => {
+                  const softMaskId = `head-detail-area-soft-${uid}-${entry.hitId}`;
                   const partCount = countsByHit[entry.hitId] ?? 0;
                   const countStrength = countToPerceptualNormalized(
                     partCount,
@@ -497,44 +544,64 @@ export function HeadBodyMapDetail({
                     headRawDotsGlobalContourMaxValue <= 0
                       ? 1
                       : headRawDotsGlobalContourMaxValue;
-                  return entry.contours.map(
-                    (contour: ContourMultiPolygon, i: number) => {
-                      const d = headRawDotsContourPath(contour);
-                      if (!d) return null;
-                      const value = contour.value ?? 0;
-                      const normalized = Math.min(
-                        1,
-                        Math.max(0, value / globalMax),
-                      );
-                      const contrastAdjusted = Math.pow(normalized, 1.7);
-                      const opacity =
-                        (0.015 + contrastAdjusted * 0.9) * countBoost;
-                      return (
-                        <path
-                          key={`head-raw-density-${entry.hitId}-${i}`}
-                          d={d}
-                          fill="#db2777"
-                          fillOpacity={opacity}
-                          stroke="none"
-                          pointerEvents="none"
-                        />
-                      );
-                    },
+                  return (
+                    <g
+                      key={`head-raw-area-${entry.hitId}`}
+                      mask={`url(#${softMaskId})`}
+                    >
+                      <g filter={`url(#${rawDotsSoftBlurId})`}>
+                        {entry.contours.map(
+                          (contour: ContourMultiPolygon, i: number) => {
+                            const d = headRawDotsContourPath(contour);
+                            if (!d) return null;
+                            const value = contour.value ?? 0;
+                            const normalized = Math.min(
+                              1,
+                              Math.max(0, value / globalMax),
+                            );
+                            const contrastAdjusted = Math.pow(normalized, 1.45);
+                            const opacity =
+                              (0.012 + contrastAdjusted * 0.78) * countBoost;
+                            return (
+                              <path
+                                key={`head-raw-density-${entry.hitId}-${i}`}
+                                d={d}
+                                fill="#db2777"
+                                fillOpacity={opacity}
+                                stroke="none"
+                                pointerEvents="none"
+                              />
+                            );
+                          },
+                        )}
+                      </g>
+                    </g>
                   );
                 })}
                 {headRawDotsContoursByHit.length === 0
-                  ? HEAD_FILL_HIT_IDS.flatMap((hitId) => {
+                  ? HEAD_FILL_HIT_IDS.map((hitId) => {
+                      const softMaskId = `head-detail-area-soft-${uid}-${hitId}`;
                       const pts = dotsByHitId[hitId] ?? [];
-                      return pts.map((p, i) => (
-                        <circle
-                          key={`head-raw-fallback-${hitId}-${i}`}
-                          cx={p.x}
-                          cy={p.y}
-                          r={3.8}
-                          fill="#db2777"
-                          fillOpacity={0.42}
-                        />
-                      ));
+                      if (pts.length === 0) return null;
+                      return (
+                        <g
+                          key={`head-raw-fallback-wrap-${hitId}`}
+                          mask={`url(#${softMaskId})`}
+                        >
+                          <g filter={`url(#${rawDotsSoftBlurId})`}>
+                            {pts.map((p, i) => (
+                              <circle
+                                key={`head-raw-fallback-${hitId}-${i}`}
+                                cx={p.x}
+                                cy={p.y}
+                                r={3.8}
+                                fill="#db2777"
+                                fillOpacity={0.42}
+                              />
+                            ))}
+                          </g>
+                        </g>
+                      );
                     })
                   : null}
               </g>
@@ -642,8 +709,7 @@ export function HeadBodyMapDetail({
       </div>
 
       {variant === "rawDots" &&
-      svgText &&
-      outlineSvgText &&
+      headWideSvgText &&
       silhouetteD &&
       generalOutlineD &&
       !headParseError ? (
