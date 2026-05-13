@@ -65,6 +65,36 @@ type DensityAnchor = {
 
 const BODY_PARTS: BodyPart[] = getBodySilhouetteAsset().parts as BodyPart[];
 
+/**
+ * Z-order for interactive silhouette paths only (later = higher = receives pointer first).
+ * Default asset order is head…arm, wrist, hand — the hand fill overlaps the wrist band, so
+ * wrist was nearly impossible to pick. Rendering distal bands after neighboring parts fixes that
+ * (same idea for ankle vs foot).
+ */
+const BODY_MAP_HIT_TARGET_ORDER: readonly BodyMapRegion[] = [
+  "head",
+  "neck",
+  "torso",
+  "arm",
+  "leg",
+  "hand",
+  "foot",
+  "wrist",
+  "ankle",
+];
+
+const BODY_PARTS_FOR_HIT_TARGETS: BodyPart[] = (() => {
+  const byId = new Map(BODY_PARTS.map((p) => [p.id, p]));
+  const ordered = BODY_MAP_HIT_TARGET_ORDER.map((id) => byId.get(id)).filter(
+    (p): p is BodyPart => p != null,
+  );
+  const seen = new Set(ordered.map((p) => p.id));
+  for (const p of BODY_PARTS) {
+    if (!seen.has(p.id)) ordered.push(p);
+  }
+  return ordered;
+})();
+
 const REGION_DENSITY_ANCHORS: Record<BodyMapRegion, DensityAnchor[]> = {
   head: [{ x: 418, y: 198, spreadX: 20, spreadY: 22 }],
   neck: [{ x: 418, y: 305, spreadX: 14, spreadY: 12 }],
@@ -691,7 +721,7 @@ export function BodyMap({
                       : null}
                   </g>
                 ) : null}
-                {BODY_PARTS.flatMap((part) =>
+                {BODY_PARTS_FOR_HIT_TARGETS.flatMap((part) =>
                   part.subpaths.map((sp, i) => (
                     <path
                       key={`${part.id}-hit-${i}`}

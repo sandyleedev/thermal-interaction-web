@@ -45,8 +45,15 @@ type ResearchFilterContextValue = {
   durationDensityPapers: ResearchPaper[];
   filteredPapers: ResearchPaper[];
   filteredPaperCount: number;
-  /** Paper counts per merged body region for the filtered set. */
+  /** Paper counts per merged body region when all filters (including body map) apply. */
   paperCountsByBodyRegion: Record<string, number>;
+  /**
+   * Papers after temperature, duration, and “other” filters only — body map selection does not apply.
+   * Used for body-map dots and per-region counts so map selection stays a visual cue only.
+   */
+  bodyMapPaperPool: ResearchPaper[];
+  /** Per-region counts for the body map (tooltips, heatmap); derived from `bodyMapPaperPool`. */
+  bodyMapRegionCounts: Record<string, number>;
   /** Per-option counts: pool excludes that facet’s selections; sibling counts stay stable within a section. */
   optionCounts: ReturnType<typeof otherFilterOptionCounts>;
   /** L1 map filter: `BodyMapParentRegion` (merged SVG row or `wholeBody`). */
@@ -260,6 +267,34 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
     () => aggregateBodyCounts(filteredPapers),
     [filteredPapers],
   );
+
+  const bodyMapPaperPool = useMemo(
+    () =>
+      filterResearchPapers(
+        ALL_RESEARCH_PAPERS,
+        tempLowC,
+        tempHighC,
+        durationLowS,
+        durationHighS,
+        otherSelections,
+        undefined,
+        rangeFilterOptions,
+      ),
+    [
+      tempLowC,
+      tempHighC,
+      durationLowS,
+      durationHighS,
+      otherSelections,
+      rangeFilterOptions,
+    ],
+  );
+
+  const bodyMapRegionCounts = useMemo(
+    () => aggregateBodyCounts(bodyMapPaperPool),
+    [bodyMapPaperPool],
+  );
+
   const value = useMemo(
     (): ResearchFilterContextValue => ({
       totalPaperCount: ALL_RESEARCH_PAPERS.length,
@@ -269,6 +304,8 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       filteredPapers,
       filteredPaperCount: filteredPapers.length,
       paperCountsByBodyRegion,
+      bodyMapPaperPool,
+      bodyMapRegionCounts,
       optionCounts,
       selectedBodyRegion,
       selectedBodyFineSubregion,
@@ -294,6 +331,8 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       durationDensityPapers,
       filteredPapers,
       paperCountsByBodyRegion,
+      bodyMapPaperPool,
+      bodyMapRegionCounts,
       optionCounts,
       selectedBodyRegion,
       selectedBodyFineSubregion,
