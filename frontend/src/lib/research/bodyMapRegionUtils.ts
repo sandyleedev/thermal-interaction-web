@@ -185,6 +185,83 @@ export function paperTouchesBodyMapParent(
   return false;
 }
 
+/** Head zoom map hit ids (outline `path1` uses `general`). */
+export const HEAD_DETAIL_HIT_IDS = [
+  "general",
+  "forehead",
+  "nose",
+  "lip",
+  "tongue",
+  "left-ear",
+  "right-ear",
+  "left-cheek",
+  "right-cheek",
+] as const;
+
+export type HeadDetailHitId = (typeof HEAD_DETAIL_HIT_IDS)[number];
+
+const HEAD_DETAIL_HIT_ID_SET = new Set<string>(HEAD_DETAIL_HIT_IDS);
+
+function headEarOrCheekHit(
+  paper: BodySitesCarrier,
+  sub: "ear" | "cheek",
+  lateral: "left" | "right",
+): boolean {
+  for (const s of paper.bodySites ?? []) {
+    const resolved = resolveBodySite(s);
+    if (resolved.parent !== "head" || resolved.subregion.trim().toLowerCase() !== sub) {
+      continue;
+    }
+    const sd = (s.side ?? "").trim().toLowerCase();
+    if (sd === lateral) return true;
+    if (sd === "" || sd === "unspecified") return true;
+  }
+  return false;
+}
+
+function headExactSub(paper: BodySitesCarrier, sub: string): boolean {
+  const sl = sub.toLowerCase();
+  for (const s of paper.bodySites ?? []) {
+    const resolved = resolveBodySite(s);
+    if (resolved.parent === "head" && resolved.subregion.trim().toLowerCase() === sl) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Head L2 zoom: `general` matches only `head → general` sites; lateral hits include unspecified side.
+ */
+export function paperMatchesHeadFineSelection(
+  paper: BodySitesCarrier,
+  hit: string,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  switch (h) {
+    case "general":
+      return headExactSub(paper, "general");
+    case "forehead":
+      return headExactSub(paper, "forehead");
+    case "nose":
+      return headExactSub(paper, "nose");
+    case "lip":
+      return headExactSub(paper, "lip");
+    case "tongue":
+      return headExactSub(paper, "tongue");
+    case "left-ear":
+      return headEarOrCheekHit(paper, "ear", "left");
+    case "right-ear":
+      return headEarOrCheekHit(paper, "ear", "right");
+    case "left-cheek":
+      return headEarOrCheekHit(paper, "cheek", "left");
+    case "right-cheek":
+      return headEarOrCheekHit(paper, "cheek", "right");
+    default:
+      return false;
+  }
+}
+
 /**
  * Level-2 filter (optional). When `fineSubregion` is set, `parent` must also be set.
  * Match is case-insensitive on `subregion` after trimming.
@@ -196,6 +273,10 @@ export function paperMatchesBodyMapFineSelection(
 ): boolean {
   const needle = fineSubregion.trim().toLowerCase();
   if (!needle) return paperTouchesBodyMapParent(paper, parent);
+
+  if (parent === "head" && HEAD_DETAIL_HIT_ID_SET.has(needle)) {
+    return paperMatchesHeadFineSelection(paper, needle);
+  }
 
   for (const s of paper.bodySites ?? []) {
     const resolved = resolveBodySite(s);

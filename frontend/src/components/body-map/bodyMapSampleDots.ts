@@ -320,17 +320,18 @@ function sampleDotsInBodyPartPath(
 }
 
 /**
- * One dot inside the union of one or more subpaths (e.g. full left arm = upper + fore + shell).
+ * Rejection sample inside the union of cohort subpaths (same space as {@link sampleOneDotInCohortUnion}).
  */
-function sampleOneDotInCohortUnion(
+function sampleDotsInCohortUnion(
   subpaths: readonly BodySubpath[],
   indices: readonly number[],
+  dotCount: number,
   seedTag: string,
 ): { x: number; y: number }[] {
-  if (indices.length === 0) return [];
+  if (indices.length === 0 || dotCount <= 0) return [];
   if (indices.length === 1) {
     const sp = subpaths[indices[0]!]!;
-    return sampleDotsInBodyPartPath(sp.d, sp.transform, 1, seedTag);
+    return sampleDotsInBodyPartPath(sp.d, sp.transform, dotCount, seedTag);
   }
 
   const sampled = runWithCohortPathsInTempSvg(
@@ -355,39 +356,198 @@ function sampleOneDotInCohortUnion(
       const pt = svg.createSVGPoint();
       const seed = hashStringToSeed(seedTag);
       const rnd = mulberry32(seed === 0 ? 0x9e3779b9 : seed);
-      const maxAttempts = 120_000;
-      for (let attempts = 0; attempts < maxAttempts; attempts++) {
-        const x = minX + rnd() * (maxX - minX);
-        const y = minY + rnd() * (maxY - minY);
-        pt.x = x;
-        pt.y = y;
-        let hit: SVGPathElement | null = null;
+      const out: { x: number; y: number }[] = [];
+      let attemptLimit = Math.min(600_000, Math.max(dotCount * 900, 20_000));
+      const attemptCap = 1_200_000;
+      let attempts = 0;
+
+      while (out.length < dotCount) {
+        while (out.length < dotCount && attempts < attemptLimit) {
+          attempts += 1;
+          const x = minX + rnd() * (maxX - minX);
+          const y = minY + rnd() * (maxY - minY);
+          pt.x = x;
+          pt.y = y;
+          let hit: SVGPathElement | null = null;
+          for (const path of paths) {
+            if (path.isPointInFill(pt)) {
+              hit = path;
+              break;
+            }
+          }
+          if (!hit) continue;
+          if (!pointInsideSilhouette(silhouette, hit, pt, svg)) continue;
+          out.push(localPointToParentGroup(hit, pt));
+        }
+        if (out.length >= dotCount || attemptLimit >= attemptCap) break;
+        attemptLimit = Math.min(attemptLimit * 2, attemptCap);
+      }
+
+      const cx = (minX + maxX) / 2;
+      const cy = (minY + maxY) / 2;
+      while (out.length < dotCount) {
+        pt.x = cx;
+        pt.y = cy;
+        let pushed = false;
         for (const path of paths) {
           if (path.isPointInFill(pt)) {
-            hit = path;
+            out.push(localPointToParentGroup(path, pt));
+            pushed = true;
             break;
           }
         }
-        if (!hit) continue;
-        if (!pointInsideSilhouette(silhouette, hit, pt, svg)) continue;
-        return [localPointToParentGroup(hit, pt)];
+        if (!pushed) break;
       }
-
-      /** Bbox-center fallback (may land outside thin strokes). */
-      const cx = (minX + maxX) / 2;
-      const cy = (minY + maxY) / 2;
-      pt.x = cx;
-      pt.y = cy;
-      for (const path of paths) {
-        if (path.isPointInFill(pt)) {
-          return [localPointToParentGroup(path, pt)];
-        }
-      }
-      return [];
+      return out.slice(0, dotCount);
     },
   );
 
   return sampled ?? [];
+}
+
+/** One dot inside the union of one or more subpaths (e.g. full left arm = upper + fore + shell). */
+function sampleOneDotInCohortUnion(
+  subpaths: readonly BodySubpath[],
+  indices: readonly number[],
+  seedTag: string,
+): { x: number; y: number }[] {
+  return sampleDotsInCohortUnion(subpaths, indices, 1, seedTag);
+}
+
+function allocateIntegerShares(
+  total: number,
+  weights: readonly number[],
+): number[] {
+  const n = weights.length;
+  if (n === 0) return [];
+  const tw = weights.reduce((a, b) => a + b, 0);
+  if (tw <= 0) return Array.from({ length: n }, () => 0);
+  const raw = weights.map((w) => (total * w) / tw);
+  const floors = raw.map((x) => Math.floor(x));
+  let rem = total - floors.reduce((a, b) => a + b, 0);
+  const order = raw
+    .map((x, i) => ({ i, f: x - (floors[i] ?? 0) }))
+    .sort((a, b) => b.f - a.f);
+  for (let k = 0; k < rem; k++) {
+    const idx = order[k % n]!.i;
+    floors[idx] = (floors[idx] ?? 0) + 1;
+  }
+  return floors;
+}
+
+type AreaDensityBucket = {
+  weight: number;
+  cohort?: readonly number[];
+  subpathIndex?: number;
+};
+
+/**
+ * Area view (KDE): many samples split across {@link BodyMapPlacementRegion}-aware cohorts
+ * (e.g. arm-forearm vs arm-upper-arm), proportional to how many filtered papers hit each cohort.
+ */
+export function sampleHeatmapAreaDensityDots(
+  subpaths: readonly BodySubpath[],
+  targets: readonly HeatmapDotPlacementTarget[],
+  partId: string,
+  maxDots: number,
+): { x: number; y: number }[] {
+  if (maxDots <= 0 || targets.length === 0) return [];
+
+  const capped = targets.length > 8000 ? targets.slice(0, 8000) : targets;
+  const singles: HeatmapDotPlacementTarget[] = [];
+  const pairGroups = new Map<string, HeatmapDotPlacementTarget[]>();
+  for (const t of capped) {
+    if (t.pairKey) {
+      const arr = pairGroups.get(t.pairKey) ?? [];
+      arr.push(t);
+      pairGroups.set(t.pairKey, arr);
+    } else {
+      singles.push(t);
+    }
+  }
+
+  const buckets = new Map<string, AreaDensityBucket>();
+
+  function bump(
+    key: string,
+    delta: number,
+    fields: Omit<AreaDensityBucket, "weight">,
+  ) {
+    const cur = buckets.get(key);
+    if (cur) {
+      cur.weight += delta;
+    } else {
+      buckets.set(key, { weight: delta, ...fields });
+    }
+  }
+
+  for (const [, group] of pairGroups) {
+    if (group.length === 2) {
+      const t0 = group[0]!;
+      const t1 = group[1]!;
+      const c0 = t0.cohortSubpathIndices;
+      const c1 = t1.cohortSubpathIndices;
+      if (c0 && c1 && c0.length >= 1 && c1.length >= 1) {
+        const sorted0 = [...c0].sort((a, b) => a - b).join(",");
+        const sorted1 = [...c1].sort((a, b) => a - b).join(",");
+        bump(`${partId}\0cohort\0L\0${sorted0}`, 1, { cohort: c0 });
+        bump(`${partId}\0cohort\0R\0${sorted1}`, 1, { cohort: c1 });
+        continue;
+      }
+      if (subpaths.length === 2) {
+        group.sort((a, b) => (a.subpathIndex ?? 0) - (b.subpathIndex ?? 0));
+        const a0 = group[0]!;
+        const a1 = group[1]!;
+        bump(`${partId}\0sub\0${a0.subpathIndex ?? 0}`, 1, {
+          subpathIndex: a0.subpathIndex ?? 0,
+        });
+        bump(`${partId}\0sub\0${a1.subpathIndex ?? 0}`, 1, {
+          subpathIndex: a1.subpathIndex ?? 0,
+        });
+        continue;
+      }
+    }
+    for (const t of group) singles.push(t);
+  }
+
+  for (const t of singles) {
+    if (t.cohortSubpathIndices && t.cohortSubpathIndices.length > 0) {
+      const sorted = [...t.cohortSubpathIndices].sort((a, b) => a - b).join(",");
+      bump(`${partId}\0cohort\0solo\0${sorted}`, 1, {
+        cohort: t.cohortSubpathIndices,
+      });
+      continue;
+    }
+    const idx = t.subpathIndex ?? 0;
+    bump(`${partId}\0sub\0solo\0${idx}`, 1, { subpathIndex: idx });
+  }
+
+  const entries = [...buckets.entries()];
+  if (entries.length === 0) return [];
+
+  const weights = entries.map(([, b]) => b.weight);
+  const totalW = weights.reduce((a, b) => a + b, 0);
+  if (totalW <= 0) return [];
+
+  const alloc = allocateIntegerShares(maxDots, weights);
+  const out: { x: number; y: number }[] = [];
+
+  for (let i = 0; i < entries.length; i++) {
+    const n = alloc[i] ?? 0;
+    if (n <= 0) continue;
+    const [key, bucket] = entries[i]!;
+    const seedBase = `${key}\0area-density`;
+    if (bucket.cohort && bucket.cohort.length > 0) {
+      out.push(...sampleDotsInCohortUnion(subpaths, bucket.cohort, n, seedBase));
+    } else {
+      const idx = bucket.subpathIndex ?? 0;
+      const sp = subpaths[idx] ?? subpaths[0];
+      if (!sp) continue;
+      out.push(...sampleDotsInBodyPartPath(sp.d, sp.transform, n, seedBase));
+    }
+  }
+
+  return out;
 }
 
 /**

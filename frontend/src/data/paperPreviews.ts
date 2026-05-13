@@ -89,7 +89,7 @@ function formatBodySitesDisplay(p: ResearchPaper): string {
     .join("; ");
 }
 
-function titleCaseOption(s: string): string {
+export function titleCaseOption(s: string): string {
   return s
     .split(/[-_]/)
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))

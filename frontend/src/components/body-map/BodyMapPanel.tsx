@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import BodyMap, { type BodyMapVariant } from "./BodyMap";
+import { HeadBodyMapDetail } from "./HeadBodyMapDetail";
+import { paperTouchesBodyMapParent } from "@/lib/research/researchPapers";
 
 export function BodyMapPanel() {
   const [variant, setVariant] = useState<BodyMapVariant>("countHeatmap");
@@ -9,8 +11,19 @@ export function BodyMapPanel() {
     bodyMapRegionCounts,
     globalPaperCountsByBodyRegion,
     selectedBodyRegion,
+    selectedBodyFineSubregion,
     setBodyMapSelection,
+    setBodyMapFineSubregion,
+    clearBodyMapSelection,
   } = useResearchFilter();
+
+  const headDetailPapers = useMemo(
+    () =>
+      bodyMapPaperPool.filter((p) => paperTouchesBodyMapParent(p, "head")),
+    [bodyMapPaperPool],
+  );
+
+  const showHeadDetail = selectedBodyRegion === "head";
 
   return (
     <aside className="landing-panel landing-body-map">
@@ -40,14 +53,24 @@ export function BodyMapPanel() {
         </div>
       </div>
       <div className="panel-content panel-content-center">
-        <BodyMap
-          variant={variant}
-          paperCountsByPart={bodyMapRegionCounts}
-          heatmapDotPapers={bodyMapPaperPool}
-          heatmapScaleReferenceCounts={globalPaperCountsByBodyRegion}
-          selectedBodyRegion={selectedBodyRegion}
-          onSelectBodyRegion={setBodyMapSelection}
-        />
+        {showHeadDetail ? (
+          <HeadBodyMapDetail
+            variant={variant}
+            papers={headDetailPapers}
+            selectedFineSubregion={selectedBodyFineSubregion}
+            onSelectFine={setBodyMapFineSubregion}
+            onBack={clearBodyMapSelection}
+          />
+        ) : (
+          <BodyMap
+            variant={variant}
+            paperCountsByPart={bodyMapRegionCounts}
+            heatmapDotPapers={bodyMapPaperPool}
+            heatmapScaleReferenceCounts={globalPaperCountsByBodyRegion}
+            selectedBodyRegion={selectedBodyRegion}
+            onSelectBodyRegion={setBodyMapSelection}
+          />
+        )}
       </div>
     </aside>
   );

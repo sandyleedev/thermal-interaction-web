@@ -10,6 +10,7 @@ export type {
   BodyMapParentRegion,
   BodyMapPlacementRegion,
   BodyMapRegion,
+  HeadDetailHitId,
 } from "@/lib/research/bodyMapRegionUtils";
 
 export {
@@ -21,9 +22,11 @@ export {
   bodyMapPlacementRegionsForDetail,
   bodyMapRegionForPlacement,
   countPapersWithWholeBodyGeneral,
+  HEAD_DETAIL_HIT_IDS,
   parentKeysForBodyMapAggregatedCounts,
   paperHasWholeBodyGeneralSite,
   paperMatchesBodyMapFineSelection,
+  paperMatchesHeadFineSelection,
   paperTouchesBodyMapParent,
   resolveBodySite,
   WHOLE_BODY_GENERAL_COUNT_KEY,
@@ -67,9 +70,37 @@ export type ResearchPaper = {
   doi?: string;
   url?: string;
   technicalSummary?: string;
+  /** Rich fields from `researchPapers.json` (detail page). */
+  materialsInContactWithSkin?: string[];
+  ambientTemperatureC?: number | null;
+  thermalVocabularyDescription?: string;
+  emotionTheoriesMentioned?: string[];
+  emotionTheoriesUsage?: string;
+  emotionAffectMeasurement?: string;
+  thermalAffectJustification?: string;
+  thermalCuePurpose?: string;
+  mainActuatorForTemperatureSensation?: string;
+  mainActuatorModel?: string;
+  mainActuatorSize?: string;
+  overallDeviceSize?: string;
+  mainActuatorPossibleTemperatureRange?: string;
+  otherSensoryActuators?: string[];
+  auxiliaryHardware?: string[];
+  heatControlMethod?: string;
+  powerConsumption?: string;
+  temporalParameters?: string;
+  otherNote?: string;
+  studyMethods?: string;
+  contributions?: string;
+  contributionsToDesign?: string;
+  powerEnergyConsumption?: string;
 };
 export const ALL_RESEARCH_PAPERS: ResearchPaper[] =
   researchPapersJson as ResearchPaper[];
+
+export function getResearchPaperById(id: string): ResearchPaper | undefined {
+  return ALL_RESEARCH_PAPERS.find((p) => p.id === id);
+}
 
 export function normalizeBodySites(paper: ResearchPaper): BodySite[] {
   return paper.bodySites ?? [];

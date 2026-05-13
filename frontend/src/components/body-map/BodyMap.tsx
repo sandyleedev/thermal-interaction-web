@@ -13,6 +13,7 @@ import { getBodySilhouetteAsset } from "./bodyMapSilhouetteAsset";
 import {
   collectHeatmapDotPlacementTargetsForCoarsePart,
   MAX_HEATMAP_DOTS_PER_REGION,
+  sampleHeatmapAreaDensityDots,
   sampleHeatmapDotPlacements,
   type BodySubpath,
 } from "./bodyMapSampleDots";
@@ -56,13 +57,6 @@ type BodyPart = {
   subpaths: BodySubpath[];
 };
 
-type DensityAnchor = {
-  x: number;
-  y: number;
-  spreadX: number;
-  spreadY: number;
-};
-
 const BODY_PARTS: BodyPart[] = getBodySilhouetteAsset().parts as BodyPart[];
 
 /**
@@ -95,36 +89,6 @@ const BODY_PARTS_FOR_HIT_TARGETS: BodyPart[] = (() => {
   return ordered;
 })();
 
-const REGION_DENSITY_ANCHORS: Record<BodyMapRegion, DensityAnchor[]> = {
-  head: [{ x: 418, y: 198, spreadX: 20, spreadY: 22 }],
-  neck: [{ x: 418, y: 305, spreadX: 14, spreadY: 12 }],
-  torso: [{ x: 418, y: 610, spreadX: 84, spreadY: 120 }],
-  arm: [
-    { x: 275, y: 600, spreadX: 34, spreadY: 56 },
-    { x: 560, y: 600, spreadX: 34, spreadY: 56 },
-  ],
-  wrist: [
-    { x: 175, y: 810, spreadX: 16, spreadY: 18 },
-    { x: 660, y: 810, spreadX: 16, spreadY: 18 },
-  ],
-  hand: [
-    { x: 140, y: 900, spreadX: 22, spreadY: 24 },
-    { x: 700, y: 900, spreadX: 22, spreadY: 24 },
-  ],
-  leg: [
-    { x: 345, y: 1180, spreadX: 32, spreadY: 76 },
-    { x: 492, y: 1180, spreadX: 32, spreadY: 76 },
-  ],
-  ankle: [
-    { x: 350, y: 1555, spreadX: 14, spreadY: 14 },
-    { x: 486, y: 1555, spreadX: 14, spreadY: 14 },
-  ],
-  foot: [
-    { x: 355, y: 1665, spreadX: 26, spreadY: 20 },
-    { x: 485, y: 1665, spreadX: 26, spreadY: 20 },
-  ],
-};
-
 export type BodyMapVariant = "countHeatmap" | "rawDots";
 
 type BodyMapProps = {
@@ -155,101 +119,6 @@ function interpolatePinkDensityTone(t: number): string {
 /** Emphasize high-density differences for clearer overlap contrast. */
 function heatmapContrastT(t: number): number {
   return Math.pow(Math.min(1, Math.max(0, t)), 0.72);
-}
-
-function hashStringToSeed(s: string): number {
-  let h = 2166136261 >>> 0;
-  for (let i = 0; i < s.length; i++) {
-    h ^= s.charCodeAt(i);
-    h = Math.imul(h, 16777619) >>> 0;
-  }
-  return h >>> 0;
-}
-
-function mulberry32(seed: number) {
-  let a = seed >>> 0;
-  return () => {
-    a |= 0;
-    a = (a + 0x6d2b79f5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), a | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function gaussianRandom(rnd: () => number): number {
-  let u = 0;
-  let v = 0;
-  while (u === 0) u = rnd();
-  while (v === 0) v = rnd();
-  return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
-}
-
-function allocateAcrossAnchors(total: number, anchorCount: number): number[] {
-  if (anchorCount <= 0) return [];
-  const base = Math.floor(total / anchorCount);
-  const remainder = total % anchorCount;
-  return Array.from({ length: anchorCount }, (_, i) =>
-    i < remainder ? base + 1 : base,
-  );
-}
-
-function buildPath2D(subpaths: BodySubpath[]): Path2D {
-  const path = new Path2D();
-  for (const subpath of subpaths) {
-    path.addPath(new Path2D(subpath.d));
-  }
-  return path;
-}
-
-function createPathPointTester(
-  path: Path2D,
-): ((x: number, y: number) => boolean) | null {
-  if (typeof document === "undefined") return null;
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return null;
-  return (x: number, y: number) => ctx.isPointInPath(path, x, y);
-}
-
-function generateAnchoredGaussianDots(
-  region: BodyMapRegion,
-  regionSubpaths: BodySubpath[],
-  dotCount: number,
-): { x: number; y: number }[] {
-  if (dotCount <= 0) return [];
-  const anchors = REGION_DENSITY_ANCHORS[region];
-  if (!anchors?.length) return [];
-  const rnd = mulberry32(hashStringToSeed(`${region}:${dotCount}`));
-  const bodyPath = new Path2D(BODY_MAP_OUTLINE_PATH_D);
-  const regionPath = buildPath2D(regionSubpaths);
-  const isInBody = createPathPointTester(bodyPath);
-  const isInRegion = createPathPointTester(regionPath);
-  const pointsPerAnchor = allocateAcrossAnchors(dotCount, anchors.length);
-  const out: { x: number; y: number }[] = [];
-  for (let anchorIndex = 0; anchorIndex < anchors.length; anchorIndex++) {
-    const anchor = anchors[anchorIndex];
-    const n = pointsPerAnchor[anchorIndex] ?? 0;
-    for (let i = 0; i < n; i++) {
-      let accepted: { x: number; y: number } | null = null;
-      for (let attempt = 0; attempt < 80; attempt++) {
-        const x = anchor.x + gaussianRandom(rnd) * anchor.spreadX;
-        const y = anchor.y + gaussianRandom(rnd) * anchor.spreadY;
-        const bodyPass = isInBody ? isInBody(x, y) : true;
-        const regionPass = isInRegion ? isInRegion(x, y) : true;
-        if (bodyPass && regionPass) {
-          accepted = { x, y };
-          break;
-        }
-      }
-      if (accepted) {
-        out.push(accepted);
-      } else {
-        out.push({ x: anchor.x, y: anchor.y });
-      }
-    }
-  }
-  return out;
 }
 
 export function BodyMap({
@@ -383,17 +252,21 @@ export function BodyMap({
     for (const part of BODY_PARTS) {
       if (variant === "rawDots") {
         const papersForDots = heatmapDotPapers ?? [];
-        const n = collectHeatmapDotPlacementTargetsForCoarsePart(
+        const targets = collectHeatmapDotPlacementTargetsForCoarsePart(
           part.id,
           papersForDots,
           part.subpaths,
-        ).length;
-        const capped = Math.min(n, MAX_HEATMAP_DOTS_PER_REGION);
-        next[part.id] = generateAnchoredGaussianDots(
-          part.id,
-          part.subpaths,
-          capped,
         );
+        if (targets.length <= 0) {
+          next[part.id] = [];
+        } else {
+          next[part.id] = sampleHeatmapAreaDensityDots(
+            part.subpaths,
+            targets,
+            part.id,
+            MAX_HEATMAP_DOTS_PER_REGION,
+          );
+        }
       } else {
         const papersForDots = heatmapDotPapers ?? [];
         const targets = collectHeatmapDotPlacementTargetsForCoarsePart(
@@ -483,7 +356,7 @@ export function BodyMap({
   const ariaLabel =
     variant === "countHeatmap"
       ? "Body map: smooth density heatmap — overlapping dots encode paper concentration per region on a fixed full-dataset scale; whole-body general studies use a full-silhouette tint instead of regional dots; hover regions or the outer figure outline for counts, including whole-body (general)."
-      : "Body map: one dot per paper, placed randomly within each body region; whole-body general studies use a full-silhouette tint instead of regional dots; hover regions or the outer figure outline for whole-body (general) counts.";
+      : "Body map: area view draws placement-aware density (e.g. forearm vs upper arm) from filtered papers, then smooths it for display; whole-body general studies use a full-silhouette tint instead of regional dots; hover regions or the outer figure outline for whole-body (general) counts.";
   const mapTransform = BODY_MAP_UNIFORM_SCALE_TRANSFORM;
   const activeView = BODY_MAP_VIEW;
   const activeClipPath = `url(#${clipPathId})`;
