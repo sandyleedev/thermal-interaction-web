@@ -8,6 +8,11 @@ import {
 } from "@/lib/research/researchPapers";
 import type { BodyMapRegion } from "@/lib/research/bodyMapRegions";
 import { dotCohortPlanForResolvedSite } from "./bodyMapDotCohorts";
+
+/**
+ * Shared placement resolution + sampling for the full-body map.
+ * Dot view: {@link sampleHeatmapDotPlacements}. Area view: {@link sampleHeatmapAreaDensityDots}.
+ */
 const INNER_TX = 0;
 
 function hashStringToSeed(s: string): number {

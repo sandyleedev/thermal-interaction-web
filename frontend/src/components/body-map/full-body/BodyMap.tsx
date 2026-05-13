@@ -2,35 +2,40 @@ import {
   useCallback,
   useEffect,
   useId,
-  useLayoutEffect,
   useMemo,
   useState,
   type PointerEvent,
 } from "react";
-import { contourDensity, geoPath } from "d3";
 import type { ContourMultiPolygon } from "d3-contour";
-import { BODY_MAP_VIEW, getBodyMapOutlinePathD } from "./bodyMapOutlinePath";
+import { BODY_MAP_VIEW, getBodyMapOutlinePathD } from "../bodyMapOutlinePath";
 import {
   getBodySilhouetteAsset,
   loadBodySilhouetteAsset,
-} from "./bodyMapSilhouetteAsset";
+} from "../bodyMapSilhouetteAsset";
+import type { BodyMapVariant } from "../bodyMapVariant";
 import {
-  collectHeatmapDotPlacementTargetsForCoarsePart,
-  MAX_HEATMAP_DOTS_PER_REGION,
-  sampleHeatmapAreaDensityDots,
-  sampleHeatmapDotPlacements,
-  type BodySubpath,
-} from "./bodyMapSampleDots";
+  heatmapContrastT,
+  interpolatePinkDensityTone,
+} from "../shared/bodyMapHeatmapColors";
+import {
+  buildBodyMapAreaDensityContoursByPart,
+  createBodyMapAreaContourGeoPath,
+  maxContourValueFromLayers,
+} from "./bodyMapAreaContours";
 import {
   countToPerceptualNormalized,
   getRegionCountForBodyMapPart,
-} from "./bodyMapVisualization";
+} from "../bodyMapVisualization";
 import {
   WHOLE_BODY_GENERAL_COUNT_KEY,
   type BodyMapParentRegion,
   type BodyMapRegion,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
+import {
+  type FullBodyMapPart,
+  useBodyMapPartDots,
+} from "./useBodyMapPartDots";
 
 /**
  * Full-body map (Level 1 only in this file).
@@ -55,11 +60,7 @@ const BODY_MAP_CONTENT_SCALE_Y = 1;
 
 const BODY_MAP_UNIFORM_SCALE_TRANSFORM = `translate(${BODY_MAP_SCALE_PIVOT_OX} ${BODY_MAP_SCALE_PIVOT_OY}) scale(${BODY_MAP_CONTENT_SCALE_X} ${BODY_MAP_CONTENT_SCALE_Y}) translate(${-BODY_MAP_SCALE_PIVOT_OX} ${-BODY_MAP_SCALE_PIVOT_OY})`;
 
-type BodyPart = {
-  id: BodyMapRegion;
-  label: string;
-  subpaths: BodySubpath[];
-};
+type BodyPart = FullBodyMapPart;
 
 /**
  * Z-order for interactive silhouette paths only (later = higher = receives pointer first).
@@ -91,8 +92,6 @@ function buildBodyPartsForHitTargets(bodyParts: BodyPart[]): BodyPart[] {
   return ordered;
 }
 
-export type BodyMapVariant = "countHeatmap" | "rawDots";
-
 type BodyMapProps = {
   paperCountsByPart?: Record<string, number>;
   /**
@@ -108,20 +107,6 @@ type BodyMapProps = {
   selectedBodyRegion?: BodyMapParentRegion | null;
   onSelectBodyRegion?: (parent: BodyMapParentRegion | null) => void;
 };
-
-/** Area view legend alignment: #ffe4e6 → #db2777 */
-function interpolatePinkDensityTone(t: number): string {
-  const u = Math.min(1, Math.max(0, t));
-  const c0 = { r: 255, g: 228, b: 230 };
-  const c1 = { r: 219, g: 39, b: 119 };
-  const lerp = (a: number, b: number) => Math.round(a + (b - a) * u);
-  return `rgb(${lerp(c0.r, c1.r)}, ${lerp(c0.g, c1.g)}, ${lerp(c0.b, c1.b)})`;
-}
-
-/** Emphasize high-density differences for clearer overlap contrast. */
-function heatmapContrastT(t: number): number {
-  return Math.pow(Math.min(1, Math.max(0, t)), 0.72);
-}
 
 export function BodyMap({
   paperCountsByPart = {},
@@ -143,9 +128,6 @@ export function BodyMap({
   const wholeBodyRingGlowFilterId = `body-map-wb-ring-glow-${uid}`;
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
   const [hoveredPartId, setHoveredPartId] = useState<string | null>(null);
-  const [dotsByPartId, setDotsByPartId] = useState<
-    Record<string, { x: number; y: number }[]>
-  >({});
   const [silhouetteStatus, setSilhouetteStatus] = useState<
     "loading" | "ready" | "error"
   >("loading");
@@ -194,6 +176,14 @@ export function BodyMap({
     () => (heatmapDotPapers ?? []).map((p) => p.id).join("\0"),
     [heatmapDotPapers],
   );
+
+  const dotsByPartId = useBodyMapPartDots({
+    variant,
+    bodyParts,
+    heatmapDotPapers,
+    paperCountsKey,
+    heatmapPaperIdsKey,
+  });
 
   const wholeBodyGeneralPaperCount = useMemo(() => {
     const raw = JSON.parse(paperCountsKey) as Record<string, number>;
@@ -245,89 +235,22 @@ export function BodyMap({
     { partId: BodyMapRegion; contours: ContourMultiPolygon[] }[]
   >(() => {
     if (variant !== "rawDots") return [];
-    const parts = bodyParts;
-    const density = contourDensity<{ x: number; y: number }>()
-      .x((d: { x: number; y: number }) => d.x)
-      .y((d: { x: number; y: number }) => d.y)
-      .size([BODY_MAP_VIEW.w, BODY_MAP_VIEW.y + BODY_MAP_VIEW.h])
-      .bandwidth(36)
-      .thresholds(28);
-    return parts
-      .map((part) => {
-        const points = dotsByPartId[part.id] ?? [];
-        if (points.length < 2) return null;
-        const contours = density(points);
-        return { partId: part.id, contours };
-      })
-      .filter(
-        (
-          entry,
-        ): entry is {
-          partId: BodyMapRegion;
-          contours: ContourMultiPolygon[];
-        } => entry !== null,
-      );
+    return buildBodyMapAreaDensityContoursByPart(bodyParts, dotsByPartId);
   }, [dotsByPartId, variant, bodyParts]);
-  const rawDotsGlobalContourMaxValue = useMemo(() => {
-    return Math.max(
-      0,
-      ...rawDotsContoursByPart.flatMap((entry) =>
-        entry.contours.map(
-          (contour: ContourMultiPolygon) => contour.value ?? 0,
-        ),
-      ),
-    );
-  }, [rawDotsContoursByPart]);
-  const rawDotsContourPath = useMemo(() => geoPath(), []);
+  const rawDotsGlobalContourMaxValue = useMemo(
+    () => maxContourValueFromLayers(rawDotsContoursByPart),
+    [rawDotsContoursByPart],
+  );
+  const rawDotsContourPath = useMemo(
+    () => createBodyMapAreaContourGeoPath(),
+    [],
+  );
   const rawDotsLegendTicks = useMemo(() => {
     const lo = countColorDomain[0];
     const hi = countColorDomain[1];
     const mid = lo + (hi - lo) / 2;
     return [lo, mid, hi].map((v) => Math.round(v));
   }, [countColorDomain]);
-
-  useLayoutEffect(() => {
-    let cancelled = false;
-    const next: Record<string, { x: number; y: number }[]> = {};
-    for (const part of bodyParts) {
-      if (variant === "rawDots") {
-        const papersForDots = heatmapDotPapers ?? [];
-        const targets = collectHeatmapDotPlacementTargetsForCoarsePart(
-          part.id,
-          papersForDots,
-          part.subpaths,
-        );
-        if (targets.length <= 0) {
-          next[part.id] = [];
-        } else {
-          next[part.id] = sampleHeatmapAreaDensityDots(
-            part.subpaths,
-            targets,
-            part.id,
-            MAX_HEATMAP_DOTS_PER_REGION,
-          );
-        }
-      } else {
-        const papersForDots = heatmapDotPapers ?? [];
-        const targets = collectHeatmapDotPlacementTargetsForCoarsePart(
-          part.id,
-          papersForDots,
-          part.subpaths,
-        );
-        next[part.id] = sampleHeatmapDotPlacements(
-          part.subpaths,
-          targets,
-          part.id,
-        );
-      }
-    }
-    queueMicrotask(() => {
-      if (!cancelled) setDotsByPartId(next);
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [paperCountsKey, variant, heatmapPaperIdsKey, heatmapDotPapers, bodyParts]);
 
   const wholeBodyOutlineActive =
     hoveredPartId === WHOLE_BODY_GENERAL_COUNT_KEY ||

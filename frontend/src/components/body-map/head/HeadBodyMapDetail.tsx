@@ -4,21 +4,23 @@ import {
   useId,
   useLayoutEffect,
   useMemo,
+  useRef,
   useState,
   type PointerEvent,
 } from "react";
 import { contourDensity, geoPath } from "d3";
 import type { ContourMultiPolygon } from "d3-contour";
+import { areaDotsLruPut, areaDotsLruTouch } from "../shared/bodyMapAreaDotsCache";
 import {
   buildHeadAreaDensityDotsByHitId,
   buildHeadDotsByHitId,
   HEAD_DETAIL_VIEWBOX,
   type HeadShapeSpec,
 } from "./headDetailSampleDots";
-import type { BodyMapVariant } from "./BodyMap";
+import type { BodyMapVariant } from "../bodyMapVariant";
 import {
   countToPerceptualNormalized,
-} from "./bodyMapVisualization";
+} from "../bodyMapVisualization";
 import {
   paperMatchesHeadFineSelection,
   type ResearchPaper,
@@ -154,6 +156,10 @@ export function HeadBodyMapDetail({
     Record<string, { x: number; y: number }[]>
   >({});
 
+  const headAreaDotsSampleCacheRef = useRef<
+    Map<string, Record<string, { x: number; y: number }[]>>
+  >(new Map());
+
   useEffect(() => {
     let cancelled = false;
     fetch("/body-map/head-subpart-outline-wide.svg")
@@ -209,6 +215,11 @@ export function HeadBodyMapDetail({
   } = headParse;
 
   const paperIdsKey = useMemo(() => papers.map((p) => p.id).join("\0"), [papers]);
+
+  const shapeByHitKey = useMemo(
+    () => [...shapeByHit.keys()].sort().join("\0"),
+    [shapeByHit],
+  );
 
   const countsByHit = useMemo(() => {
     const keys = ["general", ...HEAD_FILL_HIT_IDS] as const;
@@ -266,6 +277,23 @@ export function HeadBodyMapDetail({
   useLayoutEffect(() => {
     if (!shapeByHit.size) return;
     let cancelled = false;
+    const areaCacheKey = `${paperIdsKey}\0${shapeByHitKey}`;
+
+    if (variant === "rawDots") {
+      const cached = areaDotsLruTouch(
+        headAreaDotsSampleCacheRef.current,
+        areaCacheKey,
+      );
+      if (cached) {
+        queueMicrotask(() => {
+          if (!cancelled) setDotsByHitId(structuredClone(cached));
+        });
+        return () => {
+          cancelled = true;
+        };
+      }
+    }
+
     const next =
       variant === "rawDots"
         ? buildHeadAreaDensityDotsByHitId(
@@ -274,13 +302,22 @@ export function HeadBodyMapDetail({
             MAX_HEATMAP_DOTS_PER_HIT,
           )
         : buildHeadDotsByHitId(papers, shapeByHit, MAX_HEATMAP_DOTS_PER_HIT);
+
+    if (variant === "rawDots") {
+      areaDotsLruPut(
+        headAreaDotsSampleCacheRef.current,
+        areaCacheKey,
+        structuredClone(next),
+      );
+    }
+
     queueMicrotask(() => {
       if (!cancelled) setDotsByHitId(next);
     });
     return () => {
       cancelled = true;
     };
-  }, [shapeByHit, paperIdsKey, papers, variant]);
+  }, [shapeByHit, paperIdsKey, papers, variant, shapeByHitKey]);
 
   const clearHover = useCallback(() => {
     setHoveredHitId(null);

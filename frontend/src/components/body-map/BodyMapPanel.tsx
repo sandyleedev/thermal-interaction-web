@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
-import BodyMap, { type BodyMapVariant } from "./BodyMap";
-import { HeadBodyMapDetail } from "./HeadBodyMapDetail";
+import BodyMap from "./full-body/BodyMap";
+import type { BodyMapVariant } from "./bodyMapVariant";
+import { HeadBodyMapDetail } from "./head/HeadBodyMapDetail";
 import { paperTouchesBodyMapParent } from "@/lib/research/researchPapers";
 
 export function BodyMapPanel() {
