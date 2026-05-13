@@ -39,6 +39,20 @@ function formatDurationRange(minS: number, maxS: number): string {
   return `${formatSecondsBrief(minS)} – ${formatSecondsBrief(maxS)}`;
 }
 
+function formatTemperatureRangeDisplay(p: ResearchPaper): string {
+  if (p.minC != null && p.maxC != null) {
+    return `${Math.round(p.minC)}°C – ${Math.round(p.maxC)}°C`;
+  }
+  return "N/A";
+}
+
+function formatDurationRangeDisplay(p: ResearchPaper): string {
+  if (p.durationMinS != null && p.durationMaxS != null) {
+    return formatDurationRange(p.durationMinS, p.durationMaxS);
+  }
+  return "N/A";
+}
+
 function taxonomyRegionLabel(region: string): string {
   const map: Record<string, string> = {
     head: "Head",
@@ -97,8 +111,8 @@ function previewFromResearchPaper(p: ResearchPaper): PaperPreviewRecord {
     publicationVenue: p.publicationVenue?.trim() || "Unknown venue",
     bodySitesSummary: formatBodySitesDisplay(p),
     transferMode: p.thermalModes.length ? p.thermalModes.join(", ") : "—",
-    temperatureRange: `${Math.round(p.minC)}°C – ${Math.round(p.maxC)}°C`,
-    duration: formatDurationRange(p.durationMinS, p.durationMaxS),
+    temperatureRange: formatTemperatureRangeDisplay(p),
+    duration: formatDurationRangeDisplay(p),
     keywords,
     thumbnailUrls: thumbnailUrlsForDoi(p.doi),
     abstract:

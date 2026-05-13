@@ -81,7 +81,9 @@ export function TemperaturePanelHorizontal({
 
   const centerTemps = useMemo(
     () =>
-      temperatureDensityPapers.map((p) => (p.minC + p.maxC) / 2),
+      temperatureDensityPapers
+        .filter((p) => p.minC != null && p.maxC != null)
+        .map((p) => ((p.minC as number) + (p.maxC as number)) / 2),
     [temperatureDensityPapers],
   );
 

@@ -49,10 +49,17 @@ export type ResearchPaper = {
   authors?: string;
   publicationYear?: number;
   publicationVenue?: string;
-  minC: number;
-  maxC: number;
-  durationMinS: number;
-  durationMaxS: number;
+  /**
+   * Reported stimulus / study temperature bounds (°C), or `null` when not reported or not applicable.
+   * Use `null` for both when the paper does not give a numeric range (do not invent placeholders).
+   */
+  minC: number | null;
+  maxC: number | null;
+  /**
+   * Stimulus or study block duration bounds (seconds), or `null` when not reported or not applicable.
+   */
+  durationMinS: number | null;
+  durationMaxS: number | null;
   bodySites: BodySite[];
   senses: string[];
   materials: string[];

@@ -91,11 +91,17 @@ export function tempToCoolWarmColor(tempC: number): string {
   return `rgb(${r},${g},${b})`;
 }
 
+/**
+ * True when the paper's reported [minC, maxC] overlaps the filter window.
+ * If either bound is missing (`null` / `undefined`), the paper is **not** excluded by the
+ * temperature slider (unknown range is treated as unconstrained on this axis).
+ */
 export function rangeOverlapsFilter(
-  minC: number,
-  maxC: number,
+  minC: number | null | undefined,
+  maxC: number | null | undefined,
   filterLow: number,
   filterHigh: number,
 ): boolean {
+  if (minC == null || maxC == null) return true;
   return maxC >= filterLow && minC <= filterHigh;
 }

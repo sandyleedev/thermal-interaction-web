@@ -32,12 +32,16 @@ export type BodyMapSelection = {
   fineSubregion?: string | null;
 };
 
+/**
+ * Like {@link rangeOverlapsFilter}: missing bounds mean this axis does not exclude the paper.
+ */
 export function durationRangeOverlapsFilter(
-  minS: number,
-  maxS: number,
+  minS: number | null | undefined,
+  maxS: number | null | undefined,
   filterLowS: number,
   filterHighS: number,
 ): boolean {
+  if (minS == null || maxS == null) return true;
   return maxS >= filterLowS && minS <= filterHighS;
 }
 

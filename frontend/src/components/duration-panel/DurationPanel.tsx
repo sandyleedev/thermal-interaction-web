@@ -128,7 +128,9 @@ export function DurationPanel() {
     durationAxisTotal > 0 ? (durationAxisSelected / durationAxisTotal) * 100 : 0;
   const centerDurationsS = useMemo(
     () =>
-      durationDensityPapers.map((paper) => (paper.durationMinS + paper.durationMaxS) / 2),
+      durationDensityPapers
+        .filter((p) => p.durationMinS != null && p.durationMaxS != null)
+        .map((p) => ((p.durationMinS as number) + (p.durationMaxS as number)) / 2),
     [durationDensityPapers],
   );
   const kdePaths = useMemo(
