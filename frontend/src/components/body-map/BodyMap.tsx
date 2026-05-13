@@ -1,5 +1,6 @@
 import {
   useCallback,
+  useEffect,
   useId,
   useLayoutEffect,
   useMemo,
@@ -8,8 +9,11 @@ import {
 } from "react";
 import { contourDensity, geoPath } from "d3";
 import type { ContourMultiPolygon } from "d3-contour";
-import { BODY_MAP_OUTLINE_PATH_D, BODY_MAP_VIEW } from "./bodyMapOutlinePath";
-import { getBodySilhouetteAsset } from "./bodyMapSilhouetteAsset";
+import { BODY_MAP_VIEW, getBodyMapOutlinePathD } from "./bodyMapOutlinePath";
+import {
+  getBodySilhouetteAsset,
+  loadBodySilhouetteAsset,
+} from "./bodyMapSilhouetteAsset";
 import {
   collectHeatmapDotPlacementTargetsForCoarsePart,
   MAX_HEATMAP_DOTS_PER_REGION,
@@ -31,7 +35,7 @@ import {
 /**
  * Full-body map (Level 1 only in this file).
  *
- * - Part geometry is parsed from `body-silhouette-parts.svg` (see `bodyMapSilhouetteAsset.ts`).
+ * - Part geometry is parsed from `public/body-map/body-silhouette-parts.svg` (see `bodyMapSilhouetteAsset.ts`).
  * - Level 2 zoomed SVG + fine hit targets will live in a separate component later; filtering hooks already exist
  *   on context (`selectedBodyFineSubregion` + `BodyMapSelection.fineSubregion`).
  */
@@ -57,8 +61,6 @@ type BodyPart = {
   subpaths: BodySubpath[];
 };
 
-const BODY_PARTS: BodyPart[] = getBodySilhouetteAsset().parts as BodyPart[];
-
 /**
  * Z-order for interactive silhouette paths only (later = higher = receives pointer first).
  * Default asset order is head…arm, wrist, hand — the hand fill overlaps the wrist band, so
@@ -77,17 +79,17 @@ const BODY_MAP_HIT_TARGET_ORDER: readonly BodyMapRegion[] = [
   "ankle",
 ];
 
-const BODY_PARTS_FOR_HIT_TARGETS: BodyPart[] = (() => {
-  const byId = new Map(BODY_PARTS.map((p) => [p.id, p]));
+function buildBodyPartsForHitTargets(bodyParts: BodyPart[]): BodyPart[] {
+  const byId = new Map(bodyParts.map((p) => [p.id, p]));
   const ordered = BODY_MAP_HIT_TARGET_ORDER.map((id) => byId.get(id)).filter(
     (p): p is BodyPart => p != null,
   );
   const seen = new Set(ordered.map((p) => p.id));
-  for (const p of BODY_PARTS) {
+  for (const p of bodyParts) {
     if (!seen.has(p.id)) ordered.push(p);
   }
   return ordered;
-})();
+}
 
 export type BodyMapVariant = "countHeatmap" | "rawDots";
 
@@ -144,6 +146,44 @@ export function BodyMap({
   const [dotsByPartId, setDotsByPartId] = useState<
     Record<string, { x: number; y: number }[]>
   >({});
+  const [silhouetteStatus, setSilhouetteStatus] = useState<
+    "loading" | "ready" | "error"
+  >("loading");
+  const [silhouetteErrorMsg, setSilhouetteErrorMsg] = useState<string | null>(
+    null,
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    loadBodySilhouetteAsset()
+      .then(() => {
+        if (!cancelled) setSilhouetteStatus("ready");
+      })
+      .catch((e: unknown) => {
+        if (!cancelled) {
+          setSilhouetteStatus("error");
+          setSilhouetteErrorMsg(e instanceof Error ? e.message : String(e));
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const bodyParts = useMemo((): BodyPart[] => {
+    if (silhouetteStatus !== "ready") return [];
+    return getBodySilhouetteAsset().parts as BodyPart[];
+  }, [silhouetteStatus]);
+
+  const bodyPartsForHitTargets = useMemo(
+    () => buildBodyPartsForHitTargets(bodyParts),
+    [bodyParts],
+  );
+
+  const outlinePathD = useMemo(
+    () => (silhouetteStatus === "ready" ? getBodyMapOutlinePathD() : ""),
+    [silhouetteStatus],
+  );
 
   const paperCountsKey = useMemo(
     () => JSON.stringify(paperCountsByPart),
@@ -163,11 +203,11 @@ export function BodyMap({
   const partPaperMap = useMemo(() => {
     const raw = JSON.parse(paperCountsKey) as Record<string, number>;
     const m: Record<string, number> = {};
-    for (const p of BODY_PARTS) {
+    for (const p of bodyParts) {
       m[p.id] = getRegionCountForBodyMapPart(p.id, raw);
     }
     return m;
-  }, [paperCountsKey]);
+  }, [paperCountsKey, bodyParts]);
 
   const rawForGlobalHeatmapScale =
     heatmapScaleReferenceCounts ?? paperCountsByPart;
@@ -175,12 +215,12 @@ export function BodyMap({
   const countColorDomain = useMemo<[number, number]>(() => {
     const maxVal = Math.max(
       0,
-      ...BODY_PARTS.map((part) =>
+      ...bodyParts.map((part) =>
         getRegionCountForBodyMapPart(part.id, rawForGlobalHeatmapScale),
       ),
     );
     return maxVal <= 0 ? [0, 1] : [0, maxVal];
-  }, [rawForGlobalHeatmapScale]);
+  }, [rawForGlobalHeatmapScale, bodyParts]);
 
   const wholeBodySilhouetteTint = useMemo(() => {
     if (wholeBodyGeneralPaperCount <= 0) return null;
@@ -205,7 +245,7 @@ export function BodyMap({
     { partId: BodyMapRegion; contours: ContourMultiPolygon[] }[]
   >(() => {
     if (variant !== "rawDots") return [];
-    const parts = BODY_PARTS;
+    const parts = bodyParts;
     const density = contourDensity<{ x: number; y: number }>()
       .x((d: { x: number; y: number }) => d.x)
       .y((d: { x: number; y: number }) => d.y)
@@ -227,7 +267,7 @@ export function BodyMap({
           contours: ContourMultiPolygon[];
         } => entry !== null,
       );
-  }, [dotsByPartId, variant]);
+  }, [dotsByPartId, variant, bodyParts]);
   const rawDotsGlobalContourMaxValue = useMemo(() => {
     return Math.max(
       0,
@@ -249,7 +289,7 @@ export function BodyMap({
   useLayoutEffect(() => {
     let cancelled = false;
     const next: Record<string, { x: number; y: number }[]> = {};
-    for (const part of BODY_PARTS) {
+    for (const part of bodyParts) {
       if (variant === "rawDots") {
         const papersForDots = heatmapDotPapers ?? [];
         const targets = collectHeatmapDotPlacementTargetsForCoarsePart(
@@ -287,7 +327,7 @@ export function BodyMap({
     return () => {
       cancelled = true;
     };
-  }, [paperCountsKey, variant, heatmapPaperIdsKey, heatmapDotPapers]);
+  }, [paperCountsKey, variant, heatmapPaperIdsKey, heatmapDotPapers, bodyParts]);
 
   const wholeBodyOutlineActive =
     hoveredPartId === WHOLE_BODY_GENERAL_COUNT_KEY ||
@@ -374,6 +414,15 @@ export function BodyMap({
             Clear
           </button>
         ) : null}
+        {silhouetteStatus === "loading" ? (
+          <p className="body-map-loading">Loading body map…</p>
+        ) : null}
+        {silhouetteStatus === "error" ? (
+          <p className="body-map-error" role="alert">
+            {silhouetteErrorMsg ?? "Could not load body map SVG."}
+          </p>
+        ) : null}
+        {silhouetteStatus === "ready" ? (
         <svg
           className="body-map-svg"
           width="100%"
@@ -459,7 +508,7 @@ export function BodyMap({
             <clipPath id={clipPathId} clipPathUnits="userSpaceOnUse">
               <path
                 transform={`translate(${BODY_MAP_INNER_TX})`}
-                d={BODY_MAP_OUTLINE_PATH_D}
+                d={outlinePathD}
               />
             </clipPath>
             <mask
@@ -480,7 +529,7 @@ export function BodyMap({
               />
               <path
                 transform={`translate(${BODY_MAP_INNER_TX})`}
-                d={BODY_MAP_OUTLINE_PATH_D}
+                d={outlinePathD}
                 fill="black"
               />
             </mask>
@@ -497,14 +546,14 @@ export function BodyMap({
               />
               <path
                 transform={`translate(${BODY_MAP_INNER_TX})`}
-                d={BODY_MAP_OUTLINE_PATH_D}
+                d={outlinePathD}
                 fill="transparent"
                 pointerEvents="none"
               />
               <g id="layer1" transform={`translate(${BODY_MAP_INNER_TX})`}>
                 {wholeBodySilhouetteTint ? (
                   <path
-                    d={BODY_MAP_OUTLINE_PATH_D}
+                    d={outlinePathD}
                     fill={wholeBodySilhouetteTint.fill}
                     fillOpacity={wholeBodySilhouetteTint.fillOpacity}
                     stroke="none"
@@ -513,7 +562,7 @@ export function BodyMap({
                 ) : null}
                 {variant === "countHeatmap" ? (
                   <g pointerEvents="none">
-                    {BODY_PARTS.flatMap((part) => {
+                    {bodyParts.flatMap((part) => {
                       const c = partPaperMap[part.id] ?? 0;
                       const t = countToPerceptualNormalized(
                         c,
@@ -578,7 +627,7 @@ export function BodyMap({
                       );
                     })}
                     {rawDotsContoursByPart.length === 0
-                      ? BODY_PARTS.flatMap((part) => {
+                      ? bodyParts.flatMap((part) => {
                           const dots = dotsByPartId[part.id] ?? [];
                           return dots.map((p, i) => (
                             <circle
@@ -594,7 +643,7 @@ export function BodyMap({
                       : null}
                   </g>
                 ) : null}
-                {BODY_PARTS_FOR_HIT_TARGETS.flatMap((part) =>
+                {bodyPartsForHitTargets.flatMap((part) =>
                   part.subpaths.map((sp, i) => (
                     <path
                       key={`${part.id}-hit-${i}`}
@@ -637,7 +686,7 @@ export function BodyMap({
               pointerEvents="auto"
             >
               <path
-                d={BODY_MAP_OUTLINE_PATH_D}
+                d={outlinePathD}
                 fill="none"
                 stroke={wholeBodyHitRingVisible ? "#fbcfe8" : "transparent"}
                 strokeOpacity={
@@ -662,7 +711,7 @@ export function BodyMap({
                 aria-label="Whole body (general) paper count along the figure outline"
               />
               <path
-                d={BODY_MAP_OUTLINE_PATH_D}
+                d={outlinePathD}
                 fill="none"
                 stroke={wholeBodyOutlineActive ? "#db2777" : "#1e293b"}
                 strokeOpacity={wholeBodyOutlineActive ? 0.82 : 0.65}
@@ -676,9 +725,10 @@ export function BodyMap({
             </g>
           </g>
         </svg>
+        ) : null}
       </div>
 
-      {variant === "countHeatmap" ? (
+      {silhouetteStatus === "ready" && variant === "countHeatmap" ? (
         <div className="body-map-heatmap-legend">
           <svg
             width="100%"
@@ -729,7 +779,7 @@ export function BodyMap({
           </p>
         </div>
       ) : null}
-      {variant === "rawDots" ? (
+      {silhouetteStatus === "ready" && variant === "rawDots" ? (
         <div className="body-map-heatmap-legend">
           <svg
             width="100%"

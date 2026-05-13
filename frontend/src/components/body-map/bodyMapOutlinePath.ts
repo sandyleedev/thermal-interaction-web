@@ -1,10 +1,8 @@
 /**
  * User-space viewBox + outer silhouette `d` for the body map and for temp SVG in `bodyMapSampleDots`.
- * Values come from {@link getBodySilhouetteAsset} (`body-silhouette-parts.svg`).
+ * Outline `d` comes from {@link getBodySilhouetteAsset} after {@link loadBodySilhouetteAsset}.
  */
 import { getBodySilhouetteAsset } from "./bodyMapSilhouetteAsset";
-
-const b = getBodySilhouetteAsset();
 
 /**
  * Cropped viewport (legacy framing): trims ~70px at the top of the raw SVG viewBox so the
@@ -18,4 +16,6 @@ export const BODY_MAP_VIEW = {
 } as const;
 
 /** Body silhouette `d` — same as clip path; used for dot sampling inside visible fill. */
-export const BODY_MAP_OUTLINE_PATH_D = b.outlinePathD;
+export function getBodyMapOutlinePathD(): string {
+  return getBodySilhouetteAsset().outlinePathD;
+}

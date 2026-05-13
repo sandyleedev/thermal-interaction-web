@@ -1,4 +1,4 @@
-import { BODY_MAP_OUTLINE_PATH_D, BODY_MAP_VIEW } from "./bodyMapOutlinePath";
+import { BODY_MAP_VIEW, getBodyMapOutlinePathD } from "./bodyMapOutlinePath";
 import {
   bodyMapPlacementRegionsForDetail,
   bodyMapRegionForPlacement,
@@ -97,7 +97,7 @@ function runWithBodyPartPathInTempSvg<T>(
     "http://www.w3.org/2000/svg",
     "path",
   );
-  silhouette.setAttribute("d", BODY_MAP_OUTLINE_PATH_D);
+  silhouette.setAttribute("d", getBodyMapOutlinePathD());
   silhouette.setAttribute("fill", "#000");
 
   const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -148,7 +148,7 @@ function runWithTwoBodyPartPathsInTempSvg<T>(
     "http://www.w3.org/2000/svg",
     "path",
   );
-  silhouette.setAttribute("d", BODY_MAP_OUTLINE_PATH_D);
+  silhouette.setAttribute("d", getBodyMapOutlinePathD());
   silhouette.setAttribute("fill", "#000");
 
   const path0 = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -201,7 +201,7 @@ function runWithCohortPathsInTempSvg<T>(
     "http://www.w3.org/2000/svg",
     "path",
   );
-  silhouette.setAttribute("d", BODY_MAP_OUTLINE_PATH_D);
+  silhouette.setAttribute("d", getBodyMapOutlinePathD());
   silhouette.setAttribute("fill", "#000");
 
   const paths: SVGPathElement[] = [];

@@ -1,13 +1,14 @@
 /**
- * L1 body map geometry from `src/assets/body-map/body-silhouette-parts.svg`
- * (kept in sync with `public/body-map/body-silhouette-parts.svg` for direct URL use).
+ * L1 body map geometry from `public/body-map/body-silhouette-parts.svg`
+ * (loaded at runtime; add new map SVGs under `public/body-map/` the same way).
  *
  * Inkscape `inkscape:label` values are grouped into merged SVG hit regions (`BodyMapRegion`).
  * The "Base" path is the full silhouette outline (clip + stroke), not a hover part.
  */
 
-import rawSvg from "@/assets/body-map/body-silhouette-parts.svg?raw";
 import type { BodyMapRegion } from "@/lib/research/researchPapers";
+
+const SILHOUETTE_URL = "/body-map/body-silhouette-parts.svg";
 
 export type SilhouetteBodySubpath = { d: string; transform?: string; label: string };
 
@@ -17,12 +18,14 @@ export type SilhouetteBodyPart = {
   subpaths: SilhouetteBodySubpath[];
 };
 
-/** Parsed once on first read (browser only — uses DOMParser). */
-let cache: {
+type ParsedSilhouette = {
   view: { x: number; y: number; w: number; h: number };
   outlinePathD: string;
   parts: readonly SilhouetteBodyPart[];
-} | null = null;
+};
+
+let cache: ParsedSilhouette | null = null;
+let inflight: Promise<void> | null = null;
 
 /**
  * Maps Inkscape layer labels from the source SVG to merged L1 parts.
@@ -51,7 +54,19 @@ const PART_INKSCAPE_LABELS: {
   {
     id: "torso",
     label: "Torso",
-    labels: ["Torso", "RightShoulder", "LeftShoulder", "Chest", "Abdomen"],
+    labels: [
+      "Torso",
+      "RightShoulder",
+      "LeftShoulder",
+      "Chest",
+      "Abdomen",
+      /* Illustrator export: shoulder / midriff fragments without inkscape labels */
+      "path37",
+      "path32",
+      "path33",
+      "path41",
+      "path42",
+    ],
   },
   {
     id: "arm",
@@ -80,29 +95,28 @@ const PART_INKSCAPE_LABELS: {
     ],
   },
   { id: "ankle", label: "Ankle", labels: ["LeftAnkle", "RightAnkle"] },
-  /** Source file typo: "RIghtFoot" — keep both spellings. */
-  { id: "foot", label: "Foot", labels: ["LeftFoot", "RIghtFoot"] },
+  /** Inkscape typo "RIghtFoot"; Illustrator uses `RightFoot`. */
+  { id: "foot", label: "Foot", labels: ["LeftFoot", "RIghtFoot", "RightFoot"] },
 ];
 
-function inkscapeLabel(el: Element): string {
-  return (
+/** Inkscape label if present, otherwise `id` (Illustrator / cleaned exports). */
+function pathRegionKey(el: Element): string {
+  const ink =
     el.getAttribute("inkscape:label") ??
     el.getAttributeNS("http://www.inkscape.org/namespaces/inkscape", "label") ??
-    ""
-  );
+    "";
+  const trimmedInk = ink.trim();
+  if (trimmedInk) return trimmedInk;
+  return el.getAttribute("id")?.trim() ?? "";
 }
 
-function parseSilhouette(): {
-  view: { x: number; y: number; w: number; h: number };
-  outlinePathD: string;
-  parts: readonly SilhouetteBodyPart[];
-} {
+function parseSilhouette(svgText: string): ParsedSilhouette {
   if (typeof DOMParser === "undefined") {
     throw new Error(
       "bodyMapSilhouetteAsset: DOMParser is missing (expected browser).",
     );
   }
-  const doc = new DOMParser().parseFromString(rawSvg, "image/svg+xml");
+  const doc = new DOMParser().parseFromString(svgText, "image/svg+xml");
   const svg = doc.querySelector("svg");
   const vb = (svg?.getAttribute("viewBox") ?? "0 0 837.483 1819.369").split(
     /[\s,]+/,
@@ -120,17 +134,17 @@ function parseSilhouette(): {
   doc.querySelectorAll("path").forEach((el) => {
     const d = el.getAttribute("d");
     if (!d?.trim()) return;
-    const lab = inkscapeLabel(el);
-    if (lab === "Base") {
+    const key = pathRegionKey(el);
+    if (key === "Base") {
       outlinePathD = d.trim();
       return;
     }
-    if (lab) dByLabel.set(lab, d.trim());
+    if (key) dByLabel.set(key, d.trim());
   });
 
   if (!outlinePathD) {
     throw new Error(
-      'bodyMapSilhouetteAsset: no path with inkscape:label="Base" found.',
+      'bodyMapSilhouetteAsset: no outline path (inkscape:label or id="Base").',
     );
   }
 
@@ -152,11 +166,33 @@ function parseSilhouette(): {
   return { view, outlinePathD, parts };
 }
 
+/** Fetches and parses the silhouette SVG once; safe to call from multiple components. */
+export function loadBodySilhouetteAsset(): Promise<void> {
+  if (cache) return Promise.resolve();
+  inflight ??= (async () => {
+    const res = await fetch(SILHOUETTE_URL);
+    if (!res.ok) {
+      throw new Error(
+        `bodyMapSilhouetteAsset: failed to load ${SILHOUETTE_URL} (HTTP ${res.status}).`,
+      );
+    }
+    const text = await res.text();
+    cache = parseSilhouette(text);
+  })().finally(() => {
+    inflight = null;
+  });
+  return inflight;
+}
+
 export function getBodySilhouetteAsset(): {
   view: { x: number; y: number; w: number; h: number };
   outlinePathD: string;
   parts: readonly SilhouetteBodyPart[];
 } {
-  cache ??= parseSilhouette();
+  if (!cache) {
+    throw new Error(
+      "getBodySilhouetteAsset: call await loadBodySilhouetteAsset() before reading geometry.",
+    );
+  }
   return cache;
 }

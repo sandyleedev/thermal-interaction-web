@@ -191,6 +191,17 @@
   color: #b91c1c;
 }
 
+.body-map-loading,
+.body-map-error {
+  margin: 0.5rem 0 0;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.body-map-error {
+  color: #b91c1c;
+}
+
 .landing-body-map .head-detail-svg {
   min-height: 220px;
   max-height: min(52vh, 420px);
