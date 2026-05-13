@@ -13,21 +13,10 @@
     "durationMaxS": 10,
     "minimumDurationSecond": 1.9,
     "maximumDurationSecond": 10,
-    "senses": [
-      "tactile",
-      "visual"
-    ],
-    "materials": [
-      "metal",
-      "fabrics-textiles"
-    ],
-    "materialsInContactWithSkin": [
-      "metal",
-      "fabrics-textiles"
-    ],
-    "thermalModes": [
-      "conduction"
-    ],
+    "senses": ["tactile", "visual"],
+    "materials": ["metal", "fabrics-textiles"],
+    "materialsInContactWithSkin": ["metal", "fabrics-textiles"],
+    "thermalModes": ["conduction"],
     "doi": "10.1145/3654777.3676460",
     "url": "https://doi.org/10.1145/3654777.3676460",
     "ambientTemperatureC": null,
@@ -42,12 +31,8 @@
     "mainActuatorSize": "30x40x2.3 mm",
     "overallDeviceSize": "",
     "mainActuatorPossibleTemperatureRange": "Relative -15C to +9C from neutral skin temperature",
-    "otherSensoryActuators": [
-      "ERM vibrotactile actuators"
-    ],
-    "auxiliaryHardware": [
-      "heat sink"
-    ],
+    "otherSensoryActuators": ["ERM vibrotactile actuators"],
+    "auxiliaryHardware": ["heat sink"],
     "heatControlMethod": "Open-loop with pre-calibrated voltage mapping",
     "powerConsumption": "5.7V, 6A",
     "temporalParameters": "Warm-up around 1-3s, motion durations up to 10s",
@@ -78,21 +63,10 @@
     "durationMaxS": 600,
     "minimumDurationSecond": 300,
     "maximumDurationSecond": 600,
-    "senses": [
-      "tactile",
-      "visual",
-      "auditory",
-      "body-general"
-    ],
-    "materials": [
-      "air-gas"
-    ],
-    "materialsInContactWithSkin": [
-      "air-gas"
-    ],
-    "thermalModes": [
-      "convection"
-    ],
+    "senses": ["tactile", "visual", "auditory", "body-general"],
+    "materials": ["air-gas"],
+    "materialsInContactWithSkin": ["air-gas"],
+    "thermalModes": ["convection"],
     "doi": "10.1145/3623509.3633364",
     "url": "https://doi.org/10.1145/3623509.3633364",
     "ambientTemperatureC": null,
@@ -139,21 +113,10 @@
     "durationMaxS": 40,
     "minimumDurationSecond": 3,
     "maximumDurationSecond": 40,
-    "senses": [
-      "tactile",
-      "gustatory"
-    ],
-    "materials": [
-      "metal",
-      "liquids-gels"
-    ],
-    "materialsInContactWithSkin": [
-      "metal",
-      "liquids-gels"
-    ],
-    "thermalModes": [
-      "conduction"
-    ],
+    "senses": ["tactile", "gustatory"],
+    "materials": ["metal", "liquids-gels"],
+    "materialsInContactWithSkin": ["metal", "liquids-gels"],
+    "thermalModes": ["conduction"],
     "doi": "10.1145/3675231.3675247",
     "url": "https://doi.org/10.1145/3675231.3675247",
     "ambientTemperatureC": 23,
@@ -169,11 +132,7 @@
     "overallDeviceSize": "",
     "mainActuatorPossibleTemperatureRange": "Cooling around 2.5-3.0C below baseline skin in constant condition",
     "otherSensoryActuators": [],
-    "auxiliaryHardware": [
-      "heat sink",
-      "fan",
-      "thermistor"
-    ],
+    "auxiliaryHardware": ["heat sink", "fan", "thermistor"],
     "heatControlMethod": "Thermistor feedback control",
     "powerConsumption": "24V, 10A controller",
     "temporalParameters": "Swallow and pre-swallow synchronization around 3s",
@@ -204,19 +163,10 @@
     "durationMaxS": 7,
     "minimumDurationSecond": 5,
     "maximumDurationSecond": 7,
-    "senses": [
-      "tactile",
-      "thermal-alone"
-    ],
-    "materials": [
-      "polymers-synthetics"
-    ],
-    "materialsInContactWithSkin": [
-      "polymers-synthetics"
-    ],
-    "thermalModes": [
-      "conduction"
-    ],
+    "senses": ["tactile", "thermal-alone"],
+    "materials": ["polymers-synthetics"],
+    "materialsInContactWithSkin": ["polymers-synthetics"],
+    "thermalModes": ["conduction"],
     "doi": "10.1145/3613904.3641941",
     "url": "https://doi.org/10.1145/3613904.3641941",
     "ambientTemperatureC": null,
@@ -231,12 +181,8 @@
     "mainActuatorSize": "30x40x2.3 mm",
     "overallDeviceSize": "",
     "mainActuatorPossibleTemperatureRange": "-8C to +6C relative to skin temperature",
-    "otherSensoryActuators": [
-      "ERM vibrotactile actuators"
-    ],
-    "auxiliaryHardware": [
-      "Korad KD6005P programmable power supply"
-    ],
+    "otherSensoryActuators": ["ERM vibrotactile actuators"],
+    "auxiliaryHardware": ["Korad KD6005P programmable power supply"],
     "heatControlMethod": "",
     "powerConsumption": "Up to 6A at 5.7V",
     "temporalParameters": "Thermal around 5s, vibrotactile around 7s",
@@ -267,24 +213,10 @@
     "durationMaxS": 5,
     "minimumDurationSecond": 1,
     "maximumDurationSecond": 5,
-    "senses": [
-      "visual",
-      "tactile",
-      "thermal-alone"
-    ],
-    "materials": [
-      "liquids-gels",
-      "air-gas"
-    ],
-    "materialsInContactWithSkin": [
-      "liquids-gels",
-      "air-gas"
-    ],
-    "thermalModes": [
-      "radiation",
-      "conduction",
-      "convection"
-    ],
+    "senses": ["visual", "tactile", "thermal-alone"],
+    "materials": ["liquids-gels", "air-gas"],
+    "materialsInContactWithSkin": ["liquids-gels", "air-gas"],
+    "thermalModes": ["radiation", "conduction", "convection"],
     "doi": "10.1145/3654777.3676453",
     "url": "https://doi.org/10.1145/3654777.3676453",
     "ambientTemperatureC": 23,
@@ -335,20 +267,10 @@
     "durationMaxS": 2.3,
     "minimumDurationSecond": 1.3,
     "maximumDurationSecond": 2.3,
-    "senses": [
-      "thermal-alone",
-      "trigeminal-nerve"
-    ],
-    "materials": [
-      "air-gas"
-    ],
-    "materialsInContactWithSkin": [
-      "air-gas"
-    ],
-    "thermalModes": [
-      "conduction",
-      "convection"
-    ],
+    "senses": ["thermal-alone", "trigeminal-nerve"],
+    "materials": ["air-gas"],
+    "materialsInContactWithSkin": ["air-gas"],
+    "thermalModes": ["conduction", "convection"],
     "doi": "10.1145/3654777.3676438",
     "url": "https://doi.org/10.1145/3654777.3676438",
     "ambientTemperatureC": 24.78,
@@ -399,21 +321,10 @@
     "durationMaxS": 30,
     "minimumDurationSecond": 30,
     "maximumDurationSecond": 30,
-    "senses": [
-      "thermal-alone",
-      "olfactory"
-    ],
-    "materials": [
-      "fabrics-textiles",
-      "chemical"
-    ],
-    "materialsInContactWithSkin": [
-      "fabrics-textiles",
-      "chemical"
-    ],
-    "thermalModes": [
-      "conduction"
-    ],
+    "senses": ["thermal-alone", "olfactory"],
+    "materials": ["fabrics-textiles", "chemical"],
+    "materialsInContactWithSkin": ["fabrics-textiles", "chemical"],
+    "thermalModes": ["conduction"],
     "doi": "10.1145/3613904.3642113",
     "url": "https://doi.org/10.1145/3613904.3642113",
     "ambientTemperatureC": 25,
@@ -428,14 +339,8 @@
     "mainActuatorSize": "25mm fan, watch-like form",
     "overallDeviceSize": "About 65x35x15 mm",
     "mainActuatorPossibleTemperatureRange": "Cooling intensity depends on evaporation and fan speed",
-    "otherSensoryActuators": [
-      "scent with perfume conditions"
-    ],
-    "auxiliaryHardware": [
-      "ESP32S3",
-      "thermistor",
-      "400mAh battery"
-    ],
+    "otherSensoryActuators": ["scent with perfume conditions"],
+    "auxiliaryHardware": ["ESP32S3", "thermistor", "400mAh battery"],
     "heatControlMethod": "PWM fan speed control",
     "powerConsumption": "Around 0.35W fan operation",
     "temporalParameters": "30s stimulation windows, effective cooling up to around 30-60 min per refill",
@@ -466,22 +371,10 @@
     "durationMaxS": 1,
     "minimumDurationSecond": 1,
     "maximumDurationSecond": 1,
-    "senses": [
-      "olfactory",
-      "trigeminal-nerve",
-      "visual"
-    ],
-    "materials": [
-      "air-gas",
-      "chemical"
-    ],
-    "materialsInContactWithSkin": [
-      "air-gas",
-      "chemical"
-    ],
-    "thermalModes": [
-      "convection"
-    ],
+    "senses": ["olfactory", "trigeminal-nerve", "visual"],
+    "materials": ["air-gas", "chemical"],
+    "materialsInContactWithSkin": ["air-gas", "chemical"],
+    "thermalModes": ["convection"],
     "doi": "10.1145/3313831.3376806",
     "url": "https://doi.org/10.1145/3313831.3376806",
     "ambientTemperatureC": 24,
@@ -532,26 +425,15 @@
     "durationMaxS": 10,
     "minimumDurationSecond": 10,
     "maximumDurationSecond": 10,
-    "senses": [
-      "tactile",
-      "thermal-alone"
-    ],
-    "materials": [
-      "metal"
-    ],
-    "materialsInContactWithSkin": [
-      "metal"
-    ],
-    "thermalModes": [
-      "conduction"
-    ],
+    "senses": ["tactile", "thermal-alone"],
+    "materials": ["metal"],
+    "materialsInContactWithSkin": ["metal"],
+    "thermalModes": ["conduction"],
     "doi": "10.1145/3536221.3556572",
     "url": "https://doi.org/10.1145/3536221.3556572",
     "ambientTemperatureC": null,
     "thermalVocabularyDescription": "",
-    "emotionTheoriesMentioned": [
-      "Russell Circumplex Model of Affect"
-    ],
+    "emotionTheoriesMentioned": ["Russell Circumplex Model of Affect"],
     "emotionTheoriesUsage": "Used as the analysis frame for valence and arousal responses.",
     "emotionAffectMeasurement": "Likert self-reports for valence, arousal, and emotional resonance.",
     "thermalAffectJustification": "Builds on prior thermotactile affect literature.",
@@ -561,9 +443,7 @@
     "mainActuatorSize": "",
     "overallDeviceSize": "",
     "mainActuatorPossibleTemperatureRange": "24C cold, 30C neutral, 34-36C warm",
-    "otherSensoryActuators": [
-      "Haptuator Mk II vibrotactile actuator"
-    ],
+    "otherSensoryActuators": ["Haptuator Mk II vibrotactile actuator"],
     "auxiliaryHardware": [
       "Haptu-Amp-Quad",
       "QUUTEC USB thermo-electric controller"
@@ -598,21 +478,10 @@
     "durationMaxS": 25,
     "minimumDurationSecond": 25,
     "maximumDurationSecond": 25,
-    "senses": [
-      "visual",
-      "thermal-alone"
-    ],
-    "materials": [
-      "polymers-synthetics",
-      "liquids-gels"
-    ],
-    "materialsInContactWithSkin": [
-      "fabrics-textiles"
-    ],
-    "thermalModes": [
-      "conduction",
-      "convection"
-    ],
+    "senses": ["visual", "thermal-alone"],
+    "materials": ["polymers-synthetics", "liquids-gels"],
+    "materialsInContactWithSkin": ["fabrics-textiles"],
+    "thermalModes": ["conduction", "convection"],
     "doi": "10.1145/3313831.3376195",
     "url": "https://doi.org/10.1145/3313831.3376195",
     "ambientTemperatureC": 23,
@@ -628,11 +497,7 @@
     "overallDeviceSize": "",
     "mainActuatorPossibleTemperatureRange": "About 18C to 48C system range; tested 22.5C to 42.5C",
     "otherSensoryActuators": [],
-    "auxiliaryHardware": [
-      "thermal mixing valve",
-      "pump",
-      "solenoid valves"
-    ],
+    "auxiliaryHardware": ["thermal mixing valve", "pump", "solenoid valves"],
     "heatControlMethod": "Water mixing and flow control",
     "powerConsumption": "",
     "temporalParameters": "About 25s stimulation with around 12s full cold-to-hot transition capability",

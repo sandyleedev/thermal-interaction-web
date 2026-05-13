@@ -4,9 +4,9 @@
  * 1. `BodyMapRegion` — merged SVG hit targets on the L1 map (hover / selection).
  *    Excludes `wholeBody` (no silhouette path; whole-body UX uses outline + tint).
  *
- * 2. `BodyMapPlacementRegion` — partition used for dots / density / heatmap marks.
- *    Same set as `BodyMapRegion` today; cohort logic maps finer `BodyMapDetailRegion`
- *    values onto these merged paths.
+ * 2. `BodyMapPlacementRegion` — partition for dots / density / heatmap marks on the L1 SVG.
+ *    Finer than merged hit targets where needed (torso, arm, leg); each placement maps to
+ *    exactly one {@link BodyMapRegion} path via {@link bodyMapRegionForPlacement}.
  *
  * 3. `BodyMapDetailRegion` — finest grain in `bodySites`: L1 parent (`BodyMapParentRegion`) + L2 slug.
  */
@@ -34,7 +34,55 @@ export const BODY_MAP_PARENT_REGIONS = [
 
 export type BodyMapParentRegion = (typeof BODY_MAP_PARENT_REGIONS)[number];
 
-export type BodyMapPlacementRegion = BodyMapRegion;
+/**
+ * Dot / density placement keys on the L1 map. Torso, arm, and leg use L2-style slices; other
+ * parents use the same string as the merged SVG {@link BodyMapRegion} id.
+ */
+export const BODY_MAP_PLACEMENT_REGIONS = [
+  "head",
+  "neck",
+  "torso-general",
+  "torso-shoulder",
+  "torso-chest",
+  "torso-abdomen",
+  "arm-general",
+  "arm-upper-arm",
+  "arm-forearm",
+  "wrist",
+  "hand",
+  "leg-general",
+  "leg-thigh",
+  "leg-crural",
+  "ankle",
+  "foot",
+] as const;
+
+export type BodyMapPlacementRegion = (typeof BODY_MAP_PLACEMENT_REGIONS)[number];
+
+const PLACEMENT_TO_BODY_MAP_REGION = {
+  head: "head",
+  neck: "neck",
+  "torso-general": "torso",
+  "torso-shoulder": "torso",
+  "torso-chest": "torso",
+  "torso-abdomen": "torso",
+  "arm-general": "arm",
+  "arm-upper-arm": "arm",
+  "arm-forearm": "arm",
+  wrist: "wrist",
+  hand: "hand",
+  "leg-general": "leg",
+  "leg-thigh": "leg",
+  "leg-crural": "leg",
+  ankle: "ankle",
+  foot: "foot",
+} as const satisfies Record<BodyMapPlacementRegion, BodyMapRegion>;
+
+export function bodyMapRegionForPlacement(
+  placement: BodyMapPlacementRegion,
+): BodyMapRegion {
+  return PLACEMENT_TO_BODY_MAP_REGION[placement];
+}
 
 /**
  * One anatomical site from the dataset after normalisation (`resolveBodySite`):

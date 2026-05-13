@@ -23,7 +23,6 @@ import {
 import {
   WHOLE_BODY_GENERAL_COUNT_KEY,
   type BodyMapParentRegion,
-  type BodyMapPlacementRegion,
   type BodyMapRegion,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
@@ -304,7 +303,7 @@ export function BodyMap({
     return [lo, mid, hi].map((v) => Math.round(v));
   }, [countColorDomain]);
   const rawDotsContoursByPart = useMemo<
-    { partId: BodyMapPlacementRegion; contours: ContourMultiPolygon[] }[]
+    { partId: BodyMapRegion; contours: ContourMultiPolygon[] }[]
   >(() => {
     if (variant !== "rawDots") return [];
     const parts = BODY_PARTS;
@@ -325,7 +324,7 @@ export function BodyMap({
         (
           entry,
         ): entry is {
-          partId: BodyMapPlacementRegion;
+          partId: BodyMapRegion;
           contours: ContourMultiPolygon[];
         } => entry !== null,
       );
@@ -393,6 +392,10 @@ export function BodyMap({
 
   const wholeBodyRingHovered = hoveredPartId === WHOLE_BODY_GENERAL_COUNT_KEY;
 
+  /** Thick masked ring: stay visible while whole body is selected, not only on hover. */
+  const wholeBodyHitRingVisible =
+    wholeBodyRingHovered || selectedBodyRegion === "wholeBody";
+
   const clearPointerHover = useCallback(() => {
     setHoveredPartId(null);
     setTooltip(null);
@@ -458,6 +461,16 @@ export function BodyMap({
   return (
     <div className="body-map-root">
       <div className="body-map-svg-wrap">
+        {selectedBodyRegion != null && onSelectBodyRegion ? (
+          <button
+            type="button"
+            className="body-map-clear-selection"
+            onClick={() => onSelectBodyRegion(null)}
+            aria-label="Clear body region filter"
+          >
+            Clear
+          </button>
+        ) : null}
         <svg
           className="body-map-svg"
           width="100%"
@@ -723,8 +736,10 @@ export function BodyMap({
               <path
                 d={BODY_MAP_OUTLINE_PATH_D}
                 fill="none"
-                stroke={wholeBodyRingHovered ? "#fbcfe8" : "transparent"}
-                strokeOpacity={wholeBodyRingHovered ? 0.88 : 1}
+                stroke={wholeBodyHitRingVisible ? "#fbcfe8" : "transparent"}
+                strokeOpacity={
+                  wholeBodyRingHovered ? 0.88 : wholeBodyHitRingVisible ? 0.52 : 1
+                }
                 strokeWidth={40}
                 vectorEffect="nonScalingStroke"
                 strokeLinejoin="round"

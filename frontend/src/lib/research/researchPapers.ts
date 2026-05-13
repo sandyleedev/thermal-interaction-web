@@ -15,9 +15,11 @@ export type {
 export {
   BODY_MAP_L2_SUBREGIONS_BY_PARENT,
   BODY_MAP_PARENT_REGIONS,
+  BODY_MAP_PLACEMENT_REGIONS,
   BODY_MAP_REGIONS,
   bodyMapParentKeysForPaper,
   bodyMapPlacementRegionsForDetail,
+  bodyMapRegionForPlacement,
   countPapersWithWholeBodyGeneral,
   parentKeysForBodyMapAggregatedCounts,
   paperHasWholeBodyGeneralSite,

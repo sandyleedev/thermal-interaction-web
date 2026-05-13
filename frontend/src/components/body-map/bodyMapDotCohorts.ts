@@ -63,10 +63,11 @@ function singleAll(labels: readonly string[]): DotCohortPlan {
 
 /**
  * Maps a resolved body site to silhouette subpath index cohorts for L1 dot placement.
+ * `placement` is a {@link BodyMapPlacementRegion} (finer than merged SVG parts where needed).
  * Returns `null` when there are no usable Inkscape labels — caller falls back to legacy L/R bbox pairing.
  */
 export function dotCohortPlanForResolvedSite(
-  partId: BodyMapPlacementRegion,
+  placement: BodyMapPlacementRegion,
   labels: readonly string[],
   resolved: BodyMapDetailRegion,
 ): DotCohortPlan | null {
@@ -75,33 +76,24 @@ export function dotCohortPlanForResolvedSite(
   }
 
   const sub = resolved.subregion.trim().toLowerCase();
-  if (resolved.parent !== partId) return null;
 
-  switch (partId) {
-    case "arm": {
-      if (sub === "general") return allLeftRightDual(labels);
-      if (sub === "forearm") {
-        return (
-          dualFiltered(labels, (lab) => /fore/i.test(lab)) ?? allLeftRightDual(labels)
-        );
-      }
-      if (sub === "upper-arm" || sub === "upper arm") {
-        return (
-          dualFiltered(labels, (lab) => /upper/i.test(lab)) ?? allLeftRightDual(labels)
-        );
-      }
+  switch (placement) {
+    case "arm-general":
       return allLeftRightDual(labels);
-    }
-    case "leg": {
-      if (sub === "general") return allLeftRightDual(labels);
-      if (sub === "thigh") {
-        return dualFiltered(labels, (lab) => /thigh/i.test(lab)) ?? allLeftRightDual(labels);
-      }
-      if (sub === "crural" || sub === "crural-region") {
-        return dualFiltered(labels, (lab) => /crural/i.test(lab)) ?? allLeftRightDual(labels);
-      }
+    case "arm-forearm":
+      return (
+        dualFiltered(labels, (lab) => /fore/i.test(lab)) ?? allLeftRightDual(labels)
+      );
+    case "arm-upper-arm":
+      return (
+        dualFiltered(labels, (lab) => /upper/i.test(lab)) ?? allLeftRightDual(labels)
+      );
+    case "leg-general":
       return allLeftRightDual(labels);
-    }
+    case "leg-thigh":
+      return dualFiltered(labels, (lab) => /thigh/i.test(lab)) ?? allLeftRightDual(labels);
+    case "leg-crural":
+      return dualFiltered(labels, (lab) => /crural/i.test(lab)) ?? allLeftRightDual(labels);
     case "wrist":
     case "hand":
     case "ankle":
@@ -111,7 +103,7 @@ export function dotCohortPlanForResolvedSite(
       if (sub === "general") return singleAll(labels);
       if (sub === "ear") {
         const s = singleFiltered(labels, (lab) => /ear/i.test(lab));
-        return s.indices.length > 0 ? s : singleAll(labels);
+        return s.kind === "single" && s.indices.length > 0 ? s : singleAll(labels);
       }
       if (sub === "forehead")
         return preferOrAll(labels, (lab) => /forehead/i.test(lab));
@@ -126,18 +118,16 @@ export function dotCohortPlanForResolvedSite(
       return labels.length <= 1
         ? { kind: "single", indices: [0] }
         : singleAll(labels);
-    case "torso": {
-      if (sub === "general") return singleAll(labels);
-      if (sub === "shoulder") {
-        return (
-          dualFiltered(labels, (lab) => /shoulder/i.test(lab)) ?? singleAll(labels)
-        );
-      }
-      if (sub === "chest") return preferOrAll(labels, (lab) => /chest/i.test(lab));
-      if (sub === "abdomen") return preferOrAll(labels, (lab) => /abdomen/i.test(lab));
-      if (sub === "back") return singleAll(labels);
+    case "torso-general":
       return singleAll(labels);
-    }
+    case "torso-shoulder":
+      return (
+        dualFiltered(labels, (lab) => /shoulder/i.test(lab)) ?? singleAll(labels)
+      );
+    case "torso-chest":
+      return preferOrAll(labels, (lab) => /chest/i.test(lab));
+    case "torso-abdomen":
+      return preferOrAll(labels, (lab) => /abdomen/i.test(lab));
     default:
       return null;
   }
@@ -145,5 +135,5 @@ export function dotCohortPlanForResolvedSite(
 
 function preferOrAll(labels: readonly string[], pred: (lab: string) => boolean): DotCohortPlan {
   const s = singleFiltered(labels, pred);
-  return s.indices.length > 0 ? s : singleAll(labels);
+  return s.kind === "single" && s.indices.length > 0 ? s : singleAll(labels);
 }

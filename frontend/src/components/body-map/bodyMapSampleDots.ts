@@ -1,12 +1,12 @@
 import { BODY_MAP_OUTLINE_PATH_D, BODY_MAP_VIEW } from "./bodyMapOutlinePath";
 import {
   bodyMapPlacementRegionsForDetail,
+  bodyMapRegionForPlacement,
   normalizeBodySites,
   resolveBodySite,
-  type BodyMapPlacementRegion,
-  type BodySite,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
+import type { BodyMapRegion } from "@/lib/research/bodyMapRegions";
 import { dotCohortPlanForResolvedSite } from "./bodyMapDotCohorts";
 const INNER_TX = 0;
 
@@ -286,10 +286,7 @@ function sampleDotsInBodyPartPath(
       const out: { x: number; y: number }[] = [];
       const pt = svg.createSVGPoint();
       /** Thin / rotated limbs: fill is a small fraction of bbox; raise limits. */
-      let attemptLimit = Math.min(
-        600_000,
-        Math.max(dotCount * 900, 20_000),
-      );
+      let attemptLimit = Math.min(600_000, Math.max(dotCount * 900, 20_000));
       const attemptCap = 1_200_000;
       let attempts = 0;
       const seed = hashStringToSeed(
@@ -470,16 +467,10 @@ export type HeatmapDotPlacementTarget = {
   cohortSubpathIndices?: readonly number[];
 };
 
-/** Which merged silhouette path(s) on the L1 map should show a dot for this raw site. */
-function placementRegionsForBodySite(
-  site: BodySite,
-): readonly BodyMapPlacementRegion[] {
-  return bodyMapPlacementRegionsForDetail(resolveBodySite(site));
-}
-
-function leftRightIndicesFromSubpaths(
-  subpaths: readonly BodySubpath[],
-): { leftIdx: number; rightIdx: number } {
+function leftRightIndicesFromSubpaths(subpaths: readonly BodySubpath[]): {
+  leftIdx: number;
+  rightIdx: number;
+} {
   if (subpaths.length !== 2) return { leftIdx: 0, rightIdx: 1 };
   const a = getBodySubpathBBoxCenter(subpaths[0]);
   const b = getBodySubpathBBoxCenter(subpaths[1]);
@@ -492,12 +483,12 @@ function leftRightIndicesFromSubpaths(
 
 /**
  * One dot per matching body site on this coarse map part; bilateral unspecified → L+R.
- * Placement uses Inkscape path labels: L1 **general** → union of all left vs right subpaths
- * (e.g. full arm); fine L2 (e.g. forearm) → left/right forearm paths only. Whole-body general
- * is excluded upstream (no silhouette dots).
+ * Placement uses {@link BodyMapPlacementRegion} (e.g. arm-forearm vs arm-upper-arm), folded
+ * onto merged SVG parts via {@link bodyMapRegionForPlacement}. Whole-body general is excluded
+ * upstream (no silhouette dots).
  */
 export function collectHeatmapDotPlacementTargetsForCoarsePart(
-  partId: BodyMapPlacementRegion,
+  partId: BodyMapRegion,
   papers: readonly ResearchPaper[],
   subpaths: readonly BodySubpath[],
 ): HeatmapDotPlacementTarget[] {
@@ -510,48 +501,72 @@ export function collectHeatmapDotPlacementTargetsForCoarsePart(
     const sites = normalizeBodySites(paper);
     for (let si = 0; si < sites.length; si++) {
       const site = sites[si];
-      if (!placementRegionsForBodySite(site).includes(partId)) continue;
-
       const resolved = resolveBodySite(site);
-      const plan = dotCohortPlanForResolvedSite(partId, labels, resolved);
+      for (const placement of bodyMapPlacementRegionsForDetail(resolved)) {
+        if (bodyMapRegionForPlacement(placement) !== partId) continue;
 
-      if (plan) {
-        const pairKey = `${paper.id}:${partId}:site${si}`;
-        if (plan.kind === "single") {
-          const idx = plan.indices.length > 0 ? plan.indices : [0];
-          out.push({
-            paperId: paper.id,
-            cohortSubpathIndices: idx,
-          });
+        const plan = dotCohortPlanForResolvedSite(placement, labels, resolved);
+
+        if (plan) {
+          const pairKey = `${paper.id}:${placement}:site${si}`;
+          if (plan.kind === "single") {
+            const idx = plan.indices.length > 0 ? plan.indices : [0];
+            out.push({
+              paperId: paper.id,
+              cohortSubpathIndices: idx,
+            });
+            continue;
+          }
+          if (site.side === "left") {
+            out.push({
+              paperId: paper.id,
+              cohortSubpathIndices: [...plan.left],
+            });
+          } else if (site.side === "right") {
+            out.push({
+              paperId: paper.id,
+              cohortSubpathIndices: [...plan.right],
+            });
+          } else {
+            out.push(
+              {
+                paperId: paper.id,
+                cohortSubpathIndices: [...plan.left],
+                pairKey,
+              },
+              {
+                paperId: paper.id,
+                cohortSubpathIndices: [...plan.right],
+                pairKey,
+              },
+            );
+          }
           continue;
         }
+
+        if (subpathCount <= 1) {
+          out.push({ paperId: paper.id });
+          continue;
+        }
+        const legacyPairKey = `${paper.id}:${placement}:site${si}`;
         if (site.side === "left") {
-          out.push({ paperId: paper.id, cohortSubpathIndices: [...plan.left] });
+          out.push({ paperId: paper.id, subpathIndex: lr.leftIdx });
         } else if (site.side === "right") {
-          out.push({ paperId: paper.id, cohortSubpathIndices: [...plan.right] });
+          out.push({ paperId: paper.id, subpathIndex: lr.rightIdx });
         } else {
           out.push(
-            { paperId: paper.id, cohortSubpathIndices: [...plan.left], pairKey },
-            { paperId: paper.id, cohortSubpathIndices: [...plan.right], pairKey },
+            {
+              paperId: paper.id,
+              subpathIndex: lr.leftIdx,
+              pairKey: legacyPairKey,
+            },
+            {
+              paperId: paper.id,
+              subpathIndex: lr.rightIdx,
+              pairKey: legacyPairKey,
+            },
           );
         }
-        continue;
-      }
-
-      if (subpathCount <= 1) {
-        out.push({ paperId: paper.id });
-        continue;
-      }
-      const legacyPairKey = `${paper.id}:${partId}:site${si}`;
-      if (site.side === "left") {
-        out.push({ paperId: paper.id, subpathIndex: lr.leftIdx });
-      } else if (site.side === "right") {
-        out.push({ paperId: paper.id, subpathIndex: lr.rightIdx });
-      } else {
-        out.push(
-          { paperId: paper.id, subpathIndex: lr.leftIdx, pairKey: legacyPairKey },
-          { paperId: paper.id, subpathIndex: lr.rightIdx, pairKey: legacyPairKey },
-        );
       }
     }
   }
@@ -609,23 +624,51 @@ export function sampleHeatmapDotPlacements(
         const rnd = mulberry32(seed === 0 ? 0x9e3779b9 : seed);
         const sharedT = rnd();
         const batch =
-          runWithTwoBodyPartPathsInTempSvg(subpaths[0], subpaths[1], ({ path0, path1, silhouette, svg }) => {
-            const pathFor = (idx: number) => (idx === 0 ? path0 : path1);
-            const pa = pathFor(a0.subpathIndex!);
-            const pb = pathFor(a1.subpathIndex!);
-            let a = trySamplePathAtVerticalFraction(pa, silhouette, svg, sharedT, rnd);
-            let b = trySamplePathAtVerticalFraction(pb, silhouette, svg, sharedT, rnd);
-            if (!a) {
-              a = trySamplePathAtVerticalFraction(pa, silhouette, svg, rnd(), rnd);
-            }
-            if (!b) {
-              b = trySamplePathAtVerticalFraction(pb, silhouette, svg, rnd(), rnd);
-            }
-            const acc: { x: number; y: number }[] = [];
-            if (a) acc.push(a);
-            if (b) acc.push(b);
-            return acc;
-          }) ?? [];
+          runWithTwoBodyPartPathsInTempSvg(
+            subpaths[0],
+            subpaths[1],
+            ({ path0, path1, silhouette, svg }) => {
+              const pathFor = (idx: number) => (idx === 0 ? path0 : path1);
+              const pa = pathFor(a0.subpathIndex!);
+              const pb = pathFor(a1.subpathIndex!);
+              let a = trySamplePathAtVerticalFraction(
+                pa,
+                silhouette,
+                svg,
+                sharedT,
+                rnd,
+              );
+              let b = trySamplePathAtVerticalFraction(
+                pb,
+                silhouette,
+                svg,
+                sharedT,
+                rnd,
+              );
+              if (!a) {
+                a = trySamplePathAtVerticalFraction(
+                  pa,
+                  silhouette,
+                  svg,
+                  rnd(),
+                  rnd,
+                );
+              }
+              if (!b) {
+                b = trySamplePathAtVerticalFraction(
+                  pb,
+                  silhouette,
+                  svg,
+                  rnd(),
+                  rnd,
+                );
+              }
+              const acc: { x: number; y: number }[] = [];
+              if (a) acc.push(a);
+              if (b) acc.push(b);
+              return acc;
+            },
+          ) ?? [];
         out.push(...batch);
         continue;
       }

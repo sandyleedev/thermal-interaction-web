@@ -24,7 +24,9 @@ export type {
 export {
   BODY_MAP_L2_SUBREGIONS_BY_PARENT,
   BODY_MAP_PARENT_REGIONS,
+  BODY_MAP_PLACEMENT_REGIONS,
   BODY_MAP_REGIONS,
+  bodyMapRegionForPlacement,
 } from "@/lib/research/bodyMapRegions";
 
 const BODY_MAP_PARENT_REGION_SET = new Set<string>(BODY_MAP_PARENT_REGIONS);
@@ -97,11 +99,36 @@ export function countPapersWithWholeBodyGeneral(
 /**
  * Which `BodyMapPlacementRegion`s receive a dot for this detail site on the L1 map.
  * Whole-body sites do not place per-region dots (outline + tint / ring handle whole-body UX).
+ * Arm, leg, and torso map L2 subregions to distinct placement keys; other parents mirror {@link BodyMapRegion}.
  */
 export function bodyMapPlacementRegionsForDetail(
   site: BodyMapDetailRegion,
 ): BodyMapPlacementRegion[] {
   if (site.parent === "wholeBody") return [];
+
+  if (site.parent === "arm") {
+    const sub = site.subregion.trim().toLowerCase();
+    if (sub === "forearm") return ["arm-forearm"];
+    if (sub === "upper-arm" || sub === "upper arm") return ["arm-upper-arm"];
+    return ["arm-general"];
+  }
+
+  if (site.parent === "leg") {
+    const sub = site.subregion.trim().toLowerCase();
+    if (sub === "thigh") return ["leg-thigh"];
+    if (sub === "crural" || sub === "crural-region") return ["leg-crural"];
+    return ["leg-general"];
+  }
+
+  if (site.parent === "torso") {
+    const sub = site.subregion.trim().toLowerCase();
+    if (sub === "shoulder") return ["torso-shoulder"];
+    if (sub === "chest") return ["torso-chest"];
+    if (sub === "abdomen") return ["torso-abdomen"];
+    // general, back, and any other L2 → full merged torso paths (same cohort as former "torso general").
+    return ["torso-general"];
+  }
+
   return [site.parent as BodyMapPlacementRegion];
 }
 
@@ -143,23 +170,17 @@ export type BodySitesCarrier = {
 
 /**
  * True if the paper should stay visible when the user picks one L1 region on the map.
- * Whole-body sites match every L1 filter except “foot only” style logic — here, whole-body matches all.
+ * Whole-body outline selection (`wholeBody`) matches sites whose resolved parent is `wholeBody`.
+ * Physical regions (head, arm, …) match only sites that resolve to that same parent — a
+ * whole-body-only site does not satisfy those filters.
  */
 export function paperTouchesBodyMapParent(
   paper: BodySitesCarrier,
   parent: BodyMapParentRegion,
 ): boolean {
   const sites = paper.bodySites ?? [];
-  if (parent === "wholeBody") {
-    for (const s of sites) {
-      if (resolveBodySite(s).parent === "wholeBody") return true;
-    }
-    return false;
-  }
   for (const s of sites) {
-    const { parent: p } = resolveBodySite(s);
-    if (p === "wholeBody") return true;
-    if (p === parent) return true;
+    if (resolveBodySite(s).parent === parent) return true;
   }
   return false;
 }

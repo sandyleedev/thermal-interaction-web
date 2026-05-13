@@ -156,6 +156,7 @@
 }
 
 .landing-body-map .body-map-svg-wrap {
+  position: relative;
   flex: 1 1 0;
   min-height: 0;
   min-width: 0;
@@ -165,6 +166,36 @@
   overflow: hidden;
   box-sizing: border-box;
   padding: 1rem 1.25rem 1.25rem;
+}
+
+.body-map-clear-selection {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.45rem;
+  z-index: 4;
+  margin: 0;
+  padding: 0.22rem 0.5rem;
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #475569;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.body-map-clear-selection:hover {
+  color: #0f172a;
+  border-color: rgba(100, 116, 139, 0.65);
+  background: #fff;
+}
+
+.body-map-clear-selection:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 1px;
 }
 
 /* No CSS scale: scaling from the bottom pushed the head past overflow:hidden parents. */
