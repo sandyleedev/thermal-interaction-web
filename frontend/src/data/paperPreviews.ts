@@ -1,3 +1,4 @@
+import { paperHasReportedDurationRange } from "@/lib/research/filterResearchPapers";
 import {
   ALL_RESEARCH_PAPERS,
   normalizeBodySites,
@@ -47,8 +48,8 @@ function formatTemperatureRangeDisplay(p: ResearchPaper): string {
 }
 
 function formatDurationRangeDisplay(p: ResearchPaper): string {
-  if (p.durationMinS != null && p.durationMaxS != null) {
-    return formatDurationRange(p.durationMinS, p.durationMaxS);
+  if (paperHasReportedDurationRange(p)) {
+    return formatDurationRange(p.durationMinS as number, p.durationMaxS as number);
   }
   return "N/A";
 }

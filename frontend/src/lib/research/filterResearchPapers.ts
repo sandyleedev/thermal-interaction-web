@@ -32,6 +32,71 @@ export type BodyMapSelection = {
   fineSubregion?: string | null;
 };
 
+export type RangeFilterOptions = {
+  /**
+   * When true (default), papers with `null` min/max °C still pass the temperature axis.
+   * When false, those papers are excluded unless they report a numeric range that overlaps the slider.
+   */
+  includeUnspecifiedTemperature?: boolean;
+  /**
+   * When true (default), papers with `null` duration bounds still pass the duration axis.
+   * When false, those papers are excluded unless they report a numeric range that overlaps the slider.
+   */
+  includeUnspecifiedDuration?: boolean;
+};
+
+const DEFAULT_RANGE_OPTS: Required<RangeFilterOptions> = {
+  includeUnspecifiedTemperature: true,
+  includeUnspecifiedDuration: true,
+};
+
+function resolvedRangeOpts(opts?: RangeFilterOptions): Required<RangeFilterOptions> {
+  return {
+    includeUnspecifiedTemperature:
+      opts?.includeUnspecifiedTemperature ??
+      DEFAULT_RANGE_OPTS.includeUnspecifiedTemperature,
+    includeUnspecifiedDuration:
+      opts?.includeUnspecifiedDuration ?? DEFAULT_RANGE_OPTS.includeUnspecifiedDuration,
+  };
+}
+
+/** Temperature axis: overlap with slider, or pass/fail when bounds are missing. */
+export function paperMatchesTemperatureAxis(
+  p: ResearchPaper,
+  tempLowC: number,
+  tempHighC: number,
+  includeUnspecified: boolean,
+): boolean {
+  if (p.minC == null || p.maxC == null) return includeUnspecified;
+  return rangeOverlapsFilter(p.minC, p.maxC, tempLowC, tempHighC);
+}
+
+/**
+ * True when the paper has a numeric duration range that should participate in overlap checks
+ * and KDE samples. `0`/`0` is treated as an unknown placeholder (same as `null`).
+ */
+export function paperHasReportedDurationRange(p: ResearchPaper): boolean {
+  if (p.durationMinS == null || p.durationMaxS == null) return false;
+  if (p.durationMinS === 0 && p.durationMaxS === 0) return false;
+  return true;
+}
+
+/** Duration axis: overlap with slider, or pass/fail when bounds are missing. */
+export function paperMatchesDurationAxis(
+  p: ResearchPaper,
+  durationLowS: number,
+  durationHighS: number,
+  includeUnspecified: boolean,
+): boolean {
+  if (!paperHasReportedDurationRange(p)) return includeUnspecified;
+  return durationRangeOverlapsFilter(
+    p.durationMinS,
+    p.durationMaxS,
+    durationLowS,
+    durationHighS,
+  );
+}
+
 /**
  * Like {@link rangeOverlapsFilter}: missing bounds mean this axis does not exclude the paper.
  */
@@ -101,17 +166,26 @@ export function filterResearchPapers(
   durationHighS: number,
   other: OtherFilterSelections,
   bodyMapSelection?: BodyMapSelection,
+  rangeOpts?: RangeFilterOptions,
 ): ResearchPaper[] {
+  const ro = resolvedRangeOpts(rangeOpts);
   return papers.filter((p) => {
-    if (!rangeOverlapsFilter(p.minC, p.maxC, tempLowC, tempHighC)) {
+    if (
+      !paperMatchesTemperatureAxis(
+        p,
+        tempLowC,
+        tempHighC,
+        ro.includeUnspecifiedTemperature,
+      )
+    ) {
       return false;
     }
     if (
-      !durationRangeOverlapsFilter(
-        p.durationMinS,
-        p.durationMaxS,
+      !paperMatchesDurationAxis(
+        p,
         durationLowS,
         durationHighS,
+        ro.includeUnspecifiedDuration,
       )
     ) {
       return false;
@@ -132,14 +206,16 @@ export function filterResearchPapersIgnoringTemperature(
   durationHighS: number,
   other: OtherFilterSelections,
   bodyMapSelection?: BodyMapSelection,
+  rangeOpts?: RangeFilterOptions,
 ): ResearchPaper[] {
+  const ro = resolvedRangeOpts(rangeOpts);
   return papers.filter((p) => {
     if (
-      !durationRangeOverlapsFilter(
-        p.durationMinS,
-        p.durationMaxS,
+      !paperMatchesDurationAxis(
+        p,
         durationLowS,
         durationHighS,
+        ro.includeUnspecifiedDuration,
       )
     ) {
       return false;
@@ -160,9 +236,18 @@ export function filterResearchPapersIgnoringDuration(
   tempHighC: number,
   other: OtherFilterSelections,
   bodyMapSelection?: BodyMapSelection,
+  rangeOpts?: RangeFilterOptions,
 ): ResearchPaper[] {
+  const ro = resolvedRangeOpts(rangeOpts);
   return papers.filter((p) => {
-    if (!rangeOverlapsFilter(p.minC, p.maxC, tempLowC, tempHighC)) {
+    if (
+      !paperMatchesTemperatureAxis(
+        p,
+        tempLowC,
+        tempHighC,
+        ro.includeUnspecifiedTemperature,
+      )
+    ) {
       return false;
     }
     if (!paperMatchesOtherFilters(p, other)) return false;
@@ -183,17 +268,26 @@ export function filterPapersExceptOtherCategory(
   selections: OtherFilterSelections,
   skipCategory: OtherFilterCategory,
   bodyMapSelection?: BodyMapSelection,
+  rangeOpts?: RangeFilterOptions,
 ): ResearchPaper[] {
+  const ro = resolvedRangeOpts(rangeOpts);
   return papers.filter((p) => {
-    if (!rangeOverlapsFilter(p.minC, p.maxC, tempLowC, tempHighC)) {
+    if (
+      !paperMatchesTemperatureAxis(
+        p,
+        tempLowC,
+        tempHighC,
+        ro.includeUnspecifiedTemperature,
+      )
+    ) {
       return false;
     }
     if (
-      !durationRangeOverlapsFilter(
-        p.durationMinS,
-        p.durationMaxS,
+      !paperMatchesDurationAxis(
+        p,
         durationLowS,
         durationHighS,
+        ro.includeUnspecifiedDuration,
       )
     ) {
       return false;
@@ -220,6 +314,7 @@ export function otherFilterOptionCounts(
   durationHighS: number,
   selections: OtherFilterSelections,
   bodyMapSelection?: BodyMapSelection,
+  rangeOpts?: RangeFilterOptions,
 ): Record<OtherFilterCategory, Record<string, number>> {
   const out = {} as Record<OtherFilterCategory, Record<string, number>>;
   for (const cat of OTHER_FILTER_CATEGORY_ORDER) {
@@ -232,6 +327,7 @@ export function otherFilterOptionCounts(
       selections,
       cat,
       bodyMapSelection,
+      rangeOpts,
     );
     const optionIds = OPTION_IDS_BY_CATEGORY[cat];
     const m: Record<string, number> = {};

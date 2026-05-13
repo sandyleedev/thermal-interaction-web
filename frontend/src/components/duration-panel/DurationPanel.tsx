@@ -9,7 +9,10 @@ import {
   durationToNorm,
   formatDurationForUi,
 } from "./durationPanelUtils";
-import { durationRangeOverlapsFilter } from "@/lib/research/filterResearchPapers";
+import {
+  paperHasReportedDurationRange,
+  paperMatchesDurationAxis,
+} from "@/lib/research/filterResearchPapers";
 import { buildDurationKdePathsHorizontal } from "./durationPanelDensity";
 
 const TRACK_H = 22;
@@ -56,6 +59,8 @@ export function DurationPanel() {
     durationHighS,
     durationDensityPapers,
     setDurationRange,
+    includeUnspecifiedDuration,
+    setIncludeUnspecifiedDuration,
   } = useResearchFilter();
   const filterLowS = durationLowS;
   const filterHighS = durationHighS;
@@ -115,21 +120,26 @@ export function DurationPanel() {
   const durationAxisSelected = useMemo(
     () =>
       durationDensityPapers.filter((paper) =>
-        durationRangeOverlapsFilter(
-          paper.durationMinS,
-          paper.durationMaxS,
+        paperMatchesDurationAxis(
+          paper,
           filterLowS,
           filterHighS,
+          includeUnspecifiedDuration,
         ),
       ).length,
-    [durationDensityPapers, filterLowS, filterHighS],
+    [
+      durationDensityPapers,
+      filterLowS,
+      filterHighS,
+      includeUnspecifiedDuration,
+    ],
   );
   const durationSelectionRatioPct =
     durationAxisTotal > 0 ? (durationAxisSelected / durationAxisTotal) * 100 : 0;
   const centerDurationsS = useMemo(
     () =>
       durationDensityPapers
-        .filter((p) => p.durationMinS != null && p.durationMaxS != null)
+        .filter((p) => paperHasReportedDurationRange(p))
         .map((p) => ((p.durationMinS as number) + (p.durationMaxS as number)) / 2),
     [durationDensityPapers],
   );
@@ -309,6 +319,14 @@ export function DurationPanel() {
             ))}
           </div>
         </div>
+        <label className="filter-include-unspecified">
+          <input
+            type="checkbox"
+            checked={includeUnspecifiedDuration}
+            onChange={(e) => setIncludeUnspecifiedDuration(e.target.checked)}
+          />
+          Include unspecified values
+        </label>
       </div>
     </section>
   );

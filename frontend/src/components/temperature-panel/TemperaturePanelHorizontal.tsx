@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useId, useMemo, useRef } from "react";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
+import { paperMatchesTemperatureAxis } from "@/lib/research/filterResearchPapers";
 import { buildKdePathsHorizontal } from "./temperaturePanelDensity";
 import {
-  rangeOverlapsFilter,
   TEMP_AXIS_MAX,
   TEMP_AXIS_MIN,
   tempToNorm,
@@ -69,6 +69,8 @@ export function TemperaturePanelHorizontal({
     tempLowC,
     tempHighC,
     setTempRange,
+    includeUnspecifiedTemperature,
+    setIncludeUnspecifiedTemperature,
   } = useResearchFilter();
   const filterLow = tempLowC;
   const filterHigh = tempHighC;
@@ -141,9 +143,19 @@ export function TemperaturePanelHorizontal({
   const temperatureAxisSelected = useMemo(
     () =>
       temperatureDensityPapers.filter((paper) =>
-        rangeOverlapsFilter(paper.minC, paper.maxC, filterLow, filterHigh),
+        paperMatchesTemperatureAxis(
+          paper,
+          filterLow,
+          filterHigh,
+          includeUnspecifiedTemperature,
+        ),
       ).length,
-    [temperatureDensityPapers, filterLow, filterHigh],
+    [
+      temperatureDensityPapers,
+      filterLow,
+      filterHigh,
+      includeUnspecifiedTemperature,
+    ],
   );
   const temperatureSelectionRatioPct =
     temperatureAxisTotal > 0 ? (temperatureAxisSelected / temperatureAxisTotal) * 100 : 0;
@@ -320,6 +332,14 @@ export function TemperaturePanelHorizontal({
             ))}
           </div>
         </div>
+        <label className="filter-include-unspecified">
+          <input
+            type="checkbox"
+            checked={includeUnspecifiedTemperature}
+            onChange={(e) => setIncludeUnspecifiedTemperature(e.target.checked)}
+          />
+          Include unspecified values
+        </label>
       </div>
     </section>
   );

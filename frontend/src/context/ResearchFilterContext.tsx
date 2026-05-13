@@ -15,6 +15,7 @@ import {
   filterResearchPapersIgnoringTemperature,
   otherFilterOptionCounts,
   type OtherFilterSelections,
+  type RangeFilterOptions,
 } from "@/lib/research/filterResearchPapers";
 import {
   ALL_RESEARCH_PAPERS,
@@ -24,6 +25,10 @@ import {
   type BodyMapParentRegion,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
+import {
+  DURATION_MAX_S,
+  DURATION_MIN_S,
+} from "@/components/duration-panel/durationPanelUtils";
 import {
   TEMP_AXIS_MAX,
   TEMP_AXIS_MIN,
@@ -64,6 +69,12 @@ type ResearchFilterContextValue = {
   otherSelections: OtherFilterSelections;
   toggleOtherChip: (category: OtherFilterCategory, optionId: string) => void;
   clearOtherFilters: () => void;
+  /** When true, papers without numeric °C bounds still match the temperature slider filter. */
+  includeUnspecifiedTemperature: boolean;
+  setIncludeUnspecifiedTemperature: (value: boolean) => void;
+  /** When true, papers without numeric duration bounds still match the duration slider filter. */
+  includeUnspecifiedDuration: boolean;
+  setIncludeUnspecifiedDuration: (value: boolean) => void;
 };
 
 const ResearchFilterContext = createContext<
@@ -72,7 +83,8 @@ const ResearchFilterContext = createContext<
 
 /** Full axis span (-10…100 °C), same as the temperature sliders. */
 const DEFAULT_TEMP: [number, number] = [TEMP_AXIS_MIN, TEMP_AXIS_MAX];
-const DEFAULT_DURATION: [number, number] = [10, 3600];
+/** Full log axis span (1 s … 1 week), same as the duration sliders. */
+const DEFAULT_DURATION: [number, number] = [DURATION_MIN_S, DURATION_MAX_S];
 
 function aggregateBodyCounts(papers: readonly ResearchPaper[]): Record<string, number> {
   const raw: Record<string, number> = {};
@@ -104,6 +116,10 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
   const [selectedBodyFineSubregion, setSelectedBodyFineSubregion] = useState<
     string | null
   >(null);
+  const [includeUnspecifiedTemperature, setIncludeUnspecifiedTemperature] =
+    useState(true);
+  const [includeUnspecifiedDuration, setIncludeUnspecifiedDuration] =
+    useState(true);
 
   const bodyMapSelection: BodyMapSelection = useMemo(
     () => ({
@@ -111,6 +127,14 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       fineSubregion: selectedBodyFineSubregion,
     }),
     [selectedBodyRegion, selectedBodyFineSubregion],
+  );
+
+  const rangeFilterOptions: RangeFilterOptions = useMemo(
+    () => ({
+      includeUnspecifiedTemperature,
+      includeUnspecifiedDuration,
+    }),
+    [includeUnspecifiedTemperature, includeUnspecifiedDuration],
   );
 
   const setTempRange = useCallback((lowC: number, highC: number) => {
@@ -165,6 +189,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
         durationHighS,
         otherSelections,
         bodyMapSelection,
+        rangeFilterOptions,
       ),
     [
       tempLowC,
@@ -173,6 +198,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       durationHighS,
       otherSelections,
       bodyMapSelection,
+      rangeFilterOptions,
     ],
   );
 
@@ -184,8 +210,15 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
         durationHighS,
         otherSelections,
         bodyMapSelection,
+        rangeFilterOptions,
       ),
-    [durationLowS, durationHighS, otherSelections, bodyMapSelection],
+    [
+      durationLowS,
+      durationHighS,
+      otherSelections,
+      bodyMapSelection,
+      rangeFilterOptions,
+    ],
   );
   const durationDensityPapers = useMemo(
     () =>
@@ -195,8 +228,9 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
         tempHighC,
         otherSelections,
         bodyMapSelection,
+        rangeFilterOptions,
       ),
-    [tempLowC, tempHighC, otherSelections, bodyMapSelection],
+    [tempLowC, tempHighC, otherSelections, bodyMapSelection, rangeFilterOptions],
   );
 
   const optionCounts = useMemo(
@@ -209,6 +243,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
         durationHighS,
         otherSelections,
         bodyMapSelection,
+        rangeFilterOptions,
       ),
     [
       tempLowC,
@@ -217,6 +252,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       durationHighS,
       otherSelections,
       bodyMapSelection,
+      rangeFilterOptions,
     ],
   );
 
@@ -248,6 +284,10 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       otherSelections,
       toggleOtherChip,
       clearOtherFilters,
+      includeUnspecifiedTemperature,
+      setIncludeUnspecifiedTemperature,
+      includeUnspecifiedDuration,
+      setIncludeUnspecifiedDuration,
     }),
     [
       temperatureDensityPapers,
@@ -269,6 +309,10 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       otherSelections,
       toggleOtherChip,
       clearOtherFilters,
+      includeUnspecifiedTemperature,
+      includeUnspecifiedDuration,
+      setIncludeUnspecifiedTemperature,
+      setIncludeUnspecifiedDuration,
     ],
   );
 
