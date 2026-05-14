@@ -1,42 +1,110 @@
-# Thermal interaction web
+# Thermal Interaction Web
 
-Static single-page app (React + Vite) for exploring research papers and interactive body-map filters. There is no backend in this repo; everything runs in the browser.
+This is a static single-page website for exploring thermal interaction research papers using interactive filters and a body-map visualisation.
 
-## Requirements
+There is no backend server. Everything runs locally in the browser.
 
-| Tool        | Version                                                                                                                                                                                       |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Node.js** | **20.x ≥20.19** or **22.x ≥22.12** ([Vite 8](https://vitejs.dev/) supported ranges).<br>Easiest: install current **LTS** from [nodejs.org](https://nodejs.org/).<br>Node 18 is not supported. |
-| **npm**     | **10+** (ships with Node 20+). `pnpm` / `yarn` work if you prefer, from the `frontend` directory.                                                                                             |
+## Opening the website locally
 
-Check your versions:
+To open the website on your computer, Node.js and npm are required. No IDE or code editor is required.
+
+### 1. Install Node.js
+
+Please install the current LTS version of Node.js from [nodejs.org](https://nodejs.org/).
+
+After installing Node.js, you can check that it is available by opening a terminal and running:
 
 ```bash
-node -v   # e.g. v20.19.0 or v22.12.0
-npm -v    # e.g. 10.8.2
+node -v
+npm -v
 ```
 
-## Run locally
+Recommended versions:
 
-All install and dev commands are run from the **`frontend`** folder (that is where `package.json` lives).
+| Tool    | Version          |
+| ------- | ---------------- |
+| Node.js | 20.19+ or 22.12+ |
+| npm     | 10+              |
+
+### 2. Open a terminal in the `frontend` folder
+
+On macOS:
+<br>
+<img src="/docs/open-in-terminal.png" alt="Open in Terminal on macOS" width="400">
+
+1. Open the unzipped project folder in Finder.
+2. Right-click the `frontend` folder.
+3. Select `Open in Terminal`.
+
+On Windows:
+
+1. Open the unzipped project folder.
+2. Open the `frontend` folder.
+3. Click the address bar at the top of File Explorer.
+4. Type `cmd` and press Enter.
+
+After this, the terminal should be opened in the correct `frontend` folder.
+
+If `Open in Terminal` is not shown on macOS, open Terminal manually and run.
+For example, if the project is in the Downloads folder, run:
 
 ```bash
-cd thermal-interaction-web/frontend
+cd ~/Downloads/thermal-interaction-web/frontend
+```
+
+If the project folder is somewhere else, please adjust the path accordingly.
+
+### 3. Install the required packages
+
+Run:
+
+```bash
 npm install
+```
+
+This may take a few minutes the first time.
+
+### 4. Start the website
+
+Run:
+
+```bash
 npm run dev
 ```
 
-Then open the URL Vite prints (usually **http://localhost:5173**). Edit code and the page hot-reloads.
+### 5. Open the website in your browser
 
-## Other scripts
+After the command starts successfully, the terminal will show a local URL, usually:
 
-| Command           | Description                                             |
-| ----------------- | ------------------------------------------------------- |
-| `npm run build`   | Typecheck + production bundle into `frontend/dist/`.    |
-| `npm run preview` | Serve the production build locally (run after `build`). |
-| `npm run lint`    | ESLint.                                                 |
+```text
+http://localhost:5173
+```
+
+Open this URL in your browser.
+
+The website should then be available locally on your computer.
+
+## Developer commands
+
+All commands should be run from the `frontend` folder.
+
+| Command           | Description                               |
+| ----------------- | ----------------------------------------- |
+| `npm run dev`     | Start the local development server        |
+| `npm run build`   | Typecheck and create the production build |
+| `npm run preview` | Preview the production build locally      |
+| `npm run lint`    | Run ESLint                                |
 
 ## Troubleshooting
 
-- **`npm install` fails or Vite warns about Node** — Upgrade to Node **20.19+** or **22.12+** (e.g. via [nvm](https://github.com/nvm-sh/nvm) or the installer from [nodejs.org](https://nodejs.org/)).
-- **Port already in use** — Vite will try another port, or run `npm run dev -- --port 5174`.
+### Node.js version warning
+
+If installation fails or Vite shows a Node.js warning, please install a newer LTS version of Node.js.
+
+The recommended versions are Node.js 20.19+ or 22.12+.
+
+### Port already in use
+
+If port `5173` is already being used, Vite may open the website on another port.
+
+Please use the URL shown in the terminal.
