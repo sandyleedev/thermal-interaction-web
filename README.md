@@ -45,15 +45,6 @@ On Windows:
 
 After this, the terminal should be opened in the correct `frontend` folder.
 
-If `Open in Terminal` is not shown on macOS, open Terminal manually and run.
-For example, if the project is in the Downloads folder, run:
-
-```bash
-cd ~/Downloads/thermal-interaction-web/frontend
-```
-
-If the project folder is somewhere else, please adjust the path accordingly.
-
 ### 3. Install the required packages
 
 Run:
@@ -83,6 +74,10 @@ http://localhost:5173
 Open this URL in your browser.
 
 The website should then be available locally on your computer.
+
+### 6. Stop the local server
+
+To stop the website, go back to the terminal window and press `Ctrl + C`.
 
 ## Developer commands
 
