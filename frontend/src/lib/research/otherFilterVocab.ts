@@ -24,8 +24,8 @@ export const OTHER_FILTER_OPTIONS: Record<OtherFilterCategory, FilterOption[]> =
   {
     senses: [
       { id: "thermal-alone", label: "Thermal-alone" },
-      { id: "tactile", label: "Tactile" },
-      { id: "force", label: "Force" },
+      { id: "haptic-tactile", label: "Haptic-Tactile" },
+      { id: "haptic-force", label: "Haptic-Force" },
       { id: "kinesthetic-motion", label: "Kinesthetic/motion" },
       { id: "visual", label: "Visual" },
       { id: "auditory", label: "Auditory" },
