@@ -1264,15 +1264,11 @@
 
 .results-pagination-block {
   margin-top: 0.65rem;
-  padding-top: 0.55rem;
-  border-top: 1px solid #e8e8e8;
   flex-shrink: 0;
 }
 
 .results-paper-list + .results-pagination-block {
   margin-top: 0.65rem;
-  padding-top: 0.55rem;
-  border-top: 1px solid #e8e8e8;
 }
 
 .results-pagination-range {
@@ -1298,32 +1294,42 @@
   gap: 0.22rem;
 }
 
-.results-pagination-btn {
-  flex-shrink: 0;
-  padding: 0.28rem 0.55rem;
+.results-pagination-btn,
+.results-pagination-page {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.875rem;
   font: inherit;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: -0.02em;
-  color: #475569;
-  background: #f8fafc;
-  border: 1px solid rgba(148, 163, 184, 0.45);
+  line-height: 1.25;
   border-radius: 5px;
   cursor: pointer;
 }
 
+.results-pagination-btn {
+  flex-shrink: 0;
+  padding: 0 0.55rem;
+  color: #475569;
+  background: #f8fafc;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+}
+
+.results-pagination-btn--edge {
+  min-width: 2rem;
+  padding: 0 0.4rem;
+  letter-spacing: -0.08em;
+}
+
 .results-pagination-page {
   min-width: 1.75rem;
-  padding: 0.24rem 0.42rem;
-  font: inherit;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  padding: 0 0.42rem;
   color: #475569;
   background: #fafafa;
   border: 1px solid rgba(203, 213, 225, 0.95);
-  border-radius: 5px;
-  cursor: pointer;
   font-variant-numeric: tabular-nums;
 }
 

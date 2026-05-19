@@ -135,6 +135,15 @@ function ResultsPaginationNav({
       <nav className="results-pagination" aria-label="Results pagination">
         <button
           type="button"
+          className="results-pagination-btn results-pagination-btn--edge"
+          disabled={currentPage <= 1}
+          aria-label="First page"
+          onClick={() => onPageChange(1)}
+        >
+          <span aria-hidden>◀◀</span>
+        </button>
+        <button
+          type="button"
           className="results-pagination-btn"
           disabled={currentPage <= 1}
           onClick={() => onPageChange(currentPage - 1)}
@@ -171,6 +180,15 @@ function ResultsPaginationNav({
           onClick={() => onPageChange(currentPage + 1)}
         >
           Next
+        </button>
+        <button
+          type="button"
+          className="results-pagination-btn results-pagination-btn--edge"
+          disabled={currentPage >= totalPages}
+          aria-label="Last page"
+          onClick={() => onPageChange(totalPages)}
+        >
+          <span aria-hidden>▶▶</span>
         </button>
       </nav>
     </div>
