@@ -978,7 +978,9 @@
   min-width: 0;
 }
 
-.landing-other-filter-category-panel .other-filter-category-title-cluster .panel-title {
+.landing-other-filter-category-panel
+  .other-filter-category-title-cluster
+  .panel-title {
   margin: 0;
   flex: 0 1 auto;
   min-width: 0;
@@ -1530,7 +1532,7 @@
   /* Row height follows content so the document scrolls (no nested results scroll). */
   grid-template-rows: auto;
   gap: 0.45rem;
-  padding: 0.35rem 0.85rem 0.65rem;
+  padding: 0.35rem 0.65rem;
   align-items: stretch;
 }
 
@@ -1548,7 +1550,7 @@
 }
 
 .landing-layout-col-left {
-  padding: 0.45rem 0.65rem 0.65rem 0;
+  padding: 0.25rem 0.45rem 0.45rem 0;
   border-right: 1px solid #e5e5e5;
 }
 
@@ -1611,7 +1613,7 @@
 }
 
 .landing-layout-col-right {
-  padding: 0.35rem 0 0.65rem 0.65rem;
+  padding: 0.25rem 0 0.65rem 0.45rem;
   border-left: 1px solid #e5e5e5;
   overflow: visible;
 }
