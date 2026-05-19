@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { BodyMapPanel } from "@/components/body-map/BodyMapPanel";
 import { DurationPanel } from "@/components/duration-panel/DurationPanel";
 import { Header } from "@/components/landing/Header";
@@ -11,6 +12,10 @@ import "@/pages/LandingPage.css";
  * Main landing layout: three-column view (body map | filters | results).
  */
 export function LandingPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="landing-root">
       <Header />

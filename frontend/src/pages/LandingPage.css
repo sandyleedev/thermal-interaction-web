@@ -1,6 +1,6 @@
 .landing-root {
   --range-slider-value-pill-gap: 5px;
-  min-height: 100%;
+  min-height: 100dvh;
   height: auto;
   display: flex;
   flex-direction: column;
@@ -39,7 +39,7 @@
 }
 
 .landing-main {
-  flex: 1 1 auto;
+  flex: 1 0 auto;
   display: flex;
   min-height: 0;
   overflow: visible;
@@ -473,17 +473,17 @@
 }
 
 .landing-results {
-  flex: 1 1 0;
+  flex: 0 0 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .landing-results .panel-content {
-  flex: 1 1 0;
+  flex: 0 0 auto;
   min-height: 0;
-  overflow: auto;
+  overflow: visible;
 }
 
 .landing-panel {
@@ -1186,6 +1186,178 @@
   color: #94a3b8;
 }
 
+.results-list-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  margin-top: 0.5rem;
+  flex-wrap: nowrap;
+}
+
+.results-list-toolbar .results-pagination-range {
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.results-list-toolbar .results-page-size {
+  flex: 0 0 auto;
+  margin: 0;
+  margin-left: auto;
+}
+
+.results-page-size {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.35rem;
+}
+
+.results-page-size-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #64748b;
+}
+
+.results-page-size-btn {
+  min-width: 2rem;
+  padding: 0.2rem 0.45rem;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #475569;
+  background: #fafafa;
+  border: 1px solid rgba(203, 213, 225, 0.95);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.results-page-size-btn:hover {
+  background: #f1f5f9;
+  border-color: rgba(148, 163, 184, 0.85);
+}
+
+.results-page-size-btn:focus-visible {
+  outline: 2px solid rgba(56, 189, 248, 0.55);
+  outline-offset: 2px;
+}
+
+.results-page-size-btn--active {
+  color: #0f172a;
+  background: linear-gradient(
+    to bottom,
+    rgba(239, 246, 255, 0.95),
+    rgba(219, 234, 254, 0.88)
+  );
+  border-color: rgba(59, 130, 246, 0.42);
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.06);
+}
+
+.results-list-toolbar + .results-paper-list {
+  margin-top: 0.55rem;
+}
+
+.results-pagination-block {
+  margin-top: 0.65rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid #e8e8e8;
+  flex-shrink: 0;
+}
+
+.results-paper-list + .results-pagination-block {
+  margin-top: 0.65rem;
+  padding-top: 0.55rem;
+  border-top: 1px solid #e8e8e8;
+}
+
+.results-pagination-range {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: #64748b;
+  line-height: 1.35;
+}
+
+.results-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.results-pagination-pages {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22rem;
+}
+
+.results-pagination-btn {
+  flex-shrink: 0;
+  padding: 0.28rem 0.55rem;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #475569;
+  background: #f8fafc;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.results-pagination-page {
+  min-width: 1.75rem;
+  padding: 0.24rem 0.42rem;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #475569;
+  background: #fafafa;
+  border: 1px solid rgba(203, 213, 225, 0.95);
+  border-radius: 5px;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+
+.results-pagination-page:hover {
+  background: #f1f5f9;
+  border-color: rgba(148, 163, 184, 0.85);
+}
+
+.results-pagination-page--current {
+  color: #0f172a;
+  background: linear-gradient(
+    to bottom,
+    rgba(239, 246, 255, 0.95),
+    rgba(219, 234, 254, 0.88)
+  );
+  border-color: rgba(59, 130, 246, 0.42);
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.06);
+  cursor: default;
+}
+
+.results-pagination-btn:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: rgba(100, 116, 139, 0.55);
+}
+
+.results-pagination-btn:focus-visible,
+.results-pagination-page:focus-visible {
+  outline: 2px solid rgba(56, 189, 248, 0.55);
+  outline-offset: 2px;
+}
+
+.results-pagination-btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
 /* Shorter center-column temperature plot in compact mode. */
 .landing-temperature-panel.landing-temperature-panel--compact .panel-content {
   padding: 0.04rem 0.05rem 0;
@@ -1355,8 +1527,8 @@
       280px,
       1.46fr
     );
-  /* One row fills viewport height so the center column can shrink; filter stack scrolls with the page. */
-  grid-template-rows: minmax(0, 1fr);
+  /* Row height follows content so the document scrolls (no nested results scroll). */
+  grid-template-rows: auto;
   gap: 0.45rem;
   padding: 0.35rem 0.85rem 0.65rem;
   align-items: stretch;
@@ -1441,10 +1613,11 @@
 .landing-layout-col-right {
   padding: 0.35rem 0 0.65rem 0.65rem;
   border-left: 1px solid #e5e5e5;
+  overflow: visible;
 }
 
 .landing-layout-col-right .landing-results {
-  flex: 1 1 0;
+  flex: 0 0 auto;
   min-height: 0;
 }
 
