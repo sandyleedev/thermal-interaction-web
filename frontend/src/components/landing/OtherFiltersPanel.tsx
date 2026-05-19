@@ -1,13 +1,11 @@
 import {
   useEffect,
   useId,
-  useMemo,
   useRef,
   useState,
 } from "react";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import {
-  OTHER_FILTER_CATEGORY_ORDER,
   OTHER_FILTER_OPTIONS,
   OTHER_FILTER_SECTION_TITLES,
   type OtherFilterCategory,
@@ -15,12 +13,6 @@ import {
 
 const OTHER_FILTERS_LOGIC_TOOLTIP =
   "Select multiple options within a category (OR), and combine categories (AND)";
-
-function otherFiltersHasSelection(
-  selections: Record<OtherFilterCategory, readonly string[]>,
-): boolean {
-  return OTHER_FILTER_CATEGORY_ORDER.some((c) => selections[c].length > 0);
-}
 
 function OtherFiltersLogicInfoButton() {
   const tooltipId = useId();
@@ -110,104 +102,66 @@ export function FilterChip({ label, count, selected, onToggle }: FilterChipProps
   );
 }
 
-type StaticCategorySectionProps = {
+export type OtherFilterCategoryPanelProps = {
   category: OtherFilterCategory;
-  title: string;
-  optionCountById: Record<string, number | undefined>;
-  selectedIds: readonly string[];
-  onToggleChip: (category: OtherFilterCategory, optionId: string) => void;
-};
-
-function StaticCategorySection({
-  category,
-  title,
-  optionCountById,
-  selectedIds,
-  onToggleChip,
-}: StaticCategorySectionProps) {
-  const options = OTHER_FILTER_OPTIONS[category];
-  return (
-    <section
-      className="other-filters-section"
-      aria-labelledby={`other-filters-heading-${category}`}
-    >
-      <h3 className="other-filters-section-title" id={`other-filters-heading-${category}`}>
-        {title}
-      </h3>
-      <div className="other-filters-chip-row" role="group" aria-label={title}>
-        {options.map((opt) => (
-          <FilterChip
-            key={opt.id}
-            label={opt.label}
-            count={optionCountById[opt.id] ?? 0}
-            selected={selectedIds.includes(opt.id)}
-            onToggle={() => onToggleChip(category, opt.id)}
-          />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-export type OtherFiltersPanelProps = {
-  excludeCategories?: readonly OtherFilterCategory[];
+  /** Show OR/AND logic tooltip beside the panel title (first category panel only). */
+  showFilterLogicInfo?: boolean;
   className?: string;
 };
 
-export function OtherFiltersPanel({
-  excludeCategories = [],
+export function OtherFilterCategoryPanel({
+  category,
+  showFilterLogicInfo = false,
   className,
-}: OtherFiltersPanelProps = {}) {
+}: OtherFilterCategoryPanelProps) {
   const {
     optionCounts,
     otherSelections,
     toggleOtherChip,
-    clearOtherFilters,
+    clearOtherFilterCategory,
   } = useResearchFilter();
 
-  const hasSelection = otherFiltersHasSelection(otherSelections);
-
-  const categoriesToShow = useMemo(() => {
-    const ex = new Set(excludeCategories);
-    return OTHER_FILTER_CATEGORY_ORDER.filter((c) => !ex.has(c));
-  }, [excludeCategories]);
+  const title = OTHER_FILTER_SECTION_TITLES[category];
+  const options = OTHER_FILTER_OPTIONS[category];
+  const selectedIds = otherSelections[category];
+  const hasSelection = selectedIds.length > 0;
 
   return (
     <section
       className={[
         "landing-panel",
-        "landing-other-filters-panel",
-        "landing-other-filters-panel--flat-sections",
+        "landing-other-filter-category-panel",
         className,
       ]
         .filter(Boolean)
         .join(" ")}
     >
-      <div className="other-filters-panel-header">
-        <div className="other-filters-panel-title-cluster">
-          <h2 className="panel-title">Other filters</h2>
-          <OtherFiltersLogicInfoButton />
+      <div className="other-filter-category-panel-header">
+        <div className="other-filter-category-title-cluster">
+          <h2 className="panel-title">{title}</h2>
+          {showFilterLogicInfo ? <OtherFiltersLogicInfoButton /> : null}
         </div>
         <button
           type="button"
           className="other-filters-clear-all"
           disabled={!hasSelection}
-          onClick={clearOtherFilters}
+          onClick={() => clearOtherFilterCategory(category)}
         >
-          Clear all
+          Clear
         </button>
       </div>
-      <div className="panel-content other-filters-panel-content">
-        {categoriesToShow.map((category) => (
-          <StaticCategorySection
-            key={category}
-            category={category}
-            title={OTHER_FILTER_SECTION_TITLES[category]}
-            optionCountById={optionCounts[category]}
-            selectedIds={otherSelections[category]}
-            onToggleChip={toggleOtherChip}
-          />
-        ))}
+      <div className="panel-content other-filter-category-panel-content">
+        <div className="other-filters-chip-row" role="group" aria-label={title}>
+          {options.map((opt) => (
+            <FilterChip
+              key={opt.id}
+              label={opt.label}
+              count={optionCounts[category][opt.id] ?? 0}
+              selected={selectedIds.includes(opt.id)}
+              onToggle={() => toggleOtherChip(category, opt.id)}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );

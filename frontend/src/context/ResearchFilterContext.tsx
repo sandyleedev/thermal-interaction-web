@@ -75,6 +75,7 @@ type ResearchFilterContextValue = {
   setDurationRange: (lowS: number, highS: number) => void;
   otherSelections: OtherFilterSelections;
   toggleOtherChip: (category: OtherFilterCategory, optionId: string) => void;
+  clearOtherFilterCategory: (category: OtherFilterCategory) => void;
   clearOtherFilters: () => void;
   /** When true, papers without numeric °C bounds still match the temperature slider filter. */
   includeUnspecifiedTemperature: boolean;
@@ -167,6 +168,10 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
     },
     [],
   );
+
+  const clearOtherFilterCategory = useCallback((category: OtherFilterCategory) => {
+    setOtherSelections((prev) => ({ ...prev, [category]: [] }));
+  }, []);
 
   const clearOtherFilters = useCallback(() => {
     setOtherSelections(emptyOtherFilterSelections());
@@ -320,6 +325,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       setDurationRange,
       otherSelections,
       toggleOtherChip,
+      clearOtherFilterCategory,
       clearOtherFilters,
       includeUnspecifiedTemperature,
       setIncludeUnspecifiedTemperature,
@@ -347,6 +353,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       setDurationRange,
       otherSelections,
       toggleOtherChip,
+      clearOtherFilterCategory,
       clearOtherFilters,
       includeUnspecifiedTemperature,
       includeUnspecifiedDuration,

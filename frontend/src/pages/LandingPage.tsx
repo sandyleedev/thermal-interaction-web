@@ -1,7 +1,8 @@
 import { BodyMapPanel } from "@/components/body-map/BodyMapPanel";
 import { DurationPanel } from "@/components/duration-panel/DurationPanel";
 import { Header } from "@/components/landing/Header";
-import { OtherFiltersPanel } from "@/components/landing/OtherFiltersPanel";
+import { OtherFilterCategoryPanel } from "@/components/landing/OtherFiltersPanel";
+import { OTHER_FILTER_CATEGORY_ORDER } from "@/lib/research/otherFilterVocab";
 import { ResultsPanel } from "@/components/landing/ResultsPanel";
 import { TemperaturePanelHorizontal } from "@/components/temperature-panel/TemperaturePanelHorizontal";
 import "@/pages/LandingPage.css";
@@ -21,7 +22,13 @@ export function LandingPage() {
           <div className="landing-filters-scroll">
             <TemperaturePanelHorizontal compact />
             <DurationPanel />
-            <OtherFiltersPanel />
+            {OTHER_FILTER_CATEGORY_ORDER.map((category, index) => (
+              <OtherFilterCategoryPanel
+                key={category}
+                category={category}
+                showFilterLogicInfo={index === 0}
+              />
+            ))}
           </div>
         </div>
         <div className="landing-layout-col landing-layout-col-right">

@@ -457,15 +457,15 @@
   min-height: 0;
 }
 
-.landing-filters-scroll-stack > .landing-other-filters-panel {
+.landing-filters-scroll-stack > .landing-other-filter-category-panel {
   flex: 0 0 auto;
   min-height: auto;
   overflow: visible;
 }
 
 .landing-filters-scroll-stack
-  .landing-other-filters-panel
-  .other-filters-panel-content {
+  .landing-other-filter-category-panel
+  .other-filter-category-panel-content {
   flex: 0 0 auto;
   min-height: auto;
   overflow-x: hidden;
@@ -954,23 +954,23 @@
   white-space: nowrap;
 }
 
-/* —— Panel 4: other filters (chips) —— */
-.landing-other-filters-panel {
+/* —— Other filter category panels (chips) —— */
+.landing-other-filter-category-panel {
   min-width: 0;
   min-height: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
-.landing-other-filters-panel .other-filters-panel-header {
+.landing-other-filter-category-panel .other-filter-category-panel-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
   flex-shrink: 0;
-  padding-bottom: 0.42rem;
+  margin: 0 0 0.45rem;
 }
 
-.other-filters-panel-title-cluster {
+.other-filter-category-title-cluster {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -978,7 +978,7 @@
   min-width: 0;
 }
 
-.landing-other-filters-panel .other-filters-panel-title-cluster .panel-title {
+.landing-other-filter-category-panel .other-filter-category-title-cluster .panel-title {
   margin: 0;
   flex: 0 1 auto;
   min-width: 0;
@@ -1086,37 +1086,13 @@
   cursor: not-allowed;
 }
 
-.landing-other-filters-panel .other-filters-panel-content {
+.landing-other-filter-category-panel .other-filter-category-panel-content {
   flex: 0 0 auto;
   min-height: auto;
   overflow-x: hidden;
   overflow-y: visible;
-  padding: 0.08rem 0 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.landing-other-filters-panel--flat-sections .other-filters-panel-content {
-  gap: 0.55rem;
-}
-
-.other-filters-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  min-width: 0;
-}
-
-.other-filters-section-title {
-  margin: 0;
   padding: 0;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: -0.015em;
-  color: #64748b;
-  text-transform: uppercase;
+  margin: 0;
 }
 
 .other-filters-chip-row {
@@ -1379,7 +1355,7 @@
       280px,
       1.46fr
     );
-  /* One row fills viewport height so the center column can shrink; scroll stays inside Other filters only. */
+  /* One row fills viewport height so the center column can shrink; filter stack scrolls with the page. */
   grid-template-rows: minmax(0, 1fr);
   gap: 0.45rem;
   padding: 0.35rem 0.85rem 0.65rem;
@@ -1415,7 +1391,7 @@
   min-height: 0;
 }
 
-/* Temperature + Duration stay fixed; Other filters body scrolls. */
+/* Filter panels stack vertically in the center column. */
 .landing-filters-scroll {
   flex: 0 0 auto;
   min-height: auto;
@@ -1437,7 +1413,7 @@
   overflow: visible;
 }
 
-.landing-filters-scroll > .landing-panel.landing-other-filters-panel {
+.landing-filters-scroll > .landing-panel.landing-other-filter-category-panel {
   flex: 0 0 auto;
   min-height: auto;
   overflow: visible;
@@ -1454,8 +1430,8 @@
 }
 
 .landing-filters-scroll
-  .landing-other-filters-panel
-  .other-filters-panel-content {
+  .landing-other-filter-category-panel
+  .other-filter-category-panel-content {
   flex: 0 0 auto;
   min-height: auto;
   overflow-x: hidden;
