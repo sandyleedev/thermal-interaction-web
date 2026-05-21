@@ -3,6 +3,7 @@ import { useResearchFilter } from "@/context/ResearchFilterContext";
 import BodyMap from "./full-body/BodyMap";
 import type { BodyMapVariant } from "./bodyMapVariant";
 import { HeadBodyMapDetail } from "./head/HeadBodyMapDetail";
+import { NeckBodyMapDetail } from "./neck/NeckBodyMapDetail";
 import { paperTouchesBodyMapParent } from "@/lib/research/researchPapers";
 
 export function BodyMapPanel() {
@@ -24,7 +25,14 @@ export function BodyMapPanel() {
     [bodyMapPaperPool],
   );
 
+  const neckDetailPapers = useMemo(
+    () =>
+      bodyMapPaperPool.filter((p) => paperTouchesBodyMapParent(p, "neck")),
+    [bodyMapPaperPool],
+  );
+
   const showHeadDetail = selectedBodyRegion === "head";
+  const showNeckDetail = selectedBodyRegion === "neck";
 
   return (
     <aside className="landing-panel landing-body-map">
@@ -58,6 +66,14 @@ export function BodyMapPanel() {
           <HeadBodyMapDetail
             variant={variant}
             papers={headDetailPapers}
+            selectedFineSubregion={selectedBodyFineSubregion}
+            onSelectFine={setBodyMapFineSubregion}
+            onBack={clearBodyMapSelection}
+          />
+        ) : showNeckDetail ? (
+          <NeckBodyMapDetail
+            variant={variant}
+            papers={neckDetailPapers}
             selectedFineSubregion={selectedBodyFineSubregion}
             onSelectFine={setBodyMapFineSubregion}
             onBack={clearBodyMapSelection}

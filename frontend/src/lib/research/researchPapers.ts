@@ -11,6 +11,7 @@ export type {
   BodyMapPlacementRegion,
   BodyMapRegion,
   HeadDetailHitId,
+  NeckDetailHitId,
 } from "@/lib/research/bodyMapRegionUtils";
 
 export {
@@ -23,10 +24,12 @@ export {
   bodyMapRegionForPlacement,
   countPapersWithWholeBodyGeneral,
   HEAD_DETAIL_HIT_IDS,
+  NECK_DETAIL_HIT_IDS,
   parentKeysForBodyMapAggregatedCounts,
   paperHasWholeBodyGeneralSite,
   paperMatchesBodyMapFineSelection,
   paperMatchesHeadFineSelection,
+  paperMatchesNeckFineSelection,
   paperTouchesBodyMapParent,
   resolveBodySite,
   WHOLE_BODY_GENERAL_COUNT_KEY,

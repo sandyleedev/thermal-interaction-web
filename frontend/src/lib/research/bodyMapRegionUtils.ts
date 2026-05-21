@@ -202,6 +202,16 @@ export type HeadDetailHitId = (typeof HEAD_DETAIL_HIT_IDS)[number];
 
 const HEAD_DETAIL_HIT_ID_SET = new Set<string>(HEAD_DETAIL_HIT_IDS);
 
+/** Neck zoom map hit ids (general ring uses `general`). */
+export const NECK_DETAIL_HIT_IDS = ["anterior", "posterior"] as const;
+
+export type NeckDetailHitId = (typeof NECK_DETAIL_HIT_IDS)[number];
+
+const NECK_DETAIL_HIT_ID_SET = new Set<string>([
+  ...NECK_DETAIL_HIT_IDS,
+  "general",
+]);
+
 function headEarOrCheekHit(
   paper: BodySitesCarrier,
   sub: "ear" | "cheek",
@@ -262,6 +272,37 @@ export function paperMatchesHeadFineSelection(
   }
 }
 
+function neckExactSub(paper: BodySitesCarrier, sub: string): boolean {
+  const sl = sub.toLowerCase();
+  for (const s of paper.bodySites ?? []) {
+    const resolved = resolveBodySite(s);
+    if (resolved.parent === "neck" && resolved.subregion.trim().toLowerCase() === sl) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Neck L2 zoom: `general` matches only `neck → general` sites.
+ */
+export function paperMatchesNeckFineSelection(
+  paper: BodySitesCarrier,
+  hit: string,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  switch (h) {
+    case "general":
+      return neckExactSub(paper, "general");
+    case "anterior":
+      return neckExactSub(paper, "anterior");
+    case "posterior":
+      return neckExactSub(paper, "posterior");
+    default:
+      return false;
+  }
+}
+
 /**
  * Level-2 filter (optional). When `fineSubregion` is set, `parent` must also be set.
  * Match is case-insensitive on `subregion` after trimming.
@@ -276,6 +317,10 @@ export function paperMatchesBodyMapFineSelection(
 
   if (parent === "head" && HEAD_DETAIL_HIT_ID_SET.has(needle)) {
     return paperMatchesHeadFineSelection(paper, needle);
+  }
+
+  if (parent === "neck" && NECK_DETAIL_HIT_ID_SET.has(needle)) {
+    return paperMatchesNeckFineSelection(paper, needle);
   }
 
   for (const s of paper.bodySites ?? []) {
