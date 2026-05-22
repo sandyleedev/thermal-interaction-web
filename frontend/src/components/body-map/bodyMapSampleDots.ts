@@ -517,7 +517,9 @@ export function sampleHeatmapAreaDensityDots(
 
   for (const t of singles) {
     if (t.cohortSubpathIndices && t.cohortSubpathIndices.length > 0) {
-      const sorted = [...t.cohortSubpathIndices].sort((a, b) => a - b).join(",");
+      const sorted = [...t.cohortSubpathIndices]
+        .sort((a, b) => a - b)
+        .join(",");
       bump(`${partId}\0cohort\0solo\0${sorted}`, 1, {
         cohort: t.cohortSubpathIndices,
       });
@@ -543,7 +545,9 @@ export function sampleHeatmapAreaDensityDots(
     const [key, bucket] = entries[i]!;
     const seedBase = `${key}\0area-density`;
     if (bucket.cohort && bucket.cohort.length > 0) {
-      out.push(...sampleDotsInCohortUnion(subpaths, bucket.cohort, n, seedBase));
+      out.push(
+        ...sampleDotsInCohortUnion(subpaths, bucket.cohort, n, seedBase),
+      );
     } else {
       const idx = bucket.subpathIndex ?? 0;
       const sp = subpaths[idx] ?? subpaths[0];
