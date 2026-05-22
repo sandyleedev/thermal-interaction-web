@@ -13,6 +13,14 @@ import { dotCohortPlanForResolvedSite } from "./bodyMapDotCohorts";
  * Shared placement resolution + sampling for the full-body map.
  * Dot view: {@link sampleHeatmapDotPlacements}. Area view: {@link sampleHeatmapAreaDensityDots}.
  */
+
+/**
+ * When `true`, heatmap dots are sampled only inside the outer body silhouette and the
+ * full-body map clips the dot layer to that outline. When `false`, dots may extend past
+ * the outline (still sampled inside each part path’s fill).
+ */
+export const REQUIRE_DOTS_INSIDE_BODY_OUTLINE = true;
+
 const INNER_TX = 0;
 
 function hashStringToSeed(s: string): number {
@@ -254,7 +262,12 @@ function trySamplePathAtVerticalFraction(
     pt.x = x;
     pt.y = y;
     if (!path.isPointInFill(pt)) continue;
-    if (!pointInsideSilhouette(silhouette, path, pt, svg)) continue;
+    if (
+      REQUIRE_DOTS_INSIDE_BODY_OUTLINE &&
+      !pointInsideSilhouette(silhouette, path, pt, svg)
+    ) {
+      continue;
+    }
     return localPointToParentGroup(path, pt);
   }
   return null;
@@ -309,7 +322,12 @@ function sampleDotsInBodyPartPath(
           pt.x = x;
           pt.y = y;
           if (!path.isPointInFill(pt)) continue;
-          if (!pointInsideSilhouette(silhouette, path, pt, svg)) continue;
+          if (
+            REQUIRE_DOTS_INSIDE_BODY_OUTLINE &&
+            !pointInsideSilhouette(silhouette, path, pt, svg)
+          ) {
+            continue;
+          }
           out.push(localPointToParentGroup(path, pt));
         }
         if (out.length >= dotCount || attemptLimit >= attemptCap) {
@@ -381,7 +399,12 @@ function sampleDotsInCohortUnion(
             }
           }
           if (!hit) continue;
-          if (!pointInsideSilhouette(silhouette, hit, pt, svg)) continue;
+          if (
+            REQUIRE_DOTS_INSIDE_BODY_OUTLINE &&
+            !pointInsideSilhouette(silhouette, hit, pt, svg)
+          ) {
+            continue;
+          }
           out.push(localPointToParentGroup(hit, pt));
         }
         if (out.length >= dotCount || attemptLimit >= attemptCap) break;

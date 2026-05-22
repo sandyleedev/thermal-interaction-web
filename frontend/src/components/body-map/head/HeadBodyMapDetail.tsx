@@ -10,7 +10,10 @@ import {
 } from "react";
 import { contourDensity, geoPath } from "d3";
 import type { ContourMultiPolygon } from "d3-contour";
-import { areaDotsLruPut, areaDotsLruTouch } from "../shared/bodyMapAreaDotsCache";
+import {
+  areaDotsLruPut,
+  areaDotsLruTouch,
+} from "../shared/bodyMapAreaDotsCache";
 import {
   buildHeadAreaDensityDotsByHitId,
   buildHeadDotsByHitId,
@@ -18,18 +21,16 @@ import {
   type HeadShapeSpec,
 } from "./headDetailSampleDots";
 import type { BodyMapVariant } from "../bodyMapVariant";
-import {
-  countToPerceptualNormalized,
-} from "../bodyMapVisualization";
+import { countToPerceptualNormalized } from "../bodyMapVisualization";
 import {
   paperMatchesHeadFineSelection,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
 
 /** Smaller than full-body dots so subregions on the head SVG read more clearly. */
-const HEATMAP_DOT_RADIUS = 18;
-const HEATMAP_DOT_OPACITY_MIN = 0.22;
-const HEATMAP_DOT_OPACITY_MAX = 0.52;
+const HEATMAP_DOT_RADIUS = 28;
+const HEATMAP_DOT_OPACITY_MIN = 0.12;
+const HEATMAP_DOT_OPACITY_MAX = 0.32;
 const MAX_HEATMAP_DOTS_PER_HIT = 500;
 
 /** Finer grid + more thresholds smooth density contour edges in Area view. */
@@ -214,7 +215,10 @@ export function HeadBodyMapDetail({
     error: headParseError,
   } = headParse;
 
-  const paperIdsKey = useMemo(() => papers.map((p) => p.id).join("\0"), [papers]);
+  const paperIdsKey = useMemo(
+    () => papers.map((p) => p.id).join("\0"),
+    [papers],
+  );
 
   const shapeByHitKey = useMemo(
     () => [...shapeByHit.keys()].sort().join("\0"),
@@ -575,8 +579,7 @@ export function HeadBodyMapDetail({
                     partCount,
                     countColorDomain,
                   );
-                  const countBoost =
-                    0.35 + Math.pow(countStrength, 0.9) * 0.65;
+                  const countBoost = 0.35 + Math.pow(countStrength, 0.9) * 0.65;
                   const globalMax =
                     headRawDotsGlobalContourMaxValue <= 0
                       ? 1
@@ -650,8 +653,7 @@ export function HeadBodyMapDetail({
               const selected =
                 !suppressSelectedFineFillWhileGeneralHover &&
                 selectedFineSubregion?.toLowerCase() === hitId.toLowerCase();
-              const active =
-                hoveredHitId === hitId || selected;
+              const active = hoveredHitId === hitId || selected;
               const fillPaint = active
                 ? `url(#${hoverGradientId})`
                 : "transparent";
@@ -719,7 +721,9 @@ export function HeadBodyMapDetail({
               d={generalOutlineD}
               fill="none"
               stroke={generalRingActive ? "#fbcfe8" : "transparent"}
-              strokeOpacity={generalRingHovered ? 1 : generalRingActive ? 0.92 : 1}
+              strokeOpacity={
+                generalRingHovered ? 1 : generalRingActive ? 0.92 : 1
+              }
               strokeWidth={10}
               vectorEffect="nonScalingStroke"
               strokeLinejoin="round"
@@ -795,8 +799,9 @@ export function HeadBodyMapDetail({
           </div>
           <p className="body-map-heatmap-legend-caption">
             Paper count (low to high): {countColorDomain[0].toLocaleString()} to{" "}
-            {countColorDomain[1].toLocaleString()}. Uses the same d3 density smoothing as the
-            full-body map. Hover the outline for whole-head (general).
+            {countColorDomain[1].toLocaleString()}. Uses the same d3 density
+            smoothing as the full-body map. Hover the outline for whole-head
+            (general).
           </p>
         </div>
       ) : null}

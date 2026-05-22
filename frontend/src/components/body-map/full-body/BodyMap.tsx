@@ -32,10 +32,8 @@ import {
   type BodyMapRegion,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
-import {
-  type FullBodyMapPart,
-  useBodyMapPartDots,
-} from "./useBodyMapPartDots";
+import { REQUIRE_DOTS_INSIDE_BODY_OUTLINE } from "../bodyMapSampleDots";
+import { type FullBodyMapPart, useBodyMapPartDots } from "./useBodyMapPartDots";
 
 /**
  * Full-body map (Level 1 only in this file).
@@ -46,9 +44,9 @@ import {
  */
 type TooltipState = { label: string; count: number; x: number; y: number };
 
-const HEATMAP_DOT_RADIUS = 45;
-const HEATMAP_DOT_OPACITY_MIN = 0.22;
-const HEATMAP_DOT_OPACITY_MAX = 0.52;
+const HEATMAP_DOT_RADIUS = 75;
+const HEATMAP_DOT_OPACITY_MIN = 0.12;
+const HEATMAP_DOT_OPACITY_MAX = 0.32;
 
 /** Inner `g` translate (path data + clip live in this space). */
 const BODY_MAP_INNER_TX = 0;
@@ -323,6 +321,7 @@ export function BodyMap({
   const mapTransform = BODY_MAP_UNIFORM_SCALE_TRANSFORM;
   const activeView = BODY_MAP_VIEW;
   const activeClipPath = `url(#${clipPathId})`;
+  const clipDotsToOutline = REQUIRE_DOTS_INSIDE_BODY_OUTLINE;
 
   return (
     <div className="body-map-root">
@@ -346,145 +345,189 @@ export function BodyMap({
           </p>
         ) : null}
         {silhouetteStatus === "ready" ? (
-        <svg
-          className="body-map-svg"
-          width="100%"
-          height="100%"
-          viewBox={`${activeView.x} ${activeView.y} ${activeView.w} ${activeView.h}`}
-          preserveAspectRatio="xMidYMin meet"
-          role="img"
-          aria-label={ariaLabel}
-        >
-          <defs>
-            <linearGradient
-              id={hoverGradientId}
-              gradientUnits="userSpaceOnUse"
-              x1={10}
-              y1={BODY_MAP_VIEW.y}
-              x2={78}
-              y2={BODY_MAP_VIEW.y + BODY_MAP_VIEW.h}
-            >
-              <stop offset="0%" stopColor="#e0f2fe" stopOpacity={0.75} />
-              <stop offset="50%" stopColor="#bae6fd" stopOpacity={0.65} />
-              <stop offset="100%" stopColor="#7dd3fc" stopOpacity={0.55} />
-            </linearGradient>
-            <linearGradient
-              id={rawDotsLegendGradientId}
-              x1="0%"
-              y1="0%"
-              x2="100%"
-              y2="0%"
-            >
-              <stop offset="0%" stopColor="#ffe4e6" />
-              <stop offset="100%" stopColor="#db2777" />
-            </linearGradient>
-            <filter
-              id={softFillFilterId}
-              x="-50%"
-              y="-50%"
-              width="200%"
-              height="200%"
-              colorInterpolationFilters="sRGB"
-            >
-              <feGaussianBlur in="SourceGraphic" stdDeviation="6.8" />
-            </filter>
-            <filter
-              id={rawDotsSoftBlurId}
-              x="-40%"
-              y="-40%"
-              width="180%"
-              height="180%"
-              colorInterpolationFilters="sRGB"
-            >
-              <feGaussianBlur in="SourceGraphic" stdDeviation="4" />
-            </filter>
-            <filter
-              id={wholeBodyRingGlowFilterId}
-              x="-100%"
-              y="-100%"
-              width="300%"
-              height="300%"
-              colorInterpolationFilters="sRGB"
-            >
-              <feGaussianBlur
-                in="SourceGraphic"
-                stdDeviation="5.5"
-                result="wbRingBlur"
-              />
-              <feMerge>
-                <feMergeNode in="wbRingBlur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-            <radialGradient
-              id={heatDotRadialGradientId}
-              gradientUnits="objectBoundingBox"
-              cx="0.5"
-              cy="0.5"
-              r="0.5"
-            >
-              <stop offset="0%" stopColor="#be185d" stopOpacity="1" />
-              <stop offset="38%" stopColor="#db2777" stopOpacity="0.72" />
-              <stop offset="72%" stopColor="#fb7185" stopOpacity="0.28" />
-              <stop offset="100%" stopColor="#ffe4e6" stopOpacity="0" />
-            </radialGradient>
-            <clipPath id={clipPathId} clipPathUnits="userSpaceOnUse">
-              <path
-                transform={`translate(${BODY_MAP_INNER_TX})`}
-                d={outlinePathD}
-              />
-            </clipPath>
-            <mask
-              id={wholeBodyRingMaskId}
-              maskUnits="userSpaceOnUse"
-              maskContentUnits="userSpaceOnUse"
-              x={BODY_MAP_VIEW.x}
-              y={BODY_MAP_VIEW.y}
-              width={BODY_MAP_VIEW.w}
-              height={BODY_MAP_VIEW.h}
-            >
-              <rect
+          <svg
+            className="body-map-svg"
+            width="100%"
+            height="100%"
+            viewBox={`${activeView.x} ${activeView.y} ${activeView.w} ${activeView.h}`}
+            preserveAspectRatio="xMidYMin meet"
+            role="img"
+            aria-label={ariaLabel}
+          >
+            <defs>
+              <linearGradient
+                id={hoverGradientId}
+                gradientUnits="userSpaceOnUse"
+                x1={10}
+                y1={BODY_MAP_VIEW.y}
+                x2={78}
+                y2={BODY_MAP_VIEW.y + BODY_MAP_VIEW.h}
+              >
+                <stop offset="0%" stopColor="#e0f2fe" stopOpacity={0.75} />
+                <stop offset="50%" stopColor="#bae6fd" stopOpacity={0.65} />
+                <stop offset="100%" stopColor="#7dd3fc" stopOpacity={0.55} />
+              </linearGradient>
+              <linearGradient
+                id={rawDotsLegendGradientId}
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="0%"
+              >
+                <stop offset="0%" stopColor="#ffe4e6" />
+                <stop offset="100%" stopColor="#db2777" />
+              </linearGradient>
+              <filter
+                id={softFillFilterId}
+                x="-50%"
+                y="-50%"
+                width="200%"
+                height="200%"
+                colorInterpolationFilters="sRGB"
+              >
+                <feGaussianBlur in="SourceGraphic" stdDeviation="6.8" />
+              </filter>
+              <filter
+                id={rawDotsSoftBlurId}
+                x="-40%"
+                y="-40%"
+                width="180%"
+                height="180%"
+                colorInterpolationFilters="sRGB"
+              >
+                <feGaussianBlur in="SourceGraphic" stdDeviation="4" />
+              </filter>
+              <filter
+                id={wholeBodyRingGlowFilterId}
+                x="-100%"
+                y="-100%"
+                width="300%"
+                height="300%"
+                colorInterpolationFilters="sRGB"
+              >
+                <feGaussianBlur
+                  in="SourceGraphic"
+                  stdDeviation="5.5"
+                  result="wbRingBlur"
+                />
+                <feMerge>
+                  <feMergeNode in="wbRingBlur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <radialGradient
+                id={heatDotRadialGradientId}
+                gradientUnits="objectBoundingBox"
+                cx="0.5"
+                cy="0.5"
+                r="0.5"
+              >
+                <stop offset="0%" stopColor="#be185d" stopOpacity="1" />
+                <stop offset="38%" stopColor="#db2777" stopOpacity="0.72" />
+                <stop offset="72%" stopColor="#fb7185" stopOpacity="0.28" />
+                <stop offset="100%" stopColor="#ffe4e6" stopOpacity="0" />
+              </radialGradient>
+              <clipPath id={clipPathId} clipPathUnits="userSpaceOnUse">
+                <path
+                  transform={`translate(${BODY_MAP_INNER_TX})`}
+                  d={outlinePathD}
+                />
+              </clipPath>
+              <mask
+                id={wholeBodyRingMaskId}
+                maskUnits="userSpaceOnUse"
+                maskContentUnits="userSpaceOnUse"
                 x={BODY_MAP_VIEW.x}
                 y={BODY_MAP_VIEW.y}
                 width={BODY_MAP_VIEW.w}
                 height={BODY_MAP_VIEW.h}
-                fill="white"
-              />
-              <path
-                transform={`translate(${BODY_MAP_INNER_TX})`}
-                d={outlinePathD}
-                fill="black"
-              />
-            </mask>
-          </defs>
+              >
+                <rect
+                  x={BODY_MAP_VIEW.x}
+                  y={BODY_MAP_VIEW.y}
+                  width={BODY_MAP_VIEW.w}
+                  height={BODY_MAP_VIEW.h}
+                  fill="white"
+                />
+                <path
+                  transform={`translate(${BODY_MAP_INNER_TX})`}
+                  d={outlinePathD}
+                  fill="black"
+                />
+              </mask>
+            </defs>
 
-          <g transform={mapTransform}>
-            <g clipPath={activeClipPath}>
-              <rect
-                x={BODY_MAP_VIEW.x}
-                y={BODY_MAP_VIEW.y}
-                width={BODY_MAP_VIEW.w}
-                height={BODY_MAP_VIEW.h}
-                fill="transparent"
-              />
-              <path
+            <g transform={mapTransform}>
+              <g clipPath={activeClipPath}>
+                <rect
+                  x={BODY_MAP_VIEW.x}
+                  y={BODY_MAP_VIEW.y}
+                  width={BODY_MAP_VIEW.w}
+                  height={BODY_MAP_VIEW.h}
+                  fill="transparent"
+                />
+                <path
+                  transform={`translate(${BODY_MAP_INNER_TX})`}
+                  d={outlinePathD}
+                  fill="transparent"
+                  pointerEvents="none"
+                />
+                <g id="layer1" transform={`translate(${BODY_MAP_INNER_TX})`}>
+                  {wholeBodySilhouetteTint ? (
+                    <path
+                      d={outlinePathD}
+                      fill={wholeBodySilhouetteTint.fill}
+                      fillOpacity={wholeBodySilhouetteTint.fillOpacity}
+                      stroke="none"
+                      pointerEvents="none"
+                    />
+                  ) : null}
+                  {bodyPartsForHitTargets.flatMap((part) =>
+                    part.subpaths.map((sp, i) => (
+                      <path
+                        key={`${part.id}-hit-${i}`}
+                        id={`${part.id}-hit-${i}`}
+                        d={sp.d}
+                        transform={sp.transform}
+                        fill={
+                          hoveredPartId === part.id ||
+                          selectedBodyRegion === part.id
+                            ? `url(#${hoverGradientId})`
+                            : "transparent"
+                        }
+                        fillOpacity={
+                          hoveredPartId === part.id ||
+                          selectedBodyRegion === part.id
+                            ? 0.78
+                            : 1
+                        }
+                        filter={
+                          hoveredPartId === part.id ||
+                          selectedBodyRegion === part.id
+                            ? `url(#${softFillFilterId})`
+                            : undefined
+                        }
+                        stroke="none"
+                        pointerEvents="all"
+                        style={{ cursor: "pointer" }}
+                        onPointerEnter={handlePartEnter(part)}
+                        onPointerMove={handlePartMove}
+                        onPointerLeave={handlePartLeave}
+                        onClick={handlePartClick(part)}
+                      />
+                    )),
+                  )}
+                </g>
+              </g>
+
+              <g
+                className="body-map-dots-layer"
                 transform={`translate(${BODY_MAP_INNER_TX})`}
-                d={outlinePathD}
-                fill="transparent"
+                clipPath={clipDotsToOutline ? activeClipPath : undefined}
                 pointerEvents="none"
-              />
-              <g id="layer1" transform={`translate(${BODY_MAP_INNER_TX})`}>
-                {wholeBodySilhouetteTint ? (
-                  <path
-                    d={outlinePathD}
-                    fill={wholeBodySilhouetteTint.fill}
-                    fillOpacity={wholeBodySilhouetteTint.fillOpacity}
-                    stroke="none"
-                    pointerEvents="none"
-                  />
-                ) : null}
+              >
                 {variant === "countHeatmap" ? (
-                  <g pointerEvents="none">
+                  <g>
                     {bodyParts.flatMap((part) => {
                       const c = partPaperMap[part.id] ?? 0;
                       const t = countToPerceptualNormalized(
@@ -511,7 +554,7 @@ export function BodyMap({
                   </g>
                 ) : null}
                 {variant === "rawDots" ? (
-                  <g pointerEvents="none" filter={`url(#${rawDotsSoftBlurId})`}>
+                  <g filter={`url(#${rawDotsSoftBlurId})`}>
                     {rawDotsContoursByPart.flatMap((entry) => {
                       const partCount = partPaperMap[entry.partId] ?? 0;
                       const countStrength = countToPerceptualNormalized(
@@ -543,7 +586,6 @@ export function BodyMap({
                               fill="#db2777"
                               fillOpacity={opacity}
                               stroke="none"
-                              pointerEvents="none"
                             />
                           );
                         },
@@ -566,88 +608,56 @@ export function BodyMap({
                       : null}
                   </g>
                 ) : null}
-                {bodyPartsForHitTargets.flatMap((part) =>
-                  part.subpaths.map((sp, i) => (
-                    <path
-                      key={`${part.id}-hit-${i}`}
-                      id={`${part.id}-hit-${i}`}
-                      d={sp.d}
-                      transform={sp.transform}
-                      fill={
-                        hoveredPartId === part.id ||
-                        selectedBodyRegion === part.id
-                          ? `url(#${hoverGradientId})`
-                          : "transparent"
-                      }
-                      fillOpacity={
-                        hoveredPartId === part.id ||
-                        selectedBodyRegion === part.id
-                          ? 0.78
-                          : 1
-                      }
-                      filter={
-                        hoveredPartId === part.id ||
-                        selectedBodyRegion === part.id
-                          ? `url(#${softFillFilterId})`
-                          : undefined
-                      }
-                      stroke="none"
-                      pointerEvents="all"
-                      style={{ cursor: "pointer" }}
-                      onPointerEnter={handlePartEnter(part)}
-                      onPointerMove={handlePartMove}
-                      onPointerLeave={handlePartLeave}
-                      onClick={handlePartClick(part)}
-                    />
-                  )),
-                )}
+              </g>
+
+              <g
+                transform={`translate(${BODY_MAP_INNER_TX})`}
+                pointerEvents="auto"
+              >
+                <path
+                  d={outlinePathD}
+                  fill="none"
+                  stroke={wholeBodyHitRingVisible ? "#fbcfe8" : "transparent"}
+                  strokeOpacity={
+                    wholeBodyRingHovered
+                      ? 0.88
+                      : wholeBodyHitRingVisible
+                        ? 0.52
+                        : 1
+                  }
+                  strokeWidth={40}
+                  vectorEffect="nonScalingStroke"
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                  pointerEvents="stroke"
+                  mask={`url(#${wholeBodyRingMaskId})`}
+                  filter={
+                    wholeBodyRingHovered
+                      ? `url(#${wholeBodyRingGlowFilterId})`
+                      : undefined
+                  }
+                  style={{ cursor: "pointer" }}
+                  onPointerEnter={handleWholeBodyRingEnter}
+                  onPointerMove={handlePartMove}
+                  onPointerLeave={handlePartLeave}
+                  onClick={handleWholeBodyRingClick}
+                  aria-label="Whole body (general) paper count along the figure outline"
+                />
+                <path
+                  d={outlinePathD}
+                  fill="none"
+                  stroke={wholeBodyOutlineActive ? "#db2777" : "#1e293b"}
+                  strokeOpacity={wholeBodyOutlineActive ? 0.82 : 0.65}
+                  strokeWidth={1.1}
+                  vectorEffect="nonScalingStroke"
+                  shapeRendering="geometricPrecision"
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                  pointerEvents="none"
+                />
               </g>
             </g>
-
-            <g
-              transform={`translate(${BODY_MAP_INNER_TX})`}
-              pointerEvents="auto"
-            >
-              <path
-                d={outlinePathD}
-                fill="none"
-                stroke={wholeBodyHitRingVisible ? "#fbcfe8" : "transparent"}
-                strokeOpacity={
-                  wholeBodyRingHovered ? 0.88 : wholeBodyHitRingVisible ? 0.52 : 1
-                }
-                strokeWidth={40}
-                vectorEffect="nonScalingStroke"
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                pointerEvents="stroke"
-                mask={`url(#${wholeBodyRingMaskId})`}
-                filter={
-                  wholeBodyRingHovered
-                    ? `url(#${wholeBodyRingGlowFilterId})`
-                    : undefined
-                }
-                style={{ cursor: "pointer" }}
-                onPointerEnter={handleWholeBodyRingEnter}
-                onPointerMove={handlePartMove}
-                onPointerLeave={handlePartLeave}
-                onClick={handleWholeBodyRingClick}
-                aria-label="Whole body (general) paper count along the figure outline"
-              />
-              <path
-                d={outlinePathD}
-                fill="none"
-                stroke={wholeBodyOutlineActive ? "#db2777" : "#1e293b"}
-                strokeOpacity={wholeBodyOutlineActive ? 0.82 : 0.65}
-                strokeWidth={1.1}
-                vectorEffect="nonScalingStroke"
-                shapeRendering="geometricPrecision"
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                pointerEvents="none"
-              />
-            </g>
-          </g>
-        </svg>
+          </svg>
         ) : null}
       </div>
 
