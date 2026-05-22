@@ -256,6 +256,51 @@
   margin-top: 0.35rem;
 }
 
+.torso-detail-back {
+  position: absolute;
+  top: 0.8rem;
+  left: 0.5rem;
+  z-index: 3;
+  margin: 0;
+  padding: 0.28rem 0.55rem;
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #475569;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.torso-detail-back:hover {
+  color: #0f172a;
+  border-color: rgba(100, 116, 139, 0.65);
+  background: #fff;
+}
+
+.torso-detail-loading,
+.torso-detail-error {
+  margin: 0.5rem 0 0;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.torso-detail-error {
+  color: #b91c1c;
+}
+
+.landing-body-map .torso-detail-svg {
+  min-height: 220px;
+  max-height: min(52vh, 420px);
+}
+
+.landing-body-map .torso-detail-legend {
+  margin-top: 0.35rem;
+}
+
 .landing-body-map .body-map-svg-wrap {
   position: relative;
   min-height: 0;
@@ -266,6 +311,10 @@
   overflow: hidden;
   box-sizing: border-box;
   padding: 2rem 1rem;
+}
+
+.landing-body-map .torso-detail-svg-wrap {
+  padding: 4rem 2rem;
 }
 
 .body-map-clear-selection {

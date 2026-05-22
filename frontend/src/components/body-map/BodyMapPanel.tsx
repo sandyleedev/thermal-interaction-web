@@ -4,6 +4,7 @@ import BodyMap from "./full-body/BodyMap";
 import type { BodyMapVariant } from "./bodyMapVariant";
 import { HeadBodyMapDetail } from "./head/HeadBodyMapDetail";
 import { NeckBodyMapDetail } from "./neck/NeckBodyMapDetail";
+import { TorsoBodyMapDetail } from "./torso/TorsoBodyMapDetail";
 import { paperTouchesBodyMapParent } from "@/lib/research/researchPapers";
 
 export function BodyMapPanel() {
@@ -31,8 +32,15 @@ export function BodyMapPanel() {
     [bodyMapPaperPool],
   );
 
+  const torsoDetailPapers = useMemo(
+    () =>
+      bodyMapPaperPool.filter((p) => paperTouchesBodyMapParent(p, "torso")),
+    [bodyMapPaperPool],
+  );
+
   const showHeadDetail = selectedBodyRegion === "head";
   const showNeckDetail = selectedBodyRegion === "neck";
+  const showTorsoDetail = selectedBodyRegion === "torso";
 
   return (
     <aside className="landing-panel landing-body-map">
@@ -74,6 +82,14 @@ export function BodyMapPanel() {
           <NeckBodyMapDetail
             variant={variant}
             papers={neckDetailPapers}
+            selectedFineSubregion={selectedBodyFineSubregion}
+            onSelectFine={setBodyMapFineSubregion}
+            onBack={clearBodyMapSelection}
+          />
+        ) : showTorsoDetail ? (
+          <TorsoBodyMapDetail
+            variant={variant}
+            papers={torsoDetailPapers}
             selectedFineSubregion={selectedBodyFineSubregion}
             onSelectFine={setBodyMapFineSubregion}
             onBack={clearBodyMapSelection}

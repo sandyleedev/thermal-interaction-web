@@ -212,6 +212,21 @@ const NECK_DETAIL_HIT_ID_SET = new Set<string>([
   "general",
 ]);
 
+/** Torso zoom map hit ids (general ring uses `general`). */
+export const TORSO_DETAIL_HIT_IDS = [
+  "chest",
+  "abdomen",
+  "shoulder",
+  "back",
+] as const;
+
+export type TorsoDetailHitId = (typeof TORSO_DETAIL_HIT_IDS)[number];
+
+const TORSO_DETAIL_HIT_ID_SET = new Set<string>([
+  ...TORSO_DETAIL_HIT_IDS,
+  "general",
+]);
+
 function headEarOrCheekHit(
   paper: BodySitesCarrier,
   sub: "ear" | "cheek",
@@ -303,6 +318,41 @@ export function paperMatchesNeckFineSelection(
   }
 }
 
+function torsoExactSub(paper: BodySitesCarrier, sub: string): boolean {
+  const sl = sub.toLowerCase();
+  for (const s of paper.bodySites ?? []) {
+    const resolved = resolveBodySite(s);
+    if (resolved.parent === "torso" && resolved.subregion.trim().toLowerCase() === sl) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Torso L2 zoom: `general` matches only `torso → general` sites.
+ */
+export function paperMatchesTorsoFineSelection(
+  paper: BodySitesCarrier,
+  hit: string,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  switch (h) {
+    case "general":
+      return torsoExactSub(paper, "general");
+    case "chest":
+      return torsoExactSub(paper, "chest");
+    case "abdomen":
+      return torsoExactSub(paper, "abdomen");
+    case "shoulder":
+      return torsoExactSub(paper, "shoulder");
+    case "back":
+      return torsoExactSub(paper, "back");
+    default:
+      return false;
+  }
+}
+
 /**
  * Level-2 filter (optional). When `fineSubregion` is set, `parent` must also be set.
  * Match is case-insensitive on `subregion` after trimming.
@@ -321,6 +371,10 @@ export function paperMatchesBodyMapFineSelection(
 
   if (parent === "neck" && NECK_DETAIL_HIT_ID_SET.has(needle)) {
     return paperMatchesNeckFineSelection(paper, needle);
+  }
+
+  if (parent === "torso" && TORSO_DETAIL_HIT_ID_SET.has(needle)) {
+    return paperMatchesTorsoFineSelection(paper, needle);
   }
 
   for (const s of paper.bodySites ?? []) {
