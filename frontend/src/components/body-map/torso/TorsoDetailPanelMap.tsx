@@ -48,13 +48,14 @@ export type TorsoDetailPanelMapProps = {
   rawDotsDensityCellSize: number;
   rawDotsDensityThresholds: number;
   hoveredHitId: string | null;
-  selectedFineSubregion: string | null;
+  isHitSelected: (hitId: string) => boolean;
   suppressSelectedFineFillWhileGeneralHover: boolean;
   onFillHitEnter: (hitId: string) => (e: PointerEvent<SVGElement>) => void;
   onPointerMove: (e: PointerEvent<SVGElement>) => void;
   onPointerLeave: () => void;
-  onToggleFine: (hitId: string) => void;
+  onToggleHit: (hitId: string) => void;
   onGeneralRingEnter: (e: PointerEvent<SVGElement>) => void;
+  onGeneralRingClick: () => void;
   generalRingActive: boolean;
   generalRingHovered: boolean;
 };
@@ -82,13 +83,14 @@ export function TorsoDetailPanelMap({
   rawDotsDensityCellSize,
   rawDotsDensityThresholds,
   hoveredHitId,
-  selectedFineSubregion,
+  isHitSelected,
   suppressSelectedFineFillWhileGeneralHover,
   onFillHitEnter,
   onPointerMove,
   onPointerLeave,
-  onToggleFine,
+  onToggleHit,
   onGeneralRingEnter,
+  onGeneralRingClick,
   generalRingActive,
   generalRingHovered,
 }: TorsoDetailPanelMapProps) {
@@ -363,8 +365,7 @@ export function TorsoDetailPanelMap({
         const spec = shapeByHit.get(hitId);
         if (!spec) return [];
         const selected =
-          !suppressSelectedFineFillWhileGeneralHover &&
-          selectedFineSubregion?.toLowerCase() === hitId.toLowerCase();
+          !suppressSelectedFineFillWhileGeneralHover && isHitSelected(hitId);
         const active = hoveredHitId === hitId || selected;
         const fillPaint = active ? `url(#${hoverGradientId})` : "transparent";
         const common = {
@@ -377,7 +378,7 @@ export function TorsoDetailPanelMap({
           onPointerEnter: onFillHitEnter(hitId),
           onPointerMove,
           onPointerLeave,
-          onClick: () => onToggleFine(hitId),
+          onClick: () => onToggleHit(hitId),
         };
         return torsoSpecLayers(hitId, spec).map((layer) => (
           <path
@@ -429,7 +430,7 @@ export function TorsoDetailPanelMap({
           onPointerEnter={onGeneralRingEnter}
           onPointerMove={onPointerMove}
           onPointerLeave={onPointerLeave}
-          onClick={() => onToggleFine("general")}
+          onClick={onGeneralRingClick}
           aria-label="Torso general (outline)"
         />
       ) : null}

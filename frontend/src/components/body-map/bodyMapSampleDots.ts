@@ -19,7 +19,7 @@ import { dotCohortPlanForResolvedSite } from "./bodyMapDotCohorts";
  * full-body map clips the dot layer to that outline. When `false`, dots may extend past
  * the outline (still sampled inside each part path’s fill).
  */
-export const REQUIRE_DOTS_INSIDE_BODY_OUTLINE = true;
+export const REQUIRE_DOTS_INSIDE_BODY_OUTLINE = false;
 
 const INNER_TX = 0;
 

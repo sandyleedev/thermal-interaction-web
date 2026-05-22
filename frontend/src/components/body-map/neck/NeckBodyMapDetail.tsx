@@ -21,6 +21,9 @@ import type { BodyMapVariant } from "../bodyMapVariant";
 import {
   countToPerceptualNormalized,
 } from "../bodyMapVisualization";
+import { BodyMapDetailSelectAll } from "@/components/body-map/BodyMapDetailSelectAll";
+import { useResearchFilter } from "@/context/ResearchFilterContext";
+import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   paperMatchesNeckFineSelection,
   type ResearchPaper,
@@ -106,18 +109,17 @@ function parseNeckDetailSvg(svgText: string): {
 export type NeckBodyMapDetailProps = {
   variant: BodyMapVariant;
   papers: readonly ResearchPaper[];
-  selectedFineSubregion: string | null;
-  onSelectFine: (fine: string | null) => void;
   onBack: () => void;
 };
 
 export function NeckBodyMapDetail({
   variant,
   papers,
-  selectedFineSubregion,
-  onSelectFine,
   onBack,
 }: NeckBodyMapDetailProps) {
+  const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
+    useResearchFilter();
+
   const uid = useId().replace(/:/g, "");
   const hoverGradientId = `neck-detail-hover-${uid}`;
   const softFillFilterId = `neck-detail-soft-${uid}`;
@@ -321,22 +323,24 @@ export function NeckBodyMapDetail({
 
   const toggleFine = useCallback(
     (hitId: string) => {
-      const cur = selectedFineSubregion?.trim().toLowerCase() ?? "";
-      if (cur === hitId.toLowerCase()) onSelectFine(null);
-      else onSelectFine(hitId);
+      toggleBodyMapChip("neck", hitId);
     },
-    [onSelectFine, selectedFineSubregion],
+    [toggleBodyMapChip],
   );
 
   const generalRingHovered = hoveredHitId === "general";
   const generalRingActive =
-    generalRingHovered || selectedFineSubregion?.toLowerCase() === "general";
+    generalRingHovered || isBodyMapChipSelected("neck", "general");
 
   /** Avoid stacking a thick General ring on top of a selected fine fill. */
   const suppressSelectedFineFillWhileGeneralHover =
     generalRingHovered &&
-    !!selectedFineSubregion?.trim() &&
-    selectedFineSubregion.trim().toLowerCase() !== "general";
+    selectedBodyMapChips.some(
+      (c) =>
+        c.parent === "neck" &&
+        normalizeBodyMapSubpart(c.subpart) !== "" &&
+        normalizeBodyMapSubpart(c.subpart) !== "general",
+    );
 
   const vbParts = NECK_DETAIL_VIEWBOX.split(/\s+/).map(Number);
   const vbW = vbParts[2] ?? 210;
@@ -345,14 +349,17 @@ export function NeckBodyMapDetail({
   return (
     <div className="body-map-root neck-detail-root">
       <div className="body-map-svg-wrap neck-detail-svg-wrap">
-        <button
-          type="button"
-          className="neck-detail-back"
-          onClick={onBack}
-          aria-label="Back to full body map"
-        >
-          ← Full body
-        </button>
+        <div className="body-map-detail-controls">
+          <button
+            type="button"
+            className="neck-detail-back"
+            onClick={onBack}
+            aria-label="Back to full body map"
+          >
+            ← Full body
+          </button>
+          <BodyMapDetailSelectAll parent="neck" />
+        </div>
         {neckParseError ? (
           <p className="neck-detail-error" role="alert">
             {neckParseError}
@@ -621,7 +628,7 @@ export function NeckBodyMapDetail({
               if (!spec) return null;
               const selected =
                 !suppressSelectedFineFillWhileGeneralHover &&
-                selectedFineSubregion?.toLowerCase() === hitId.toLowerCase();
+                isBodyMapChipSelected("neck", hitId);
               const active =
                 hoveredHitId === hitId || selected;
               const fillPaint = active
@@ -710,7 +717,7 @@ export function NeckBodyMapDetail({
               }}
               onPointerMove={handleMove}
               onPointerLeave={clearHover}
-              onClick={() => toggleFine("general")}
+              onClick={() => toggleBodyMapChip("neck", "general")}
               aria-label="Neck general (outline)"
             />
           </svg>

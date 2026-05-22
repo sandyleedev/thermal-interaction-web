@@ -19,6 +19,9 @@ import {
   type TorsoShapeSpec,
 } from "./torsoDetailSampleDots";
 import type { BodyMapVariant } from "../bodyMapVariant";
+import { BodyMapDetailSelectAll } from "@/components/body-map/BodyMapDetailSelectAll";
+import { useResearchFilter } from "@/context/ResearchFilterContext";
+import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   paperMatchesTorsoFineSelection,
   type ResearchPaper,
@@ -95,8 +98,15 @@ function parseTorsoDetailSvg(svgText: string): {
       readTorsoPath(doc, "RightShoulder"),
     ],
   });
-  // No dedicated back path in the asset — sample dots inside the full torso silhouette.
-  shapeByHit.set("back", { kind: "path", d: silhouetteD });
+  // Back hit: trunk only (`Torso`), not full `Base` (arms/neck). Optional `Back` path if added to SVG.
+  const backPathEl = doc.querySelector('path[id="Back"]');
+  const backD = backPathEl?.getAttribute("d")?.trim();
+  shapeByHit.set("back", {
+    kind: "path",
+    ...(backD
+      ? readTorsoPath(doc, "Back")
+      : { d: generalOutlineD }),
+  });
 
   return {
     silhouetteD,
@@ -108,18 +118,17 @@ function parseTorsoDetailSvg(svgText: string): {
 export type TorsoBodyMapDetailProps = {
   variant: BodyMapVariant;
   papers: readonly ResearchPaper[];
-  selectedFineSubregion: string | null;
-  onSelectFine: (fine: string | null) => void;
   onBack: () => void;
 };
 
 export function TorsoBodyMapDetail({
   variant,
   papers,
-  selectedFineSubregion,
-  onSelectFine,
   onBack,
 }: TorsoBodyMapDetailProps) {
+  const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
+    useResearchFilter();
+
   const uid = useId().replace(/:/g, "");
   const frontIdPrefix = `torso-detail-front-${uid}`;
   const backIdPrefix = `torso-detail-back-${uid}`;
@@ -293,24 +302,31 @@ export function TorsoBodyMapDetail({
     );
   }, []);
 
-  const toggleFine = useCallback(
+  const toggleHit = useCallback(
     (hitId: string) => {
-      const cur = selectedFineSubregion?.trim().toLowerCase() ?? "";
-      if (cur === hitId.toLowerCase()) onSelectFine(null);
-      else onSelectFine(hitId);
+      toggleBodyMapChip("torso", hitId);
     },
-    [onSelectFine, selectedFineSubregion],
+    [toggleBodyMapChip],
+  );
+
+  const isHitSelected = useCallback(
+    (hitId: string) => isBodyMapChipSelected("torso", hitId),
+    [isBodyMapChipSelected],
   );
 
   const generalRingHovered = hoveredHitId === "general";
   const generalRingActive =
-    generalRingHovered || selectedFineSubregion?.toLowerCase() === "general";
+    generalRingHovered || isBodyMapChipSelected("torso", "general");
 
   /** Avoid stacking a thick General ring on top of a selected fine fill. */
   const suppressSelectedFineFillWhileGeneralHover =
     generalRingHovered &&
-    !!selectedFineSubregion?.trim() &&
-    selectedFineSubregion.trim().toLowerCase() !== "general";
+    selectedBodyMapChips.some(
+      (c) =>
+        c.parent === "torso" &&
+        normalizeBodyMapSubpart(c.subpart) !== "" &&
+        normalizeBodyMapSubpart(c.subpart) !== "general",
+    );
 
   const handleGeneralRingEnter = useCallback(
     (e: PointerEvent<SVGElement>) => {
@@ -340,13 +356,14 @@ export function TorsoBodyMapDetail({
     rawDotsDensityCellSize: TORSO_RAW_DOTS_DENSITY_CELL_SIZE,
     rawDotsDensityThresholds: TORSO_RAW_DOTS_DENSITY_THRESHOLDS,
     hoveredHitId,
-    selectedFineSubregion,
+    isHitSelected,
     suppressSelectedFineFillWhileGeneralHover,
     onFillHitEnter: handleFillHitEnter,
     onPointerMove: handleMove,
     onPointerLeave: clearHover,
-    onToggleFine: toggleFine,
+    onToggleHit: toggleHit,
     onGeneralRingEnter: handleGeneralRingEnter,
+    onGeneralRingClick: () => toggleBodyMapChip("torso", "general"),
     generalRingActive,
     generalRingHovered,
   };
@@ -354,14 +371,17 @@ export function TorsoBodyMapDetail({
   return (
     <div className="body-map-root torso-detail-root">
       <div className="body-map-svg-wrap torso-detail-svg-wrap">
-        <button
-          type="button"
-          className="torso-detail-back"
-          onClick={onBack}
-          aria-label="Back to full body map"
-        >
-          ← Full body
-        </button>
+        <div className="body-map-detail-controls">
+          <button
+            type="button"
+            className="torso-detail-back"
+            onClick={onBack}
+            aria-label="Back to full body map"
+          >
+            ← Full body
+          </button>
+          <BodyMapDetailSelectAll parent="torso" />
+        </div>
         {torsoParseError ? (
           <p className="torso-detail-error" role="alert">
             {torsoParseError}

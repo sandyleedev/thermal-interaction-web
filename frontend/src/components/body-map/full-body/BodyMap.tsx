@@ -27,6 +27,10 @@ import {
   getRegionCountForBodyMapPart,
 } from "../bodyMapVisualization";
 import {
+  bodyMapParentHasChipSelection,
+  type BodyMapChipSelection,
+} from "@/lib/research/bodyMapChipSelection";
+import {
   WHOLE_BODY_GENERAL_COUNT_KEY,
   type BodyMapParentRegion,
   type BodyMapRegion,
@@ -40,7 +44,7 @@ import { type FullBodyMapPart, useBodyMapPartDots } from "./useBodyMapPartDots";
  *
  * - Part geometry is parsed from `public/body-map/body-silhouette-parts.svg` (see `bodyMapSilhouetteAsset.ts`).
  * - Level 2 zoomed SVG + fine hit targets will live in a separate component later; filtering hooks already exist
- *   on context (`selectedBodyFineSubregion` + `BodyMapSelection.fineSubregion`).
+ *   on context (`selectedBodyMapChips` + `BodyMapSelection.selectedChips`).
  */
 type TooltipState = { label: string; count: number; x: number; y: number };
 
@@ -102,8 +106,9 @@ type BodyMapProps = {
    */
   heatmapScaleReferenceCounts?: Record<string, number>;
   variant?: BodyMapVariant;
-  selectedBodyRegion?: BodyMapParentRegion | null;
-  onSelectBodyRegion?: (parent: BodyMapParentRegion | null) => void;
+  /** Chip selections — L1 parents highlighted when any chip targets that parent. */
+  selectedBodyMapChips?: readonly BodyMapChipSelection[];
+  onPartClick?: (region: BodyMapParentRegion) => void;
 };
 
 export function BodyMap({
@@ -111,9 +116,18 @@ export function BodyMap({
   heatmapDotPapers,
   heatmapScaleReferenceCounts,
   variant = "countHeatmap",
-  selectedBodyRegion = null,
-  onSelectBodyRegion,
+  selectedBodyMapChips = [],
+  onPartClick,
 }: BodyMapProps) {
+  const isRegionChipSelected = useCallback(
+    (region: BodyMapParentRegion) =>
+      bodyMapParentHasChipSelection(selectedBodyMapChips, region),
+    [selectedBodyMapChips],
+  );
+  const isWholeBodyChipSelected = useCallback(
+    () => isRegionChipSelected("wholeBody"),
+    [isRegionChipSelected],
+  );
   const uid = useId().replace(/:/g, "");
   const clipPathId = `body-map-silhouette-${uid}`;
   const wholeBodyRingMaskId = `body-map-wb-ring-mask-${uid}`;
@@ -252,13 +266,13 @@ export function BodyMap({
 
   const wholeBodyOutlineActive =
     hoveredPartId === WHOLE_BODY_GENERAL_COUNT_KEY ||
-    selectedBodyRegion === "wholeBody";
+    isWholeBodyChipSelected();
 
   const wholeBodyRingHovered = hoveredPartId === WHOLE_BODY_GENERAL_COUNT_KEY;
 
   /** Thick masked ring: stay visible while whole body is selected, not only on hover. */
   const wholeBodyHitRingVisible =
-    wholeBodyRingHovered || selectedBodyRegion === "wholeBody";
+    wholeBodyRingHovered || isWholeBodyChipSelected();
 
   const clearPointerHover = useCallback(() => {
     setHoveredPartId(null);
@@ -279,8 +293,8 @@ export function BodyMap({
   );
 
   const handleWholeBodyRingClick = useCallback(() => {
-    onSelectBodyRegion?.("wholeBody");
-  }, [onSelectBodyRegion]);
+    onPartClick?.("wholeBody");
+  }, [onPartClick]);
 
   const handlePartEnter = useCallback(
     (part: BodyPart) => {
@@ -308,10 +322,10 @@ export function BodyMap({
   const handlePartClick = useCallback(
     (part: BodyPart) => {
       return () => {
-        onSelectBodyRegion?.(part.id);
+        onPartClick?.(part.id);
       };
     },
-    [onSelectBodyRegion],
+    [onPartClick],
   );
 
   const ariaLabel =
@@ -326,16 +340,6 @@ export function BodyMap({
   return (
     <div className="body-map-root">
       <div className="body-map-svg-wrap">
-        {selectedBodyRegion != null && onSelectBodyRegion ? (
-          <button
-            type="button"
-            className="body-map-clear-selection"
-            onClick={() => onSelectBodyRegion(null)}
-            aria-label="Clear body region filter"
-          >
-            Clear
-          </button>
-        ) : null}
         {silhouetteStatus === "loading" ? (
           <p className="body-map-loading">Loading body map…</p>
         ) : null}
@@ -491,19 +495,19 @@ export function BodyMap({
                         transform={sp.transform}
                         fill={
                           hoveredPartId === part.id ||
-                          selectedBodyRegion === part.id
+                          isRegionChipSelected(part.id)
                             ? `url(#${hoverGradientId})`
                             : "transparent"
                         }
                         fillOpacity={
                           hoveredPartId === part.id ||
-                          selectedBodyRegion === part.id
+                          isRegionChipSelected(part.id)
                             ? 0.78
                             : 1
                         }
                         filter={
                           hoveredPartId === part.id ||
-                          selectedBodyRegion === part.id
+                          isRegionChipSelected(part.id)
                             ? `url(#${softFillFilterId})`
                             : undefined
                         }

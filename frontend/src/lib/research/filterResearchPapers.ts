@@ -4,10 +4,10 @@ import {
   type OtherFilterCategory,
 } from "@/lib/research/otherFilterVocab";
 import {
-  type BodyMapParentRegion,
-  paperMatchesBodyMapFineSelection,
-  paperTouchesBodyMapParent,
-} from "@/lib/research/bodyMapRegionUtils";
+  type BodyMapChipSelection,
+  paperMatchesBodyMapChip,
+} from "@/lib/research/bodyMapChipSelection";
+import type { BodyMapParentRegion } from "@/lib/research/bodyMapRegions";
 import {
   OPTION_IDS_BY_CATEGORY,
   type ResearchPaper,
@@ -20,16 +20,13 @@ export type OtherFilterSelections = Record<
 >;
 
 /**
- * Body-map facet. L1 is always used on the full-body map; L2 is reserved for the future zoomed SVG.
+ * Body-map facet: ordered multi-select chips (L1 and/or L2 subparts, OR match).
  */
 export type BodyMapSelection = {
-  /** L1 map filter: `BodyMapParentRegion` (SVG row or `wholeBody`). */
-  coarseBodyRegion: BodyMapParentRegion | null;
-  /**
-   * Fine slice under `coarseBodyRegion` (Level 2). Ignored until the zoomed map exists.
-   * When null/empty, only the coarse region filter applies.
-   */
-  fineSubregion?: string | null;
+  /** Selection order preserved for chip UI; empty = no body-map constraint. */
+  selectedChips: readonly BodyMapChipSelection[];
+  /** Which detail zoom is open (navigation only). */
+  activeDetailRegion?: BodyMapParentRegion | null;
 };
 
 export type RangeFilterOptions = {
@@ -146,16 +143,15 @@ export function paperMatchesBodyMapSelection(
   paper: ResearchPaper,
   selection?: BodyMapSelection,
 ): boolean {
-  if (!selection?.coarseBodyRegion) return true;
-  const fine = selection.fineSubregion?.trim();
-  if (!fine) {
-    return paperTouchesBodyMapParent(paper, selection.coarseBodyRegion);
+  if (!selection) return true;
+
+  const chips = selection.selectedChips ?? [];
+  if (chips.length === 0) return true;
+
+  for (const chip of chips) {
+    if (paperMatchesBodyMapChip(paper, chip)) return true;
   }
-  return paperMatchesBodyMapFineSelection(
-    paper,
-    selection.coarseBodyRegion,
-    fine,
-  );
+  return false;
 }
 
 export function filterResearchPapers(

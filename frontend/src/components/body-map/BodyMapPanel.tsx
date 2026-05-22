@@ -1,6 +1,9 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
+import { BODY_MAP_DETAIL_REGIONS } from "@/lib/research/bodyMapChipLabels";
+import type { BodyMapParentRegion } from "@/lib/research/bodyMapRegions";
 import BodyMap from "./full-body/BodyMap";
+import { BodyMapSelectionChips } from "./BodyMapSelectionChips";
 import type { BodyMapVariant } from "./bodyMapVariant";
 import { HeadBodyMapDetail } from "./head/HeadBodyMapDetail";
 import { NeckBodyMapDetail } from "./neck/NeckBodyMapDetail";
@@ -13,11 +16,12 @@ export function BodyMapPanel() {
     bodyMapPaperPool,
     bodyMapRegionCounts,
     globalPaperCountsByBodyRegion,
-    selectedBodyRegion,
-    selectedBodyFineSubregion,
-    setBodyMapSelection,
-    setBodyMapFineSubregion,
-    clearBodyMapSelection,
+    selectedBodyMapChips,
+    activeDetailRegion,
+    toggleBodyMapChip,
+    removeBodyMapChip,
+    navigateToBodyMapDetail,
+    exitBodyMapDetail,
   } = useResearchFilter();
 
   const headDetailPapers = useMemo(
@@ -38,9 +42,24 @@ export function BodyMapPanel() {
     [bodyMapPaperPool],
   );
 
-  const showHeadDetail = selectedBodyRegion === "head";
-  const showNeckDetail = selectedBodyRegion === "neck";
-  const showTorsoDetail = selectedBodyRegion === "torso";
+  const showHeadDetail = activeDetailRegion === "head";
+  const showNeckDetail = activeDetailRegion === "neck";
+  const showTorsoDetail = activeDetailRegion === "torso";
+
+  const handleFullBodyPartClick = useCallback(
+    (region: BodyMapParentRegion) => {
+      if (BODY_MAP_DETAIL_REGIONS.has(region)) {
+        navigateToBodyMapDetail(region);
+        return;
+      }
+      if (region === "wholeBody") {
+        toggleBodyMapChip("wholeBody", "general");
+        return;
+      }
+      toggleBodyMapChip(region);
+    },
+    [navigateToBodyMapDetail, toggleBodyMapChip],
+  );
 
   return (
     <aside className="landing-panel landing-body-map">
@@ -70,40 +89,42 @@ export function BodyMapPanel() {
         </div>
       </div>
       <div className="panel-content panel-content-center">
-        {showHeadDetail ? (
-          <HeadBodyMapDetail
-            variant={variant}
-            papers={headDetailPapers}
-            selectedFineSubregion={selectedBodyFineSubregion}
-            onSelectFine={setBodyMapFineSubregion}
-            onBack={clearBodyMapSelection}
+        <div className="body-map-panel-stage">
+          <BodyMapSelectionChips
+            chips={selectedBodyMapChips}
+            onRemoveChip={(chip) =>
+              removeBodyMapChip(chip.parent, chip.subpart)
+            }
           />
-        ) : showNeckDetail ? (
-          <NeckBodyMapDetail
-            variant={variant}
-            papers={neckDetailPapers}
-            selectedFineSubregion={selectedBodyFineSubregion}
-            onSelectFine={setBodyMapFineSubregion}
-            onBack={clearBodyMapSelection}
-          />
-        ) : showTorsoDetail ? (
-          <TorsoBodyMapDetail
-            variant={variant}
-            papers={torsoDetailPapers}
-            selectedFineSubregion={selectedBodyFineSubregion}
-            onSelectFine={setBodyMapFineSubregion}
-            onBack={clearBodyMapSelection}
-          />
-        ) : (
-          <BodyMap
-            variant={variant}
-            paperCountsByPart={bodyMapRegionCounts}
-            heatmapDotPapers={bodyMapPaperPool}
-            heatmapScaleReferenceCounts={globalPaperCountsByBodyRegion}
-            selectedBodyRegion={selectedBodyRegion}
-            onSelectBodyRegion={setBodyMapSelection}
-          />
-        )}
+          {showHeadDetail ? (
+            <HeadBodyMapDetail
+              variant={variant}
+              papers={headDetailPapers}
+              onBack={exitBodyMapDetail}
+            />
+          ) : showNeckDetail ? (
+            <NeckBodyMapDetail
+              variant={variant}
+              papers={neckDetailPapers}
+              onBack={exitBodyMapDetail}
+            />
+          ) : showTorsoDetail ? (
+            <TorsoBodyMapDetail
+              variant={variant}
+              papers={torsoDetailPapers}
+              onBack={exitBodyMapDetail}
+            />
+          ) : (
+            <BodyMap
+              variant={variant}
+              paperCountsByPart={bodyMapRegionCounts}
+              heatmapDotPapers={bodyMapPaperPool}
+              heatmapScaleReferenceCounts={globalPaperCountsByBodyRegion}
+              selectedBodyMapChips={selectedBodyMapChips}
+              onPartClick={handleFullBodyPartClick}
+            />
+          )}
+        </div>
       </div>
     </aside>
   );

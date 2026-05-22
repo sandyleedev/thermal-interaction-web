@@ -22,6 +22,9 @@ import {
 } from "./headDetailSampleDots";
 import type { BodyMapVariant } from "../bodyMapVariant";
 import { countToPerceptualNormalized } from "../bodyMapVisualization";
+import { BodyMapDetailSelectAll } from "@/components/body-map/BodyMapDetailSelectAll";
+import { useResearchFilter } from "@/context/ResearchFilterContext";
+import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   paperMatchesHeadFineSelection,
   type ResearchPaper,
@@ -130,18 +133,17 @@ function parseHeadDetailWideSvg(svgText: string): {
 export type HeadBodyMapDetailProps = {
   variant: BodyMapVariant;
   papers: readonly ResearchPaper[];
-  selectedFineSubregion: string | null;
-  onSelectFine: (fine: string | null) => void;
   onBack: () => void;
 };
 
 export function HeadBodyMapDetail({
   variant,
   papers,
-  selectedFineSubregion,
-  onSelectFine,
   onBack,
 }: HeadBodyMapDetailProps) {
+  const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
+    useResearchFilter();
+
   const uid = useId().replace(/:/g, "");
   const hoverGradientId = `head-detail-hover-${uid}`;
   const softFillFilterId = `head-detail-soft-${uid}`;
@@ -351,22 +353,24 @@ export function HeadBodyMapDetail({
 
   const toggleFine = useCallback(
     (hitId: string) => {
-      const cur = selectedFineSubregion?.trim().toLowerCase() ?? "";
-      if (cur === hitId.toLowerCase()) onSelectFine(null);
-      else onSelectFine(hitId);
+      toggleBodyMapChip("head", hitId);
     },
-    [onSelectFine, selectedFineSubregion],
+    [toggleBodyMapChip],
   );
 
   const generalRingHovered = hoveredHitId === "general";
   const generalRingActive =
-    generalRingHovered || selectedFineSubregion?.toLowerCase() === "general";
+    generalRingHovered || isBodyMapChipSelected("head", "general");
 
   /** Avoid stacking a thick General ring on top of a selected fine fill (e.g. forehead). */
   const suppressSelectedFineFillWhileGeneralHover =
     generalRingHovered &&
-    !!selectedFineSubregion?.trim() &&
-    selectedFineSubregion.trim().toLowerCase() !== "general";
+    selectedBodyMapChips.some(
+      (c) =>
+        c.parent === "head" &&
+        normalizeBodyMapSubpart(c.subpart) !== "" &&
+        normalizeBodyMapSubpart(c.subpart) !== "general",
+    );
 
   const vbParts = HEAD_DETAIL_VIEWBOX.split(/\s+/).map(Number);
   const vbW = vbParts[2] ?? 210;
@@ -375,14 +379,17 @@ export function HeadBodyMapDetail({
   return (
     <div className="body-map-root head-detail-root">
       <div className="body-map-svg-wrap head-detail-svg-wrap">
-        <button
-          type="button"
-          className="head-detail-back"
-          onClick={onBack}
-          aria-label="Back to full body map"
-        >
-          ← Full body
-        </button>
+        <div className="body-map-detail-controls">
+          <button
+            type="button"
+            className="head-detail-back"
+            onClick={onBack}
+            aria-label="Back to full body map"
+          >
+            ← Full body
+          </button>
+          <BodyMapDetailSelectAll parent="head" />
+        </div>
         {headParseError ? (
           <p className="head-detail-error" role="alert">
             {headParseError}
@@ -652,7 +659,7 @@ export function HeadBodyMapDetail({
               if (!spec) return null;
               const selected =
                 !suppressSelectedFineFillWhileGeneralHover &&
-                selectedFineSubregion?.toLowerCase() === hitId.toLowerCase();
+                isBodyMapChipSelected("head", hitId);
               const active = hoveredHitId === hitId || selected;
               const fillPaint = active
                 ? `url(#${hoverGradientId})`
@@ -742,7 +749,7 @@ export function HeadBodyMapDetail({
               }}
               onPointerMove={handleMove}
               onPointerLeave={clearHover}
-              onClick={() => toggleFine("general")}
+              onClick={() => toggleBodyMapChip("head", "general")}
               aria-label="Head general (outline)"
             />
           </svg>

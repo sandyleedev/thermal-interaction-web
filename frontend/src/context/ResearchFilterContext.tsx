@@ -18,6 +18,12 @@ import {
   type RangeFilterOptions,
 } from "@/lib/research/filterResearchPapers";
 import {
+  type BodyMapChipSelection,
+  bodyMapChipKey,
+  getSelectableSubpartIds,
+  normalizeBodyMapSubpart,
+} from "@/lib/research/bodyMapChipSelection";
+import {
   ALL_RESEARCH_PAPERS,
   bodyMapParentKeysForPaper,
   paperHasWholeBodyGeneralSite,
@@ -56,17 +62,29 @@ type ResearchFilterContextValue = {
   bodyMapRegionCounts: Record<string, number>;
   /** Per-option counts: pool excludes that facet’s selections; sibling counts stay stable within a section. */
   optionCounts: ReturnType<typeof otherFilterOptionCounts>;
-  /** L1 map filter: `BodyMapParentRegion` (merged SVG row or `wholeBody`). */
-  selectedBodyRegion: BodyMapParentRegion | null;
-  /**
-   * L2 filter (subregion slug under `selectedBodyRegion`). Stays null until the zoomed map UI exists.
-   * Wired through `bodyMapSelection` so list filters can be extended without another refactor.
-   */
-  selectedBodyFineSubregion: string | null;
-  setBodyMapSelection: (parent: BodyMapParentRegion | null) => void;
-  /** Future L2 UI: set fine filter without clearing coarse. */
-  setBodyMapFineSubregion: (fineSubregion: string | null) => void;
-  clearBodyMapSelection: () => void;
+  /** Body-map chips in selection order (L1 whole region and/or L2 subparts). */
+  selectedBodyMapChips: readonly BodyMapChipSelection[];
+  /** Detail zoom open on the body map (head / neck / torso); navigation only. */
+  activeDetailRegion: BodyMapParentRegion | null;
+  toggleBodyMapChip: (
+    parent: BodyMapParentRegion,
+    subpart?: string | null,
+  ) => void;
+  removeBodyMapChip: (
+    parent: BodyMapParentRegion,
+    subpart?: string | null,
+  ) => void;
+  isBodyMapChipSelected: (
+    parent: BodyMapParentRegion,
+    subpart?: string | null,
+  ) => boolean;
+  removeAllBodyMapChipsForParent: (parent: BodyMapParentRegion) => void;
+  areAllBodyMapSubpartsSelected: (parent: BodyMapParentRegion) => boolean;
+  selectAllBodyMapSubparts: (parent: BodyMapParentRegion) => void;
+  clearBodyMapSubpartsForParent: (parent: BodyMapParentRegion) => void;
+  navigateToBodyMapDetail: (region: BodyMapParentRegion) => void;
+  exitBodyMapDetail: () => void;
+  clearBodyMapChips: () => void;
   tempLowC: number;
   tempHighC: number;
   setTempRange: (lowC: number, highC: number) => void;
@@ -118,12 +136,11 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
   const [otherSelections, setOtherSelections] = useState<
     Record<OtherFilterCategory, string[]>
   >(() => emptyOtherFilterSelections());
-  const [selectedBodyRegion, setSelectedBodyRegion] = useState<BodyMapParentRegion | null>(
-    null,
-  );
-  const [selectedBodyFineSubregion, setSelectedBodyFineSubregion] = useState<
-    string | null
-  >(null);
+  const [selectedBodyMapChips, setSelectedBodyMapChips] = useState<
+    BodyMapChipSelection[]
+  >([]);
+  const [activeDetailRegion, setActiveDetailRegion] =
+    useState<BodyMapParentRegion | null>(null);
   const [includeUnspecifiedTemperature, setIncludeUnspecifiedTemperature] =
     useState(true);
   const [includeUnspecifiedDuration, setIncludeUnspecifiedDuration] =
@@ -131,10 +148,10 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
 
   const bodyMapSelection: BodyMapSelection = useMemo(
     () => ({
-      coarseBodyRegion: selectedBodyRegion,
-      fineSubregion: selectedBodyFineSubregion,
+      selectedChips: selectedBodyMapChips,
+      activeDetailRegion,
     }),
-    [selectedBodyRegion, selectedBodyFineSubregion],
+    [selectedBodyMapChips, activeDetailRegion],
   );
 
   const rangeFilterOptions: RangeFilterOptions = useMemo(
@@ -177,18 +194,90 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
     setOtherSelections(emptyOtherFilterSelections());
   }, []);
 
-  const setBodyMapSelection = useCallback((parent: BodyMapParentRegion | null) => {
-    setSelectedBodyRegion(parent);
-    setSelectedBodyFineSubregion(null);
+  const isBodyMapChipSelected = useCallback(
+    (parent: BodyMapParentRegion, subpart?: string | null) => {
+      const key = bodyMapChipKey({ parent, subpart });
+      return selectedBodyMapChips.some((c) => bodyMapChipKey(c) === key);
+    },
+    [selectedBodyMapChips],
+  );
+
+  const removeBodyMapChip = useCallback(
+    (parent: BodyMapParentRegion, subpart?: string | null) => {
+      const key = bodyMapChipKey({ parent, subpart });
+      setSelectedBodyMapChips((prev) =>
+        prev.filter((c) => bodyMapChipKey(c) !== key),
+      );
+    },
+    [],
+  );
+
+  const toggleBodyMapChip = useCallback(
+    (parent: BodyMapParentRegion, subpart?: string | null) => {
+      const key = bodyMapChipKey({ parent, subpart });
+      setSelectedBodyMapChips((prev) => {
+        const idx = prev.findIndex((c) => bodyMapChipKey(c) === key);
+        if (idx >= 0) {
+          return [...prev.slice(0, idx), ...prev.slice(idx + 1)];
+        }
+        return [...prev, { parent, subpart: subpart ?? undefined }];
+      });
+    },
+    [],
+  );
+
+  const removeAllBodyMapChipsForParent = useCallback(
+    (parent: BodyMapParentRegion) => {
+      setSelectedBodyMapChips((prev) => prev.filter((c) => c.parent !== parent));
+    },
+    [],
+  );
+
+  const areAllBodyMapSubpartsSelected = useCallback(
+    (parent: BodyMapParentRegion) => {
+      const ids = getSelectableSubpartIds(parent);
+      return ids.every((id) =>
+        selectedBodyMapChips.some(
+          (c) =>
+            c.parent === parent &&
+            normalizeBodyMapSubpart(c.subpart) === id.toLowerCase(),
+        ),
+      );
+    },
+    [selectedBodyMapChips],
+  );
+
+  const selectAllBodyMapSubparts = useCallback((parent: BodyMapParentRegion) => {
+    const ids = getSelectableSubpartIds(parent);
+    setSelectedBodyMapChips((prev) => {
+      const next = [...prev];
+      for (const subpart of ids) {
+        const key = bodyMapChipKey({ parent, subpart });
+        if (!next.some((c) => bodyMapChipKey(c) === key)) {
+          next.push({ parent, subpart });
+        }
+      }
+      return next;
+    });
   }, []);
 
-  const setBodyMapFineSubregion = useCallback((fineSubregion: string | null) => {
-    setSelectedBodyFineSubregion(fineSubregion);
+  const clearBodyMapSubpartsForParent = useCallback(
+    (parent: BodyMapParentRegion) => {
+      setSelectedBodyMapChips((prev) => prev.filter((c) => c.parent !== parent));
+    },
+    [],
+  );
+
+  const navigateToBodyMapDetail = useCallback((region: BodyMapParentRegion) => {
+    setActiveDetailRegion(region);
   }, []);
 
-  const clearBodyMapSelection = useCallback(() => {
-    setSelectedBodyRegion(null);
-    setSelectedBodyFineSubregion(null);
+  const exitBodyMapDetail = useCallback(() => {
+    setActiveDetailRegion(null);
+  }, []);
+
+  const clearBodyMapChips = useCallback(() => {
+    setSelectedBodyMapChips([]);
   }, []);
 
   const filteredPapers = useMemo(
@@ -312,11 +401,18 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       bodyMapPaperPool,
       bodyMapRegionCounts,
       optionCounts,
-      selectedBodyRegion,
-      selectedBodyFineSubregion,
-      setBodyMapSelection,
-      setBodyMapFineSubregion,
-      clearBodyMapSelection,
+      selectedBodyMapChips,
+      activeDetailRegion,
+      toggleBodyMapChip,
+      removeBodyMapChip,
+      isBodyMapChipSelected,
+      removeAllBodyMapChipsForParent,
+      areAllBodyMapSubpartsSelected,
+      selectAllBodyMapSubparts,
+      clearBodyMapSubpartsForParent,
+      navigateToBodyMapDetail,
+      exitBodyMapDetail,
+      clearBodyMapChips,
       tempLowC,
       tempHighC,
       setTempRange,
@@ -340,11 +436,18 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       bodyMapPaperPool,
       bodyMapRegionCounts,
       optionCounts,
-      selectedBodyRegion,
-      selectedBodyFineSubregion,
-      setBodyMapSelection,
-      setBodyMapFineSubregion,
-      clearBodyMapSelection,
+      selectedBodyMapChips,
+      activeDetailRegion,
+      toggleBodyMapChip,
+      removeBodyMapChip,
+      isBodyMapChipSelected,
+      removeAllBodyMapChipsForParent,
+      areAllBodyMapSubpartsSelected,
+      selectAllBodyMapSubparts,
+      clearBodyMapSubpartsForParent,
+      navigateToBodyMapDetail,
+      exitBodyMapDetail,
+      clearBodyMapChips,
       tempLowC,
       tempHighC,
       setTempRange,
