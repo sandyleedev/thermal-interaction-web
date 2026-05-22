@@ -292,9 +292,58 @@
   color: #b91c1c;
 }
 
-.landing-body-map .torso-detail-svg {
+.torso-detail-stage {
+  position: relative;
+  width: 100%;
   min-height: 220px;
   max-height: min(52vh, 420px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 0.25rem;
+}
+
+.torso-detail-front-panel {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-right: 34%;
+  box-sizing: border-box;
+}
+
+.torso-detail-back-panel {
+  position: absolute;
+  top: 0.15rem;
+  right: 0;
+  width: 32%;
+  max-width: 9.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+}
+
+.torso-detail-view-label {
+  margin: 0.25rem 0 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #334155;
+  letter-spacing: -0.02em;
+}
+
+.landing-body-map .torso-detail-svg--front {
+  width: 100%;
+  min-height: 200px;
+  max-height: min(50vh, 400px);
+}
+
+.landing-body-map .torso-detail-svg--back {
+  width: 100%;
+  height: auto;
+  max-height: 10.5rem;
 }
 
 .landing-body-map .torso-detail-legend {
