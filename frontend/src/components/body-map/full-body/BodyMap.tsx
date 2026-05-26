@@ -17,6 +17,7 @@ import {
   heatmapContrastT,
   interpolatePinkDensityTone,
 } from "../shared/bodyMapHeatmapColors";
+import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
 import {
   buildBodyMapAreaDensityContoursByPart,
   createBodyMapAreaContourGeoPath,
@@ -237,12 +238,6 @@ export function BodyMap({
     };
   }, [wholeBodyGeneralPaperCount, countColorDomain]);
 
-  const legendTickValues = useMemo(() => {
-    const lo = countColorDomain[0];
-    const hi = countColorDomain[1];
-    const mid = lo + (hi - lo) / 2;
-    return [lo, mid, hi].map((v) => Math.round(v));
-  }, [countColorDomain]);
   const rawDotsContoursByPart = useMemo<
     { partId: BodyMapRegion; contours: ContourMultiPolygon[] }[]
   >(() => {
@@ -257,12 +252,6 @@ export function BodyMap({
     () => createBodyMapAreaContourGeoPath(),
     [],
   );
-  const rawDotsLegendTicks = useMemo(() => {
-    const lo = countColorDomain[0];
-    const hi = countColorDomain[1];
-    const mid = lo + (hi - lo) / 2;
-    return [lo, mid, hi].map((v) => Math.round(v));
-  }, [countColorDomain]);
 
   const wholeBodyOutlineActive =
     hoveredPartId === WHOLE_BODY_GENERAL_COUNT_KEY ||
@@ -370,16 +359,6 @@ export function BodyMap({
                 <stop offset="0%" stopColor="#e0f2fe" stopOpacity={0.75} />
                 <stop offset="50%" stopColor="#bae6fd" stopOpacity={0.65} />
                 <stop offset="100%" stopColor="#7dd3fc" stopOpacity={0.55} />
-              </linearGradient>
-              <linearGradient
-                id={rawDotsLegendGradientId}
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="0%"
-              >
-                <stop offset="0%" stopColor="#ffe4e6" />
-                <stop offset="100%" stopColor="#db2777" />
               </linearGradient>
               <filter
                 id={softFillFilterId}
@@ -665,96 +644,21 @@ export function BodyMap({
         ) : null}
       </div>
 
-      {silhouetteStatus === "ready" && variant === "countHeatmap" ? (
-        <div className="body-map-heatmap-legend">
-          <svg
-            width="100%"
-            height="18"
-            role="img"
-            aria-label="Paper density gradient legend"
-          >
-            <defs>
-              <linearGradient
-                id={heatLegendGradientId}
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="0%"
-              >
-                <stop offset="0%" stopColor={interpolatePinkDensityTone(0)} />
-                <stop offset="100%" stopColor={interpolatePinkDensityTone(1)} />
-              </linearGradient>
-            </defs>
-            <rect
-              x="0"
-              y="2"
-              width="100%"
-              height="10"
-              rx="5"
-              fill={`url(#${heatLegendGradientId})`}
-            />
-          </svg>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              fontSize: "0.68rem",
-              color: "#64748b",
-              marginTop: "0.15rem",
-              fontVariantNumeric: "tabular-nums",
-            }}
-            aria-hidden
-          >
-            <span>{legendTickValues[0].toLocaleString()}</span>
-            <span>{legendTickValues[1].toLocaleString()}</span>
-            <span>{legendTickValues[2].toLocaleString()}</span>
-          </div>
-          <p className="body-map-heatmap-legend-caption">
-            Paper density (low to high): {countColorDomain[0].toLocaleString()}{" "}
-            to {countColorDomain[1].toLocaleString()} papers. Hover regions or
-            the outer outline for counts (outline shows whole-body general).
-          </p>
-        </div>
-      ) : null}
-      {silhouetteStatus === "ready" && variant === "rawDots" ? (
-        <div className="body-map-heatmap-legend">
-          <svg
-            width="100%"
-            height="18"
-            role="img"
-            aria-label="Density strength gradient legend"
-          >
-            <rect
-              x="0"
-              y="2"
-              width="100%"
-              height="10"
-              rx="5"
-              fill={`url(#${rawDotsLegendGradientId})`}
-            />
-          </svg>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              fontSize: "0.68rem",
-              color: "#64748b",
-              marginTop: "0.15rem",
-              fontVariantNumeric: "tabular-nums",
-            }}
-            aria-hidden
-          >
-            <span>{rawDotsLegendTicks[0].toLocaleString()}</span>
-            <span>{rawDotsLegendTicks[1].toLocaleString()}</span>
-            <span>{rawDotsLegendTicks[2].toLocaleString()}</span>
-          </div>
-          <p className="body-map-heatmap-legend-caption">
-            Paper count (low to high): {countColorDomain[0].toLocaleString()} to{" "}
-            {countColorDomain[1].toLocaleString()}. Dots use d3 density
-            smoothing for visual clustering. Hover the outline for whole-body
-            (general).
-          </p>
-        </div>
+      {silhouetteStatus === "ready" ? (
+        <BodyMapHeatmapLegend
+          variant={variant}
+          colorDomain={countColorDomain}
+          gradientId={
+            variant === "countHeatmap"
+              ? heatLegendGradientId
+              : rawDotsLegendGradientId
+          }
+          caption={
+            variant === "countHeatmap"
+              ? `Paper density (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()} papers. Hover regions or the outer outline for counts (outline shows whole-body general).`
+              : `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Dots use d3 density smoothing for visual clustering. Hover the outline for whole-body (general).`
+          }
+        />
       ) : null}
 
       {tooltip ? (

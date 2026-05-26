@@ -19,6 +19,7 @@ import {
   type TorsoShapeSpec,
 } from "./torsoDetailSampleDots";
 import type { BodyMapVariant } from "../bodyMapVariant";
+import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
 import { BodyMapDetailSelectAll } from "@/components/body-map/BodyMapDetailSelectAll";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
@@ -224,13 +225,6 @@ export function TorsoBodyMapDetail({
     return backCount <= 0 ? [0, 1] : [0, backCount];
   }, [countsByHit]);
 
-  const torsoRawDotsLegendTicks = useMemo(() => {
-    const lo = countColorDomain[0];
-    const hi = countColorDomain[1];
-    const mid = lo + (hi - lo) / 2;
-    return [lo, mid, hi].map((v) => Math.round(v));
-  }, [countColorDomain]);
-
   useLayoutEffect(() => {
     if (!shapeByHit.size) return;
     let cancelled = false;
@@ -429,61 +423,18 @@ export function TorsoBodyMapDetail({
         ) : null}
       </div>
 
-      {variant === "rawDots" &&
-      torsoSvgText &&
-      silhouetteD &&
-      generalOutlineD &&
-      !torsoParseError ? (
-        <div className="body-map-heatmap-legend torso-detail-legend">
-          <svg
-            width="100%"
-            height="18"
-            role="img"
-            aria-label="Density strength gradient legend"
-          >
-            <defs>
-              <linearGradient
-                id={`${uid}-torso-raw-legend-strip`}
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="0%"
-              >
-                <stop offset="0%" stopColor="#ffe4e6" />
-                <stop offset="100%" stopColor="#db2777" />
-              </linearGradient>
-            </defs>
-            <rect
-              x="0"
-              y="2"
-              width="100%"
-              height="10"
-              rx="5"
-              fill={`url(#${uid}-torso-raw-legend-strip)`}
-            />
-          </svg>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              fontSize: "0.68rem",
-              color: "#64748b",
-              marginTop: "0.15rem",
-              fontVariantNumeric: "tabular-nums",
-            }}
-            aria-hidden
-          >
-            <span>{torsoRawDotsLegendTicks[0].toLocaleString()}</span>
-            <span>{torsoRawDotsLegendTicks[1].toLocaleString()}</span>
-            <span>{torsoRawDotsLegendTicks[2].toLocaleString()}</span>
-          </div>
-          <p className="body-map-heatmap-legend-caption">
-            Paper count (low to high): {countColorDomain[0].toLocaleString()} to{" "}
-            {countColorDomain[1].toLocaleString()}. Uses the same d3 density
-            smoothing as the full-body map. Hover the outline for whole-torso
-            (general).
-          </p>
-        </div>
+      {torsoSvgText && silhouetteD && generalOutlineD && !torsoParseError ? (
+        <BodyMapHeatmapLegend
+          variant={variant}
+          colorDomain={countColorDomain}
+          gradientId={`${uid}-torso-legend-${variant}`}
+          className="torso-detail-legend"
+          caption={
+            variant === "countHeatmap"
+              ? `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Hover subregions or the outline for whole-torso (general).`
+              : `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Uses the same d3 density smoothing as the full-body map. Hover the outline for whole-torso (general).`
+          }
+        />
       ) : null}
 
       {tooltip ? (

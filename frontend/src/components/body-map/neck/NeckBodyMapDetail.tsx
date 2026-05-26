@@ -18,6 +18,7 @@ import {
   type NeckShapeSpec,
 } from "./neckDetailSampleDots";
 import type { BodyMapVariant } from "../bodyMapVariant";
+import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
 import {
   countToPerceptualNormalized,
 } from "../bodyMapVisualization";
@@ -242,13 +243,6 @@ export function NeckBodyMapDetail({
   }, [neckRawDotsContoursByHit]);
 
   const neckRawDotsContourPath = useMemo(() => geoPath(), []);
-
-  const neckRawDotsLegendTicks = useMemo(() => {
-    const lo = countColorDomain[0];
-    const hi = countColorDomain[1];
-    const mid = lo + (hi - lo) / 2;
-    return [lo, mid, hi].map((v) => Math.round(v));
-  }, [countColorDomain]);
 
   useLayoutEffect(() => {
     if (!shapeByHit.size) return;
@@ -724,60 +718,18 @@ export function NeckBodyMapDetail({
         ) : null}
       </div>
 
-      {variant === "rawDots" &&
-      neckSvgText &&
-      silhouetteD &&
-      generalOutlineD &&
-      !neckParseError ? (
-        <div className="body-map-heatmap-legend neck-detail-legend">
-          <svg
-            width="100%"
-            height="18"
-            role="img"
-            aria-label="Density strength gradient legend"
-          >
-            <defs>
-              <linearGradient
-                id={`${uid}-neck-raw-legend-strip`}
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="0%"
-              >
-                <stop offset="0%" stopColor="#ffe4e6" />
-                <stop offset="100%" stopColor="#db2777" />
-              </linearGradient>
-            </defs>
-            <rect
-              x="0"
-              y="2"
-              width="100%"
-              height="10"
-              rx="5"
-              fill={`url(#${uid}-neck-raw-legend-strip)`}
-            />
-          </svg>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              fontSize: "0.68rem",
-              color: "#64748b",
-              marginTop: "0.15rem",
-              fontVariantNumeric: "tabular-nums",
-            }}
-            aria-hidden
-          >
-            <span>{neckRawDotsLegendTicks[0].toLocaleString()}</span>
-            <span>{neckRawDotsLegendTicks[1].toLocaleString()}</span>
-            <span>{neckRawDotsLegendTicks[2].toLocaleString()}</span>
-          </div>
-          <p className="body-map-heatmap-legend-caption">
-            Paper count (low to high): {countColorDomain[0].toLocaleString()} to{" "}
-            {countColorDomain[1].toLocaleString()}. Uses the same d3 density smoothing as the
-            full-body map. Hover the outline for whole-neck (general).
-          </p>
-        </div>
+      {neckSvgText && silhouetteD && generalOutlineD && !neckParseError ? (
+        <BodyMapHeatmapLegend
+          variant={variant}
+          colorDomain={countColorDomain}
+          gradientId={`${uid}-neck-legend-${variant}`}
+          className="neck-detail-legend"
+          caption={
+            variant === "countHeatmap"
+              ? `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Hover subregions or the outline for whole-neck (general).`
+              : `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Uses the same d3 density smoothing as the full-body map. Hover the outline for whole-neck (general).`
+          }
+        />
       ) : null}
 
       {tooltip ? (
