@@ -16,7 +16,7 @@ export type FilterOption = { id: string; label: string };
 export const OTHER_FILTER_SECTION_TITLES: Record<OtherFilterCategory, string> =
   {
     senses: "Senses",
-    materials: "Materials",
+    materials: "Materials in contact with skin",
     thermalTransferModes: "Thermal transfer modes",
   };
 
