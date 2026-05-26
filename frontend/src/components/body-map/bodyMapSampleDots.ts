@@ -17,9 +17,9 @@ import { dotCohortPlanForResolvedSite } from "./bodyMapDotCohorts";
 /**
  * When `true`, heatmap dots are sampled only inside the outer body silhouette and the
  * full-body map clips the dot layer to that outline. When `false`, dots may extend past
- * the outline (still sampled inside each part path’s fill).
+ * the outline (still sampled inside each part path's fill).
  */
-export const REQUIRE_DOTS_INSIDE_BODY_OUTLINE = false;
+export const REQUIRE_DOTS_INSIDE_BODY_OUTLINE = true;
 
 const INNER_TX = 0;
 

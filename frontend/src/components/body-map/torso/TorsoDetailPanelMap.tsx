@@ -1,13 +1,19 @@
 import { useMemo, type PointerEvent } from "react";
 import { contourDensity, geoPath } from "d3";
 import type { ContourMultiPolygon } from "d3-contour";
-import { TORSO_DETAIL_VIEWBOX, type TorsoShapeSpec } from "./torsoDetailSampleDots";
+import {
+  TORSO_DETAIL_VIEWBOX,
+  type TorsoShapeSpec,
+} from "./torsoDetailSampleDots";
 import type { BodyMapVariant } from "../bodyMapVariant";
 import { countToPerceptualNormalized } from "../bodyMapVisualization";
 
 type TorsoPathLayer = { d: string; transform?: string; layerKey: string };
 
-function torsoSpecLayers(hitId: string, spec: TorsoShapeSpec): TorsoPathLayer[] {
+function torsoSpecLayers(
+  hitId: string,
+  spec: TorsoShapeSpec,
+): TorsoPathLayer[] {
   if (spec.kind === "path-union") {
     return spec.paths.map((p, i) => ({
       d: p.d,
@@ -304,30 +310,35 @@ export function TorsoDetailPanelMap({
                 ? 1
                 : rawDotsGlobalContourMaxValue;
             return (
-              <g key={`${panel}-raw-area-${entry.hitId}`} mask={`url(#${softMaskId})`}>
+              <g
+                key={`${panel}-raw-area-${entry.hitId}`}
+                mask={`url(#${softMaskId})`}
+              >
                 <g filter={`url(#${rawDotsSoftBlurId})`}>
-                  {entry.contours.map((contour: ContourMultiPolygon, i: number) => {
-                    const d = rawDotsContourPath(contour);
-                    if (!d) return null;
-                    const value = contour.value ?? 0;
-                    const normalized = Math.min(
-                      1,
-                      Math.max(0, value / globalMax),
-                    );
-                    const contrastAdjusted = Math.pow(normalized, 1.45);
-                    const opacity =
-                      (0.012 + contrastAdjusted * 0.78) * countBoost;
-                    return (
-                      <path
-                        key={`${panel}-raw-density-${entry.hitId}-${i}`}
-                        d={d}
-                        fill="#db2777"
-                        fillOpacity={opacity}
-                        stroke="none"
-                        pointerEvents="none"
-                      />
-                    );
-                  })}
+                  {entry.contours.map(
+                    (contour: ContourMultiPolygon, i: number) => {
+                      const d = rawDotsContourPath(contour);
+                      if (!d) return null;
+                      const value = contour.value ?? 0;
+                      const normalized = Math.min(
+                        1,
+                        Math.max(0, value / globalMax),
+                      );
+                      const contrastAdjusted = Math.pow(normalized, 1.45);
+                      const opacity =
+                        (0.012 + contrastAdjusted * 0.78) * countBoost;
+                      return (
+                        <path
+                          key={`${panel}-raw-density-${entry.hitId}-${i}`}
+                          d={d}
+                          fill="#db2777"
+                          fillOpacity={opacity}
+                          stroke="none"
+                          pointerEvents="none"
+                        />
+                      );
+                    },
+                  )}
                 </g>
               </g>
             );
