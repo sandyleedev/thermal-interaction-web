@@ -14,6 +14,11 @@ import {
   paperMatchesDurationAxis,
 } from "@/lib/research/filterResearchPapers";
 import { buildDurationKdePathsHorizontal } from "./durationPanelDensity";
+import {
+  DistributionViolinDefs,
+  DISTRIBUTION_PINK_VIVID,
+  distributionViolinVisualIds,
+} from "@/components/distribution-violin/distributionViolinVisuals";
 
 const TRACK_H = 22;
 const PLOT_W = 320;
@@ -156,6 +161,7 @@ export function DurationPanel() {
     PLOT_PAD.left + 14,
     Math.min(PLOT_W - PLOT_PAD.right - 14, violinLabelXRaw),
   );
+  const violinVisualIds = distributionViolinVisualIds(violinClipId);
 
   return (
     <section
@@ -172,23 +178,34 @@ export function DurationPanel() {
             aria-label="Paper count density by study duration (single-sided violin), horizontal axis"
           >
             <defs>
-              <clipPath id={`duration-violin-clip-${violinClipId}`}>
+              <clipPath id={violinVisualIds.clipId}>
                 <path d={kdePaths.areaD} />
               </clipPath>
+              <DistributionViolinDefs
+                ids={violinVisualIds}
+                yTop={PLOT_PAD.top}
+                yBottom={PLOT_PAD.top + innerH}
+              />
             </defs>
-            <path d={kdePaths.areaD} className="distribution-violin-area" />
-            <rect
-              x={violinSelectionX}
-              y={PLOT_PAD.top}
-              width={Math.max(0, violinSelectionW)}
-              height={innerH}
-              className="distribution-violin-selection-fill"
-              clipPath={`url(#duration-violin-clip-${violinClipId})`}
-            />
+            <g filter={`url(#${violinVisualIds.softBlurId})`}>
+              <path
+                d={kdePaths.areaD}
+                fill={`url(#${violinVisualIds.areaGradientId})`}
+              />
+              <rect
+                x={violinSelectionX}
+                y={PLOT_PAD.top}
+                width={Math.max(0, violinSelectionW)}
+                height={innerH}
+                fill={`url(#${violinVisualIds.selectionGradientId})`}
+                clipPath={`url(#${violinVisualIds.clipId})`}
+              />
+            </g>
             <path
               d={kdePaths.lineD}
               className="distribution-violin-line"
               fill="none"
+              stroke={DISTRIBUTION_PINK_VIVID}
             />
             <text
               x={violinLabelX}
