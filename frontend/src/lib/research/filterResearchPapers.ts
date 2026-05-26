@@ -64,8 +64,8 @@ export function paperMatchesTemperatureAxis(
   tempHighC: number,
   includeUnspecified: boolean,
 ): boolean {
-  if (p.minC == null || p.maxC == null) return includeUnspecified;
-  return rangeOverlapsFilter(p.minC, p.maxC, tempLowC, tempHighC);
+  if (p.minTempC == null || p.maxTempC == null) return includeUnspecified;
+  return rangeOverlapsFilter(p.minTempC, p.maxTempC, tempLowC, tempHighC);
 }
 
 /**
@@ -73,8 +73,8 @@ export function paperMatchesTemperatureAxis(
  * and KDE samples. `0`/`0` is treated as an unknown placeholder (same as `null`).
  */
 export function paperHasReportedDurationRange(p: ResearchPaper): boolean {
-  if (p.durationMinS == null || p.durationMaxS == null) return false;
-  if (p.durationMinS === 0 && p.durationMaxS === 0) return false;
+  if (p.minDurationSec == null || p.maxDurationSec == null) return false;
+  if (p.minDurationSec === 0 && p.maxDurationSec === 0) return false;
   return true;
 }
 
@@ -87,8 +87,8 @@ export function paperMatchesDurationAxis(
 ): boolean {
   if (!paperHasReportedDurationRange(p)) return includeUnspecified;
   return durationRangeOverlapsFilter(
-    p.durationMinS,
-    p.durationMaxS,
+    p.minDurationSec,
+    p.maxDurationSec,
     durationLowS,
     durationHighS,
   );

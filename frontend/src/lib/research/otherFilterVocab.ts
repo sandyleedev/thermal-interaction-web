@@ -3,12 +3,12 @@
 export type OtherFilterCategory =
   | "senses"
   | "materials"
-  | "thermalModes";
+  | "thermalTransferModes";
 
 export const OTHER_FILTER_CATEGORY_ORDER: OtherFilterCategory[] = [
   "senses",
   "materials",
-  "thermalModes",
+  "thermalTransferModes",
 ];
 
 export type FilterOption = { id: string; label: string };
@@ -17,7 +17,7 @@ export const OTHER_FILTER_SECTION_TITLES: Record<OtherFilterCategory, string> =
   {
     senses: "Senses",
     materials: "Materials",
-    thermalModes: "Thermal transfer modes",
+    thermalTransferModes: "Thermal transfer modes",
   };
 
 export const OTHER_FILTER_OPTIONS: Record<OtherFilterCategory, FilterOption[]> =
@@ -46,7 +46,7 @@ export const OTHER_FILTER_OPTIONS: Record<OtherFilterCategory, FilterOption[]> =
       { id: "air-gas", label: "Air / Gas" },
       { id: "chemical", label: "Chemical" },
     ],
-    thermalModes: [
+    thermalTransferModes: [
       { id: "conduction", label: "Conduction" },
       { id: "radiation", label: "Radiation" },
       { id: "convection", label: "Convection" },
@@ -60,6 +60,6 @@ export function emptyOtherFilterSelections(): Record<
   return {
     senses: [],
     materials: [],
-    thermalModes: [],
+    thermalTransferModes: [],
   };
 }

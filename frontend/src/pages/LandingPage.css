@@ -2358,6 +2358,10 @@
   color: #334155;
 }
 
+.paper-detail__prose--pre-wrap {
+  white-space: pre-wrap;
+}
+
 .paper-detail__link-line {
   margin: 0.45rem 0 0;
   font-size: 0.8125rem;

@@ -140,7 +140,7 @@ export function DurationPanel() {
     () =>
       durationDensityPapers
         .filter((p) => paperHasReportedDurationRange(p))
-        .map((p) => ((p.durationMinS as number) + (p.durationMaxS as number)) / 2),
+        .map((p) => ((p.minDurationSec as number) + (p.maxDurationSec as number)) / 2),
     [durationDensityPapers],
   );
   const kdePaths = useMemo(

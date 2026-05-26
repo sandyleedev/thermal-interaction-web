@@ -41,15 +41,15 @@ function formatDurationRange(minS: number, maxS: number): string {
 }
 
 function formatTemperatureRangeDisplay(p: ResearchPaper): string {
-  if (p.minC != null && p.maxC != null) {
-    return `${Math.round(p.minC)}°C – ${Math.round(p.maxC)}°C`;
+  if (p.minTempC != null && p.maxTempC != null) {
+    return `${Math.round(p.minTempC)}°C – ${Math.round(p.maxTempC)}°C`;
   }
   return "N/A";
 }
 
 function formatDurationRangeDisplay(p: ResearchPaper): string {
   if (paperHasReportedDurationRange(p)) {
-    return formatDurationRange(p.durationMinS as number, p.durationMaxS as number);
+    return formatDurationRange(p.minDurationSec as number, p.maxDurationSec as number);
   }
   return "N/A";
 }
@@ -101,7 +101,7 @@ function previewFromResearchPaper(p: ResearchPaper): PaperPreviewRecord {
     ...p.senses.map(titleCaseOption),
     ...p.materials.map(titleCaseOption),
     formatBodySitesDisplay(p),
-    ...p.thermalModes.map(titleCaseOption),
+    ...p.thermalTransferModes.map(titleCaseOption),
   ];
   const keywords = [...new Set(tagCandidates.map((k) => k.trim()).filter(Boolean))];
   return {
@@ -111,7 +111,9 @@ function previewFromResearchPaper(p: ResearchPaper): PaperPreviewRecord {
     publicationYear: p.publicationYear ?? 2024,
     publicationVenue: p.publicationVenue?.trim() || "Unknown venue",
     bodySitesSummary: formatBodySitesDisplay(p),
-    transferMode: p.thermalModes.length ? p.thermalModes.join(", ") : "—",
+    transferMode: p.thermalTransferModes.length
+      ? p.thermalTransferModes.join(", ")
+      : "—",
     temperatureRange: formatTemperatureRangeDisplay(p),
     duration: formatDurationRangeDisplay(p),
     keywords,

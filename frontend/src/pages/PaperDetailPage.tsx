@@ -58,10 +58,26 @@ function DetailBlock({
   );
 }
 
-function DetailParagraph({ text }: { text: string | undefined }) {
+function DetailParagraph({
+  text,
+  preserveLineBreaks = false,
+}: {
+  text: string | undefined;
+  preserveLineBreaks?: boolean;
+}) {
   const t = trimText(text);
   if (!t) return null;
-  return <p className="paper-detail__prose">{t}</p>;
+  return (
+    <p
+      className={
+        preserveLineBreaks
+          ? "paper-detail__prose paper-detail__prose--pre-wrap"
+          : "paper-detail__prose"
+      }
+    >
+      {t}
+    </p>
+  );
 }
 
 function DetailChipRow({ items }: { items: readonly string[] | undefined }) {
@@ -132,17 +148,6 @@ export function PaperDetailPage() {
     (paper.auxiliaryHardware?.length ?? 0) > 0;
   const showHardware = hwRows.length > 0 || hasAuxLists;
 
-  const emotionTheoryLabels = paper.emotionTheoriesMentioned?.length
-    ? paper.emotionTheoriesMentioned
-        .map((x) => titleCaseOption(String(x)))
-        .join(", ")
-    : "";
-  const showEmotion =
-    Boolean(emotionTheoryLabels) ||
-    Boolean(trimText(paper.emotionTheoriesUsage)) ||
-    Boolean(trimText(paper.emotionAffectMeasurement)) ||
-    Boolean(trimText(paper.thermalAffectJustification));
-
   return (
     <div className="paper-detail-page">
       <div className="paper-detail">
@@ -198,6 +203,13 @@ export function PaperDetailPage() {
               <dt>Thermal transfer</dt>
               <dd>{preview.transferMode}</dd>
             </div>
+            {paper.ambientTempC != null &&
+            Number.isFinite(paper.ambientTempC) ? (
+              <div className="paper-detail__fact">
+                <dt>Ambient Temperature</dt>
+                <dd>{paper.ambientTempC}°C</dd>
+              </div>
+            ) : null}
             <div className="paper-detail__fact">
               <dt>Temperature range</dt>
               <dd>{preview.temperatureRange}</dd>
@@ -206,13 +218,6 @@ export function PaperDetailPage() {
               <dt>Duration</dt>
               <dd>{preview.duration}</dd>
             </div>
-            {paper.ambientTemperatureC != null &&
-            Number.isFinite(paper.ambientTemperatureC) ? (
-              <div className="paper-detail__fact">
-                <dt>Ambient Temperature</dt>
-                <dd>{paper.ambientTemperatureC}°C</dd>
-              </div>
-            ) : null}
             {mic ? (
               <div className="paper-detail__fact paper-detail__fact--wide">
                 <dt>Materials on skin</dt>
@@ -246,24 +251,13 @@ export function PaperDetailPage() {
           </DetailBlock>
 
           <DetailBlock
-            title="Study methods"
-            when={Boolean(trimText(paper.studyMethods))}
+            title="Thermal perception measure"
+            when={Boolean(trimText(paper.thermalPerceptionMeasure))}
           >
-            <DetailParagraph text={paper.studyMethods} />
-          </DetailBlock>
-
-          <DetailBlock
-            title="Contributions"
-            when={Boolean(trimText(paper.contributions))}
-          >
-            <DetailParagraph text={paper.contributions} />
-          </DetailBlock>
-
-          <DetailBlock
-            title="Design takeaways"
-            when={Boolean(trimText(paper.contributionsToDesign))}
-          >
-            <DetailParagraph text={paper.contributionsToDesign} />
+            <DetailParagraph
+              text={paper.thermalPerceptionMeasure}
+              preserveLineBreaks
+            />
           </DetailBlock>
 
           <DetailBlock
@@ -271,27 +265,6 @@ export function PaperDetailPage() {
             when={Boolean(trimText(paper.thermalCuePurpose))}
           >
             <DetailParagraph text={paper.thermalCuePurpose} />
-          </DetailBlock>
-
-          <DetailBlock
-            title="Thermal vocabulary (paper)"
-            when={Boolean(trimText(paper.thermalVocabularyDescription))}
-          >
-            <DetailParagraph text={paper.thermalVocabularyDescription} />
-          </DetailBlock>
-
-          <DetailBlock title="Emotion and affect" when={showEmotion}>
-            {emotionTheoryLabels ? (
-              <p className="paper-detail__prose">
-                <span className="paper-detail__label">
-                  Theories mentioned:{" "}
-                </span>
-                {emotionTheoryLabels}
-              </p>
-            ) : null}
-            <DetailParagraph text={paper.emotionTheoriesUsage} />
-            <DetailParagraph text={paper.emotionAffectMeasurement} />
-            <DetailParagraph text={paper.thermalAffectJustification} />
           </DetailBlock>
 
           <DetailBlock title="Hardware and control" when={showHardware}>

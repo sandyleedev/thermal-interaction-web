@@ -64,33 +64,20 @@ export type ResearchPaper = {
   authors?: string;
   publicationYear?: number;
   publicationVenue?: string;
-  /**
-   * Reported stimulus / study temperature bounds (°C), or `null` when not reported or not applicable.
-   * Use `null` for both when the paper does not give a numeric range (do not invent placeholders).
-   */
-  minC: number | null;
-  maxC: number | null;
-  /**
-   * Stimulus or study block duration bounds (seconds), or `null` when not reported or not applicable.
-   */
-  durationMinS: number | null;
-  durationMaxS: number | null;
-  bodySites: BodySite[];
-  senses: string[];
-  materials: string[];
-  thermalModes: string[];
   doi?: string;
   url?: string;
-  technicalSummary?: string;
-  /** Rich fields from `researchPapers.json` (detail page). */
-  materialsInContactWithSkin?: string[];
-  ambientTemperatureC?: number | null;
-  thermalVocabularyDescription?: string;
-  emotionTheoriesMentioned?: string[];
-  emotionTheoriesUsage?: string;
-  emotionAffectMeasurement?: string;
-  thermalAffectJustification?: string;
+
+  ambientTempC?: number | null;
+  minTempC: number | null;
+  maxTempC: number | null;
+  minDurationSec: number | null;
+  maxDurationSec: number | null;
+  senses: string[];
+  thermalPerceptionMeasure?: string;
   thermalCuePurpose?: string;
+  thermalTransferModes: string[];
+
+  /** Technical related fields */
   mainActuatorForTemperatureSensation?: string;
   mainActuatorModel?: string;
   mainActuatorSize?: string;
@@ -102,11 +89,17 @@ export type ResearchPaper = {
   powerConsumption?: string;
   temporalParameters?: string;
   otherNote?: string;
-  studyMethods?: string;
-  contributions?: string;
-  contributionsToDesign?: string;
+  technicalSummary?: string;
+
+  materialsInContactWithSkin?: string[];
+  materials: string[];
+
+  bodyPartsInvolved?: string;
+  bodySites: BodySite[];
+
   powerEnergyConsumption?: string;
 };
+
 export const ALL_RESEARCH_PAPERS: ResearchPaper[] =
   researchPapersJson as ResearchPaper[];
 
@@ -127,8 +120,8 @@ export function paperFieldForCategory(
       return paper.senses;
     case "materials":
       return paper.materials;
-    case "thermalModes":
-      return paper.thermalModes;
+    case "thermalTransferModes":
+      return paper.thermalTransferModes;
     default:
       return [];
   }
