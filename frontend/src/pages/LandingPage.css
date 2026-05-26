@@ -526,15 +526,19 @@
   align-items: center;
   gap: 0.15rem;
   padding: 0.2rem 0.3rem 0.2rem 0.65rem;
-  border: 1px solid rgba(148, 163, 184, 0.55);
+  border: 1px solid rgba(244, 114, 182, 0.48);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.96);
-  color: #334155;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 251, 252, 0.98),
+    rgba(255, 228, 230, 0.72)
+  );
+  color: #57534e;
   font-size: 0.6rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   line-height: 1.2;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+  box-shadow: 0 1px 2px rgba(219, 39, 119, 0.06);
 }
 
 .body-map-selection-chip-label {
@@ -553,7 +557,7 @@
   border: none;
   border-radius: 50%;
   background: transparent;
-  color: #64748b;
+  color: #db2777;
   font-size: 0.95rem;
   font-weight: 600;
   line-height: 1;
@@ -561,12 +565,12 @@
 }
 
 .body-map-selection-chip-dismiss:hover {
-  color: #0f172a;
-  background: rgba(241, 245, 249, 0.9);
+  color: #9f1239;
+  background: rgba(255, 228, 230, 0.82);
 }
 
 .body-map-selection-chip-dismiss:focus-visible {
-  outline: 2px solid #38bdf8;
+  outline: 2px solid rgba(219, 39, 119, 0.38);
   outline-offset: 1px;
 }
 
@@ -1471,9 +1475,9 @@
   font-size: 0.6875rem;
   font-weight: 500;
   letter-spacing: -0.015em;
-  color: #475569;
-  background: #fafafa;
-  border: 1px solid rgba(203, 213, 225, 0.95);
+  color: #57534e;
+  background: #fffbfc;
+  border: 1px solid rgba(251, 207, 232, 0.92);
   border-radius: 999px;
   cursor: pointer;
   line-height: 1.25;
@@ -1485,12 +1489,12 @@
 }
 
 .filter-chip:hover {
-  background: #f1f5f9;
-  border-color: rgba(148, 163, 184, 0.85);
+  background: rgba(255, 228, 230, 0.78);
+  border-color: rgba(244, 114, 182, 0.58);
 }
 
 .filter-chip:focus-visible {
-  outline: 2px solid rgba(56, 189, 248, 0.55);
+  outline: 2px solid rgba(219, 39, 119, 0.38);
   outline-offset: 2px;
 }
 
@@ -1501,22 +1505,22 @@
 .filter-chip-count {
   font-variant-numeric: tabular-nums;
   font-weight: 600;
-  color: #94a3b8;
+  color: #e879a9;
 }
 
 .filter-chip--selected {
-  color: #0f172a;
+  color: #9f1239;
   background: linear-gradient(
     to bottom,
-    rgba(239, 246, 255, 0.95),
-    rgba(219, 234, 254, 0.88)
+    rgba(255, 228, 230, 0.82),
+    rgba(251, 207, 232, 0.68)
   );
-  border-color: rgba(59, 130, 246, 0.42);
-  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.06);
+  border-color: rgba(219, 39, 119, 0.34);
+  box-shadow: 0 0 0 1px rgba(219, 39, 119, 0.05);
 }
 
 .filter-chip--selected .filter-chip-count {
-  color: #64748b;
+  color: #be185d;
 }
 
 .landing-results-inner {
