@@ -227,6 +227,29 @@ const TORSO_DETAIL_HIT_ID_SET = new Set<string>([
   "general",
 ]);
 
+/** Arm zoom map hit ids (general ring uses `general`). */
+export const ARM_DETAIL_HIT_IDS = ["upper-arm", "forearm"] as const;
+
+export type ArmDetailHitId = (typeof ARM_DETAIL_HIT_IDS)[number];
+
+export type ArmDetailSide = "left" | "right";
+
+const ARM_DETAIL_HIT_ID_SET = new Set<string>([
+  ...ARM_DETAIL_HIT_IDS,
+  "general",
+]);
+
+/** True when a body site’s optional `side` should appear on the given arm panel. */
+export function armSiteMatchesPanelSide(
+  site: { side?: string },
+  panelSide: ArmDetailSide,
+): boolean {
+  const sd = (site.side ?? "").trim().toLowerCase();
+  if (sd === panelSide) return true;
+  if (sd === "" || sd === "unspecified") return true;
+  return false;
+}
+
 function headEarOrCheekHit(
   paper: BodySitesCarrier,
   sub: "ear" | "cheek",
@@ -353,6 +376,57 @@ export function paperMatchesTorsoFineSelection(
   }
 }
 
+function armExactSubForSide(
+  paper: BodySitesCarrier,
+  sub: string,
+  panelSide: ArmDetailSide,
+): boolean {
+  const sl = sub.toLowerCase();
+  for (const s of paper.bodySites ?? []) {
+    const resolved = resolveBodySite(s);
+    if (resolved.parent !== "arm") continue;
+    if (resolved.subregion.trim().toLowerCase() !== sl) continue;
+    if (!armSiteMatchesPanelSide(s, panelSide)) continue;
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Arm L2 zoom on one panel: `general` matches only `arm → general` sites for that side.
+ */
+export function paperMatchesArmFineSelectionForSide(
+  paper: BodySitesCarrier,
+  hit: string,
+  panelSide: ArmDetailSide,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  switch (h) {
+    case "general":
+      return armExactSubForSide(paper, "general", panelSide);
+    case "upper-arm":
+      return (
+        armExactSubForSide(paper, "upper-arm", panelSide) ||
+        armExactSubForSide(paper, "upper arm", panelSide)
+      );
+    case "forearm":
+      return armExactSubForSide(paper, "forearm", panelSide);
+    default:
+      return false;
+  }
+}
+
+/** Arm L2 zoom (any side): used for filter chips and aggregate counts. */
+export function paperMatchesArmFineSelection(
+  paper: BodySitesCarrier,
+  hit: string,
+): boolean {
+  return (
+    paperMatchesArmFineSelectionForSide(paper, hit, "left") ||
+    paperMatchesArmFineSelectionForSide(paper, hit, "right")
+  );
+}
+
 /**
  * Level-2 filter (optional). When `fineSubregion` is set, `parent` must also be set.
  * Match is case-insensitive on `subregion` after trimming.
@@ -375,6 +449,10 @@ export function paperMatchesBodyMapFineSelection(
 
   if (parent === "torso" && TORSO_DETAIL_HIT_ID_SET.has(needle)) {
     return paperMatchesTorsoFineSelection(paper, needle);
+  }
+
+  if (parent === "arm" && ARM_DETAIL_HIT_ID_SET.has(needle)) {
+    return paperMatchesArmFineSelection(paper, needle);
   }
 
   for (const s of paper.bodySites ?? []) {

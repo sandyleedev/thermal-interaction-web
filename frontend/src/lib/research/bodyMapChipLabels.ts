@@ -10,6 +10,7 @@ export const BODY_MAP_DETAIL_REGIONS = new Set<BodyMapParentRegion>([
   "head",
   "neck",
   "torso",
+  "arm",
 ]);
 
 const PARENT_CHIP_LABEL: Record<BodyMapParentRegion, string> = {
