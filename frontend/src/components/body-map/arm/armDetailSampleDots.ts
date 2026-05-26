@@ -9,6 +9,7 @@ import {
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
 import {
+  type HeadShapeSampleOptions,
   type HeadShapeSpec,
   sampleDotsInHeadShape,
 } from "../head/headDetailSampleDots";
@@ -17,6 +18,26 @@ export const ARM_LEFT_DETAIL_VIEWBOX = "0 0 281.3336 750.20129";
 export const ARM_RIGHT_DETAIL_VIEWBOX = "0 0 282.18663 750.20129";
 
 export type ArmShapeSpec = HeadShapeSpec;
+
+/** Keep arm dots off the silhouette stroke without clustering in the centroid. */
+function armDotSampleOptions(
+  panelSide: ArmDetailSide,
+  hitId: string,
+): HeadShapeSampleOptions {
+  const left = panelSide === "left";
+  if (hitId === "forearm") {
+    return {
+      borderInset: left ? 8 : 6,
+      minSpread: 0.18,
+      maxSpread: 0.62,
+    };
+  }
+  return {
+    borderInset: left ? 10 : 7,
+    minSpread: 0.14,
+    maxSpread: 0.44,
+  };
+}
 
 /**
  * Which arm-detail hit ids receive a dot for this body site on one panel (no dots for `general`).
@@ -80,10 +101,11 @@ export function buildArmDotsByHitId(
   for (const [hitId, targets] of targetsByHit) {
     const spec = shapeByHitId.get(hitId);
     if (!spec) continue;
+    const sampleOptions = armDotSampleOptions(panelSide, hitId);
     const capped = targets.slice(0, maxDotsPerHit);
     const pts: { x: number; y: number }[] = [];
     for (const t of capped) {
-      const one = sampleDotsInHeadShape(spec, 1, t.seed);
+      const one = sampleDotsInHeadShape(spec, 1, t.seed, sampleOptions);
       if (one[0]) pts.push(one[0]);
     }
     out[hitId] = pts;
@@ -103,8 +125,14 @@ export function buildArmAreaDensityDotsByHitId(
     if (targets.length === 0) continue;
     const spec = shapeByHitId.get(hitId);
     if (!spec) continue;
+    const sampleOptions = armDotSampleOptions(panelSide, hitId);
     const seedTag = `arm-area-density\0${panelSide}\0${hitId}\0${samplesPerHit}`;
-    out[hitId] = sampleDotsInHeadShape(spec, samplesPerHit, seedTag);
+    out[hitId] = sampleDotsInHeadShape(
+      spec,
+      samplesPerHit,
+      seedTag,
+      sampleOptions,
+    );
   }
   return out;
 }

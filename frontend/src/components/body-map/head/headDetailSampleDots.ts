@@ -101,6 +101,45 @@ export function collectHeadDetailTargetsByHit(
   return map;
 }
 
+export type HeadShapeSampleOptions = {
+  /** Min clearance from fill edge in shape-local units. */
+  borderInset?: number;
+  minSpread?: number;
+  maxSpread?: number;
+};
+
+const BORDER_CLEARANCE_DIRS: ReadonlyArray<readonly [number, number]> = [
+  [1, 0],
+  [-1, 0],
+  [0, 1],
+  [0, -1],
+  [0.707106, 0.707106],
+  [-0.707106, 0.707106],
+  [0.707106, -0.707106],
+  [-0.707106, -0.707106],
+];
+
+function pointHasBorderClearance(
+  shape: SVGPathElement | SVGEllipseElement,
+  x: number,
+  y: number,
+  inset: number,
+  pt: DOMPoint,
+): boolean {
+  pt.x = x;
+  pt.y = y;
+  if (!shape.isPointInFill(pt)) return false;
+  if (inset <= 0) return true;
+  for (const [dx, dy] of BORDER_CLEARANCE_DIRS) {
+    pt.x = x + dx * inset;
+    pt.y = y + dy * inset;
+    if (!shape.isPointInFill(pt)) return false;
+  }
+  pt.x = x;
+  pt.y = y;
+  return true;
+}
+
 /**
  * Rejection sample inside a head subpart path or ellipse (head SVG user space).
  */
@@ -108,6 +147,7 @@ export function sampleDotsInHeadShape(
   spec: HeadShapeSpec,
   dotCount: number,
   seedTag: string,
+  options?: HeadShapeSampleOptions,
 ): { x: number; y: number }[] {
   if (dotCount <= 0 || typeof document === "undefined") return [];
 
@@ -118,14 +158,12 @@ export function sampleDotsInHeadShape(
   const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   svg.setAttribute("viewBox", HEAD_DETAIL_VIEWBOX);
 
-  const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-  if (spec.transform) g.setAttribute("transform", spec.transform);
-
   let shape: SVGPathElement | SVGEllipseElement;
   if (spec.kind === "path") {
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     path.setAttribute("d", spec.d);
     path.setAttribute("fill", "#000");
+    if (spec.transform) path.setAttribute("transform", spec.transform);
     shape = path;
   } else {
     const el = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
@@ -134,11 +172,11 @@ export function sampleDotsInHeadShape(
     el.setAttribute("rx", String(spec.rx));
     el.setAttribute("ry", String(spec.ry));
     el.setAttribute("fill", "#000");
+    if (spec.transform) el.setAttribute("transform", spec.transform);
     shape = el;
   }
 
-  g.appendChild(shape);
-  svg.appendChild(g);
+  svg.appendChild(shape);
   wrapper.appendChild(svg);
   document.body.appendChild(wrapper);
 
@@ -191,48 +229,54 @@ export function sampleDotsInHeadShape(
       headShapeCentroidCache.set(shapeGeomKey, { x: anchorX, y: anchorY });
     }
 
-    const pushToSvgUser = (x: number, y: number) => {
+    const minSpread = options?.minSpread ?? 0.1;
+    const maxSpread = options?.maxSpread ?? 0.42;
+    const borderInset = Math.max(0, options?.borderInset ?? 0);
+
+    const pushToRootSvgUser = (x: number, y: number) => {
       pt.x = x;
       pt.y = y;
-      const ctm = shape.getCTM();
-      const gCtm = g.getCTM();
-      if (!ctm || !gCtm) {
-        out.push({ x, y });
+      const shapeCtm = shape.getCTM();
+      const svgCtm = svg.getCTM();
+      if (shapeCtm && svgCtm) {
+        const root = pt.matrixTransform(svgCtm.inverse().multiply(shapeCtm));
+        out.push({ x: root.x, y: root.y });
         return;
       }
-      const pVp = pt.matrixTransform(ctm);
-      const pG = pVp.matrixTransform(gCtm.inverse());
-      out.push({ x: pG.x, y: pG.y });
+      out.push({ x, y });
     };
 
     let attemptLimit = Math.min(600_000, Math.max(dotCount * 900, 20_000));
     const attemptCap = 1_200_000;
     let attempts = 0;
+    let effectiveInset = borderInset;
 
     while (out.length < dotCount) {
       while (out.length < dotCount && attempts < attemptLimit) {
         attempts += 1;
         const ux = bbox.x + rnd() * bbox.width;
         const uy = bbox.y + rnd() * bbox.height;
-        const w = 0.1 + rnd() * 0.42;
-        const x = anchorX + (ux - anchorX) * w;
-        const y = anchorY + (uy - anchorY) * w;
-        pt.x = x;
-        pt.y = y;
-        if (!shape.isPointInFill(pt)) continue;
-        pushToSvgUser(x, y);
+        const spread = minSpread + rnd() * Math.max(0, maxSpread - minSpread);
+        const x = anchorX + (ux - anchorX) * spread;
+        const y = anchorY + (uy - anchorY) * spread;
+        if (!pointHasBorderClearance(shape, x, y, effectiveInset, pt)) continue;
+        pushToRootSvgUser(x, y);
       }
-      if (out.length >= dotCount || attemptLimit >= attemptCap) break;
+      if (out.length >= dotCount) break;
+      if (effectiveInset > 0) {
+        effectiveInset = Math.max(0, effectiveInset * 0.5);
+        attempts = 0;
+        continue;
+      }
+      if (attemptLimit >= attemptCap) break;
       attemptLimit = Math.min(attemptLimit * 2, attemptCap);
     }
 
     while (out.length < dotCount) {
-      pt.x = anchorX;
-      pt.y = anchorY;
-      if (shape.isPointInFill(pt)) {
-        pushToSvgUser(anchorX, anchorY);
+      if (pointHasBorderClearance(shape, anchorX, anchorY, 0, pt)) {
+        pushToRootSvgUser(anchorX, anchorY);
       } else {
-        out.push({ x: bbox.x + bbox.width / 2, y: bbox.y + bbox.height / 2 });
+        pushToRootSvgUser(bbox.x + bbox.width / 2, bbox.y + bbox.height / 2);
       }
     }
     return out.slice(0, dotCount);
