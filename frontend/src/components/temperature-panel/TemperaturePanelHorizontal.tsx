@@ -74,6 +74,7 @@ export function TemperaturePanelHorizontal({
     tempLowC,
     tempHighC,
     setTempRange,
+    clearTemperatureFilter,
     includeUnspecifiedTemperature,
     setIncludeUnspecifiedTemperature,
   } = useResearchFilter();
@@ -174,6 +175,10 @@ export function TemperaturePanelHorizontal({
     Math.min(PLOT_W - PAD.right - 14, violinLabelXRaw),
   );
   const violinVisualIds = distributionViolinVisualIds(violinClipId);
+  const hasActiveTemperatureFilter =
+    filterLow !== TEMP_AXIS_MIN ||
+    filterHigh !== TEMP_AXIS_MAX ||
+    includeUnspecifiedTemperature;
 
   const tickLabels = [100, 75, 50, 25, 0, -10];
 
@@ -189,7 +194,17 @@ export function TemperaturePanelHorizontal({
         .filter(Boolean)
         .join(" ")}
     >
-      <h2 className="panel-title">Temperature</h2>
+      <div className="range-filter-panel-header">
+        <h2 className="panel-title">Temperature</h2>
+        <button
+          type="button"
+          className="other-filters-clear-all"
+          disabled={!hasActiveTemperatureFilter}
+          onClick={clearTemperatureFilter}
+        >
+          Clear
+        </button>
+      </div>
       <div className="panel-content temperature-panel-content temperature-panel-content--horizontal">
         <div className="temperature-panel-plot temperature-panel-plot--horizontal">
           <svg

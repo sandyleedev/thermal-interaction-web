@@ -900,6 +900,29 @@
   margin-bottom: 0.26rem;
 }
 
+.range-filter-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.landing-temperature-panel .range-filter-panel-header {
+  margin-bottom: 0.26rem;
+}
+
+.landing-duration-panel .range-filter-panel-header {
+  margin-bottom: 0.04rem;
+}
+
+.range-filter-panel-header .panel-title {
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: left;
+}
+
 .landing-temperature-panel .panel-content {
   padding: 0.04rem 0.28rem 0;
 }

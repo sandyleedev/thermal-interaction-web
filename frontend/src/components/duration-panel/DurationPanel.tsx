@@ -64,6 +64,7 @@ export function DurationPanel() {
     durationHighS,
     durationDensityPapers,
     setDurationRange,
+    clearDurationFilter,
     includeUnspecifiedDuration,
     setIncludeUnspecifiedDuration,
   } = useResearchFilter();
@@ -162,12 +163,26 @@ export function DurationPanel() {
     Math.min(PLOT_W - PLOT_PAD.right - 14, violinLabelXRaw),
   );
   const violinVisualIds = distributionViolinVisualIds(violinClipId);
+  const hasActiveDurationFilter =
+    filterLowS !== DURATION_MIN_S ||
+    filterHighS !== DURATION_MAX_S ||
+    includeUnspecifiedDuration;
 
   return (
     <section
       className="landing-panel landing-panel-top landing-duration-panel"
     >
-      <h2 className="panel-title">Duration</h2>
+      <div className="range-filter-panel-header">
+        <h2 className="panel-title">Duration</h2>
+        <button
+          type="button"
+          className="other-filters-clear-all"
+          disabled={!hasActiveDurationFilter}
+          onClick={clearDurationFilter}
+        >
+          Clear
+        </button>
+      </div>
       <div className="panel-content duration-panel-content">
         <div className="duration-panel-plot duration-panel-plot--horizontal">
           <svg

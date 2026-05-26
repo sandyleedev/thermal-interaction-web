@@ -88,9 +88,11 @@ type ResearchFilterContextValue = {
   tempLowC: number;
   tempHighC: number;
   setTempRange: (lowC: number, highC: number) => void;
+  clearTemperatureFilter: () => void;
   durationLowS: number;
   durationHighS: number;
   setDurationRange: (lowS: number, highS: number) => void;
+  clearDurationFilter: () => void;
   otherSelections: OtherFilterSelections;
   toggleOtherChip: (category: OtherFilterCategory, optionId: string) => void;
   clearOtherFilterCategory: (category: OtherFilterCategory) => void;
@@ -142,9 +144,9 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
   const [activeDetailRegion, setActiveDetailRegion] =
     useState<BodyMapParentRegion | null>(null);
   const [includeUnspecifiedTemperature, setIncludeUnspecifiedTemperature] =
-    useState(true);
+    useState(false);
   const [includeUnspecifiedDuration, setIncludeUnspecifiedDuration] =
-    useState(true);
+    useState(false);
 
   const bodyMapSelection: BodyMapSelection = useMemo(
     () => ({
@@ -170,6 +172,18 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
   const setDurationRange = useCallback((lowS: number, highS: number) => {
     setDurationLowS(lowS);
     setDurationHighS(highS);
+  }, []);
+
+  const clearTemperatureFilter = useCallback(() => {
+    setTempLowC(DEFAULT_TEMP[0]);
+    setTempHighC(DEFAULT_TEMP[1]);
+    setIncludeUnspecifiedTemperature(false);
+  }, []);
+
+  const clearDurationFilter = useCallback(() => {
+    setDurationLowS(DEFAULT_DURATION[0]);
+    setDurationHighS(DEFAULT_DURATION[1]);
+    setIncludeUnspecifiedDuration(false);
   }, []);
 
   const toggleOtherChip = useCallback(
@@ -416,9 +430,11 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       tempLowC,
       tempHighC,
       setTempRange,
+      clearTemperatureFilter,
       durationLowS,
       durationHighS,
       setDurationRange,
+      clearDurationFilter,
       otherSelections,
       toggleOtherChip,
       clearOtherFilterCategory,
@@ -451,9 +467,11 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       tempLowC,
       tempHighC,
       setTempRange,
+      clearTemperatureFilter,
       durationLowS,
       durationHighS,
       setDurationRange,
+      clearDurationFilter,
       otherSelections,
       toggleOtherChip,
       clearOtherFilterCategory,
