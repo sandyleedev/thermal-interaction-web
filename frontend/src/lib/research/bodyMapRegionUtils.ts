@@ -427,6 +427,114 @@ export function paperMatchesFootFineSelection(
   );
 }
 
+/** Leg zoom map hit ids (general ring uses `general`). Paint order: later = on top. */
+export const LEG_DETAIL_HIT_IDS = [
+  "left-thigh",
+  "right-thigh",
+  "left-crural-region",
+  "right-crural-region",
+] as const;
+
+export type LegDetailHitId = (typeof LEG_DETAIL_HIT_IDS)[number];
+
+export type LegDetailSide = "left" | "right";
+
+const LEG_DETAIL_HIT_ID_SET = new Set<string>([
+  ...LEG_DETAIL_HIT_IDS,
+  "general",
+]);
+
+/** True when a body site's optional `side` should appear on the given leg panel. */
+export function legSiteMatchesPanelSide(
+  site: { side?: string },
+  panelSide: LegDetailSide,
+): boolean {
+  const sd = (site.side ?? "").trim().toLowerCase();
+  if (sd === panelSide) return true;
+  if (sd === "" || sd === "unspecified") return true;
+  return false;
+}
+
+function legExactSubForSide(
+  paper: BodySitesCarrier,
+  sub: string,
+  panelSide: LegDetailSide,
+): boolean {
+  const sl = sub.toLowerCase();
+  for (const s of paper.bodySites ?? []) {
+    const resolved = resolveBodySite(s);
+    if (resolved.parent !== "leg") continue;
+    if (resolved.subregion.trim().toLowerCase() !== sl) continue;
+    if (!legSiteMatchesPanelSide(s, panelSide)) continue;
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Leg L2 zoom on one panel: `general` matches only `leg → general` sites for that side.
+ */
+export function paperMatchesLegFineSelectionForSide(
+  paper: BodySitesCarrier,
+  hit: string,
+  panelSide: LegDetailSide,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  switch (h) {
+    case "general":
+      return legExactSubForSide(paper, "general", panelSide);
+    case "thigh":
+      return legExactSubForSide(paper, "thigh", panelSide);
+    case "crural-region":
+      return (
+        legExactSubForSide(paper, "crural-region", panelSide) ||
+        legExactSubForSide(paper, "crural", panelSide)
+      );
+    default:
+      return false;
+  }
+}
+
+/** Leg L2 zoom on one bilateral map (single SVG, per-side hit targets). */
+export function paperMatchesLegFineSelection(
+  paper: BodySitesCarrier,
+  hit: string,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  switch (h) {
+    case "general":
+      return (
+        paperMatchesLegFineSelectionForSide(paper, "general", "left") ||
+        paperMatchesLegFineSelectionForSide(paper, "general", "right")
+      );
+    case "thigh":
+      return (
+        paperMatchesLegFineSelectionForSide(paper, "thigh", "left") ||
+        paperMatchesLegFineSelectionForSide(paper, "thigh", "right")
+      );
+    case "left-thigh":
+      return paperMatchesLegFineSelectionForSide(paper, "thigh", "left");
+    case "right-thigh":
+      return paperMatchesLegFineSelectionForSide(paper, "thigh", "right");
+    case "crural-region":
+    case "crural":
+      return (
+        paperMatchesLegFineSelectionForSide(paper, "crural-region", "left") ||
+        paperMatchesLegFineSelectionForSide(paper, "crural-region", "right")
+      );
+    case "left-crural-region":
+      return paperMatchesLegFineSelectionForSide(paper, "crural-region", "left");
+    case "right-crural-region":
+      return paperMatchesLegFineSelectionForSide(
+        paper,
+        "crural-region",
+        "right",
+      );
+    default:
+      return false;
+  }
+}
+
 /** True when a body site's optional `side` should appear on the given arm panel. */
 export function armSiteMatchesPanelSide(
   site: { side?: string },
@@ -649,6 +757,10 @@ export function paperMatchesBodyMapFineSelection(
 
   if (parent === "foot" && FOOT_DETAIL_HIT_ID_SET.has(needle)) {
     return paperMatchesFootFineSelection(paper, needle);
+  }
+
+  if (parent === "leg" && LEG_DETAIL_HIT_ID_SET.has(needle)) {
+    return paperMatchesLegFineSelection(paper, needle);
   }
 
   for (const s of paper.bodySites ?? []) {

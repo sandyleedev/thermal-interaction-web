@@ -1,0 +1,120 @@
+import type { BodyMapDetailRegion } from "@/lib/research/bodyMapRegions";
+import { resolveBodySite } from "@/lib/research/bodyMapRegionUtils";
+import {
+  normalizeBodySites,
+  type ResearchPaper,
+} from "@/lib/research/researchPapers";
+import {
+  type HeadShapeSampleOptions,
+  type HeadShapeSpec,
+  sampleDotsInHeadShape,
+} from "../head/headDetailSampleDots";
+
+export const LEG_DETAIL_VIEWBOX = "0 0 837.483 1819.369";
+
+export type LegShapeSpec = HeadShapeSpec;
+
+function legDotSampleOptions(hitId: string): HeadShapeSampleOptions {
+  if (hitId.includes("crural")) {
+    return { borderInset: 10, minSpread: 0.12, maxSpread: 0.48 };
+  }
+  return { borderInset: 12, minSpread: 0.14, maxSpread: 0.52 };
+}
+
+/**
+ * Which leg-detail hit ids receive a dot for this body site (no dots for `general`).
+ */
+export function legContributionHitIds(
+  site: { side?: string },
+  resolved: BodyMapDetailRegion,
+): string[] {
+  if (resolved.parent !== "leg") return [];
+  const sub = resolved.subregion.trim().toLowerCase();
+  const sd = (site.side ?? "").trim().toLowerCase();
+  switch (sub) {
+    case "general":
+      return [];
+    case "thigh":
+      if (sd === "left") return ["left-thigh"];
+      if (sd === "right") return ["right-thigh"];
+      return ["left-thigh", "right-thigh"];
+    case "crural":
+    case "crural-region":
+      if (sd === "left") return ["left-crural-region"];
+      if (sd === "right") return ["right-crural-region"];
+      return ["left-crural-region", "right-crural-region"];
+    default:
+      return [];
+  }
+}
+
+export function collectLegDetailTargetsByHit(
+  papers: readonly ResearchPaper[],
+): Map<string, { paperId: string; seed: string }[]> {
+  const map = new Map<string, { paperId: string; seed: string }[]>();
+  for (const paper of papers) {
+    const sites = normalizeBodySites(paper);
+    for (let i = 0; i < sites.length; i++) {
+      const site = sites[i]!;
+      const resolved = resolveBodySite(site);
+      const hits = legContributionHitIds(site, resolved);
+      for (const hitId of hits) {
+        let list = map.get(hitId);
+        if (!list) {
+          list = [];
+          map.set(hitId, list);
+        }
+        list.push({
+          paperId: paper.id,
+          seed: `${paper.id}\0${resolved.parent}\0${resolved.subregion}\0${site.side ?? ""}\0${i}`,
+        });
+      }
+    }
+  }
+  return map;
+}
+
+export function buildLegDotsByHitId(
+  papers: readonly ResearchPaper[],
+  shapeByHitId: ReadonlyMap<string, LegShapeSpec>,
+  maxDotsPerHit: number,
+): Record<string, { x: number; y: number }[]> {
+  const targetsByHit = collectLegDetailTargetsByHit(papers);
+  const out: Record<string, { x: number; y: number }[]> = {};
+  for (const [hitId, targets] of targetsByHit) {
+    const spec = shapeByHitId.get(hitId);
+    if (!spec) continue;
+    const sampleOptions = legDotSampleOptions(hitId);
+    const capped = targets.slice(0, maxDotsPerHit);
+    const pts: { x: number; y: number }[] = [];
+    for (const t of capped) {
+      const one = sampleDotsInHeadShape(spec, 1, t.seed, sampleOptions);
+      if (one[0]) pts.push(one[0]);
+    }
+    out[hitId] = pts;
+  }
+  return out;
+}
+
+export function buildLegAreaDensityDotsByHitId(
+  papers: readonly ResearchPaper[],
+  shapeByHitId: ReadonlyMap<string, LegShapeSpec>,
+  samplesPerHit: number,
+): Record<string, { x: number; y: number }[]> {
+  const targetsByHit = collectLegDetailTargetsByHit(papers);
+  const out: Record<string, { x: number; y: number }[]> = {};
+  for (const [hitId, targets] of targetsByHit) {
+    if (targets.length === 0) continue;
+    const spec = shapeByHitId.get(hitId);
+    if (!spec) continue;
+    const sampleOptions = legDotSampleOptions(hitId);
+    const seedTag = `leg-area-density\0${hitId}\0${samplesPerHit}`;
+    out[hitId] = sampleDotsInHeadShape(
+      spec,
+      samplesPerHit,
+      seedTag,
+      sampleOptions,
+    );
+  }
+  return out;
+}

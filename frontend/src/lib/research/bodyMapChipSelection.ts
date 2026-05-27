@@ -6,6 +6,7 @@ import {
   ARM_DETAIL_HIT_IDS,
   HAND_DETAIL_HIT_IDS,
   HEAD_DETAIL_HIT_IDS,
+  LEG_DETAIL_HIT_IDS,
   NECK_DETAIL_HIT_IDS,
   paperHasWholeBodyGeneralSite,
   paperMatchesBodyMapFineSelection,
@@ -52,6 +53,8 @@ export function getSelectableSubpartIds(
       return ["general", ...ARM_DETAIL_HIT_IDS];
     case "hand":
       return ["general", ...HAND_DETAIL_HIT_IDS];
+    case "leg":
+      return ["general", ...LEG_DETAIL_HIT_IDS];
     case "wholeBody":
       return ["general"];
     default:

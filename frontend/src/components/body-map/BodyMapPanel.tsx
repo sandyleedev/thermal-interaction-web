@@ -10,6 +10,7 @@ import { NeckBodyMapDetail } from "./neck/NeckBodyMapDetail";
 import { ArmBodyMapDetail } from "./arm/ArmBodyMapDetail";
 import { HandBodyMapDetail } from "./hand/HandBodyMapDetail";
 import { FootBodyMapDetail } from "./foot/FootBodyMapDetail";
+import { LegBodyMapDetail } from "./leg/LegBodyMapDetail";
 import { TorsoBodyMapDetail } from "./torso/TorsoBodyMapDetail";
 import { paperTouchesBodyMapParent } from "@/lib/research/researchPapers";
 
@@ -63,12 +64,19 @@ export function BodyMapPanel() {
     [bodyMapPaperPool],
   );
 
+  const legDetailPapers = useMemo(
+    () =>
+      bodyMapPaperPool.filter((p) => paperTouchesBodyMapParent(p, "leg")),
+    [bodyMapPaperPool],
+  );
+
   const showHeadDetail = activeDetailRegion === "head";
   const showNeckDetail = activeDetailRegion === "neck";
   const showTorsoDetail = activeDetailRegion === "torso";
   const showArmDetail = activeDetailRegion === "arm";
   const showHandDetail = activeDetailRegion === "hand";
   const showFootDetail = activeDetailRegion === "foot";
+  const showLegDetail = activeDetailRegion === "leg";
 
   const handleFullBodyPartClick = useCallback(
     (region: BodyMapParentRegion) => {
@@ -154,6 +162,12 @@ export function BodyMapPanel() {
             <FootBodyMapDetail
               variant={variant}
               papers={footDetailPapers}
+              onBack={exitBodyMapDetail}
+            />
+          ) : showLegDetail ? (
+            <LegBodyMapDetail
+              variant={variant}
+              papers={legDetailPapers}
               onBack={exitBodyMapDetail}
             />
           ) : (
