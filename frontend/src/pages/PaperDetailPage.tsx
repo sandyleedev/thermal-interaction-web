@@ -13,12 +13,12 @@ function trimText(s: string | undefined | null): string | undefined {
   return t ? t : undefined;
 }
 
-function formatTaxonomyList(items: readonly string[] | undefined): string {
-  if (!items?.length) return "";
-  return items
-    .map((x) => titleCaseOption(x.trim()))
-    .filter(Boolean)
-    .join(", ");
+const DETAIL_NA = "N/A";
+
+function displayOrNa(value: string | undefined): string {
+  const t = trimText(value);
+  if (!t || t === "—") return DETAIL_NA;
+  return t;
 }
 
 function paperPrimaryLink(p: ResearchPaper): string | undefined {
@@ -66,7 +66,6 @@ function DetailParagraph({
   preserveLineBreaks?: boolean;
 }) {
   const t = trimText(text);
-  if (!t) return null;
   return (
     <p
       className={
@@ -75,17 +74,25 @@ function DetailParagraph({
           : "paper-detail__prose"
       }
     >
-      {t}
+      {t ?? DETAIL_NA}
     </p>
   );
 }
 
-function DetailChipRow({ items }: { items: readonly string[] | undefined }) {
-  if (!items?.length) return null;
-  const labels = items
+function DetailChipRow({
+  items,
+  hideWhenEmpty = false,
+}: {
+  items: readonly string[] | undefined;
+  hideWhenEmpty?: boolean;
+}) {
+  const labels = (items ?? [])
     .map((x) => titleCaseOption(String(x).trim()))
     .filter(Boolean);
-  if (!labels.length) return null;
+  if (hideWhenEmpty && labels.length === 0) return null;
+  if (labels.length === 0) {
+    return <p className="paper-detail__prose paper-detail__na">{DETAIL_NA}</p>;
+  }
   return (
     <div className="paper-detail__tags paper-detail__tags--section">
       {labels.map((t, i) => (
@@ -97,24 +104,147 @@ function DetailChipRow({ items }: { items: readonly string[] | undefined }) {
   );
 }
 
+function DetailValueChips({ values }: { values: readonly string[] }) {
+  const labels = values.map((v) => v.trim()).filter(Boolean);
+  if (labels.length === 0) {
+    return <p className="paper-detail__prose paper-detail__na">{DETAIL_NA}</p>;
+  }
+  return (
+    <div className="paper-detail__tags paper-detail__tags--section">
+      {labels.map((t, i) => (
+        <span key={`${t}-${i}`} className="paper-detail__tag">
+          {t}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function DetailFactChipGroup({
+  title,
+  items,
+  values,
+}: {
+  title: string;
+  items?: readonly string[];
+  values?: readonly string[];
+}) {
+  const hid = sectionHeadingId(title);
+  return (
+    <div className="paper-detail__chip-group" aria-labelledby={hid}>
+      <h3 id={hid} className="paper-detail__subhead">
+        {title}
+      </h3>
+      {items != null ? (
+        <DetailChipRow items={items} />
+      ) : (
+        <DetailValueChips values={values ?? []} />
+      )}
+    </div>
+  );
+}
+
+function isProseBlockHeaderLine(line: string): boolean {
+  const t = line.trim();
+  if (!t.endsWith(":")) return false;
+  if (t.length > 160) return false;
+  return true;
+}
+
+type StructuredProseBlock = {
+  header?: string;
+  lines: string[];
+};
+
+function parseStructuredProseBlocks(text: string): StructuredProseBlock[] {
+  return text
+    .split(/\n\s*\n/)
+    .map((block) => {
+      const lines = block
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean);
+      if (lines.length === 0) return null;
+      if (isProseBlockHeaderLine(lines[0]!)) {
+        return { header: lines[0], lines: lines.slice(1) };
+      }
+      return { lines };
+    })
+    .filter((block): block is StructuredProseBlock => block != null);
+}
+
+function DetailStructuredProse({ text }: { text: string | undefined }) {
+  const t = trimText(text);
+  if (!t) {
+    return <p className="paper-detail__prose paper-detail__na">{DETAIL_NA}</p>;
+  }
+
+  const blocks = parseStructuredProseBlocks(t);
+  if (blocks.length === 0) {
+    return <p className="paper-detail__prose paper-detail__na">{DETAIL_NA}</p>;
+  }
+
+  return (
+    <div className="paper-detail__structured-prose">
+      {blocks.map((block, blockIndex) => (
+        <div
+          key={`${block.header ?? "block"}-${blockIndex}`}
+          className="paper-detail__prose-block"
+        >
+          {block.header ? (
+            <p className="paper-detail__prose-header">{block.header}</p>
+          ) : null}
+          {block.lines.length > 1 ? (
+            <ul className="paper-detail__prose-list">
+              {block.lines.map((line, lineIndex) => (
+                <li key={lineIndex}>{line}</li>
+              ))}
+            </ul>
+          ) : block.lines.length === 1 ? (
+            <p className="paper-detail__prose">{block.lines[0]}</p>
+          ) : null}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function formatItemList(items: readonly string[] | undefined): string | undefined {
+  if (!items?.length) return undefined;
+  const labels = items
+    .map((x) => titleCaseOption(String(x).trim()))
+    .filter(Boolean);
+  return labels.length > 0 ? labels.join(", ") : undefined;
+}
+
 function hardwareFactRows(paper: ResearchPaper): { dt: string; dd: string }[] {
   const rows: { dt: string; dd: string }[] = [];
-  const push = (dt: string, v: string | undefined) => {
+  const pushAlways = (dt: string, v: string | undefined) => {
+    rows.push({ dt, dd: trimText(v) ?? DETAIL_NA });
+  };
+  const pushIfPresent = (dt: string, v: string | undefined) => {
     const dd = trimText(v);
     if (dd) rows.push({ dt, dd });
   };
-  push("Main thermal actuator", paper.mainActuatorForTemperatureSensation);
-  push("Actuator model", paper.mainActuatorModel);
-  push("Actuator size", paper.mainActuatorSize);
-  push("Device footprint", paper.overallDeviceSize);
-  push(
-    "Stimulus temperature (reported)",
+  pushAlways(
+    "Main Actuator for Temperature Sensation",
+    paper.mainActuatorForTemperatureSensation,
+  );
+  pushAlways("Main Actuator Model", paper.mainActuatorModel);
+  pushIfPresent("Main Actuator Size", paper.mainActuatorSize);
+  pushIfPresent("Overall Device Size", paper.overallDeviceSize);
+  pushIfPresent(
+    "Possible Temperature Range of the Main Actuator",
     paper.mainActuatorPossibleTemperatureRange,
   );
-  push("Heat control", paper.heatControlMethod);
-  push("Power (stated)", paper.powerConsumption);
-  push("Temporal parameters", paper.temporalParameters);
-  push("Energy accounting", paper.powerEnergyConsumption);
+  pushAlways("Heat Control Method", paper.heatControlMethod);
+  pushIfPresent("Power consumption", paper.powerConsumption);
+  pushIfPresent("Temporal Parameters", paper.temporalParameters);
+  pushIfPresent(
+    "Other Sensory Actuators",
+    formatItemList(paper.otherSensoryActuators),
+  );
+  pushIfPresent("Auxiliary Hardware", formatItemList(paper.auxiliaryHardware));
   return rows;
 }
 
@@ -141,12 +271,12 @@ export function PaperDetailPage() {
   }
 
   const primaryLink = paperPrimaryLink(paper);
-  const mic = formatTaxonomyList(paper.materialsInContactWithSkin);
   const hwRows = hardwareFactRows(paper);
-  const hasAuxLists =
-    (paper.otherSensoryActuators?.length ?? 0) > 0 ||
-    (paper.auxiliaryHardware?.length ?? 0) > 0;
-  const showHardware = hwRows.length > 0 || hasAuxLists;
+  const showOtherNote = Boolean(trimText(paper.otherNote));
+  const ambientTempLabel =
+    paper.ambientTempC != null && Number.isFinite(paper.ambientTempC)
+      ? `${paper.ambientTempC}°C`
+      : DETAIL_NA;
 
   return (
     <div className="paper-detail-page">
@@ -194,118 +324,72 @@ export function PaperDetailPage() {
           className="paper-detail__panel paper-detail__panel--facts"
           aria-label="Key study facts"
         >
-          <dl className="paper-detail__facts">
-            <div className="paper-detail__fact">
-              <dt>Body sites</dt>
-              <dd>{preview.bodySitesSummary}</dd>
-            </div>
-            <div className="paper-detail__fact">
-              <dt>Thermal transfer</dt>
-              <dd>{preview.transferMode}</dd>
-            </div>
-            {paper.ambientTempC != null &&
-            Number.isFinite(paper.ambientTempC) ? (
-              <div className="paper-detail__fact">
-                <dt>Ambient Temperature</dt>
-                <dd>{paper.ambientTempC}°C</dd>
-              </div>
-            ) : null}
-            <div className="paper-detail__fact">
-              <dt>Temperature range</dt>
-              <dd>{preview.temperatureRange}</dd>
-            </div>
-            <div className="paper-detail__fact">
-              <dt>Duration</dt>
-              <dd>{preview.duration}</dd>
-            </div>
-            {mic ? (
-              <div className="paper-detail__fact paper-detail__fact--wide">
-                <dt>Materials on skin</dt>
-                <dd>{mic}</dd>
-              </div>
-            ) : null}
-          </dl>
-        </section>
-
-        <section
-          className="paper-detail__panel paper-detail__panel--chips"
-          aria-labelledby="paper-detail-keywords"
-        >
-          <h2 id="paper-detail-keywords" className="paper-detail__panel-title">
-            Keywords
-          </h2>
-          <div className="paper-detail__tags" role="list">
-            {preview.keywords.map((t) => (
-              <span key={t} className="paper-detail__tag" role="listitem">
-                {t}
-              </span>
-            ))}
-          </div>
+          <DetailFactChipGroup
+            title="Thermal transfer mode"
+            items={paper.thermalTransferModes}
+          />
+          <DetailFactChipGroup title="Senses" items={paper.senses} />
+          <DetailFactChipGroup
+            title="Ambient temperature"
+            values={[ambientTempLabel]}
+          />
+          <DetailFactChipGroup
+            title="Temperature range"
+            values={[displayOrNa(preview.temperatureRange)]}
+          />
+          <DetailFactChipGroup
+            title="Duration"
+            values={[displayOrNa(preview.duration)]}
+          />
+          <DetailFactChipGroup
+            title="Material(s) in contact with skin"
+            items={paper.materialsInContactWithSkin}
+          />
         </section>
 
         <div className="paper-detail__sections">
-          <DetailBlock title="Summary">
+          <DetailBlock title="Body parts involved">
             <DetailParagraph
-              text={paper.technicalSummary ?? preview.abstract}
-            />
-          </DetailBlock>
-
-          <DetailBlock
-            title="Thermal perception measure"
-            when={Boolean(trimText(paper.thermalPerceptionMeasure))}
-          >
-            <DetailParagraph
-              text={paper.thermalPerceptionMeasure}
+              text={paper.bodyPartsInvolved}
               preserveLineBreaks
             />
           </DetailBlock>
 
-          <DetailBlock
-            title="Thermal cue purpose"
-            when={Boolean(trimText(paper.thermalCuePurpose))}
-          >
+          <DetailBlock title="Measuring method for thermal perception">
+            <DetailStructuredProse text={paper.thermalPerceptionMeasure} />
+          </DetailBlock>
+
+          <DetailBlock title="Purpose of thermal cues">
             <DetailParagraph text={paper.thermalCuePurpose} />
           </DetailBlock>
 
-          <DetailBlock title="Hardware and control" when={showHardware}>
-            {hwRows.length > 0 ? (
-              <dl className="paper-detail__facts paper-detail__facts--nested">
-                {hwRows.map((row) => (
-                  <div
-                    key={row.dt}
-                    className="paper-detail__fact paper-detail__fact--wide"
-                  >
-                    <dt>{row.dt}</dt>
-                    <dd>{row.dd}</dd>
-                  </div>
-                ))}
-              </dl>
-            ) : null}
-            {paper.otherSensoryActuators?.length ? (
+          <DetailBlock title="Hardware and control">
+            <dl className="paper-detail__facts paper-detail__facts--nested">
+              {hwRows.map((row) => (
+                <div
+                  key={row.dt}
+                  className="paper-detail__fact paper-detail__fact--wide"
+                >
+                  <dt>{row.dt}</dt>
+                  <dd>{row.dd}</dd>
+                </div>
+              ))}
+            </dl>
+            {showOtherNote ? (
               <>
-                <h3 className="paper-detail__subhead">
-                  Other sensory actuators
-                </h3>
-                <DetailChipRow items={paper.otherSensoryActuators} />
-              </>
-            ) : null}
-            {paper.auxiliaryHardware?.length ? (
-              <>
-                <h3 className="paper-detail__subhead">Auxiliary hardware</h3>
-                <DetailChipRow items={paper.auxiliaryHardware} />
+                <h3 className="paper-detail__subhead">Other Note</h3>
+                <DetailParagraph text={paper.otherNote} preserveLineBreaks />
               </>
             ) : null}
           </DetailBlock>
 
-          <DetailBlock title="Notes" when={Boolean(trimText(paper.otherNote))}>
-            <DetailParagraph text={paper.otherNote} />
+          <DetailBlock title="Power/Energy Consumption">
+            <DetailParagraph text={paper.powerEnergyConsumption} />
           </DetailBlock>
 
-          {preview.engineeringSummary ? (
-            <DetailBlock title="Engineering summary">
-              <DetailParagraph text={preview.engineeringSummary} />
-            </DetailBlock>
-          ) : null}
+          <DetailBlock title="Technical Summary">
+            <DetailParagraph text={paper.technicalSummary} />
+          </DetailBlock>
         </div>
 
         <footer className="paper-detail__footer">

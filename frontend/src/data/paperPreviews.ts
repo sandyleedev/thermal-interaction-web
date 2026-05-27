@@ -2,6 +2,7 @@ import { paperHasReportedDurationRange } from "@/lib/research/filterResearchPape
 import {
   ALL_RESEARCH_PAPERS,
   normalizeBodySites,
+  type BodySite,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
 
@@ -70,23 +71,42 @@ function taxonomyRegionLabel(region: string): string {
   return map[region] ?? titleCaseOption(region);
 }
 
+export function formatBodySiteLine(site: BodySite): string {
+  const reg = taxonomyRegionLabel(site.region);
+  const sub =
+    site.subregion === "general"
+      ? "General"
+      : titleCaseOption(site.subregion.replace(/-/g, " "));
+  let line = `${reg} — ${sub}`;
+  if (site.side === "left" || site.side === "right") {
+    line += ` (${site.side === "left" ? "Left" : "Right"})`;
+  }
+  return line;
+}
+
 function formatBodySitesDisplay(p: ResearchPaper): string {
   const sites = normalizeBodySites(p);
   if (sites.length === 0) return "—";
-  return sites
-    .map((s) => {
-      const reg = taxonomyRegionLabel(s.region);
-      const sub =
-        s.subregion === "general"
-          ? "General"
-          : titleCaseOption(s.subregion.replace(/-/g, " "));
-      let line = `${reg} — ${sub}`;
-      if (s.side === "left" || s.side === "right") {
-        line += ` (${s.side === "left" ? "Left" : "Right"})`;
-      }
-      return line;
-    })
-    .join("; ");
+  return sites.map(formatBodySiteLine).join("; ");
+}
+
+export function materialListsDiffer(
+  a: readonly string[] | undefined,
+  b: readonly string[] | undefined,
+): boolean {
+  const norm = (items: readonly string[] | undefined) =>
+    new Set(
+      (items ?? [])
+        .map((x) => x.trim().toLowerCase())
+        .filter(Boolean),
+    );
+  const left = norm(a);
+  const right = norm(b);
+  if (left.size !== right.size) return true;
+  for (const item of left) {
+    if (!right.has(item)) return true;
+  }
+  return false;
 }
 
 export function titleCaseOption(s: string): string {
