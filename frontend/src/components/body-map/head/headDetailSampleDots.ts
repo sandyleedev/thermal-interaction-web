@@ -93,6 +93,37 @@ export function headContributionHitIds(
   }
 }
 
+function headContributionHitIdsForAreaView(
+  site: { side?: string },
+  resolved: BodyMapDetailRegion,
+): string[] {
+  if (resolved.parent !== "head") return [];
+  const sub = resolved.subregion.trim().toLowerCase();
+  const normalized = normalizeBodySiteSide(site.side);
+  switch (sub) {
+    case "general":
+      return [];
+    case "forehead":
+      return ["forehead"];
+    case "nose":
+      return ["nose"];
+    case "lip":
+      return ["lip"];
+    case "tongue":
+      return ["tongue"];
+    case "ear":
+      if (normalized === "left") return ["left-ear"];
+      if (normalized === "right") return ["right-ear"];
+      return ["left-ear", "right-ear"];
+    case "cheek":
+      if (normalized === "left") return ["left-cheek"];
+      if (normalized === "right") return ["right-cheek"];
+      return ["left-cheek", "right-cheek"];
+    default:
+      return [];
+  }
+}
+
 export type HeadDotTarget = { paperId: string; seed: string };
 
 export function collectHeadDetailTargetsByHit(
@@ -114,6 +145,29 @@ export function collectHeadDetailTargetsByHit(
         arr.push({
           paperId: p.id,
           seed: `${p.id}\0${hid}\0site${si}`,
+        });
+        map.set(hid, arr);
+      }
+    }
+  }
+  return map;
+}
+
+export function collectHeadDetailAreaTargetsByHit(
+  papers: readonly ResearchPaper[],
+): Map<string, HeadDotTarget[]> {
+  const map = new Map<string, HeadDotTarget[]>();
+  for (const p of papers) {
+    const sites = normalizeBodySites(p);
+    for (let si = 0; si < sites.length; si++) {
+      const site = sites[si];
+      const resolved = resolveBodySite(site);
+      const ids = headContributionHitIdsForAreaView(site, resolved);
+      for (const hid of ids) {
+        const arr = map.get(hid) ?? [];
+        arr.push({
+          paperId: p.id,
+          seed: `${p.id}\0${hid}\0area\0site${si}`,
         });
         map.set(hid, arr);
       }
@@ -336,7 +390,7 @@ export function buildHeadAreaDensityDotsByHitId(
   shapeByHitId: ReadonlyMap<string, HeadShapeSpec>,
   samplesPerHit: number,
 ): Record<string, { x: number; y: number }[]> {
-  const targetsByHit = collectHeadDetailTargetsByHit(papers);
+  const targetsByHit = collectHeadDetailAreaTargetsByHit(papers);
   const maxPaperCount = maxHitTargetCount(targetsByHit.values());
   const out: Record<string, { x: number; y: number }[]> = {};
   for (const [hitId, targets] of targetsByHit) {

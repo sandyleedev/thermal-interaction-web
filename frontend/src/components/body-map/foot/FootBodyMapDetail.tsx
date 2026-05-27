@@ -32,6 +32,7 @@ import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   FOOT_DETAIL_HIT_IDS,
   paperMatchesFootFineSelectionForSideDots,
+  paperMatchesFootFineSelectionForSideAreaView,
   type FootDetailSide,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
@@ -166,6 +167,19 @@ function countsForSide(
   return m;
 }
 
+function countsForSideAreaView(
+  papers: readonly ResearchPaper[],
+  panelSide: FootDetailSide,
+): Record<string, number> {
+  const m: Record<string, number> = {};
+  for (const k of FOOT_COUNT_HIT_IDS) {
+    m[k] = papers.filter((p) =>
+      paperMatchesFootFineSelectionForSideAreaView(p, k, panelSide),
+    ).length;
+  }
+  return m;
+}
+
 export type FootBodyMapDetailProps = {
   variant: BodyMapVariant;
   papers: readonly ResearchPaper[];
@@ -224,20 +238,27 @@ export function FootBodyMapDetail({
         right: {} as Record<string, number>,
       };
     }
+    const countFn =
+      variant === "rawDots" ? countsForSideAreaView : countsForSide;
     return {
-      left: countsForSide(papers, "left"),
-      right: countsForSide(papers, "right"),
+      left: countFn(papers, "left"),
+      right: countFn(papers, "right"),
     };
-  }, [parsed.parse, papers, paperIdsKey]);
+  }, [parsed.parse, papers, paperIdsKey, variant]);
 
   const combinedFillCounts = useMemo(() => {
     const m: Record<string, number> = {};
     for (const hitId of FOOT_FILL_HIT_IDS) {
       m[hitId] =
-        (countsBySide.left[hitId] ?? 0) + (countsBySide.right[hitId] ?? 0);
+        variant === "rawDots"
+          ? Math.max(
+              countsBySide.left[hitId] ?? 0,
+              countsBySide.right[hitId] ?? 0,
+            )
+          : (countsBySide.left[hitId] ?? 0) + (countsBySide.right[hitId] ?? 0);
     }
     return m;
-  }, [countsBySide]);
+  }, [countsBySide, variant]);
 
   const countColorDomain = useMemo<[number, number]>(() => {
     const vals = Object.values(combinedFillCounts);

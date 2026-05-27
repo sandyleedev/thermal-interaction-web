@@ -32,6 +32,7 @@ import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   LEG_DETAIL_HIT_IDS,
   paperMatchesLegFineSelectionForSideDots,
+  paperMatchesLegFineSelectionForSideAreaView,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
 
@@ -130,12 +131,15 @@ function parseLegSvg(svgText: string | null): {
 
 function countsForPanel(
   papers: readonly ResearchPaper[],
+  variant: BodyMapVariant,
 ): Record<string, number> {
   const m: Record<string, number> = {};
+  const matchFn =
+    variant === "rawDots"
+      ? paperMatchesLegFineSelectionForSideAreaView
+      : paperMatchesLegFineSelectionForSideDots;
   for (const k of LEG_COUNT_HIT_IDS) {
-    m[k] = papers.filter((p) =>
-      paperMatchesLegFineSelectionForSideDots(p, k),
-    ).length;
+    m[k] = papers.filter((p) => matchFn(p, k)).length;
   }
   return m;
 }
@@ -193,8 +197,8 @@ export function LegBodyMapDetail({
 
   const countsByHit = useMemo(() => {
     if (!parsed.parse) return {} as Record<string, number>;
-    return countsForPanel(papers);
-  }, [parsed.parse, papers, paperIdsKey]);
+    return countsForPanel(papers, variant);
+  }, [parsed.parse, papers, paperIdsKey, variant]);
 
   const countColorDomain = useMemo<[number, number]>(() => {
     const vals = LEG_FILL_HIT_IDS.map((hitId) => countsByHit[hitId] ?? 0);

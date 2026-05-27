@@ -16,6 +16,7 @@ import {
 import {
   normalizeBodySiteSide,
   siteAssignsToPanelSideForDots,
+  siteAssignsToPanelSideForAreaView,
   subregionMatches,
   type BodySiteSide,
 } from "@/lib/research/bodyMapSiteSide";
@@ -369,6 +370,49 @@ export function paperMatchesHandFineSelectionForPanelDots(
   }
 }
 
+function handExactSubForSideAreaView(
+  paper: BodySitesCarrier,
+  sub: string,
+  panelSide: HandDetailSide,
+): boolean {
+  const sites = paper.bodySites ?? [];
+  for (let i = 0; i < sites.length; i++) {
+    const s = sites[i]!;
+    const resolved = resolveBodySite(s);
+    if (resolved.parent !== "hand") continue;
+    if (!subregionMatches(resolved.subregion, sub)) continue;
+    if (!siteAssignsToPanelSideForAreaView(s, panelSide)) continue;
+    return true;
+  }
+  return false;
+}
+
+/** Hand L2 area view on one panel (unspecified sites on both sides). */
+export function paperMatchesHandFineSelectionForPanelAreaView(
+  paper: BodySitesCarrier,
+  hit: string,
+  panel: HandDetailPanel,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  if (!handHitMatchesPanelSurface(h, panel.surface)) return false;
+  switch (h) {
+    case "general":
+      return handExactSubForSideAreaView(paper, "general", panel.side);
+    case "palm":
+      return handExactSubForSideAreaView(paper, "palm", panel.side);
+    case "fingertips":
+      return handExactSubForSideAreaView(paper, "fingertips", panel.side);
+    case "fingers":
+      return handExactSubForSideAreaView(paper, "fingers", panel.side);
+    case "thenar-eminence":
+      return handExactSubForSideAreaView(paper, "thenar-eminence", panel.side);
+    case "hand-back":
+      return handExactSubForSideAreaView(paper, "hand-back", panel.side);
+    default:
+      return false;
+  }
+}
+
 function handHitMatchesPanelSurface(
   hit: string,
   surface: HandDetailSurface,
@@ -403,6 +447,21 @@ export function paperMatchesHandFineSelectionForSideDots(
   ];
   return panels.some((panel) =>
     paperMatchesHandFineSelectionForPanelDots(paper, hit, panel),
+  );
+}
+
+/** Hand L2 area view on one side (unspecified duplicated on both sides). */
+export function paperMatchesHandFineSelectionForSideAreaView(
+  paper: BodySitesCarrier,
+  hit: string,
+  side: HandDetailSide,
+): boolean {
+  const panels: HandDetailPanel[] = [
+    { side, surface: "inner" },
+    { side, surface: "outer" },
+  ];
+  return panels.some((panel) =>
+    paperMatchesHandFineSelectionForPanelAreaView(paper, hit, panel),
   );
 }
 
@@ -484,6 +543,42 @@ export function paperMatchesFootFineSelectionForSideDots(
       return footExactSubForSideDots(paper, "sole", panelSide);
     case "toes":
       return footExactSubForSideDots(paper, "toes", panelSide);
+    default:
+      return false;
+  }
+}
+
+function footExactSubForSideAreaView(
+  paper: BodySitesCarrier,
+  sub: string,
+  panelSide: FootDetailSide,
+): boolean {
+  const sites = paper.bodySites ?? [];
+  for (let i = 0; i < sites.length; i++) {
+    const s = sites[i]!;
+    const resolved = resolveBodySite(s);
+    if (resolved.parent !== "foot") continue;
+    if (!subregionMatches(resolved.subregion, sub)) continue;
+    if (!siteAssignsToPanelSideForAreaView(s, panelSide)) continue;
+    return true;
+  }
+  return false;
+}
+
+/** Foot L2 area view on one panel (unspecified sites on both sides). */
+export function paperMatchesFootFineSelectionForSideAreaView(
+  paper: BodySitesCarrier,
+  hit: string,
+  panelSide: FootDetailSide,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  switch (h) {
+    case "general":
+      return footExactSubForSideAreaView(paper, "general", panelSide);
+    case "sole":
+      return footExactSubForSideAreaView(paper, "sole", panelSide);
+    case "toes":
+      return footExactSubForSideAreaView(paper, "toes", panelSide);
     default:
       return false;
   }
@@ -595,6 +690,54 @@ export function paperMatchesLegFineSelectionForSideDots(
   }
 }
 
+function legExactSubForSideAreaView(
+  paper: BodySitesCarrier,
+  sub: string,
+  panelSide: LegDetailSide,
+): boolean {
+  const sites = paper.bodySites ?? [];
+  for (let i = 0; i < sites.length; i++) {
+    const s = sites[i]!;
+    const resolved = resolveBodySite(s);
+    if (resolved.parent !== "leg") continue;
+    if (!subregionMatches(resolved.subregion, sub)) continue;
+    if (!siteAssignsToPanelSideForAreaView(s, panelSide)) continue;
+    return true;
+  }
+  return false;
+}
+
+/** Leg L2 area view for one lateral hit id (unspecified duplicated on both sides). */
+export function paperMatchesLegFineSelectionForSideAreaView(
+  paper: BodySitesCarrier,
+  hit: string,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  switch (h) {
+    case "general":
+      return (
+        legExactSubForSideAreaView(paper, "general", "left") ||
+        legExactSubForSideAreaView(paper, "general", "right")
+      );
+    case "left-thigh":
+      return legExactSubForSideAreaView(paper, "thigh", "left");
+    case "right-thigh":
+      return legExactSubForSideAreaView(paper, "thigh", "right");
+    case "left-crural-region":
+      return (
+        legExactSubForSideAreaView(paper, "crural-region", "left") ||
+        legExactSubForSideAreaView(paper, "crural", "left")
+      );
+    case "right-crural-region":
+      return (
+        legExactSubForSideAreaView(paper, "crural-region", "right") ||
+        legExactSubForSideAreaView(paper, "crural", "right")
+      );
+    default:
+      return false;
+  }
+}
+
 /**
  * Leg L2 zoom on one panel: `general` matches only `leg → general` sites for that side.
  */
@@ -638,22 +781,26 @@ export function paperMatchesLegFineSelection(
         paperMatchesLegFineSelectionForSide(paper, "thigh", "right")
       );
     case "left-thigh":
-      return paperMatchesLegFineSelectionForSide(paper, "thigh", "left");
+      return legExactSubForSideAreaView(paper, "thigh", "left");
     case "right-thigh":
-      return paperMatchesLegFineSelectionForSide(paper, "thigh", "right");
+      return legExactSubForSideAreaView(paper, "thigh", "right");
     case "crural-region":
     case "crural":
       return (
-        paperMatchesLegFineSelectionForSide(paper, "crural-region", "left") ||
-        paperMatchesLegFineSelectionForSide(paper, "crural-region", "right")
+        legExactSubForSideAreaView(paper, "crural-region", "left") ||
+        legExactSubForSideAreaView(paper, "crural", "left") ||
+        legExactSubForSideAreaView(paper, "crural-region", "right") ||
+        legExactSubForSideAreaView(paper, "crural", "right")
       );
     case "left-crural-region":
-      return paperMatchesLegFineSelectionForSide(paper, "crural-region", "left");
+      return (
+        legExactSubForSideAreaView(paper, "crural-region", "left") ||
+        legExactSubForSideAreaView(paper, "crural", "left")
+      );
     case "right-crural-region":
-      return paperMatchesLegFineSelectionForSide(
-        paper,
-        "crural-region",
-        "right",
+      return (
+        legExactSubForSideAreaView(paper, "crural-region", "right") ||
+        legExactSubForSideAreaView(paper, "crural", "right")
       );
     default:
       return false;
@@ -735,6 +882,45 @@ export function paperMatchesArmFineSelectionForSideDots(
   }
 }
 
+function armExactSubForSideAreaView(
+  paper: BodySitesCarrier,
+  sub: string,
+  panelSide: ArmDetailSide,
+): boolean {
+  const sites = paper.bodySites ?? [];
+  for (let i = 0; i < sites.length; i++) {
+    const s = sites[i]!;
+    const resolved = resolveBodySite(s);
+    if (resolved.parent !== "arm") continue;
+    if (!subregionMatches(resolved.subregion, sub)) continue;
+    if (!siteAssignsToPanelSideForAreaView(s, panelSide)) continue;
+    return true;
+  }
+  return false;
+}
+
+/** Arm L2 area view on one panel (unspecified sites on both sides). */
+export function paperMatchesArmFineSelectionForSideAreaView(
+  paper: BodySitesCarrier,
+  hit: string,
+  panelSide: ArmDetailSide,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  switch (h) {
+    case "general":
+      return armExactSubForSideAreaView(paper, "general", panelSide);
+    case "upper-arm":
+      return (
+        armExactSubForSideAreaView(paper, "upper-arm", panelSide) ||
+        armExactSubForSideAreaView(paper, "upper arm", panelSide)
+      );
+    case "forearm":
+      return armExactSubForSideAreaView(paper, "forearm", panelSide);
+    default:
+      return false;
+  }
+}
+
 function headExactSubForSideDots(
   paper: BodySitesCarrier,
   sub: string,
@@ -780,6 +966,43 @@ export function paperMatchesHeadFineSelectionForSideDots(
   }
 }
 
+function headExactSubForSideAreaView(
+  paper: BodySitesCarrier,
+  sub: string,
+  lateral: "left" | "right",
+): boolean {
+  const sites = paper.bodySites ?? [];
+  for (let i = 0; i < sites.length; i++) {
+    const s = sites[i]!;
+    const resolved = resolveBodySite(s);
+    if (resolved.parent !== "head") continue;
+    if (!subregionMatches(resolved.subregion, sub)) continue;
+    if (!siteAssignsToPanelSideForAreaView(s, lateral)) continue;
+    return true;
+  }
+  return false;
+}
+
+/** Head L2 area view for one lateral hit id (unspecified duplicated on both sides). */
+export function paperMatchesHeadFineSelectionForSideAreaView(
+  paper: BodySitesCarrier,
+  hit: string,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  switch (h) {
+    case "left-ear":
+      return headExactSubForSideAreaView(paper, "ear", "left");
+    case "right-ear":
+      return headExactSubForSideAreaView(paper, "ear", "right");
+    case "left-cheek":
+      return headExactSubForSideAreaView(paper, "cheek", "left");
+    case "right-cheek":
+      return headExactSubForSideAreaView(paper, "cheek", "right");
+    default:
+      return false;
+  }
+}
+
 function headExactSub(paper: BodySitesCarrier, sub: string): boolean {
   const sl = sub.toLowerCase();
   for (const s of paper.bodySites ?? []) {
@@ -811,13 +1034,13 @@ export function paperMatchesHeadFineSelection(
     case "tongue":
       return headExactSub(paper, "tongue");
     case "left-ear":
-      return headExactSubForSideDots(paper, "ear", "left");
+      return headExactSubForSideAreaView(paper, "ear", "left");
     case "right-ear":
-      return headExactSubForSideDots(paper, "ear", "right");
+      return headExactSubForSideAreaView(paper, "ear", "right");
     case "left-cheek":
-      return headExactSubForSideDots(paper, "cheek", "left");
+      return headExactSubForSideAreaView(paper, "cheek", "left");
     case "right-cheek":
-      return headExactSubForSideDots(paper, "cheek", "right");
+      return headExactSubForSideAreaView(paper, "cheek", "right");
     default:
       return false;
   }
@@ -938,27 +1161,27 @@ export function paperMatchesBodyMapFineSelection(
 
   if (parent === "arm" && ARM_DETAIL_HIT_ID_SET.has(needle)) {
     if (side) {
-      return paperMatchesArmFineSelectionForSideDots(paper, needle, side);
+      return paperMatchesArmFineSelectionForSideAreaView(paper, needle, side);
     }
     return paperMatchesArmFineSelection(paper, needle);
   }
 
   if (parent === "hand" && HAND_DETAIL_HIT_ID_SET.has(needle)) {
     if (side) {
-      return paperMatchesHandFineSelectionForSideDots(paper, needle, side);
+      return paperMatchesHandFineSelectionForSideAreaView(paper, needle, side);
     }
     return paperMatchesHandFineSelection(paper, needle);
   }
 
   if (parent === "foot" && FOOT_DETAIL_HIT_ID_SET.has(needle)) {
     if (side) {
-      return paperMatchesFootFineSelectionForSideDots(paper, needle, side);
+      return paperMatchesFootFineSelectionForSideAreaView(paper, needle, side);
     }
     return paperMatchesFootFineSelection(paper, needle);
   }
 
   if (parent === "leg" && LEG_DETAIL_HIT_ID_SET.has(needle)) {
-    return paperMatchesLegFineSelection(paper, needle);
+    return paperMatchesLegFineSelectionForSideAreaView(paper, needle);
   }
 
   for (const s of paper.bodySites ?? []) {

@@ -27,6 +27,7 @@ import {
   detailAreaContourOpacity,
   detailAreaPinkForCount,
 } from "../shared/bodyMapHeatmapColors";
+import { BodyMapAreaViewFilterDefs } from "../shared/BodyMapAreaViewFilterDefs";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
@@ -406,42 +407,10 @@ export function NeckBodyMapDetail({
                 <stop offset="72%" stopColor="#fb7185" stopOpacity="0.28" />
                 <stop offset="100%" stopColor="#ffe4e6" stopOpacity="0" />
               </radialGradient>
-              <filter
-                id={rawDotsSoftBlurId}
-                x="-70%"
-                y="-70%"
-                width="240%"
-                height="240%"
-                colorInterpolationFilters="sRGB"
-              >
-                <feGaussianBlur in="SourceGraphic" stdDeviation="17" />
-              </filter>
-              <filter
-                id={areaMaskFeatherFilterId}
-                x="-70%"
-                y="-70%"
-                width="240%"
-                height="240%"
-                colorInterpolationFilters="sRGB"
-              >
-                <feMorphology
-                  in="SourceGraphic"
-                  operator="erode"
-                  radius="2.5"
-                  result="areaMaskInset"
-                />
-                <feGaussianBlur
-                  in="areaMaskInset"
-                  stdDeviation="14"
-                  result="areaMaskBlur"
-                />
-                <feComposite
-                  in="areaMaskBlur"
-                  in2="SourceGraphic"
-                  operator="in"
-                  result="areaMaskSoft"
-                />
-              </filter>
+              <BodyMapAreaViewFilterDefs
+                rawDotsSoftBlurId={rawDotsSoftBlurId}
+                areaMaskFeatherFilterId={areaMaskFeatherFilterId}
+              />
               <mask
                 id={generalRingMaskId}
                 maskUnits="userSpaceOnUse"

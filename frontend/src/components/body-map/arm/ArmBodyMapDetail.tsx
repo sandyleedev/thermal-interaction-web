@@ -34,6 +34,7 @@ import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   ARM_DETAIL_HIT_IDS,
   paperMatchesArmFineSelectionForSideDots,
+  paperMatchesArmFineSelectionForSideAreaView,
   type ArmDetailSide,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
@@ -169,6 +170,19 @@ function countsForSide(
   return m;
 }
 
+function countsForSideAreaView(
+  papers: readonly ResearchPaper[],
+  panelSide: ArmDetailSide,
+): Record<string, number> {
+  const m: Record<string, number> = {};
+  for (const k of ARM_COUNT_HIT_IDS) {
+    m[k] = papers.filter((p) =>
+      paperMatchesArmFineSelectionForSideAreaView(p, k, panelSide),
+    ).length;
+  }
+  return m;
+}
+
 export type ArmBodyMapDetailProps = {
   variant: BodyMapVariant;
   papers: readonly ResearchPaper[];
@@ -257,14 +271,31 @@ export function ArmBodyMapDetail({
     [papers, paperIdsKey],
   );
 
+  const countsBySideAreaView = useMemo(
+    () => ({
+      left: countsForSideAreaView(papers, "left"),
+      right: countsForSideAreaView(papers, "right"),
+    }),
+    [papers, paperIdsKey],
+  );
+
+  const displayCountsBySide = variant === "rawDots" ? countsBySideAreaView : countsBySide;
+
   const combinedFillCounts = useMemo(() => {
     const m: Record<string, number> = {};
     for (const hitId of ARM_FILL_HIT_IDS) {
-      m[hitId] =
-        (countsBySide.left[hitId] ?? 0) + (countsBySide.right[hitId] ?? 0);
+      if (variant === "rawDots") {
+        m[hitId] = Math.max(
+          displayCountsBySide.left[hitId] ?? 0,
+          displayCountsBySide.right[hitId] ?? 0,
+        );
+      } else {
+        m[hitId] =
+          (countsBySide.left[hitId] ?? 0) + (countsBySide.right[hitId] ?? 0);
+      }
     }
     return m;
-  }, [countsBySide]);
+  }, [countsBySide, displayCountsBySide, variant]);
 
   const countColorDomain = useMemo<[number, number]>(() => {
     const vals = ARM_FILL_HIT_IDS.map((id) => combinedFillCounts[id] ?? 0);
@@ -495,7 +526,7 @@ export function ArmBodyMapDetail({
         generalOutlineTransform={parsed.generalOutlineTransform}
         shapeByHit={parsed.shapeByHit}
         dotsByHitId={dotsBySide[panelSide]}
-        countsByHit={countsBySide[panelSide]}
+        countsByHit={displayCountsBySide[panelSide]}
         hoveredHitId={hoveredHitId}
         isHitSelected={isHitSelected(panelSide)}
         onToggleHit={toggleHit(panelSide)}

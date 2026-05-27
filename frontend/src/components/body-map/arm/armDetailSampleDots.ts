@@ -3,7 +3,7 @@ import {
   resolveBodySite,
   type ArmDetailSide,
 } from "@/lib/research/bodyMapRegionUtils";
-import { siteAssignsToPanelSideForDots } from "@/lib/research/bodyMapSiteSide";
+import { siteAssignsToPanelSideForDots, siteAssignsToPanelSideForAreaView } from "@/lib/research/bodyMapSiteSide";
 import {
   normalizeBodySites,
   type ResearchPaper,
@@ -72,6 +72,27 @@ export function armContributionHitIds(
   }
 }
 
+function armContributionHitIdsForAreaView(
+  site: { side?: string },
+  resolved: BodyMapDetailRegion,
+  panelSide: ArmDetailSide,
+): string[] {
+  if (resolved.parent !== "arm") return [];
+  if (!siteAssignsToPanelSideForAreaView(site, panelSide)) return [];
+  const sub = resolved.subregion.trim().toLowerCase();
+  switch (sub) {
+    case "general":
+      return [];
+    case "upper-arm":
+    case "upper arm":
+      return ["upper-arm"];
+    case "forearm":
+      return ["forearm"];
+    default:
+      return [];
+  }
+}
+
 export function collectArmDetailTargetsByHit(
   papers: readonly ResearchPaper[],
   panelSide: ArmDetailSide,
@@ -97,6 +118,33 @@ export function collectArmDetailTargetsByHit(
         list.push({
           paperId: paper.id,
           seed: `${paper.id}\0${resolved.parent}\0${resolved.subregion}\0${panelSide}\0${i}`,
+        });
+      }
+    }
+  }
+  return map;
+}
+
+export function collectArmDetailAreaTargetsByHit(
+  papers: readonly ResearchPaper[],
+  panelSide: ArmDetailSide,
+): Map<string, { paperId: string; seed: string }[]> {
+  const map = new Map<string, { paperId: string; seed: string }[]>();
+  for (const paper of papers) {
+    const sites = normalizeBodySites(paper);
+    for (let i = 0; i < sites.length; i++) {
+      const site = sites[i]!;
+      const resolved = resolveBodySite(site);
+      const hits = armContributionHitIdsForAreaView(site, resolved, panelSide);
+      for (const hitId of hits) {
+        let list = map.get(hitId);
+        if (!list) {
+          list = [];
+          map.set(hitId, list);
+        }
+        list.push({
+          paperId: paper.id,
+          seed: `${paper.id}\0${resolved.parent}\0${resolved.subregion}\0${panelSide}\0area\0${i}`,
         });
       }
     }
@@ -133,7 +181,7 @@ export function buildArmAreaDensityDotsByHitId(
   shapeByHitId: ReadonlyMap<string, ArmShapeSpec>,
   samplesPerHit: number,
 ): Record<string, { x: number; y: number }[]> {
-  const targetsByHit = collectArmDetailTargetsByHit(papers, panelSide);
+  const targetsByHit = collectArmDetailAreaTargetsByHit(papers, panelSide);
   const maxPaperCount = maxHitTargetCount(targetsByHit.values());
   const out: Record<string, { x: number; y: number }[]> = {};
   for (const [hitId, targets] of targetsByHit) {

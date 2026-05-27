@@ -4,7 +4,7 @@ import {
   type HandDetailPanel,
   type HandDetailSurface,
 } from "@/lib/research/bodyMapRegionUtils";
-import { siteAssignsToPanelSideForDots } from "@/lib/research/bodyMapSiteSide";
+import { siteAssignsToPanelSideForDots, siteAssignsToPanelSideForAreaView } from "@/lib/research/bodyMapSiteSide";
 import {
   normalizeBodySites,
   type ResearchPaper,
@@ -73,6 +73,20 @@ export function handContributionHitIds(
   return [sub];
 }
 
+function handContributionHitIdsForAreaView(
+  site: { side?: string },
+  resolved: BodyMapDetailRegion,
+  panel: HandDetailPanel,
+): string[] {
+  if (resolved.parent !== "hand") return [];
+  if (!siteAssignsToPanelSideForAreaView(site, panel.side)) return [];
+  const sub = resolved.subregion.trim().toLowerCase();
+  if (sub === "general") return [];
+  const surface = handSurfaceForSubregion(sub);
+  if (surface !== panel.surface) return [];
+  return [sub];
+}
+
 export function collectHandDetailTargetsByHit(
   papers: readonly ResearchPaper[],
   panel: HandDetailPanel,
@@ -98,6 +112,33 @@ export function collectHandDetailTargetsByHit(
         list.push({
           paperId: paper.id,
           seed: `${paper.id}\0${resolved.parent}\0${resolved.subregion}\0${panel.surface}\0${panel.side}\0${i}`,
+        });
+      }
+    }
+  }
+  return map;
+}
+
+export function collectHandDetailAreaTargetsByHit(
+  papers: readonly ResearchPaper[],
+  panel: HandDetailPanel,
+): Map<string, { paperId: string; seed: string }[]> {
+  const map = new Map<string, { paperId: string; seed: string }[]>();
+  for (const paper of papers) {
+    const sites = normalizeBodySites(paper);
+    for (let i = 0; i < sites.length; i++) {
+      const site = sites[i]!;
+      const resolved = resolveBodySite(site);
+      const hits = handContributionHitIdsForAreaView(site, resolved, panel);
+      for (const hitId of hits) {
+        let list = map.get(hitId);
+        if (!list) {
+          list = [];
+          map.set(hitId, list);
+        }
+        list.push({
+          paperId: paper.id,
+          seed: `${paper.id}\0${resolved.parent}\0${resolved.subregion}\0${panel.surface}\0${panel.side}\0area\0${i}`,
         });
       }
     }
@@ -150,7 +191,7 @@ export function buildHandAreaDensityDotsByHitId(
   samplesPerHit: number,
   viewBoxWidth: number,
 ): Record<string, { x: number; y: number }[]> {
-  const targetsByHit = collectHandDetailTargetsByHit(papers, panel);
+  const targetsByHit = collectHandDetailAreaTargetsByHit(papers, panel);
   const maxPaperCount = maxHitTargetCount(targetsByHit.values());
   const out: Record<string, { x: number; y: number }[]> = {};
   for (const [hitId, targets] of targetsByHit) {

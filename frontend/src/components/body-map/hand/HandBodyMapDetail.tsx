@@ -34,6 +34,7 @@ import {
   HAND_INNER_DETAIL_HIT_IDS,
   HAND_OUTER_DETAIL_HIT_IDS,
   paperMatchesHandFineSelectionForPanelDots,
+  paperMatchesHandFineSelectionForPanelAreaView,
   type HandDetailPanel,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
@@ -230,6 +231,23 @@ function countsForPanel(
   return m;
 }
 
+function countsForPanelAreaView(
+  papers: readonly ResearchPaper[],
+  panel: HandDetailPanel,
+  fillHitIds: readonly string[],
+): Record<string, number> {
+  const m: Record<string, number> = { general: 0 };
+  for (const k of fillHitIds) {
+    m[k] = 0;
+  }
+  for (const k of Object.keys(m)) {
+    m[k] = papers.filter((p) =>
+      paperMatchesHandFineSelectionForPanelAreaView(p, k, panel),
+    ).length;
+  }
+  return m;
+}
+
 const HAND_PANELS: readonly HandDetailPanel[] = [
   { surface: "inner", side: "left" },
   { surface: "inner", side: "right" },
@@ -318,13 +336,15 @@ export function HandBodyMapDetail({
   const countsByPanel = useMemo(() => {
     const out: Record<string, Record<string, number>> = {};
     if (!innerParsed.parse || !outerParsed.parse) return out;
+    const countFn =
+      variant === "rawDots" ? countsForPanelAreaView : countsForPanel;
     for (const panel of HAND_PANELS) {
       const parse =
         panel.surface === "inner" ? innerParsed.parse : outerParsed.parse;
-      out[panelKey(panel)] = countsForPanel(papers, panel, parse.fillHitIds);
+      out[panelKey(panel)] = countFn(papers, panel, parse.fillHitIds);
     }
     return out;
-  }, [innerParsed.parse, outerParsed.parse, papers, paperIdsKey]);
+  }, [innerParsed.parse, outerParsed.parse, papers, paperIdsKey, variant]);
 
   const combinedFillCounts = useMemo(() => {
     const m: Record<string, number> = {};
@@ -333,7 +353,7 @@ export function HandBodyMapDetail({
       ...HAND_OUTER_DETAIL_HIT_IDS,
     ];
     for (const hitId of allHits) {
-      m[hitId] = 0;
+      let aggregate = 0;
       for (const panel of HAND_PANELS) {
         if (
           panel.surface === "inner" &&
@@ -347,11 +367,14 @@ export function HandBodyMapDetail({
         ) {
           continue;
         }
-        m[hitId]! += countsByPanel[panelKey(panel)]?.[hitId] ?? 0;
+        const n = countsByPanel[panelKey(panel)]?.[hitId] ?? 0;
+        aggregate =
+          variant === "rawDots" ? Math.max(aggregate, n) : aggregate + n;
       }
+      m[hitId] = aggregate;
     }
     return m;
-  }, [countsByPanel]);
+  }, [countsByPanel, variant]);
 
   const countColorDomain = useMemo<[number, number]>(() => {
     const vals = Object.values(combinedFillCounts);

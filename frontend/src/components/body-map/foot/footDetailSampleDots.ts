@@ -3,7 +3,7 @@ import {
   resolveBodySite,
   type FootDetailSide,
 } from "@/lib/research/bodyMapRegionUtils";
-import { siteAssignsToPanelSideForDots } from "@/lib/research/bodyMapSiteSide";
+import { siteAssignsToPanelSideForDots, siteAssignsToPanelSideForAreaView } from "@/lib/research/bodyMapSiteSide";
 import {
   normalizeBodySites,
   type ResearchPaper,
@@ -50,6 +50,19 @@ export function footContributionHitIds(
   return [];
 }
 
+function footContributionHitIdsForAreaView(
+  site: { side?: string },
+  resolved: BodyMapDetailRegion,
+  panelSide: FootDetailSide,
+): string[] {
+  if (resolved.parent !== "foot") return [];
+  if (!siteAssignsToPanelSideForAreaView(site, panelSide)) return [];
+  const sub = resolved.subregion.trim().toLowerCase();
+  if (sub === "general") return [];
+  if (sub === "sole" || sub === "toes") return [sub];
+  return [];
+}
+
 export function collectFootDetailTargetsByHit(
   papers: readonly ResearchPaper[],
   panelSide: FootDetailSide,
@@ -75,6 +88,33 @@ export function collectFootDetailTargetsByHit(
         list.push({
           paperId: paper.id,
           seed: `${paper.id}\0${resolved.parent}\0${resolved.subregion}\0${panelSide}\0${i}`,
+        });
+      }
+    }
+  }
+  return map;
+}
+
+export function collectFootDetailAreaTargetsByHit(
+  papers: readonly ResearchPaper[],
+  panelSide: FootDetailSide,
+): Map<string, { paperId: string; seed: string }[]> {
+  const map = new Map<string, { paperId: string; seed: string }[]>();
+  for (const paper of papers) {
+    const sites = normalizeBodySites(paper);
+    for (let i = 0; i < sites.length; i++) {
+      const site = sites[i]!;
+      const resolved = resolveBodySite(site);
+      const hits = footContributionHitIdsForAreaView(site, resolved, panelSide);
+      for (const hitId of hits) {
+        let list = map.get(hitId);
+        if (!list) {
+          list = [];
+          map.set(hitId, list);
+        }
+        list.push({
+          paperId: paper.id,
+          seed: `${paper.id}\0${resolved.parent}\0${resolved.subregion}\0${panelSide}\0area\0${i}`,
         });
       }
     }
@@ -127,7 +167,7 @@ export function buildFootAreaDensityDotsByHitId(
   samplesPerHit: number,
   viewBoxWidth: number,
 ): Record<string, { x: number; y: number }[]> {
-  const targetsByHit = collectFootDetailTargetsByHit(papers, panelSide);
+  const targetsByHit = collectFootDetailAreaTargetsByHit(papers, panelSide);
   const maxPaperCount = maxHitTargetCount(targetsByHit.values());
   const out: Record<string, { x: number; y: number }[]> = {};
   for (const [hitId, targets] of targetsByHit) {

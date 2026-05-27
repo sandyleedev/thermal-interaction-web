@@ -41,6 +41,20 @@ export function siteAssignsToPanelSideForDots(
   return distributedSideForSite(distributionKey) === panelSide;
 }
 
+/**
+ * Detail area view + body-map chip filter: explicit left/right stay on one side;
+ * unspecified appears on both (dot placement still uses {@link siteAssignsToPanelSideForDots}).
+ */
+export function siteAssignsToPanelSideForAreaView(
+  site: { side?: string },
+  panelSide: "left" | "right",
+): boolean {
+  const normalized = normalizeBodySiteSide(site.side);
+  if (normalized === "left") return panelSide === "left";
+  if (normalized === "right") return panelSide === "right";
+  return true;
+}
+
 export function siteAssignsToLateralHitForDots(
   site: { side?: string },
   hitSide: "left" | "right",

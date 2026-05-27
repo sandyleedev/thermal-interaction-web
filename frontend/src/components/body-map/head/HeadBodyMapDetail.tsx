@@ -34,11 +34,13 @@ import {
   detailAreaContourOpacity,
   detailAreaPinkForCount,
 } from "../shared/bodyMapHeatmapColors";
+import { BodyMapAreaViewFilterDefs } from "../shared/BodyMapAreaViewFilterDefs";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   paperMatchesHeadFineSelection,
   paperMatchesHeadFineSelectionForSideDots,
+  paperMatchesHeadFineSelectionForSideAreaView,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
 
@@ -90,11 +92,17 @@ const HEAD_LATERAL_HIT_IDS = new Set([
   "right-cheek",
 ]);
 
-function countHeadHit(papers: readonly ResearchPaper[], hitId: string): number {
+function countHeadHit(
+  papers: readonly ResearchPaper[],
+  hitId: string,
+  variant: BodyMapVariant,
+): number {
   if (HEAD_LATERAL_HIT_IDS.has(hitId)) {
-    return papers.filter((p) =>
-      paperMatchesHeadFineSelectionForSideDots(p, hitId),
-    ).length;
+    const matchFn =
+      variant === "rawDots"
+        ? paperMatchesHeadFineSelectionForSideAreaView
+        : paperMatchesHeadFineSelectionForSideDots;
+    return papers.filter((p) => matchFn(p, hitId)).length;
   }
   return papers.filter((p) => paperMatchesHeadFineSelection(p, hitId)).length;
 }
@@ -257,10 +265,10 @@ export function HeadBodyMapDetail({
     const keys = ["general", ...HEAD_FILL_HIT_IDS] as const;
     const m: Record<string, number> = {};
     for (const k of keys) {
-      m[k] = countHeadHit(papers, k);
+      m[k] = countHeadHit(papers, k, variant);
     }
     return m;
-  }, [papers, paperIdsKey]);
+  }, [papers, paperIdsKey, variant]);
 
   const countColorDomain = useMemo<[number, number]>(() => {
     const vals = [...HEAD_FILL_HIT_IDS.map((id) => countsByHit[id] ?? 0)];
@@ -468,42 +476,10 @@ export function HeadBodyMapDetail({
                 <stop offset="72%" stopColor="#fb7185" stopOpacity="0.28" />
                 <stop offset="100%" stopColor="#ffe4e6" stopOpacity="0" />
               </radialGradient>
-              <filter
-                id={rawDotsSoftBlurId}
-                x="-70%"
-                y="-70%"
-                width="240%"
-                height="240%"
-                colorInterpolationFilters="sRGB"
-              >
-                <feGaussianBlur in="SourceGraphic" stdDeviation="17" />
-              </filter>
-              <filter
-                id={areaMaskFeatherFilterId}
-                x="-70%"
-                y="-70%"
-                width="240%"
-                height="240%"
-                colorInterpolationFilters="sRGB"
-              >
-                <feMorphology
-                  in="SourceGraphic"
-                  operator="erode"
-                  radius="2.5"
-                  result="areaMaskInset"
-                />
-                <feGaussianBlur
-                  in="areaMaskInset"
-                  stdDeviation="14"
-                  result="areaMaskBlur"
-                />
-                <feComposite
-                  in="areaMaskBlur"
-                  in2="SourceGraphic"
-                  operator="in"
-                  result="areaMaskSoft"
-                />
-              </filter>
+              <BodyMapAreaViewFilterDefs
+                rawDotsSoftBlurId={rawDotsSoftBlurId}
+                areaMaskFeatherFilterId={areaMaskFeatherFilterId}
+              />
               <mask
                 id={generalRingMaskId}
                 maskUnits="userSpaceOnUse"

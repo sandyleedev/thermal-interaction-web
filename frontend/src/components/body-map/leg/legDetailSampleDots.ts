@@ -82,6 +82,30 @@ export function legContributionHitIds(
   }
 }
 
+function legContributionHitIdsForAreaView(
+  site: { side?: string },
+  resolved: BodyMapDetailRegion,
+): string[] {
+  if (resolved.parent !== "leg") return [];
+  const sub = resolved.subregion.trim().toLowerCase();
+  const normalized = normalizeBodySiteSide(site.side);
+  switch (sub) {
+    case "general":
+      return [];
+    case "thigh":
+      if (normalized === "left") return ["left-thigh"];
+      if (normalized === "right") return ["right-thigh"];
+      return ["left-thigh", "right-thigh"];
+    case "crural":
+    case "crural-region":
+      if (normalized === "left") return ["left-crural-region"];
+      if (normalized === "right") return ["right-crural-region"];
+      return ["left-crural-region", "right-crural-region"];
+    default:
+      return [];
+  }
+}
+
 export function collectLegDetailTargetsByHit(
   papers: readonly ResearchPaper[],
 ): Map<string, { paperId: string; seed: string }[]> {
@@ -105,6 +129,32 @@ export function collectLegDetailTargetsByHit(
         list.push({
           paperId: paper.id,
           seed: `${paper.id}\0${resolved.parent}\0${resolved.subregion}\0${site.side ?? ""}\0${i}`,
+        });
+      }
+    }
+  }
+  return map;
+}
+
+export function collectLegDetailAreaTargetsByHit(
+  papers: readonly ResearchPaper[],
+): Map<string, { paperId: string; seed: string }[]> {
+  const map = new Map<string, { paperId: string; seed: string }[]>();
+  for (const paper of papers) {
+    const sites = normalizeBodySites(paper);
+    for (let i = 0; i < sites.length; i++) {
+      const site = sites[i]!;
+      const resolved = resolveBodySite(site);
+      const hits = legContributionHitIdsForAreaView(site, resolved);
+      for (const hitId of hits) {
+        let list = map.get(hitId);
+        if (!list) {
+          list = [];
+          map.set(hitId, list);
+        }
+        list.push({
+          paperId: paper.id,
+          seed: `${paper.id}\0${resolved.parent}\0${resolved.subregion}\0area\0${site.side ?? ""}\0${i}`,
         });
       }
     }
@@ -139,7 +189,7 @@ export function buildLegAreaDensityDotsByHitId(
   shapeByHitId: ReadonlyMap<string, LegShapeSpec>,
   samplesPerHit: number,
 ): Record<string, { x: number; y: number }[]> {
-  const targetsByHit = collectLegDetailTargetsByHit(papers);
+  const targetsByHit = collectLegDetailAreaTargetsByHit(papers);
   const maxPaperCount = maxHitTargetCount(targetsByHit.values());
   const out: Record<string, { x: number; y: number }[]> = {};
   for (const [hitId, targets] of targetsByHit) {
