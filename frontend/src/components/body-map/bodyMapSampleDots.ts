@@ -643,7 +643,35 @@ export function sampleDotsInMergedBodyPartPaths(
   ];
 }
 
-export const MAX_HEATMAP_DOTS_PER_REGION = 500;
+/** Area-view KDE input cap per L1 region (lower = faster sampling + contours). */
+export const MAX_HEATMAP_DOTS_PER_REGION = 200;
+
+export function maxHitTargetCount(
+  targetsByHit: Iterable<readonly unknown[]>,
+): number {
+  let max = 0;
+  for (const targets of targetsByHit) {
+    max = Math.max(max, targets.length);
+  }
+  return max;
+}
+
+/** KDE sample count on detail maps, proportional to paper count (not flat maxSamples). */
+export function resolveAreaDensitySampleCount(
+  paperCount: number,
+  maxPaperCountAmongHits: number,
+  maxSamples: number,
+  minSamples = 20,
+): number {
+  if (paperCount <= 0) return 0;
+  if (maxPaperCountAmongHits <= 0) {
+    return Math.min(maxSamples, Math.max(minSamples, minSamples));
+  }
+  const scaled = Math.round(
+    (paperCount / maxPaperCountAmongHits) * maxSamples,
+  );
+  return Math.min(maxSamples, Math.max(minSamples, scaled));
+}
 
 export function getBodySubpathBBoxCenter(
   sp: BodySubpath,

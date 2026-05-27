@@ -18,6 +18,7 @@ import {
   legBilateralTooltip,
   simpleBodyMapTooltip,
 } from "@/lib/research/bodyMapBilateralTooltips";
+import { MAX_HEATMAP_DOTS_PER_REGION } from "../bodyMapSampleDots";
 import {
   buildLegAreaDensityDotsByHitId,
   buildLegDotsByHitId,
@@ -37,7 +38,7 @@ import {
 const HEATMAP_DOT_RADIUS = 16;
 const HEATMAP_DOT_OPACITY_MIN = 0.22;
 const HEATMAP_DOT_OPACITY_MAX = 0.52;
-const MAX_HEATMAP_DOTS_PER_HIT = 500;
+const MAX_HEATMAP_DOTS_PER_HIT = MAX_HEATMAP_DOTS_PER_REGION;
 
 const LEG_RAW_DOTS_DENSITY_BANDWIDTH = 72;
 const LEG_RAW_DOTS_DENSITY_CELL_SIZE = 2;

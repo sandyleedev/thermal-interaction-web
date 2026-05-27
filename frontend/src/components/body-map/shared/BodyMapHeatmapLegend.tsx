@@ -35,7 +35,7 @@ export function BodyMapHeatmapLegend({
       <svg width="100%" height="18" role="img" aria-label={ariaLabel}>
         <defs>
           <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
-            {variant === "countHeatmap" ? (
+            {variant === "countHeatmap" || variant === "rawDots" ? (
               <>
                 <stop offset="0%" stopColor={interpolatePinkDensityTone(0)} />
                 <stop offset="100%" stopColor={interpolatePinkDensityTone(1)} />

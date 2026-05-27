@@ -14,6 +14,7 @@ import {
   areaDotsLruPut,
   areaDotsLruTouch,
 } from "../shared/bodyMapAreaDotsCache";
+import { MAX_HEATMAP_DOTS_PER_REGION } from "../bodyMapSampleDots";
 import {
   buildHeadAreaDensityDotsByHitId,
   buildHeadDotsByHitId,
@@ -29,6 +30,10 @@ import {
 } from "@/lib/research/bodyMapBilateralTooltips";
 import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
 import { countToPerceptualNormalized } from "../bodyMapVisualization";
+import {
+  detailAreaContourOpacity,
+  detailAreaPinkForCount,
+} from "../shared/bodyMapHeatmapColors";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
@@ -41,7 +46,7 @@ import {
 const HEATMAP_DOT_RADIUS = 28;
 const HEATMAP_DOT_OPACITY_MIN = 0.12;
 const HEATMAP_DOT_OPACITY_MAX = 0.32;
-const MAX_HEATMAP_DOTS_PER_HIT = 500;
+const MAX_HEATMAP_DOTS_PER_HIT = MAX_HEATMAP_DOTS_PER_REGION;
 
 /** Finer grid + more thresholds smooth density contour edges in Area view. */
 const HEAD_RAW_DOTS_DENSITY_BANDWIDTH = 70;
@@ -594,11 +599,11 @@ export function HeadBodyMapDetail({
                 {headRawDotsContoursByHit.map((entry) => {
                   const softMaskId = `head-detail-area-soft-${uid}-${entry.hitId}`;
                   const partCount = countsByHit[entry.hitId] ?? 0;
-                  const countStrength = countToPerceptualNormalized(
+                  const fillColor = detailAreaPinkForCount(
                     partCount,
-                    countColorDomain,
+                    countsByHit,
+                    HEAD_FILL_HIT_IDS,
                   );
-                  const countBoost = 0.35 + Math.pow(countStrength, 0.9) * 0.65;
                   const globalMax =
                     headRawDotsGlobalContourMaxValue <= 0
                       ? 1
@@ -618,14 +623,18 @@ export function HeadBodyMapDetail({
                               1,
                               Math.max(0, value / globalMax),
                             );
-                            const contrastAdjusted = Math.pow(normalized, 1.45);
-                            const opacity =
-                              (0.012 + contrastAdjusted * 0.78) * countBoost;
+                            const contrastAdjusted = Math.pow(normalized, 1.35);
+                            const opacity = detailAreaContourOpacity(
+                              contrastAdjusted,
+                              partCount,
+                              countsByHit,
+                              HEAD_FILL_HIT_IDS,
+                            );
                             return (
                               <path
                                 key={`head-raw-density-${entry.hitId}-${i}`}
                                 d={d}
-                                fill="#db2777"
+                                fill={fillColor}
                                 fillOpacity={opacity}
                                 stroke="none"
                                 pointerEvents="none"
@@ -642,6 +651,18 @@ export function HeadBodyMapDetail({
                       const softMaskId = `head-detail-area-soft-${uid}-${hitId}`;
                       const pts = dotsByHitId[hitId] ?? [];
                       if (pts.length === 0) return null;
+                      const partCount = countsByHit[hitId] ?? 0;
+                      const fillColor = detailAreaPinkForCount(
+                        partCount,
+                        countsByHit,
+                        HEAD_FILL_HIT_IDS,
+                      );
+                      const fallbackOpacity = detailAreaContourOpacity(
+                        1,
+                        partCount,
+                        countsByHit,
+                        HEAD_FILL_HIT_IDS,
+                      );
                       return (
                         <g
                           key={`head-raw-fallback-wrap-${hitId}`}
@@ -654,8 +675,8 @@ export function HeadBodyMapDetail({
                                 cx={p.x}
                                 cy={p.y}
                                 r={3.8}
-                                fill="#db2777"
-                                fillOpacity={0.42}
+                                fill={fillColor}
+                                fillOpacity={fallbackOpacity}
                               />
                             ))}
                           </g>

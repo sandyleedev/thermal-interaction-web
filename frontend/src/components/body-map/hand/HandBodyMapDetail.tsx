@@ -18,6 +18,7 @@ import {
   handBilateralTooltip,
   simpleBodyMapTooltip,
 } from "@/lib/research/bodyMapBilateralTooltips";
+import { MAX_HEATMAP_DOTS_PER_REGION } from "../bodyMapSampleDots";
 import {
   buildHandAreaDensityDotsByHitId,
   buildHandDotsByHitId,
@@ -40,7 +41,7 @@ import {
 const HEATMAP_DOT_RADIUS = 14;
 const HEATMAP_DOT_OPACITY_MIN = 0.22;
 const HEATMAP_DOT_OPACITY_MAX = 0.52;
-const MAX_HEATMAP_DOTS_PER_HIT = 500;
+const MAX_HEATMAP_DOTS_PER_HIT = MAX_HEATMAP_DOTS_PER_REGION;
 
 const HAND_RAW_DOTS_DENSITY_BANDWIDTH = 52;
 const HAND_RAW_DOTS_DENSITY_CELL_SIZE = 2;

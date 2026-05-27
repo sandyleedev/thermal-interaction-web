@@ -14,6 +14,10 @@ import {
   type HeadShapeSpec,
   sampleDotsInHeadShape,
 } from "../head/headDetailSampleDots";
+import {
+  maxHitTargetCount,
+  resolveAreaDensitySampleCount,
+} from "../bodyMapSampleDots";
 
 export const HAND_INNER_DETAIL_VIEWBOX = "0 0 128.92683 276.27176";
 export const HAND_OUTER_DETAIL_VIEWBOX = "0 0 131.05411 266.55075";
@@ -147,16 +151,22 @@ export function buildHandAreaDensityDotsByHitId(
   viewBoxWidth: number,
 ): Record<string, { x: number; y: number }[]> {
   const targetsByHit = collectHandDetailTargetsByHit(papers, panel);
+  const maxPaperCount = maxHitTargetCount(targetsByHit.values());
   const out: Record<string, { x: number; y: number }[]> = {};
   for (const [hitId, targets] of targetsByHit) {
     if (targets.length === 0) continue;
     const spec = shapeByHitId.get(hitId);
     if (!spec) continue;
     const sampleOptions = handDotSampleOptions(panel, hitId);
-    const seedTag = `hand-area-density\0${panel.surface}\0${panel.side}\0${hitId}\0${samplesPerHit}`;
+    const sampleCount = resolveAreaDensitySampleCount(
+      targets.length,
+      maxPaperCount,
+      samplesPerHit,
+    );
+    const seedTag = `hand-area-density\0${panel.surface}\0${panel.side}\0${hitId}\0${sampleCount}\0${targets.length}`;
     out[hitId] = sampleDotsInHeadShape(
       spec,
-      samplesPerHit,
+      sampleCount,
       seedTag,
       sampleOptions,
     );

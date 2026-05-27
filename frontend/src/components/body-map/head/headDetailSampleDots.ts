@@ -5,6 +5,10 @@ import {
   siteAssignsToLateralHitForDots,
 } from "@/lib/research/bodyMapSiteSide";
 import { normalizeBodySites, type ResearchPaper } from "@/lib/research/researchPapers";
+import {
+  maxHitTargetCount,
+  resolveAreaDensitySampleCount,
+} from "../bodyMapSampleDots";
 
 export const HEAD_DETAIL_VIEWBOX = "0 0 210 297";
 
@@ -333,13 +337,19 @@ export function buildHeadAreaDensityDotsByHitId(
   samplesPerHit: number,
 ): Record<string, { x: number; y: number }[]> {
   const targetsByHit = collectHeadDetailTargetsByHit(papers);
+  const maxPaperCount = maxHitTargetCount(targetsByHit.values());
   const out: Record<string, { x: number; y: number }[]> = {};
   for (const [hitId, targets] of targetsByHit) {
     if (targets.length === 0) continue;
     const spec = shapeByHitId.get(hitId);
     if (!spec) continue;
-    const seedTag = `head-area-density\0${hitId}\0${samplesPerHit}`;
-    out[hitId] = sampleDotsInHeadShape(spec, samplesPerHit, seedTag);
+    const sampleCount = resolveAreaDensitySampleCount(
+      targets.length,
+      maxPaperCount,
+      samplesPerHit,
+    );
+    const seedTag = `head-area-density\0${hitId}\0${sampleCount}\0${targets.length}`;
+    out[hitId] = sampleDotsInHeadShape(spec, sampleCount, seedTag);
   }
   return out;
 }

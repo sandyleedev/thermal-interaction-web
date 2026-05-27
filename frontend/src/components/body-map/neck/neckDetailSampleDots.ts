@@ -5,6 +5,10 @@ import {
   type HeadShapeSpec,
   sampleDotsInHeadShape,
 } from "../head/headDetailSampleDots";
+import {
+  maxHitTargetCount,
+  resolveAreaDensitySampleCount,
+} from "../bodyMapSampleDots";
 
 export const NECK_DETAIL_VIEWBOX = "0 0 210 297";
 
@@ -84,13 +88,19 @@ export function buildNeckAreaDensityDotsByHitId(
   samplesPerHit: number,
 ): Record<string, { x: number; y: number }[]> {
   const targetsByHit = collectNeckDetailTargetsByHit(papers);
+  const maxPaperCount = maxHitTargetCount(targetsByHit.values());
   const out: Record<string, { x: number; y: number }[]> = {};
   for (const [hitId, targets] of targetsByHit) {
     if (targets.length === 0) continue;
     const spec = shapeByHitId.get(hitId);
     if (!spec) continue;
-    const seedTag = `neck-area-density\0${hitId}\0${samplesPerHit}`;
-    out[hitId] = sampleDotsInHeadShape(spec, samplesPerHit, seedTag);
+    const sampleCount = resolveAreaDensitySampleCount(
+      targets.length,
+      maxPaperCount,
+      samplesPerHit,
+    );
+    const seedTag = `neck-area-density\0${hitId}\0${sampleCount}\0${targets.length}`;
+    out[hitId] = sampleDotsInHeadShape(spec, sampleCount, seedTag);
   }
   return out;
 }

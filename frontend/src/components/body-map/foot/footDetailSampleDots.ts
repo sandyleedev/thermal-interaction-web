@@ -13,6 +13,10 @@ import {
   type HeadShapeSpec,
   sampleDotsInHeadShape,
 } from "../head/headDetailSampleDots";
+import {
+  maxHitTargetCount,
+  resolveAreaDensitySampleCount,
+} from "../bodyMapSampleDots";
 
 export const FOOT_DETAIL_VIEWBOX = "0 0 383.11667 287.33749";
 
@@ -124,16 +128,22 @@ export function buildFootAreaDensityDotsByHitId(
   viewBoxWidth: number,
 ): Record<string, { x: number; y: number }[]> {
   const targetsByHit = collectFootDetailTargetsByHit(papers, panelSide);
+  const maxPaperCount = maxHitTargetCount(targetsByHit.values());
   const out: Record<string, { x: number; y: number }[]> = {};
   for (const [hitId, targets] of targetsByHit) {
     if (targets.length === 0) continue;
     const spec = shapeByHitId.get(hitId);
     if (!spec) continue;
     const sampleOptions = footDotSampleOptions(hitId);
-    const seedTag = `foot-area-density\0${panelSide}\0${hitId}\0${samplesPerHit}`;
+    const sampleCount = resolveAreaDensitySampleCount(
+      targets.length,
+      maxPaperCount,
+      samplesPerHit,
+    );
+    const seedTag = `foot-area-density\0${panelSide}\0${hitId}\0${sampleCount}\0${targets.length}`;
     out[hitId] = sampleDotsInHeadShape(
       spec,
-      samplesPerHit,
+      sampleCount,
       seedTag,
       sampleOptions,
     );

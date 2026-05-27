@@ -13,6 +13,7 @@ import {
   areaDotsLruTouch,
 } from "../shared/bodyMapAreaDotsCache";
 import { TorsoDetailPanelMap } from "./TorsoDetailPanelMap";
+import { MAX_HEATMAP_DOTS_PER_REGION } from "../bodyMapSampleDots";
 import {
   buildTorsoAreaDensityDotsByHitId,
   buildTorsoDotsByHitId,
@@ -32,7 +33,7 @@ const HEATMAP_DOT_RADIUS = 50;
 const BACK_HEATMAP_DOT_RADIUS = 28;
 const HEATMAP_DOT_OPACITY_MIN = 0.22;
 const HEATMAP_DOT_OPACITY_MAX = 0.52;
-const MAX_HEATMAP_DOTS_PER_HIT = 500;
+const MAX_HEATMAP_DOTS_PER_HIT = MAX_HEATMAP_DOTS_PER_REGION;
 
 /** Finer grid + more thresholds smooth density contour edges in Area view. */
 const TORSO_RAW_DOTS_DENSITY_BANDWIDTH = 70;

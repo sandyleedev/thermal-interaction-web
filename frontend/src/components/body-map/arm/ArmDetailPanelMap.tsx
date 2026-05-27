@@ -4,6 +4,10 @@ import type { ContourMultiPolygon } from "d3-contour";
 import type { ArmShapeSpec } from "./armDetailSampleDots";
 import type { BodyMapVariant } from "../bodyMapVariant";
 import { countToPerceptualNormalized } from "../bodyMapVisualization";
+import {
+  detailAreaContourOpacity,
+  detailAreaPinkForCount,
+} from "../shared/bodyMapHeatmapColors";
 
 type ShapeLayer =
   | { kind: "path"; d: string; transform?: string; layerKey: string }
@@ -385,11 +389,11 @@ export function ArmDetailPanelMap({
           {rawDotsContoursByHit.map((entry) => {
             const softMaskId = `${idPrefix}-area-soft-${entry.hitId}`;
             const partCount = countsByHit[entry.hitId] ?? 0;
-            const countStrength = countToPerceptualNormalized(
+            const fillColor = detailAreaPinkForCount(
               partCount,
-              countColorDomain,
+              countsByHit,
+              fillHitIds,
             );
-            const countBoost = 0.35 + Math.pow(countStrength, 0.9) * 0.65;
             const globalMax =
               rawDotsGlobalContourMaxValue <= 0
                 ? 1
@@ -409,14 +413,18 @@ export function ArmDetailPanelMap({
                         1,
                         Math.max(0, value / globalMax),
                       );
-                      const contrastAdjusted = Math.pow(normalized, 1.45);
-                      const opacity =
-                        (0.012 + contrastAdjusted * 0.78) * countBoost;
+                      const contrastAdjusted = Math.pow(normalized, 1.35);
+                      const opacity = detailAreaContourOpacity(
+                        contrastAdjusted,
+                        partCount,
+                        countsByHit,
+                        fillHitIds,
+                      );
                       return (
                         <path
                           key={`raw-density-${entry.hitId}-${i}`}
                           d={d}
-                          fill="#db2777"
+                          fill={fillColor}
                           fillOpacity={opacity}
                           stroke="none"
                           pointerEvents="none"
@@ -433,6 +441,18 @@ export function ArmDetailPanelMap({
                 const softMaskId = `${idPrefix}-area-soft-${hitId}`;
                 const pts = dotsByHitId[hitId] ?? [];
                 if (pts.length === 0) return null;
+                const partCount = countsByHit[hitId] ?? 0;
+                const fillColor = detailAreaPinkForCount(
+                  partCount,
+                  countsByHit,
+                  fillHitIds,
+                );
+                const fallbackOpacity = detailAreaContourOpacity(
+                  1,
+                  partCount,
+                  countsByHit,
+                  fillHitIds,
+                );
                 return (
                   <g
                     key={`raw-fallback-wrap-${hitId}`}
@@ -445,8 +465,8 @@ export function ArmDetailPanelMap({
                           cx={p.x}
                           cy={p.y}
                           r={3.2}
-                          fill="#db2777"
-                          fillOpacity={0.42}
+                          fill={fillColor}
+                          fillOpacity={fallbackOpacity}
                         />
                       ))}
                     </g>

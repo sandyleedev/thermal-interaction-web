@@ -19,6 +19,7 @@ import {
   armBilateralTooltip,
   simpleBodyMapTooltip,
 } from "@/lib/research/bodyMapBilateralTooltips";
+import { MAX_HEATMAP_DOTS_PER_REGION } from "../bodyMapSampleDots";
 import {
   ARM_LEFT_DETAIL_VIEWBOX,
   ARM_RIGHT_DETAIL_VIEWBOX,
@@ -40,7 +41,7 @@ import {
 const HEATMAP_DOT_RADIUS = 18;
 const HEATMAP_DOT_OPACITY_MIN = 0.22;
 const HEATMAP_DOT_OPACITY_MAX = 0.52;
-const MAX_HEATMAP_DOTS_PER_HIT = 500;
+const MAX_HEATMAP_DOTS_PER_HIT = MAX_HEATMAP_DOTS_PER_REGION;
 
 const ARM_RAW_DOTS_DENSITY_BANDWIDTH = 70;
 const ARM_RAW_DOTS_DENSITY_CELL_SIZE = 2;
