@@ -24,6 +24,7 @@ export function BodyMapPanel() {
     activeDetailRegion,
     toggleBodyMapChip,
     removeBodyMapChip,
+    clearBodyMapChips,
     navigateToBodyMapDetail,
     exitBodyMapDetail,
   } = useResearchFilter();
@@ -117,6 +118,16 @@ export function BodyMapPanel() {
             onClick={() => setVariant("rawDots")}
           >
             Area view
+          </button>
+        </div>
+        <div className="body-map-toolbar-actions">
+          <button
+            type="button"
+            className="other-filters-clear-all"
+            disabled={selectedBodyMapChips.length === 0}
+            onClick={clearBodyMapChips}
+          >
+            Clear
           </button>
         </div>
       </div>

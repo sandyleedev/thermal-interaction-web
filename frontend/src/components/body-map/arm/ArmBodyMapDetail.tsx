@@ -23,6 +23,7 @@ import {
 import type { BodyMapVariant } from "../bodyMapVariant";
 import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
 import { BodyMapDetailSelectAll } from "@/components/body-map/BodyMapDetailSelectAll";
+import { BodyMapDetailBackButton } from "../shared/BodyMapDetailBackButton";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
@@ -488,14 +489,7 @@ export function ArmBodyMapDetail({
     <div className="body-map-root arm-detail-root">
       <div className="body-map-svg-wrap arm-detail-svg-wrap">
         <div className="body-map-detail-controls">
-          <button
-            type="button"
-            className="arm-detail-back"
-            onClick={onBack}
-            aria-label="Back to full body map"
-          >
-            ← Full body
-          </button>
+          <BodyMapDetailBackButton onBack={onBack} />
           <BodyMapDetailSelectAll parent="arm" />
         </div>
         {parseError ? (
