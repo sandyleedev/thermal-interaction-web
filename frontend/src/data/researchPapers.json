@@ -49,7 +49,8 @@
     "bodySites": [
       {
         "region": "arm",
-        "subregion": "forearm"
+        "subregion": "forearm",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "No full energy budget reported"
@@ -100,7 +101,8 @@
     "bodySites": [
       {
         "region": "wholeBody",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": ""
@@ -155,7 +157,8 @@
     "bodySites": [
       {
         "region": "neck",
-        "subregion": "posterior"
+        "subregion": "posterior",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": ""
@@ -208,7 +211,8 @@
     "bodySites": [
       {
         "region": "arm",
-        "subregion": "forearm"
+        "subregion": "forearm",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": ""
@@ -266,7 +270,8 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "palm"
+        "subregion": "palm",
+        "side": "right"
       }
     ],
     "powerEnergyConsumption": ""
@@ -320,7 +325,8 @@
     "bodySites": [
       {
         "region": "head",
-        "subregion": "nose"
+        "subregion": "nose",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": ""
@@ -377,7 +383,8 @@
     "bodySites": [
       {
         "region": "wrist",
-        "subregion": "dorsal"
+        "subregion": "dorsal",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Low power relative to Peltier baseline in the paper"
@@ -433,7 +440,8 @@
     "bodySites": [
       {
         "region": "head",
-        "subregion": "nose"
+        "subregion": "nose",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Around 0.25W mentioned in paper"
@@ -487,7 +495,8 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "palm"
+        "subregion": "palm",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": ""
@@ -542,7 +551,8 @@
     "bodySites": [
       {
         "region": "arm",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "right"
       }
     ],
     "powerEnergyConsumption": ""
@@ -592,7 +602,8 @@
     "bodySites": [
       {
         "region": "arm",
-        "subregion": "forearm"
+        "subregion": "forearm",
+        "side": "right"
       }
     ],
     "powerEnergyConsumption": "Not reported."
@@ -655,7 +666,8 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "fingers"
+        "subregion": "fingers",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Peltier power not fully quantified."
@@ -711,7 +723,8 @@
     "bodySites": [
       {
         "region": "wholeBody",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "N/A"
@@ -765,7 +778,8 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "fingertips"
+        "subregion": "fingertips",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Up to ~12 W if all five modules active."
@@ -823,15 +837,18 @@
     "bodySites": [
       {
         "region": "arm",
-        "subregion": "forearm"
+        "subregion": "forearm",
+        "side": "unspecified"
       },
       {
         "region": "hand",
-        "subregion": "palm"
+        "subregion": "palm",
+        "side": "unspecified"
       },
       {
         "region": "foot",
-        "subregion": "sole"
+        "subregion": "sole",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "~9.6 W eight elements; ~51 min on 3.7 V 2200 mAh pack (paper estimate)."
@@ -885,19 +902,23 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "hand-back"
+        "subregion": "hand-back",
+        "side": "left"
       },
       {
         "region": "arm",
-        "subregion": "forearm"
+        "subregion": "forearm",
+        "side": "left"
       },
       {
         "region": "arm",
-        "subregion": "upper-arm"
+        "subregion": "upper-arm",
+        "side": "left"
       },
       {
         "region": "torso",
-        "subregion": "shoulder"
+        "subregion": "shoulder",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Not reported."
@@ -950,7 +971,8 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "2.5 W heating circuit stated."
@@ -1003,11 +1025,13 @@
     "bodySites": [
       {
         "region": "torso",
-        "subregion": "abdomen"
+        "subregion": "abdomen",
+        "side": "unspecified"
       },
       {
         "region": "torso",
-        "subregion": "back"
+        "subregion": "back",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Not reported."
@@ -1051,7 +1075,8 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "N/A"
@@ -1110,11 +1135,13 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "palm"
+        "subregion": "palm",
+        "side": "unspecified"
       },
       {
         "region": "hand",
-        "subregion": "fingers"
+        "subregion": "fingers",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Reports ~2600 W peak budget including many Peltier plates (lab bench)."
@@ -1156,7 +1183,8 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "N/A"
@@ -1212,11 +1240,13 @@
     "bodySites": [
       {
         "region": "wholeBody",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "unspecified"
       },
       {
         "region": "hand",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Up to ~1683 W aggregate peak across modules (paper)."
@@ -1271,7 +1301,8 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "fingertips"
+        "subregion": "fingertips",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Radiator 2000 W; Peltier 12 V circuit."
@@ -1332,11 +1363,13 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "fingers"
+        "subregion": "fingers",
+        "side": "unspecified"
       },
       {
         "region": "hand",
-        "subregion": "palm"
+        "subregion": "palm",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Up to 13.2 W per actuator at max spec; study power not isolated."
@@ -1388,11 +1421,13 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "palm"
+        "subregion": "palm",
+        "side": "unspecified"
       },
       {
         "region": "hand",
-        "subregion": "fingers"
+        "subregion": "fingers",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "N/A"
@@ -1439,7 +1474,8 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "palm"
+        "subregion": "palm",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "N/A"
@@ -1497,11 +1533,13 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "palm"
+        "subregion": "palm",
+        "side": "unspecified"
       },
       {
         "region": "hand",
-        "subregion": "fingers"
+        "subregion": "fingers",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "~500 W heating elements rated."
@@ -1554,11 +1592,13 @@
     "bodySites": [
       {
         "region": "torso",
-        "subregion": "abdomen"
+        "subregion": "abdomen",
+        "side": "unspecified"
       },
       {
         "region": "torso",
-        "subregion": "back"
+        "subregion": "back",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "~6.7 W peak estimate at 5 V; duty-cycled average lower."
@@ -1610,7 +1650,8 @@
     "bodySites": [
       {
         "region": "wholeBody",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Phone battery discharge in cold noted."
@@ -1661,11 +1702,13 @@
     "bodySites": [
       {
         "region": "head",
-        "subregion": "forehead"
+        "subregion": "forehead",
+        "side": "unspecified"
       },
       {
         "region": "head",
-        "subregion": "cheek"
+        "subregion": "cheek",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "3.7 V Li-ion 3000 mAh portable supply."
@@ -1717,7 +1760,8 @@
     "bodySites": [
       {
         "region": "head",
-        "subregion": "ear"
+        "subregion": "ear",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Per-module 2.4 W max electrical."
@@ -1771,7 +1815,8 @@
     "bodySites": [
       {
         "region": "arm",
-        "subregion": "forearm"
+        "subregion": "forearm",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Not reported."
@@ -1826,7 +1871,8 @@
     "bodySites": [
       {
         "region": "torso",
-        "subregion": "chest"
+        "subregion": "chest",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Not fully reported."
@@ -1879,7 +1925,8 @@
     "bodySites": [
       {
         "region": "head",
-        "subregion": "ear"
+        "subregion": "ear",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Not reported."
@@ -1929,19 +1976,23 @@
     "bodySites": [
       {
         "region": "torso",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "unspecified"
       },
       {
         "region": "neck",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "unspecified"
       },
       {
         "region": "arm",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "unspecified"
       },
       {
         "region": "hand",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "N/A"
@@ -2000,7 +2051,8 @@
     "bodySites": [
       {
         "region": "wrist",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "~10 W system including pump and fan; ~1.5 h at 40°C on battery."
@@ -2055,15 +2107,18 @@
     "bodySites": [
       {
         "region": "wrist",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "unspecified"
       },
       {
         "region": "arm",
-        "subregion": "forearm"
+        "subregion": "forearm",
+        "side": "unspecified"
       },
       {
         "region": "ankle",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Battery-limited 1720 mA max pack current."
@@ -2120,11 +2175,13 @@
     "bodySites": [
       {
         "region": "torso",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "unspecified"
       },
       {
         "region": "arm",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "right"
       }
     ],
     "powerEnergyConsumption": "Pad power not specified."
@@ -2178,11 +2235,13 @@
     "bodySites": [
       {
         "region": "torso",
-        "subregion": "chest"
+        "subregion": "chest",
+        "side": "unspecified"
       },
       {
         "region": "torso",
-        "subregion": "abdomen"
+        "subregion": "abdomen",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "5 V USB-class supply."
@@ -2238,11 +2297,13 @@
     "bodySites": [
       {
         "region": "torso",
-        "subregion": "back"
+        "subregion": "back",
+        "side": "unspecified"
       },
       {
         "region": "torso",
-        "subregion": "shoulder"
+        "subregion": "shoulder",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Not reported."
@@ -2298,11 +2359,13 @@
     "bodySites": [
       {
         "region": "head",
-        "subregion": "lip"
+        "subregion": "lip",
+        "side": "unspecified"
       },
       {
         "region": "head",
-        "subregion": "nose"
+        "subregion": "nose",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "~7 W stated for thermal driver path."
@@ -2357,7 +2420,8 @@
     "bodySites": [
       {
         "region": "arm",
-        "subregion": "forearm"
+        "subregion": "forearm",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "High TEC power class; exact average not reported."
@@ -2411,11 +2475,13 @@
     "bodySites": [
       {
         "region": "head",
-        "subregion": "forehead"
+        "subregion": "forehead",
+        "side": "unspecified"
       },
       {
         "region": "head",
-        "subregion": "cheek"
+        "subregion": "cheek",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Not reported."
@@ -2463,7 +2529,8 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "palm"
+        "subregion": "palm",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "USB-powered bench setup."
@@ -2519,7 +2586,8 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "fingertips"
+        "subregion": "fingertips",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Not reported."
@@ -2572,11 +2640,13 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "fingertips"
+        "subregion": "fingertips",
+        "side": "unspecified"
       },
       {
         "region": "wrist",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Bench instrumented supply."
@@ -2630,7 +2700,8 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "fingertips"
+        "subregion": "fingertips",
+        "side": "right"
       }
     ],
     "powerEnergyConsumption": "0.05–10.7 W depending on voltage and trace (paper table)."
@@ -2680,7 +2751,8 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "general"
+        "subregion": "general",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "Not reported."
@@ -2736,7 +2808,8 @@
     "bodySites": [
       {
         "region": "hand",
-        "subregion": "fingertips"
+        "subregion": "fingertips",
+        "side": "right"
       }
     ],
     "powerEnergyConsumption": "Not reported."
@@ -2792,11 +2865,13 @@
     "bodySites": [
       {
         "region": "head",
-        "subregion": "cheek"
+        "subregion": "cheek",
+        "side": "unspecified"
       },
       {
         "region": "arm",
-        "subregion": "forearm"
+        "subregion": "forearm",
+        "side": "unspecified"
       }
     ],
     "powerEnergyConsumption": "~0.52 W active pumps vs 4–13 W cited for small Peltiers."

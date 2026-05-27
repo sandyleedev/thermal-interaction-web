@@ -12,6 +12,12 @@ import {
   areaDotsLruTouch,
 } from "../shared/bodyMapAreaDotsCache";
 import { ArmDetailPanelMap } from "../arm/ArmDetailPanelMap";
+import { BodyMapHoverTooltip } from "../shared/BodyMapHoverTooltip";
+import type { BodyMapTooltipState } from "../shared/BodyMapHoverTooltip";
+import {
+  footBilateralTooltip,
+  simpleBodyMapTooltip,
+} from "@/lib/research/bodyMapBilateralTooltips";
 import {
   buildFootAreaDensityDotsByHitId,
   buildFootDotsByHitId,
@@ -24,7 +30,7 @@ import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   FOOT_DETAIL_HIT_IDS,
-  paperMatchesFootFineSelectionForSide,
+  paperMatchesFootFineSelectionForSideDots,
   type FootDetailSide,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
@@ -51,7 +57,7 @@ const FOOT_HIT_LABELS: Record<string, string> = {
   toes: "Toes",
 };
 
-type TooltipState = { label: string; count: number; x: number; y: number };
+type TooltipState = BodyMapTooltipState;
 
 type FootPanelParse = {
   silhouetteD: string;
@@ -153,7 +159,7 @@ function countsForSide(
   const m: Record<string, number> = {};
   for (const k of FOOT_COUNT_HIT_IDS) {
     m[k] = papers.filter((p) =>
-      paperMatchesFootFineSelectionForSide(p, k, panelSide),
+      paperMatchesFootFineSelectionForSideDots(p, k, panelSide),
     ).length;
   }
   return m;
@@ -334,16 +340,27 @@ export function FootBodyMapDetail({
       return (hitId: string) => {
         return (e: PointerEvent<SVGElement>) => {
           setHoveredKey(`${panelSide}:${hitId}`);
-          setTooltip({
-            label: FOOT_HIT_LABELS[hitId] ?? hitId,
-            count: countsBySide[panelSide][hitId] ?? 0,
-            x: e.clientX,
-            y: e.clientY,
-          });
+          setTooltip(
+            hitId === "general"
+              ? simpleBodyMapTooltip(
+                  FOOT_HIT_LABELS.general,
+                  countsBySide[panelSide].general ?? 0,
+                  e.clientX,
+                  e.clientY,
+                )
+              : footBilateralTooltip(
+                  papers,
+                  hitId,
+                  panelSide,
+                  FOOT_HIT_LABELS[hitId] ?? hitId,
+                  e.clientX,
+                  e.clientY,
+                ),
+          );
         };
       };
     },
-    [countsBySide],
+    [countsBySide, papers],
   );
 
   const handleMove = useCallback((e: PointerEvent<SVGElement>) => {
@@ -353,21 +370,24 @@ export function FootBodyMapDetail({
   }, []);
 
   const toggleHit = useCallback(
-    (hitId: string) => {
-      toggleBodyMapChip("foot", hitId);
+    (panelSide: FootDetailSide) => {
+      return (hitId: string) => {
+        toggleBodyMapChip("foot", hitId, panelSide);
+      };
     },
     [toggleBodyMapChip],
   );
 
   const isHitSelected = useCallback(
-    (hitId: string) => isBodyMapChipSelected("foot", hitId),
+    (panelSide: FootDetailSide) => {
+      return (hitId: string) =>
+        isBodyMapChipSelected("foot", hitId, panelSide);
+    },
     [isBodyMapChipSelected],
   );
 
   const generalRingHovered =
     hoveredKey === "left:general" || hoveredKey === "right:general";
-  const generalRingActive =
-    generalRingHovered || isBodyMapChipSelected("foot", "general");
 
   const suppressSelectedFineFillWhileGeneralHover =
     generalRingHovered &&
@@ -382,12 +402,14 @@ export function FootBodyMapDetail({
     (panelSide: FootDetailSide) => {
       return (e: PointerEvent<SVGElement>) => {
         setHoveredKey(`${panelSide}:general`);
-        setTooltip({
-          label: FOOT_HIT_LABELS.general,
-          count: countsBySide[panelSide].general ?? 0,
-          x: e.clientX,
-          y: e.clientY,
-        });
+        setTooltip(
+          simpleBodyMapTooltip(
+            FOOT_HIT_LABELS.general,
+            countsBySide[panelSide].general ?? 0,
+            e.clientX,
+            e.clientY,
+          ),
+        );
       };
     },
     [countsBySide],
@@ -411,13 +433,9 @@ export function FootBodyMapDetail({
     rawDotsDensityCellSize: FOOT_RAW_DOTS_DENSITY_CELL_SIZE,
     rawDotsDensityThresholds: FOOT_RAW_DOTS_DENSITY_THRESHOLDS,
     countColorDomain,
-    isHitSelected,
     suppressSelectedFineFillWhileGeneralHover,
     onPointerMove: handleMove,
     onPointerLeave: clearHover,
-    onToggleHit: toggleHit,
-    onGeneralRingClick: () => toggleBodyMapChip("foot", "general"),
-    generalRingActive,
     generalRingHovered,
     showGeneralRing: true,
   };
@@ -428,6 +446,9 @@ export function FootBodyMapDetail({
     const hoveredHitId = hoveredKey?.startsWith(`${panelSide}:`)
       ? (hoveredKey.slice(panelSide.length + 1) ?? null)
       : null;
+    const panelGeneralActive =
+      hoveredKey === `${panelSide}:general` ||
+      isBodyMapChipSelected("foot", "general", panelSide);
 
     return (
       <ArmDetailPanelMap
@@ -445,8 +466,14 @@ export function FootBodyMapDetail({
         countsByHit={countsBySide[panelSide]}
         hoveredHitId={hoveredHitId}
         horizontalFlip={panelSide === "right"}
+        isHitSelected={isHitSelected(panelSide)}
+        onToggleHit={toggleHit(panelSide)}
         onFillHitEnter={handleFillHitEnter(panelSide)}
         onGeneralRingEnter={handleGeneralRingEnter(panelSide)}
+        onGeneralRingClick={() =>
+          toggleBodyMapChip("foot", "general", panelSide)
+        }
+        generalRingActive={panelGeneralActive}
         {...panelCommon}
       />
     );
@@ -490,27 +517,13 @@ export function FootBodyMapDetail({
           className="foot-detail-legend"
           caption={
             variant === "countHeatmap"
-              ? `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Hover sole, toes, or the outline for whole-foot (general). Unspecified side appears on both feet.`
-              : `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Uses the same d3 density smoothing as the full-body map. Hover subregions or the outline for whole-foot (general). Unspecified side appears on both feet.`
+              ? `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Hover sole, toes, or the outline for whole-foot (general). Unspecified side is split across left and right feet.`
+              : `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Uses the same d3 density smoothing as the full-body map. Hover subregions or the outline for whole-foot (general). Unspecified side is split across left and right feet.`
           }
         />
       ) : null}
 
-      {tooltip ? (
-        <div
-          className="body-map-tooltip"
-          style={{
-            position: "fixed",
-            left: tooltip.x + 12,
-            top: tooltip.y + 12,
-            zIndex: 50,
-            pointerEvents: "none",
-          }}
-        >
-          <div className="body-map-tooltip-title">{tooltip.label}</div>
-          <div>{tooltip.count} papers</div>
-        </div>
-      ) : null}
+      <BodyMapHoverTooltip tooltip={tooltip} />
     </div>
   );
 }

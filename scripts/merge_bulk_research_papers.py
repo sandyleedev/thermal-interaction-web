@@ -90,7 +90,7 @@ def paper(
         "materialsInContactWithSkin": materials_skin,
         "materials": materials,
         "bodyPartsInvolved": body_parts_involved,
-        "bodySites": [{"region": r, "subregion": s} for r, s in body],
+        "bodySites": [{"region": r, "subregion": s, "side": side} for r, s, *rest in body for side in [(rest[0] if rest else "unspecified")]],
         "powerEnergyConsumption": energy,
     }
 

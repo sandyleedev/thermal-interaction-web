@@ -1,9 +1,9 @@
 import type { BodyMapDetailRegion } from "@/lib/research/bodyMapRegions";
 import {
-  armSiteMatchesPanelSide,
   resolveBodySite,
   type ArmDetailSide,
 } from "@/lib/research/bodyMapRegionUtils";
+import { siteAssignsToPanelSideForDots } from "@/lib/research/bodyMapSiteSide";
 import {
   normalizeBodySites,
   type ResearchPaper,
@@ -46,9 +46,14 @@ export function armContributionHitIds(
   site: { side?: string },
   resolved: BodyMapDetailRegion,
   panelSide: ArmDetailSide,
+  distributionKey: string,
 ): string[] {
   if (resolved.parent !== "arm") return [];
-  if (!armSiteMatchesPanelSide(site, panelSide)) return [];
+  if (
+    !siteAssignsToPanelSideForDots(site, panelSide, distributionKey)
+  ) {
+    return [];
+  }
   const sub = resolved.subregion.trim().toLowerCase();
   switch (sub) {
     case "general":
@@ -73,7 +78,12 @@ export function collectArmDetailTargetsByHit(
     for (let i = 0; i < sites.length; i++) {
       const site = sites[i]!;
       const resolved = resolveBodySite(site);
-      const hits = armContributionHitIds(site, resolved, panelSide);
+      const hits = armContributionHitIds(
+        site,
+        resolved,
+        panelSide,
+        `${paper.id}\0${resolved.parent}\0${resolved.subregion}\0${i}`,
+      );
       for (const hitId of hits) {
         let list = map.get(hitId);
         if (!list) {

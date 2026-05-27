@@ -139,7 +139,7 @@ export function BodyMapPanel() {
               <BodyMapSelectionChips
                 chips={selectedBodyMapChips}
                 onRemoveChip={(chip) =>
-                  removeBodyMapChip(chip.parent, chip.subpart)
+                  removeBodyMapChip(chip.parent, chip.subpart, chip.side)
                 }
               />
             </div>

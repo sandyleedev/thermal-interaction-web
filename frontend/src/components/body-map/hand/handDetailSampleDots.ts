@@ -1,10 +1,10 @@
 import type { BodyMapDetailRegion } from "@/lib/research/bodyMapRegions";
 import {
-  handSiteMatchesPanelSide,
   resolveBodySite,
   type HandDetailPanel,
   type HandDetailSurface,
 } from "@/lib/research/bodyMapRegionUtils";
+import { siteAssignsToPanelSideForDots } from "@/lib/research/bodyMapSiteSide";
 import {
   normalizeBodySites,
   type ResearchPaper,
@@ -54,9 +54,14 @@ export function handContributionHitIds(
   site: { side?: string },
   resolved: BodyMapDetailRegion,
   panel: HandDetailPanel,
+  distributionKey: string,
 ): string[] {
   if (resolved.parent !== "hand") return [];
-  if (!handSiteMatchesPanelSide(site, panel.side)) return [];
+  if (
+    !siteAssignsToPanelSideForDots(site, panel.side, distributionKey)
+  ) {
+    return [];
+  }
   const sub = resolved.subregion.trim().toLowerCase();
   if (sub === "general") return [];
   const surface = handSurfaceForSubregion(sub);
@@ -74,7 +79,12 @@ export function collectHandDetailTargetsByHit(
     for (let i = 0; i < sites.length; i++) {
       const site = sites[i]!;
       const resolved = resolveBodySite(site);
-      const hits = handContributionHitIds(site, resolved, panel);
+      const hits = handContributionHitIds(
+        site,
+        resolved,
+        panel,
+        `${paper.id}\0${resolved.parent}\0${resolved.subregion}\0${i}`,
+      );
       for (const hitId of hits) {
         let list = map.get(hitId);
         if (!list) {

@@ -3,6 +3,7 @@ import {
   type OtherFilterCategory,
   OTHER_FILTER_OPTIONS,
 } from "@/lib/research/otherFilterVocab";
+import type { BodySiteSide } from "@/lib/research/bodyMapSiteSide";
 import researchPapersJson from "@/data/researchPapers.json";
 
 export type {
@@ -33,6 +34,7 @@ export {
   bodyMapParentKeysForPaper,
   bodyMapPlacementRegionsForDetail,
   bodyMapRegionForPlacement,
+  countPapersWithBodySubregion,
   countPapersWithWholeBodyGeneral,
   ARM_DETAIL_HIT_IDS,
   armSiteMatchesPanelSide,
@@ -49,16 +51,22 @@ export {
   TORSO_DETAIL_HIT_IDS,
   paperMatchesArmFineSelection,
   paperMatchesArmFineSelectionForSide,
+  paperMatchesArmFineSelectionForSideDots,
   paperMatchesFootFineSelection,
   paperMatchesFootFineSelectionForSide,
+  paperMatchesFootFineSelectionForSideDots,
   paperMatchesLegFineSelection,
   paperMatchesLegFineSelectionForSide,
+  paperMatchesLegFineSelectionForSideDots,
   paperMatchesHandFineSelection,
   paperMatchesHandFineSelectionForPanel,
+  paperMatchesHandFineSelectionForPanelDots,
+  paperMatchesHandFineSelectionForSideDots,
   parentKeysForBodyMapAggregatedCounts,
   paperHasWholeBodyGeneralSite,
   paperMatchesBodyMapFineSelection,
   paperMatchesHeadFineSelection,
+  paperMatchesHeadFineSelectionForSideDots,
   paperMatchesNeckFineSelection,
   paperMatchesTorsoFineSelection,
   paperTouchesBodyMapParent,
@@ -66,13 +74,13 @@ export {
   WHOLE_BODY_GENERAL_COUNT_KEY,
 } from "@/lib/research/bodyMapRegionUtils";
 
-export type BodySiteSide = "left" | "right" | "unspecified";
+export type { BodySiteSide } from "@/lib/research/bodyMapSiteSide";
 
 /**
  * One measured / stimulated location on the body.
  * - `region` should be an L1 parent (`head`, `arm`, …) or `wholeBody`.
  * - `subregion` is the L2 slug (`forearm`, `palm`, …); use `general` when unknown.
- * - `side` is optional anatomical left/right when the paper reports it.
+ * - `side` is `left`, `right`, or `unspecified` when laterality is unknown.
  */
 export type BodySite = {
   region: string;
@@ -130,7 +138,10 @@ export function getResearchPaperById(id: string): ResearchPaper | undefined {
 }
 
 export function normalizeBodySites(paper: ResearchPaper): BodySite[] {
-  return paper.bodySites ?? [];
+  return (paper.bodySites ?? []).map((site) => ({
+    ...site,
+    side: site.side ?? "unspecified",
+  }));
 }
 
 export function paperFieldForCategory(

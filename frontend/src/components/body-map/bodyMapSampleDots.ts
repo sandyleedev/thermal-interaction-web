@@ -8,6 +8,10 @@ import {
 } from "@/lib/research/researchPapers";
 import type { BodyMapRegion } from "@/lib/research/bodyMapRegions";
 import { dotCohortPlanForResolvedSite } from "./bodyMapDotCohorts";
+import {
+  distributedSideForSite,
+  normalizeBodySiteSide,
+} from "@/lib/research/bodyMapSiteSide";
 
 /**
  * Shared placement resolution + sampling for the full-body map.
@@ -674,10 +678,8 @@ function leftRightIndicesFromSubpaths(subpaths: readonly BodySubpath[]): {
 }
 
 /**
- * One dot per matching body site on this coarse map part; bilateral unspecified → L+R.
- * Placement uses {@link BodyMapPlacementRegion} (e.g. arm-forearm vs arm-upper-arm), folded
- * onto merged SVG parts via {@link bodyMapRegionForPlacement}. Whole-body general is excluded
- * upstream (no silhouette dots).
+ * One dot per matching body site on this coarse map part; bilateral unspecified sites
+ * are distributed to one side (left or right), not duplicated on both.
  */
 export function collectHeatmapDotPlacementTargetsForCoarsePart(
   partId: BodyMapRegion,
@@ -700,7 +702,6 @@ export function collectHeatmapDotPlacementTargetsForCoarsePart(
         const plan = dotCohortPlanForResolvedSite(placement, labels, resolved);
 
         if (plan) {
-          const pairKey = `${paper.id}:${placement}:site${si}`;
           if (plan.kind === "single") {
             const idx = plan.indices.length > 0 ? plan.indices : [0];
             out.push({
@@ -709,30 +710,18 @@ export function collectHeatmapDotPlacementTargetsForCoarsePart(
             });
             continue;
           }
-          if (site.side === "left") {
-            out.push({
-              paperId: paper.id,
-              cohortSubpathIndices: [...plan.left],
-            });
-          } else if (site.side === "right") {
-            out.push({
-              paperId: paper.id,
-              cohortSubpathIndices: [...plan.right],
-            });
-          } else {
-            out.push(
-              {
-                paperId: paper.id,
-                cohortSubpathIndices: [...plan.left],
-                pairKey,
-              },
-              {
-                paperId: paper.id,
-                cohortSubpathIndices: [...plan.right],
-                pairKey,
-              },
-            );
-          }
+          const distributionKey = `${paper.id}:${placement}:site${si}`;
+          const normalizedSide = normalizeBodySiteSide(site.side);
+          const targetSide =
+            normalizedSide === "left" || normalizedSide === "right"
+              ? normalizedSide
+              : distributedSideForSite(distributionKey);
+          out.push({
+            paperId: paper.id,
+            cohortSubpathIndices: [
+              ...(targetSide === "left" ? plan.left : plan.right),
+            ],
+          });
           continue;
         }
 
@@ -740,25 +729,16 @@ export function collectHeatmapDotPlacementTargetsForCoarsePart(
           out.push({ paperId: paper.id });
           continue;
         }
-        const legacyPairKey = `${paper.id}:${placement}:site${si}`;
-        if (site.side === "left") {
-          out.push({ paperId: paper.id, subpathIndex: lr.leftIdx });
-        } else if (site.side === "right") {
-          out.push({ paperId: paper.id, subpathIndex: lr.rightIdx });
-        } else {
-          out.push(
-            {
-              paperId: paper.id,
-              subpathIndex: lr.leftIdx,
-              pairKey: legacyPairKey,
-            },
-            {
-              paperId: paper.id,
-              subpathIndex: lr.rightIdx,
-              pairKey: legacyPairKey,
-            },
-          );
-        }
+        const distributionKey = `${paper.id}:${placement}:site${si}`;
+        const normalizedSide = normalizeBodySiteSide(site.side);
+        const targetSide =
+          normalizedSide === "left" || normalizedSide === "right"
+            ? normalizedSide
+            : distributedSideForSite(distributionKey);
+        out.push({
+          paperId: paper.id,
+          subpathIndex: targetSide === "left" ? lr.leftIdx : lr.rightIdx,
+        });
       }
     }
   }

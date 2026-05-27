@@ -21,12 +21,19 @@ import {
   type HeadShapeSpec,
 } from "./headDetailSampleDots";
 import type { BodyMapVariant } from "../bodyMapVariant";
+import { BodyMapHoverTooltip } from "../shared/BodyMapHoverTooltip";
+import type { BodyMapTooltipState } from "../shared/BodyMapHoverTooltip";
+import {
+  headBilateralTooltip,
+  simpleBodyMapTooltip,
+} from "@/lib/research/bodyMapBilateralTooltips";
 import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
 import { countToPerceptualNormalized } from "../bodyMapVisualization";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   paperMatchesHeadFineSelection,
+  paperMatchesHeadFineSelectionForSideDots,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
 
@@ -69,7 +76,23 @@ function heatmapContrastT(t: number): number {
   return Math.pow(Math.min(1, Math.max(0, t)), 0.72);
 }
 
-type TooltipState = { label: string; count: number; x: number; y: number };
+type TooltipState = BodyMapTooltipState;
+
+const HEAD_LATERAL_HIT_IDS = new Set([
+  "left-ear",
+  "right-ear",
+  "left-cheek",
+  "right-cheek",
+]);
+
+function countHeadHit(papers: readonly ResearchPaper[], hitId: string): number {
+  if (HEAD_LATERAL_HIT_IDS.has(hitId)) {
+    return papers.filter((p) =>
+      paperMatchesHeadFineSelectionForSideDots(p, hitId),
+    ).length;
+  }
+  return papers.filter((p) => paperMatchesHeadFineSelection(p, hitId)).length;
+}
 
 /** Single asset: `head-subpart-outline-wide.svg` (head-face, head-outline, fine regions). */
 function parseHeadDetailWideSvg(svgText: string): {
@@ -229,7 +252,7 @@ export function HeadBodyMapDetail({
     const keys = ["general", ...HEAD_FILL_HIT_IDS] as const;
     const m: Record<string, number> = {};
     for (const k of keys) {
-      m[k] = papers.filter((p) => paperMatchesHeadFineSelection(p, k)).length;
+      m[k] = countHeadHit(papers, k);
     }
     return m;
   }, [papers, paperIdsKey]);
@@ -325,15 +348,24 @@ export function HeadBodyMapDetail({
     (hitId: string) => {
       return (e: PointerEvent<SVGElement>) => {
         setHoveredHitId(hitId);
-        setTooltip({
-          label: HEAD_HIT_LABELS[hitId] ?? hitId,
-          count: countsByHit[hitId] ?? 0,
-          x: e.clientX,
-          y: e.clientY,
-        });
+        const bilateral = headBilateralTooltip(
+          papers,
+          hitId,
+          e.clientX,
+          e.clientY,
+        );
+        setTooltip(
+          bilateral ??
+            simpleBodyMapTooltip(
+              HEAD_HIT_LABELS[hitId] ?? hitId,
+              countsByHit[hitId] ?? 0,
+              e.clientX,
+              e.clientY,
+            ),
+        );
       };
     },
-    [countsByHit],
+    [countsByHit, papers],
   );
 
   const handleMove = useCallback((e: PointerEvent<SVGElement>) => {
@@ -720,12 +752,14 @@ export function HeadBodyMapDetail({
               style={{ cursor: "pointer" }}
               onPointerEnter={(e) => {
                 setHoveredHitId("general");
-                setTooltip({
-                  label: HEAD_HIT_LABELS.general,
-                  count: countsByHit.general ?? 0,
-                  x: e.clientX,
-                  y: e.clientY,
-                });
+                setTooltip(
+                  simpleBodyMapTooltip(
+                    HEAD_HIT_LABELS.general,
+                    countsByHit.general ?? 0,
+                    e.clientX,
+                    e.clientY,
+                  ),
+                );
               }}
               onPointerMove={handleMove}
               onPointerLeave={clearHover}
@@ -750,21 +784,7 @@ export function HeadBodyMapDetail({
         />
       ) : null}
 
-      {tooltip ? (
-        <div
-          className="body-map-tooltip"
-          style={{
-            position: "fixed",
-            left: tooltip.x + 12,
-            top: tooltip.y + 12,
-            zIndex: 50,
-            pointerEvents: "none",
-          }}
-        >
-          <div className="body-map-tooltip-title">{tooltip.label}</div>
-          <div>{tooltip.count} papers</div>
-        </div>
-      ) : null}
+      <BodyMapHoverTooltip tooltip={tooltip} />
     </div>
   );
 }

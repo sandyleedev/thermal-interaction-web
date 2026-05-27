@@ -12,6 +12,12 @@ import {
   areaDotsLruTouch,
 } from "../shared/bodyMapAreaDotsCache";
 import { ArmDetailPanelMap } from "../arm/ArmDetailPanelMap";
+import { BodyMapHoverTooltip } from "../shared/BodyMapHoverTooltip";
+import type { BodyMapTooltipState } from "../shared/BodyMapHoverTooltip";
+import {
+  legBilateralTooltip,
+  simpleBodyMapTooltip,
+} from "@/lib/research/bodyMapBilateralTooltips";
 import {
   buildLegAreaDensityDotsByHitId,
   buildLegDotsByHitId,
@@ -24,7 +30,7 @@ import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   LEG_DETAIL_HIT_IDS,
-  paperMatchesLegFineSelection,
+  paperMatchesLegFineSelectionForSideDots,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
 
@@ -52,7 +58,7 @@ const LEG_HIT_LABELS: Record<string, string> = {
   "right-crural-region": "Crural region (right)",
 };
 
-type TooltipState = { label: string; count: number; x: number; y: number };
+type TooltipState = BodyMapTooltipState;
 
 type LegPanelParse = {
   silhouetteD: string;
@@ -126,7 +132,9 @@ function countsForPanel(
 ): Record<string, number> {
   const m: Record<string, number> = {};
   for (const k of LEG_COUNT_HIT_IDS) {
-    m[k] = papers.filter((p) => paperMatchesLegFineSelection(p, k)).length;
+    m[k] = papers.filter((p) =>
+      paperMatchesLegFineSelectionForSideDots(p, k),
+    ).length;
   }
   return m;
 }
@@ -262,15 +270,24 @@ export function LegBodyMapDetail({
     (hitId: string) => {
       return (e: PointerEvent<SVGElement>) => {
         setHoveredHitId(hitId);
-        setTooltip({
-          label: LEG_HIT_LABELS[hitId] ?? hitId,
-          count: countsByHit[hitId] ?? 0,
-          x: e.clientX,
-          y: e.clientY,
-        });
+        const bilateral = legBilateralTooltip(
+          papers,
+          hitId,
+          e.clientX,
+          e.clientY,
+        );
+        setTooltip(
+          bilateral ??
+            simpleBodyMapTooltip(
+              LEG_HIT_LABELS[hitId] ?? hitId,
+              countsByHit[hitId] ?? 0,
+              e.clientX,
+              e.clientY,
+            ),
+        );
       };
     },
-    [countsByHit],
+    [countsByHit, papers],
   );
 
   const handleMove = useCallback((e: PointerEvent<SVGElement>) => {
@@ -307,12 +324,14 @@ export function LegBodyMapDetail({
   const handleGeneralRingEnter = useCallback(
     (e: PointerEvent<SVGElement>) => {
       setHoveredHitId("general");
-      setTooltip({
-        label: LEG_HIT_LABELS.general,
-        count: countsByHit.general ?? 0,
-        x: e.clientX,
-        y: e.clientY,
-      });
+      setTooltip(
+        simpleBodyMapTooltip(
+          LEG_HIT_LABELS.general,
+          countsByHit.general ?? 0,
+          e.clientX,
+          e.clientY,
+        ),
+      );
     },
     [countsByHit],
   );
@@ -393,21 +412,7 @@ export function LegBodyMapDetail({
         />
       ) : null}
 
-      {tooltip ? (
-        <div
-          className="body-map-tooltip"
-          style={{
-            position: "fixed",
-            left: tooltip.x + 12,
-            top: tooltip.y + 12,
-            zIndex: 50,
-            pointerEvents: "none",
-          }}
-        >
-          <div className="body-map-tooltip-title">{tooltip.label}</div>
-          <div>{tooltip.count} papers</div>
-        </div>
-      ) : null}
+      <BodyMapHoverTooltip tooltip={tooltip} />
     </div>
   );
 }

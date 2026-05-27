@@ -17,11 +17,11 @@ import {
   type OtherFilterSelections,
   type RangeFilterOptions,
 } from "@/lib/research/filterResearchPapers";
+import type { BodySiteSide } from "@/lib/research/bodyMapSiteSide";
 import {
   type BodyMapChipSelection,
   bodyMapChipKey,
-  getSelectableSubpartIds,
-  normalizeBodyMapSubpart,
+  getSelectableChipsForParent,
 } from "@/lib/research/bodyMapChipSelection";
 import {
   ALL_RESEARCH_PAPERS,
@@ -69,14 +69,17 @@ type ResearchFilterContextValue = {
   toggleBodyMapChip: (
     parent: BodyMapParentRegion,
     subpart?: string | null,
+    side?: Extract<BodySiteSide, "left" | "right">,
   ) => void;
   removeBodyMapChip: (
     parent: BodyMapParentRegion,
     subpart?: string | null,
+    side?: Extract<BodySiteSide, "left" | "right">,
   ) => void;
   isBodyMapChipSelected: (
     parent: BodyMapParentRegion,
     subpart?: string | null,
+    side?: Extract<BodySiteSide, "left" | "right">,
   ) => boolean;
   removeAllBodyMapChipsForParent: (parent: BodyMapParentRegion) => void;
   areAllBodyMapSubpartsSelected: (parent: BodyMapParentRegion) => boolean;
@@ -209,16 +212,24 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const isBodyMapChipSelected = useCallback(
-    (parent: BodyMapParentRegion, subpart?: string | null) => {
-      const key = bodyMapChipKey({ parent, subpart });
+    (
+      parent: BodyMapParentRegion,
+      subpart?: string | null,
+      side?: Extract<BodySiteSide, "left" | "right">,
+    ) => {
+      const key = bodyMapChipKey({ parent, subpart, side });
       return selectedBodyMapChips.some((c) => bodyMapChipKey(c) === key);
     },
     [selectedBodyMapChips],
   );
 
   const removeBodyMapChip = useCallback(
-    (parent: BodyMapParentRegion, subpart?: string | null) => {
-      const key = bodyMapChipKey({ parent, subpart });
+    (
+      parent: BodyMapParentRegion,
+      subpart?: string | null,
+      side?: Extract<BodySiteSide, "left" | "right">,
+    ) => {
+      const key = bodyMapChipKey({ parent, subpart, side });
       setSelectedBodyMapChips((prev) =>
         prev.filter((c) => bodyMapChipKey(c) !== key),
       );
@@ -227,14 +238,18 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
   );
 
   const toggleBodyMapChip = useCallback(
-    (parent: BodyMapParentRegion, subpart?: string | null) => {
-      const key = bodyMapChipKey({ parent, subpart });
+    (
+      parent: BodyMapParentRegion,
+      subpart?: string | null,
+      side?: Extract<BodySiteSide, "left" | "right">,
+    ) => {
+      const key = bodyMapChipKey({ parent, subpart, side });
       setSelectedBodyMapChips((prev) => {
         const idx = prev.findIndex((c) => bodyMapChipKey(c) === key);
         if (idx >= 0) {
           return [...prev.slice(0, idx), ...prev.slice(idx + 1)];
         }
-        return [...prev, { parent, subpart: subpart ?? undefined }];
+        return [...prev, { parent, subpart: subpart ?? undefined, side }];
       });
     },
     [],
@@ -249,26 +264,22 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
 
   const areAllBodyMapSubpartsSelected = useCallback(
     (parent: BodyMapParentRegion) => {
-      const ids = getSelectableSubpartIds(parent);
-      return ids.every((id) =>
-        selectedBodyMapChips.some(
-          (c) =>
-            c.parent === parent &&
-            normalizeBodyMapSubpart(c.subpart) === id.toLowerCase(),
-        ),
+      const chips = getSelectableChipsForParent(parent);
+      return chips.every((chip) =>
+        selectedBodyMapChips.some((c) => bodyMapChipKey(c) === bodyMapChipKey(chip)),
       );
     },
     [selectedBodyMapChips],
   );
 
   const selectAllBodyMapSubparts = useCallback((parent: BodyMapParentRegion) => {
-    const ids = getSelectableSubpartIds(parent);
+    const chips = getSelectableChipsForParent(parent);
     setSelectedBodyMapChips((prev) => {
       const next = [...prev];
-      for (const subpart of ids) {
-        const key = bodyMapChipKey({ parent, subpart });
+      for (const chip of chips) {
+        const key = bodyMapChipKey(chip);
         if (!next.some((c) => bodyMapChipKey(c) === key)) {
-          next.push({ parent, subpart });
+          next.push(chip);
         }
       }
       return next;

@@ -98,7 +98,7 @@ function buildBodyPartsForHitTargets(bodyParts: BodyPart[]): BodyPart[] {
 type BodyMapProps = {
   paperCountsByPart?: Record<string, number>;
   /**
-   * Papers in the current filter; Dot view places one dot per body-site hit (bilateral unspecified → L+R).
+   * Papers in the current filter; Dot view places one dot per body-site hit (bilateral unspecified → distributed L/R).
    */
   heatmapDotPapers?: readonly ResearchPaper[];
   /**

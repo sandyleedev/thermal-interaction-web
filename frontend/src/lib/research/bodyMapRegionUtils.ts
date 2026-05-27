@@ -13,6 +13,12 @@ import {
   type BodyMapParentRegion,
   type BodyMapPlacementRegion,
 } from "@/lib/research/bodyMapRegions";
+import {
+  normalizeBodySiteSide,
+  siteAssignsToPanelSideForDots,
+  subregionMatches,
+  type BodySiteSide,
+} from "@/lib/research/bodyMapSiteSide";
 
 export type {
   BodyMapDetailRegion,
@@ -96,6 +102,32 @@ export function countPapersWithWholeBodyGeneral(
   return n;
 }
 
+export function paperHasBodySubregion(
+  paper: BodySitesCarrier,
+  parent: BodyMapParentRegion,
+  subregion: string,
+): boolean {
+  for (const s of paper.bodySites ?? []) {
+    const resolved = resolveBodySite(s);
+    if (resolved.parent !== parent) continue;
+    if (!subregionMatches(resolved.subregion, subregion)) continue;
+    return true;
+  }
+  return false;
+}
+
+export function countPapersWithBodySubregion(
+  papers: readonly BodySitesCarrier[],
+  parent: BodyMapParentRegion,
+  subregion: string,
+): number {
+  let n = 0;
+  for (const p of papers) {
+    if (paperHasBodySubregion(p, parent, subregion)) n += 1;
+  }
+  return n;
+}
+
 /**
  * Which `BodyMapPlacementRegion`s receive a dot for this detail site on the L1 map.
  * Whole-body sites do not place per-region dots (outline + tint / ring handle whole-body UX).
@@ -165,6 +197,7 @@ export function bodyMapParentKeysForPaper(
 
 /** Minimal paper shape so this module stays free of circular imports with `researchPapers.ts`. */
 export type BodySitesCarrier = {
+  id?: string;
   bodySites?: readonly { region: string; subregion: string; side?: string }[];
 };
 
@@ -274,15 +307,66 @@ const HAND_INNER_HIT_ID_SET = new Set<string>(HAND_INNER_DETAIL_HIT_IDS);
 
 const HAND_OUTER_HIT_ID_SET = new Set<string>(HAND_OUTER_DETAIL_HIT_IDS);
 
-/** True when a body site's optional `side` should appear on the given hand panel. */
+/** True when a body site's optional `side` should appear on the given hand panel (filters / chips). */
 export function handSiteMatchesPanelSide(
   site: { side?: string },
   panelSide: HandDetailSide,
 ): boolean {
-  const sd = (site.side ?? "").trim().toLowerCase();
+  const sd = normalizeBodySiteSide(site.side);
   if (sd === panelSide) return true;
-  if (sd === "" || sd === "unspecified") return true;
+  if (sd === "unspecified") return true;
   return false;
+}
+
+function handExactSubForSideDots(
+  paper: BodySitesCarrier,
+  sub: string,
+  panelSide: HandDetailSide,
+): boolean {
+  const sites = paper.bodySites ?? [];
+  for (let i = 0; i < sites.length; i++) {
+    const s = sites[i]!;
+    const resolved = resolveBodySite(s);
+    if (resolved.parent !== "hand") continue;
+    if (!subregionMatches(resolved.subregion, sub)) continue;
+    if (
+      !siteAssignsToPanelSideForDots(
+        s,
+        panelSide,
+        dotDistributionKey(paper, resolved, i),
+      )
+    ) {
+      continue;
+    }
+    return true;
+  }
+  return false;
+}
+
+/** Hand L2 dot placement on one panel (unspecified sites distributed L/R). */
+export function paperMatchesHandFineSelectionForPanelDots(
+  paper: BodySitesCarrier,
+  hit: string,
+  panel: HandDetailPanel,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  if (!handHitMatchesPanelSurface(h, panel.surface)) return false;
+  switch (h) {
+    case "general":
+      return handExactSubForSideDots(paper, "general", panel.side);
+    case "palm":
+      return handExactSubForSideDots(paper, "palm", panel.side);
+    case "fingertips":
+      return handExactSubForSideDots(paper, "fingertips", panel.side);
+    case "fingers":
+      return handExactSubForSideDots(paper, "fingers", panel.side);
+    case "thenar-eminence":
+      return handExactSubForSideDots(paper, "thenar-eminence", panel.side);
+    case "hand-back":
+      return handExactSubForSideDots(paper, "hand-back", panel.side);
+    default:
+      return false;
+  }
 }
 
 function handHitMatchesPanelSurface(
@@ -295,22 +379,6 @@ function handHitMatchesPanelSurface(
   return HAND_OUTER_HIT_ID_SET.has(h);
 }
 
-function handExactSubForPanel(
-  paper: BodySitesCarrier,
-  sub: string,
-  panel: HandDetailPanel,
-): boolean {
-  const sl = sub.toLowerCase();
-  for (const s of paper.bodySites ?? []) {
-    const resolved = resolveBodySite(s);
-    if (resolved.parent !== "hand") continue;
-    if (resolved.subregion.trim().toLowerCase() !== sl) continue;
-    if (!handSiteMatchesPanelSide(s, panel.side)) continue;
-    return true;
-  }
-  return false;
-}
-
 /**
  * Hand L2 zoom on one panel: `general` matches only `hand → general` sites for that side.
  * Inner panels count palm / fingertips / fingers / thenar-eminence; outer counts hand-back.
@@ -320,27 +388,25 @@ export function paperMatchesHandFineSelectionForPanel(
   hit: string,
   panel: HandDetailPanel,
 ): boolean {
-  const h = hit.trim().toLowerCase();
-  if (!handHitMatchesPanelSurface(h, panel.surface)) return false;
-  switch (h) {
-    case "general":
-      return handExactSubForPanel(paper, "general", panel);
-    case "palm":
-      return handExactSubForPanel(paper, "palm", panel);
-    case "fingertips":
-      return handExactSubForPanel(paper, "fingertips", panel);
-    case "fingers":
-      return handExactSubForPanel(paper, "fingers", panel);
-    case "thenar-eminence":
-      return handExactSubForPanel(paper, "thenar-eminence", panel);
-    case "hand-back":
-      return handExactSubForPanel(paper, "hand-back", panel);
-    default:
-      return false;
-  }
+  return paperMatchesHandFineSelectionForPanelDots(paper, hit, panel);
 }
 
-/** Hand L2 zoom (any panel): used for filter chips and aggregate counts. */
+/** Hand L2 dot placement on one side (either surface panel). */
+export function paperMatchesHandFineSelectionForSideDots(
+  paper: BodySitesCarrier,
+  hit: string,
+  side: HandDetailSide,
+): boolean {
+  const panels: HandDetailPanel[] = [
+    { side, surface: "inner" },
+    { side, surface: "outer" },
+  ];
+  return panels.some((panel) =>
+    paperMatchesHandFineSelectionForPanelDots(paper, hit, panel),
+  );
+}
+
+/** Hand L2 zoom (any panel): used for aggregate counts and side-agnostic chips. */
 export function paperMatchesHandFineSelection(
   paper: BodySitesCarrier,
   hit: string,
@@ -368,31 +434,59 @@ const FOOT_DETAIL_HIT_ID_SET = new Set<string>([
   "general",
 ]);
 
-/** True when a body site's optional `side` should appear on the given foot panel. */
+/** True when a body site's optional `side` should appear on the given foot panel (filters / chips). */
 export function footSiteMatchesPanelSide(
   site: { side?: string },
   panelSide: FootDetailSide,
 ): boolean {
-  const sd = (site.side ?? "").trim().toLowerCase();
+  const sd = normalizeBodySiteSide(site.side);
   if (sd === panelSide) return true;
-  if (sd === "" || sd === "unspecified") return true;
+  if (sd === "unspecified") return true;
   return false;
 }
 
-function footExactSubForSide(
+function footExactSubForSideDots(
   paper: BodySitesCarrier,
   sub: string,
   panelSide: FootDetailSide,
 ): boolean {
-  const sl = sub.toLowerCase();
-  for (const s of paper.bodySites ?? []) {
+  const sites = paper.bodySites ?? [];
+  for (let i = 0; i < sites.length; i++) {
+    const s = sites[i]!;
     const resolved = resolveBodySite(s);
     if (resolved.parent !== "foot") continue;
-    if (resolved.subregion.trim().toLowerCase() !== sl) continue;
-    if (!footSiteMatchesPanelSide(s, panelSide)) continue;
+    if (!subregionMatches(resolved.subregion, sub)) continue;
+    if (
+      !siteAssignsToPanelSideForDots(
+        s,
+        panelSide,
+        dotDistributionKey(paper, resolved, i),
+      )
+    ) {
+      continue;
+    }
     return true;
   }
   return false;
+}
+
+/** Foot L2 dot placement on one panel (unspecified sites distributed L/R). */
+export function paperMatchesFootFineSelectionForSideDots(
+  paper: BodySitesCarrier,
+  hit: string,
+  panelSide: FootDetailSide,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  switch (h) {
+    case "general":
+      return footExactSubForSideDots(paper, "general", panelSide);
+    case "sole":
+      return footExactSubForSideDots(paper, "sole", panelSide);
+    case "toes":
+      return footExactSubForSideDots(paper, "toes", panelSide);
+    default:
+      return false;
+  }
 }
 
 /**
@@ -403,17 +497,7 @@ export function paperMatchesFootFineSelectionForSide(
   hit: string,
   panelSide: FootDetailSide,
 ): boolean {
-  const h = hit.trim().toLowerCase();
-  switch (h) {
-    case "general":
-      return footExactSubForSide(paper, "general", panelSide);
-    case "sole":
-      return footExactSubForSide(paper, "sole", panelSide);
-    case "toes":
-      return footExactSubForSide(paper, "toes", panelSide);
-    default:
-      return false;
-  }
+  return paperMatchesFootFineSelectionForSideDots(paper, hit, panelSide);
 }
 
 /** Foot L2 zoom (either side): used for filter chips and aggregate counts. */
@@ -444,31 +528,71 @@ const LEG_DETAIL_HIT_ID_SET = new Set<string>([
   "general",
 ]);
 
-/** True when a body site's optional `side` should appear on the given leg panel. */
+/** True when a body site's optional `side` should appear on the given leg panel (filters / chips). */
 export function legSiteMatchesPanelSide(
   site: { side?: string },
   panelSide: LegDetailSide,
 ): boolean {
-  const sd = (site.side ?? "").trim().toLowerCase();
+  const sd = normalizeBodySiteSide(site.side);
   if (sd === panelSide) return true;
-  if (sd === "" || sd === "unspecified") return true;
+  if (sd === "unspecified") return true;
   return false;
 }
 
-function legExactSubForSide(
+function legExactSubForSideDots(
   paper: BodySitesCarrier,
   sub: string,
   panelSide: LegDetailSide,
 ): boolean {
-  const sl = sub.toLowerCase();
-  for (const s of paper.bodySites ?? []) {
+  const sites = paper.bodySites ?? [];
+  for (let i = 0; i < sites.length; i++) {
+    const s = sites[i]!;
     const resolved = resolveBodySite(s);
     if (resolved.parent !== "leg") continue;
-    if (resolved.subregion.trim().toLowerCase() !== sl) continue;
-    if (!legSiteMatchesPanelSide(s, panelSide)) continue;
+    if (!subregionMatches(resolved.subregion, sub)) continue;
+    if (
+      !siteAssignsToPanelSideForDots(
+        s,
+        panelSide,
+        dotDistributionKey(paper, resolved, i),
+      )
+    ) {
+      continue;
+    }
     return true;
   }
   return false;
+}
+
+/** Leg L2 dot placement for one lateral hit id (unspecified sites distributed L/R). */
+export function paperMatchesLegFineSelectionForSideDots(
+  paper: BodySitesCarrier,
+  hit: string,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  switch (h) {
+    case "general":
+      return (
+        legExactSubForSideDots(paper, "general", "left") ||
+        legExactSubForSideDots(paper, "general", "right")
+      );
+    case "left-thigh":
+      return legExactSubForSideDots(paper, "thigh", "left");
+    case "right-thigh":
+      return legExactSubForSideDots(paper, "thigh", "right");
+    case "left-crural-region":
+      return (
+        legExactSubForSideDots(paper, "crural-region", "left") ||
+        legExactSubForSideDots(paper, "crural", "left")
+      );
+    case "right-crural-region":
+      return (
+        legExactSubForSideDots(paper, "crural-region", "right") ||
+        legExactSubForSideDots(paper, "crural", "right")
+      );
+    default:
+      return false;
+  }
 }
 
 /**
@@ -482,13 +606,14 @@ export function paperMatchesLegFineSelectionForSide(
   const h = hit.trim().toLowerCase();
   switch (h) {
     case "general":
-      return legExactSubForSide(paper, "general", panelSide);
+      return legExactSubForSideDots(paper, "general", panelSide);
     case "thigh":
-      return legExactSubForSide(paper, "thigh", panelSide);
+      return legExactSubForSideDots(paper, "thigh", panelSide);
     case "crural-region":
+    case "crural":
       return (
-        legExactSubForSide(paper, "crural-region", panelSide) ||
-        legExactSubForSide(paper, "crural", panelSide)
+        legExactSubForSideDots(paper, "crural-region", panelSide) ||
+        legExactSubForSideDots(paper, "crural", panelSide)
       );
     default:
       return false;
@@ -535,32 +660,124 @@ export function paperMatchesLegFineSelection(
   }
 }
 
-/** True when a body site's optional `side` should appear on the given arm panel. */
+/** True when a body site's optional `side` should appear on the given arm panel (filters / chips). */
 export function armSiteMatchesPanelSide(
   site: { side?: string },
   panelSide: ArmDetailSide,
 ): boolean {
-  const sd = (site.side ?? "").trim().toLowerCase();
+  const sd = normalizeBodySiteSide(site.side);
   if (sd === panelSide) return true;
-  if (sd === "" || sd === "unspecified") return true;
+  if (sd === "unspecified") return true;
   return false;
 }
 
-function headEarOrCheekHit(
+function dotDistributionKey(
   paper: BodySitesCarrier,
-  sub: "ear" | "cheek",
-  lateral: "left" | "right",
+  resolved: BodyMapDetailRegion,
+  siteIndex: number,
+  siteIndexPrefix = "",
+): string {
+  const id = paperIdOf(paper);
+  const indexToken = siteIndexPrefix
+    ? `${siteIndexPrefix}${siteIndex}`
+    : String(siteIndex);
+  return `${id}\0${resolved.parent}\0${resolved.subregion}\0${indexToken}`;
+}
+
+function paperIdOf(paper: BodySitesCarrier): string {
+  return "id" in paper && typeof paper.id === "string" ? paper.id : "";
+}
+
+function armExactSubForSideDots(
+  paper: BodySitesCarrier,
+  sub: string,
+  panelSide: ArmDetailSide,
 ): boolean {
-  for (const s of paper.bodySites ?? []) {
+  const sites = paper.bodySites ?? [];
+  for (let i = 0; i < sites.length; i++) {
+    const s = sites[i]!;
     const resolved = resolveBodySite(s);
-    if (resolved.parent !== "head" || resolved.subregion.trim().toLowerCase() !== sub) {
+    if (resolved.parent !== "arm") continue;
+    if (!subregionMatches(resolved.subregion, sub)) continue;
+    if (
+      !siteAssignsToPanelSideForDots(
+        s,
+        panelSide,
+        dotDistributionKey(paper, resolved, i),
+      )
+    ) {
       continue;
     }
-    const sd = (s.side ?? "").trim().toLowerCase();
-    if (sd === lateral) return true;
-    if (sd === "" || sd === "unspecified") return true;
+    return true;
   }
   return false;
+}
+
+/** Arm L2 dot placement on one panel (unspecified sites distributed L/R). */
+export function paperMatchesArmFineSelectionForSideDots(
+  paper: BodySitesCarrier,
+  hit: string,
+  panelSide: ArmDetailSide,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  switch (h) {
+    case "general":
+      return armExactSubForSideDots(paper, "general", panelSide);
+    case "upper-arm":
+      return (
+        armExactSubForSideDots(paper, "upper-arm", panelSide) ||
+        armExactSubForSideDots(paper, "upper arm", panelSide)
+      );
+    case "forearm":
+      return armExactSubForSideDots(paper, "forearm", panelSide);
+    default:
+      return false;
+  }
+}
+
+function headExactSubForSideDots(
+  paper: BodySitesCarrier,
+  sub: string,
+  lateral: "left" | "right",
+): boolean {
+  const sites = paper.bodySites ?? [];
+  for (let i = 0; i < sites.length; i++) {
+    const s = sites[i]!;
+    const resolved = resolveBodySite(s);
+    if (resolved.parent !== "head") continue;
+    if (!subregionMatches(resolved.subregion, sub)) continue;
+    if (
+      !siteAssignsToPanelSideForDots(
+        s,
+        lateral,
+        dotDistributionKey(paper, resolved, i, "site"),
+      )
+    ) {
+      continue;
+    }
+    return true;
+  }
+  return false;
+}
+
+/** Head L2 dot placement for one lateral hit id (unspecified sites distributed L/R). */
+export function paperMatchesHeadFineSelectionForSideDots(
+  paper: BodySitesCarrier,
+  hit: string,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  switch (h) {
+    case "left-ear":
+      return headExactSubForSideDots(paper, "ear", "left");
+    case "right-ear":
+      return headExactSubForSideDots(paper, "ear", "right");
+    case "left-cheek":
+      return headExactSubForSideDots(paper, "cheek", "left");
+    case "right-cheek":
+      return headExactSubForSideDots(paper, "cheek", "right");
+    default:
+      return false;
+  }
 }
 
 function headExactSub(paper: BodySitesCarrier, sub: string): boolean {
@@ -594,13 +811,13 @@ export function paperMatchesHeadFineSelection(
     case "tongue":
       return headExactSub(paper, "tongue");
     case "left-ear":
-      return headEarOrCheekHit(paper, "ear", "left");
+      return headExactSubForSideDots(paper, "ear", "left");
     case "right-ear":
-      return headEarOrCheekHit(paper, "ear", "right");
+      return headExactSubForSideDots(paper, "ear", "right");
     case "left-cheek":
-      return headEarOrCheekHit(paper, "cheek", "left");
+      return headExactSubForSideDots(paper, "cheek", "left");
     case "right-cheek":
-      return headEarOrCheekHit(paper, "cheek", "right");
+      return headExactSubForSideDots(paper, "cheek", "right");
     default:
       return false;
   }
@@ -672,22 +889,6 @@ export function paperMatchesTorsoFineSelection(
   }
 }
 
-function armExactSubForSide(
-  paper: BodySitesCarrier,
-  sub: string,
-  panelSide: ArmDetailSide,
-): boolean {
-  const sl = sub.toLowerCase();
-  for (const s of paper.bodySites ?? []) {
-    const resolved = resolveBodySite(s);
-    if (resolved.parent !== "arm") continue;
-    if (resolved.subregion.trim().toLowerCase() !== sl) continue;
-    if (!armSiteMatchesPanelSide(s, panelSide)) continue;
-    return true;
-  }
-  return false;
-}
-
 /**
  * Arm L2 zoom on one panel: `general` matches only `arm → general` sites for that side.
  */
@@ -696,20 +897,7 @@ export function paperMatchesArmFineSelectionForSide(
   hit: string,
   panelSide: ArmDetailSide,
 ): boolean {
-  const h = hit.trim().toLowerCase();
-  switch (h) {
-    case "general":
-      return armExactSubForSide(paper, "general", panelSide);
-    case "upper-arm":
-      return (
-        armExactSubForSide(paper, "upper-arm", panelSide) ||
-        armExactSubForSide(paper, "upper arm", panelSide)
-      );
-    case "forearm":
-      return armExactSubForSide(paper, "forearm", panelSide);
-    default:
-      return false;
-  }
+  return paperMatchesArmFineSelectionForSideDots(paper, hit, panelSide);
 }
 
 /** Arm L2 zoom (any side): used for filter chips and aggregate counts. */
@@ -731,6 +919,7 @@ export function paperMatchesBodyMapFineSelection(
   paper: BodySitesCarrier,
   parent: BodyMapParentRegion,
   fineSubregion: string,
+  side?: Extract<BodySiteSide, "left" | "right">,
 ): boolean {
   const needle = fineSubregion.trim().toLowerCase();
   if (!needle) return paperTouchesBodyMapParent(paper, parent);
@@ -748,14 +937,23 @@ export function paperMatchesBodyMapFineSelection(
   }
 
   if (parent === "arm" && ARM_DETAIL_HIT_ID_SET.has(needle)) {
+    if (side) {
+      return paperMatchesArmFineSelectionForSideDots(paper, needle, side);
+    }
     return paperMatchesArmFineSelection(paper, needle);
   }
 
   if (parent === "hand" && HAND_DETAIL_HIT_ID_SET.has(needle)) {
+    if (side) {
+      return paperMatchesHandFineSelectionForSideDots(paper, needle, side);
+    }
     return paperMatchesHandFineSelection(paper, needle);
   }
 
   if (parent === "foot" && FOOT_DETAIL_HIT_ID_SET.has(needle)) {
+    if (side) {
+      return paperMatchesFootFineSelectionForSideDots(paper, needle, side);
+    }
     return paperMatchesFootFineSelection(paper, needle);
   }
 

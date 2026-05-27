@@ -1,6 +1,10 @@
 import type { BodyMapDetailRegion } from "@/lib/research/bodyMapRegions";
 import { resolveBodySite } from "@/lib/research/bodyMapRegionUtils";
 import {
+  normalizeBodySiteSide,
+  siteAssignsToLateralHitForDots,
+} from "@/lib/research/bodyMapSiteSide";
+import {
   normalizeBodySites,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
@@ -44,22 +48,31 @@ function legDotSampleOptions(hitId: string): HeadShapeSampleOptions {
 export function legContributionHitIds(
   site: { side?: string },
   resolved: BodyMapDetailRegion,
+  distributionKey: string,
 ): string[] {
   if (resolved.parent !== "leg") return [];
   const sub = resolved.subregion.trim().toLowerCase();
-  const sd = (site.side ?? "").trim().toLowerCase();
+  const normalized = normalizeBodySiteSide(site.side);
   switch (sub) {
     case "general":
       return [];
     case "thigh":
-      if (sd === "left") return ["left-thigh"];
-      if (sd === "right") return ["right-thigh"];
-      return ["left-thigh", "right-thigh"];
+      if (normalized === "left") return ["left-thigh"];
+      if (normalized === "right") return ["right-thigh"];
+      return [
+        siteAssignsToLateralHitForDots(site, "left", distributionKey)
+          ? "left-thigh"
+          : "right-thigh",
+      ];
     case "crural":
     case "crural-region":
-      if (sd === "left") return ["left-crural-region"];
-      if (sd === "right") return ["right-crural-region"];
-      return ["left-crural-region", "right-crural-region"];
+      if (normalized === "left") return ["left-crural-region"];
+      if (normalized === "right") return ["right-crural-region"];
+      return [
+        siteAssignsToLateralHitForDots(site, "left", distributionKey)
+          ? "left-crural-region"
+          : "right-crural-region",
+      ];
     default:
       return [];
   }
@@ -74,7 +87,11 @@ export function collectLegDetailTargetsByHit(
     for (let i = 0; i < sites.length; i++) {
       const site = sites[i]!;
       const resolved = resolveBodySite(site);
-      const hits = legContributionHitIds(site, resolved);
+      const hits = legContributionHitIds(
+        site,
+        resolved,
+        `${paper.id}\0${resolved.parent}\0${resolved.subregion}\0${i}`,
+      );
       for (const hitId of hits) {
         let list = map.get(hitId);
         if (!list) {

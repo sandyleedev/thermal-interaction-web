@@ -12,6 +12,12 @@ import {
   areaDotsLruTouch,
 } from "../shared/bodyMapAreaDotsCache";
 import { ArmDetailPanelMap } from "../arm/ArmDetailPanelMap";
+import { BodyMapHoverTooltip } from "../shared/BodyMapHoverTooltip";
+import type { BodyMapTooltipState } from "../shared/BodyMapHoverTooltip";
+import {
+  handBilateralTooltip,
+  simpleBodyMapTooltip,
+} from "@/lib/research/bodyMapBilateralTooltips";
 import {
   buildHandAreaDensityDotsByHitId,
   buildHandDotsByHitId,
@@ -26,7 +32,7 @@ import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   HAND_INNER_DETAIL_HIT_IDS,
   HAND_OUTER_DETAIL_HIT_IDS,
-  paperMatchesHandFineSelectionForPanel,
+  paperMatchesHandFineSelectionForPanelDots,
   type HandDetailPanel,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
@@ -52,7 +58,7 @@ const HAND_HIT_LABELS: Record<string, string> = {
   "hand-back": "Hand back",
 };
 
-type TooltipState = { label: string; count: number; x: number; y: number };
+type TooltipState = BodyMapTooltipState;
 
 type HandSurfaceParse = {
   silhouetteD: string;
@@ -217,7 +223,7 @@ function countsForPanel(
   }
   for (const k of Object.keys(m)) {
     m[k] = papers.filter((p) =>
-      paperMatchesHandFineSelectionForPanel(p, k, panel),
+      paperMatchesHandFineSelectionForPanelDots(p, k, panel),
     ).length;
   }
   return m;
@@ -433,16 +439,27 @@ export function HandBodyMapDetail({
       return (hitId: string) => {
         return (e: PointerEvent<SVGElement>) => {
           setHoveredKey(`${panelKey(panel)}:${hitId}`);
-          setTooltip({
-            label: HAND_HIT_LABELS[hitId] ?? hitId,
-            count: countsByPanel[panelKey(panel)]?.[hitId] ?? 0,
-            x: e.clientX,
-            y: e.clientY,
-          });
+          setTooltip(
+            hitId === "general"
+              ? simpleBodyMapTooltip(
+                  HAND_HIT_LABELS.general,
+                  countsByPanel[panelKey(panel)]?.general ?? 0,
+                  e.clientX,
+                  e.clientY,
+                )
+              : handBilateralTooltip(
+                  papers,
+                  hitId,
+                  panel,
+                  HAND_HIT_LABELS[hitId] ?? hitId,
+                  e.clientX,
+                  e.clientY,
+                ),
+          );
         };
       };
     },
-    [countsByPanel],
+    [countsByPanel, papers],
   );
 
   const handleMove = useCallback((e: PointerEvent<SVGElement>) => {
@@ -452,22 +469,25 @@ export function HandBodyMapDetail({
   }, []);
 
   const toggleHit = useCallback(
-    (hitId: string) => {
-      toggleBodyMapChip("hand", hitId);
+    (panel: HandDetailPanel) => {
+      return (hitId: string) => {
+        toggleBodyMapChip("hand", hitId, panel.side);
+      };
     },
     [toggleBodyMapChip],
   );
 
   const isHitSelected = useCallback(
-    (hitId: string) => isBodyMapChipSelected("hand", hitId),
+    (panel: HandDetailPanel) => {
+      return (hitId: string) =>
+        isBodyMapChipSelected("hand", hitId, panel.side);
+    },
     [isBodyMapChipSelected],
   );
 
   const generalRingHovered = HAND_PANELS.some(
     (panel) => hoveredKey === `${panelKey(panel)}:general`,
   );
-  const generalRingActive =
-    generalRingHovered || isBodyMapChipSelected("hand", "general");
 
   const suppressSelectedFineFillWhileGeneralHover =
     generalRingHovered &&
@@ -482,15 +502,17 @@ export function HandBodyMapDetail({
     (panel: HandDetailPanel) => {
       return (e: PointerEvent<SVGElement>) => {
         setHoveredKey(`${panelKey(panel)}:general`);
-        setTooltip({
-          label: HAND_HIT_LABELS.general,
-          count: countsByPanel[panelKey(panel)]?.general ?? 0,
-          x: e.clientX,
-          y: e.clientY,
-        });
+        setTooltip(
+          simpleBodyMapTooltip(
+            HAND_HIT_LABELS.general,
+            countsByPanel[panelKey(panel)]?.general ?? 0,
+            e.clientX,
+            e.clientY,
+          ),
+        );
       };
     },
-    [countsByPanel],
+    [countsByPanel, papers],
   );
 
   const mapsReady =
@@ -513,13 +535,9 @@ export function HandBodyMapDetail({
     rawDotsDensityCellSize: HAND_RAW_DOTS_DENSITY_CELL_SIZE,
     rawDotsDensityThresholds: HAND_RAW_DOTS_DENSITY_THRESHOLDS,
     countColorDomain,
-    isHitSelected,
     suppressSelectedFineFillWhileGeneralHover,
     onPointerMove: handleMove,
     onPointerLeave: clearHover,
-    onToggleHit: toggleHit,
-    onGeneralRingClick: () => toggleBodyMapChip("hand", "general"),
-    generalRingActive,
     generalRingHovered,
   };
 
@@ -532,6 +550,9 @@ export function HandBodyMapDetail({
       ? (hoveredKey.slice(key.length + 1) ?? null)
       : null;
     const sideLabel = PANEL_LABELS[key] ?? key;
+    const panelGeneralActive =
+      hoveredKey === `${key}:general` ||
+      isBodyMapChipSelected("hand", "general", panel.side);
 
     return (
       <ArmDetailPanelMap
@@ -551,8 +572,14 @@ export function HandBodyMapDetail({
         hoveredHitId={hoveredHitId}
         horizontalFlip={panel.side === "right"}
         showGeneralRing={panel.surface === "inner"}
+        isHitSelected={isHitSelected(panel)}
+        onToggleHit={toggleHit(panel)}
         onFillHitEnter={handleFillHitEnter(panel)}
         onGeneralRingEnter={handleGeneralRingEnter(panel)}
+        onGeneralRingClick={() =>
+          toggleBodyMapChip("hand", "general", panel.side)
+        }
+        generalRingActive={panelGeneralActive}
         {...panelCommon}
       />
     );
@@ -608,27 +635,13 @@ export function HandBodyMapDetail({
           className="hand-detail-legend"
           caption={
             variant === "countHeatmap"
-              ? `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Top row: palm side (inner). Bottom row: hand back (outer). Hover subregions or the outline for whole-hand (general). Unspecified side appears on both columns.`
-              : `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Uses the same d3 density smoothing as the full-body map. Top row: inner; bottom row: outer. Hover subregions or the outline for whole-hand (general). Unspecified side appears on both columns.`
+              ? `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Top row: palm side (inner). Bottom row: hand back (outer). Hover subregions or the outline for whole-hand (general). Unspecified side is split across left and right columns.`
+              : `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Uses the same d3 density smoothing as the full-body map. Top row: inner; bottom row: outer. Hover subregions or the outline for whole-hand (general). Unspecified side is split across left and right columns.`
           }
         />
       ) : null}
 
-      {tooltip ? (
-        <div
-          className="body-map-tooltip"
-          style={{
-            position: "fixed",
-            left: tooltip.x + 12,
-            top: tooltip.y + 12,
-            zIndex: 50,
-            pointerEvents: "none",
-          }}
-        >
-          <div className="body-map-tooltip-title">{tooltip.label}</div>
-          <div>{tooltip.count} papers</div>
-        </div>
-      ) : null}
+      <BodyMapHoverTooltip tooltip={tooltip} />
     </div>
   );
 }

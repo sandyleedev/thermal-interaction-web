@@ -1,5 +1,9 @@
 import type { BodyMapDetailRegion } from "@/lib/research/bodyMapRegions";
 import { resolveBodySite } from "@/lib/research/bodyMapRegionUtils";
+import {
+  normalizeBodySiteSide,
+  siteAssignsToLateralHitForDots,
+} from "@/lib/research/bodyMapSiteSide";
 import { normalizeBodySites, type ResearchPaper } from "@/lib/research/researchPapers";
 
 export const HEAD_DETAIL_VIEWBOX = "0 0 210 297";
@@ -48,10 +52,11 @@ function mulberry32(seed: number) {
 export function headContributionHitIds(
   site: { side?: string },
   resolved: BodyMapDetailRegion,
+  distributionKey: string,
 ): string[] {
   if (resolved.parent !== "head") return [];
   const sub = resolved.subregion.trim().toLowerCase();
-  const sd = (site.side ?? "").trim().toLowerCase();
+  const normalized = normalizeBodySiteSide(site.side);
   switch (sub) {
     case "general":
       return [];
@@ -64,13 +69,21 @@ export function headContributionHitIds(
     case "tongue":
       return ["tongue"];
     case "ear":
-      if (sd === "left") return ["left-ear"];
-      if (sd === "right") return ["right-ear"];
-      return ["left-ear", "right-ear"];
+      if (normalized === "left") return ["left-ear"];
+      if (normalized === "right") return ["right-ear"];
+      return [
+        siteAssignsToLateralHitForDots(site, "left", distributionKey)
+          ? "left-ear"
+          : "right-ear",
+      ];
     case "cheek":
-      if (sd === "left") return ["left-cheek"];
-      if (sd === "right") return ["right-cheek"];
-      return ["left-cheek", "right-cheek"];
+      if (normalized === "left") return ["left-cheek"];
+      if (normalized === "right") return ["right-cheek"];
+      return [
+        siteAssignsToLateralHitForDots(site, "left", distributionKey)
+          ? "left-cheek"
+          : "right-cheek",
+      ];
     default:
       return [];
   }
@@ -87,7 +100,11 @@ export function collectHeadDetailTargetsByHit(
     for (let si = 0; si < sites.length; si++) {
       const site = sites[si];
       const resolved = resolveBodySite(site);
-      const ids = headContributionHitIds(site, resolved);
+      const ids = headContributionHitIds(
+        site,
+        resolved,
+        `${p.id}\0${resolved.parent}\0${resolved.subregion}\0site${si}`,
+      );
       for (const hid of ids) {
         const arr = map.get(hid) ?? [];
         arr.push({

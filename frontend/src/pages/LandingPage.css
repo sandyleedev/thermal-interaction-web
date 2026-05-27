@@ -804,6 +804,13 @@
   font-weight: 600;
 }
 
+.body-map-tooltip-side {
+  font-weight: 500;
+  margin-top: 0.2rem;
+  padding-left: 0.15rem;
+  opacity: 0.94;
+}
+
 .body-map-heatmap-legend {
   flex-shrink: 0;
   padding: 0 1.25rem 0.55rem;

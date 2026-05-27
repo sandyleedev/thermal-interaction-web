@@ -1,9 +1,9 @@
 import type { BodyMapDetailRegion } from "@/lib/research/bodyMapRegions";
 import {
-  footSiteMatchesPanelSide,
   resolveBodySite,
   type FootDetailSide,
 } from "@/lib/research/bodyMapRegionUtils";
+import { siteAssignsToPanelSideForDots } from "@/lib/research/bodyMapSiteSide";
 import {
   normalizeBodySites,
   type ResearchPaper,
@@ -32,9 +32,14 @@ export function footContributionHitIds(
   site: { side?: string },
   resolved: BodyMapDetailRegion,
   panelSide: FootDetailSide,
+  distributionKey: string,
 ): string[] {
   if (resolved.parent !== "foot") return [];
-  if (!footSiteMatchesPanelSide(site, panelSide)) return [];
+  if (
+    !siteAssignsToPanelSideForDots(site, panelSide, distributionKey)
+  ) {
+    return [];
+  }
   const sub = resolved.subregion.trim().toLowerCase();
   if (sub === "general") return [];
   if (sub === "sole" || sub === "toes") return [sub];
@@ -51,7 +56,12 @@ export function collectFootDetailTargetsByHit(
     for (let i = 0; i < sites.length; i++) {
       const site = sites[i]!;
       const resolved = resolveBodySite(site);
-      const hits = footContributionHitIds(site, resolved, panelSide);
+      const hits = footContributionHitIds(
+        site,
+        resolved,
+        panelSide,
+        `${paper.id}\0${resolved.parent}\0${resolved.subregion}\0${i}`,
+      );
       for (const hitId of hits) {
         let list = map.get(hitId);
         if (!list) {
