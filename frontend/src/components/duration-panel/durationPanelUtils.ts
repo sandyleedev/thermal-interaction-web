@@ -8,16 +8,17 @@ const LOG_MIN = Math.log10(DURATION_MIN_S);
 const LOG_MAX = Math.log10(DURATION_MAX_S);
 const LOG_SPAN = LOG_MAX - LOG_MIN;
 
-/** Major ticks: readable units on a log axis (1s … 1wk). */
+/** Major ticks: readable units on a log axis (1s … 1week). */
 export const DURATION_MAJOR_TICKS = [
   { s: 1, label: "1s" },
+  { s: 5, label: "5s" },
   { s: 10, label: "10s" },
+  { s: 30, label: "30s" },
   { s: 60, label: "1min" },
   { s: 600, label: "10min" },
-  { s: 3600, label: "1hr" },
-  { s: 21600, label: "6hr" },
-  { s: 86400, label: "1d" },
-  { s: DURATION_MAX_S, label: "1wk" },
+  { s: 3600, label: "1h" },
+  { s: 86400, label: "1day" },
+  { s: DURATION_MAX_S, label: "1week" },
 ] as const;
 
 export function clampDurationS(seconds: number): number {

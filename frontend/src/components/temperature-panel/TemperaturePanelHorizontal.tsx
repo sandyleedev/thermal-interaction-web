@@ -4,6 +4,8 @@ import { paperMatchesTemperatureAxis } from "@/lib/research/filterResearchPapers
 import { buildKdePathsHorizontal } from "./temperaturePanelDensity";
 import {
   DistributionViolinDefs,
+  DISTRIBUTION_PINK_AREA,
+  DISTRIBUTION_PINK_SELECTION,
   DISTRIBUTION_PINK_VIVID,
   distributionViolinVisualIds,
 } from "@/components/distribution-violin/distributionViolinVisuals";
@@ -218,23 +220,16 @@ export function TemperaturePanelHorizontal({
               <clipPath id={violinVisualIds.clipId}>
                 <path d={kdePaths.areaD} />
               </clipPath>
-              <DistributionViolinDefs
-                ids={violinVisualIds}
-                yTop={PAD.top}
-                yBottom={PAD.top + innerH}
-              />
+              <DistributionViolinDefs ids={violinVisualIds} />
             </defs>
             <g filter={`url(#${violinVisualIds.softBlurId})`}>
-              <path
-                d={kdePaths.areaD}
-                fill={`url(#${violinVisualIds.areaGradientId})`}
-              />
+              <path d={kdePaths.areaD} fill={DISTRIBUTION_PINK_AREA} />
               <rect
                 x={violinSelectionX}
                 y={PAD.top}
                 width={Math.max(0, violinSelectionW)}
                 height={innerH}
-                fill={`url(#${violinVisualIds.selectionGradientId})`}
+                fill={DISTRIBUTION_PINK_SELECTION}
                 clipPath={`url(#${violinVisualIds.clipId})`}
               />
             </g>
