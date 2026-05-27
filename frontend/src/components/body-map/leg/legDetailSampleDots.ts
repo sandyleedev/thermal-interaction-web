@@ -10,7 +10,24 @@ import {
   sampleDotsInHeadShape,
 } from "../head/headDetailSampleDots";
 
-export const LEG_DETAIL_VIEWBOX = "0 0 837.483 1819.369";
+/** Small pad so the general-ring stroke is not clipped at the SVG bottom edge. */
+export const LEG_DETAIL_VIEWBOX_STROKE_PAD = 20;
+
+/** Fallback when leg.svg viewBox cannot be read. */
+export const LEG_DETAIL_VIEWBOX_FALLBACK = "0 0 522.10726 1730.7358";
+
+export function resolveLegDetailViewBox(rawViewBox: string): string {
+  const parts = rawViewBox.trim().split(/\s+/).map(Number);
+  if (parts.length !== 4 || parts.some((n) => !Number.isFinite(n))) {
+    return LEG_DETAIL_VIEWBOX_FALLBACK;
+  }
+  const [x, y, w, h] = parts;
+  return `${x} ${y} ${w} ${h + LEG_DETAIL_VIEWBOX_STROKE_PAD}`;
+}
+
+export const LEG_DETAIL_VIEWBOX = resolveLegDetailViewBox(
+  "0 0 522.10726 1710.7358",
+);
 
 export type LegShapeSpec = HeadShapeSpec;
 

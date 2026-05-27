@@ -22,8 +22,6 @@ import {
 } from "./armDetailSampleDots";
 import type { BodyMapVariant } from "../bodyMapVariant";
 import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
-import { BodyMapDetailSelectAll } from "@/components/body-map/BodyMapDetailSelectAll";
-import { BodyMapDetailBackButton } from "../shared/BodyMapDetailBackButton";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
@@ -167,13 +165,11 @@ function countsForSide(
 export type ArmBodyMapDetailProps = {
   variant: BodyMapVariant;
   papers: readonly ResearchPaper[];
-  onBack: () => void;
 };
 
 export function ArmBodyMapDetail({
   variant,
   papers,
-  onBack,
 }: ArmBodyMapDetailProps) {
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
@@ -488,10 +484,6 @@ export function ArmBodyMapDetail({
   return (
     <div className="body-map-root arm-detail-root">
       <div className="body-map-svg-wrap arm-detail-svg-wrap">
-        <div className="body-map-detail-controls">
-          <BodyMapDetailBackButton onBack={onBack} />
-          <BodyMapDetailSelectAll parent="arm" />
-        </div>
         {parseError ? (
           <p className="arm-detail-error" role="alert">
             {parseError}

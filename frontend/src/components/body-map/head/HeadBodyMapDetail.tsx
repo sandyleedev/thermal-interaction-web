@@ -23,8 +23,6 @@ import {
 import type { BodyMapVariant } from "../bodyMapVariant";
 import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
 import { countToPerceptualNormalized } from "../bodyMapVisualization";
-import { BodyMapDetailSelectAll } from "@/components/body-map/BodyMapDetailSelectAll";
-import { BodyMapDetailBackButton } from "../shared/BodyMapDetailBackButton";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
@@ -135,13 +133,11 @@ function parseHeadDetailWideSvg(svgText: string): {
 export type HeadBodyMapDetailProps = {
   variant: BodyMapVariant;
   papers: readonly ResearchPaper[];
-  onBack: () => void;
 };
 
 export function HeadBodyMapDetail({
   variant,
   papers,
-  onBack,
 }: HeadBodyMapDetailProps) {
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
@@ -374,10 +370,6 @@ export function HeadBodyMapDetail({
   return (
     <div className="body-map-root head-detail-root">
       <div className="body-map-svg-wrap head-detail-svg-wrap">
-        <div className="body-map-detail-controls">
-          <BodyMapDetailBackButton onBack={onBack} />
-          <BodyMapDetailSelectAll parent="head" />
-        </div>
         {headParseError ? (
           <p className="head-detail-error" role="alert">
             {headParseError}
@@ -398,9 +390,9 @@ export function HeadBodyMapDetail({
           <svg
             className="body-map-svg head-detail-svg"
             width="100%"
-            height="100%"
+            height="auto"
             viewBox={HEAD_DETAIL_VIEWBOX}
-            preserveAspectRatio="xMidYMid meet"
+            preserveAspectRatio="xMidYMin meet"
             role="img"
             aria-label="Head detail body map: subregions for filtered papers"
           >

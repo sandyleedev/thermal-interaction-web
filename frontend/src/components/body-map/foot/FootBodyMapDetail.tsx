@@ -20,8 +20,6 @@ import {
 } from "./footDetailSampleDots";
 import type { BodyMapVariant } from "../bodyMapVariant";
 import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
-import { BodyMapDetailSelectAll } from "@/components/body-map/BodyMapDetailSelectAll";
-import { BodyMapDetailBackButton } from "../shared/BodyMapDetailBackButton";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
@@ -164,13 +162,11 @@ function countsForSide(
 export type FootBodyMapDetailProps = {
   variant: BodyMapVariant;
   papers: readonly ResearchPaper[];
-  onBack: () => void;
 };
 
 export function FootBodyMapDetail({
   variant,
   papers,
-  onBack,
 }: FootBodyMapDetailProps) {
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
@@ -459,10 +455,6 @@ export function FootBodyMapDetail({
   return (
     <div className="body-map-root foot-detail-root">
       <div className="body-map-svg-wrap foot-detail-svg-wrap">
-        <div className="body-map-detail-controls">
-          <BodyMapDetailBackButton onBack={onBack} />
-          <BodyMapDetailSelectAll parent="foot" />
-        </div>
         {parseError ? (
           <p className="foot-detail-error" role="alert">
             {parseError}
@@ -498,8 +490,8 @@ export function FootBodyMapDetail({
           className="foot-detail-legend"
           caption={
             variant === "countHeatmap"
-              ? `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Hover sole, toes, or the outline for whole-foot (general). Unspecified side appears on both columns.`
-              : `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Uses the same d3 density smoothing as the full-body map. Hover subregions or the outline for whole-foot (general). Unspecified side appears on both columns.`
+              ? `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Hover sole, toes, or the outline for whole-foot (general). Unspecified side appears on both feet.`
+              : `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Uses the same d3 density smoothing as the full-body map. Hover subregions or the outline for whole-foot (general). Unspecified side appears on both feet.`
           }
         />
       ) : null}

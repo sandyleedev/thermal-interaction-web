@@ -153,9 +153,9 @@ export function TorsoDetailPanelMap({
     <svg
       className={svgClassName}
       width="100%"
-      height="100%"
+      height="auto"
       viewBox={TORSO_DETAIL_VIEWBOX}
-      preserveAspectRatio="xMidYMid meet"
+      preserveAspectRatio="xMidYMin meet"
       role="img"
       aria-label={ariaLabel}
     >

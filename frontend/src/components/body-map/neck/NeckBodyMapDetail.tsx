@@ -22,8 +22,6 @@ import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
 import {
   countToPerceptualNormalized,
 } from "../bodyMapVisualization";
-import { BodyMapDetailSelectAll } from "@/components/body-map/BodyMapDetailSelectAll";
-import { BodyMapDetailBackButton } from "../shared/BodyMapDetailBackButton";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
@@ -111,13 +109,11 @@ function parseNeckDetailSvg(svgText: string): {
 export type NeckBodyMapDetailProps = {
   variant: BodyMapVariant;
   papers: readonly ResearchPaper[];
-  onBack: () => void;
 };
 
 export function NeckBodyMapDetail({
   variant,
   papers,
-  onBack,
 }: NeckBodyMapDetailProps) {
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
@@ -344,10 +340,6 @@ export function NeckBodyMapDetail({
   return (
     <div className="body-map-root neck-detail-root">
       <div className="body-map-svg-wrap neck-detail-svg-wrap">
-        <div className="body-map-detail-controls">
-          <BodyMapDetailBackButton onBack={onBack} />
-          <BodyMapDetailSelectAll parent="neck" />
-        </div>
         {neckParseError ? (
           <p className="neck-detail-error" role="alert">
             {neckParseError}
@@ -368,9 +360,9 @@ export function NeckBodyMapDetail({
           <svg
             className="body-map-svg neck-detail-svg"
             width="100%"
-            height="100%"
+            height="auto"
             viewBox={NECK_DETAIL_VIEWBOX}
-            preserveAspectRatio="xMidYMid meet"
+            preserveAspectRatio="xMidYMin meet"
             role="img"
             aria-label="Neck detail body map: subregions for filtered papers"
           >

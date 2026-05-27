@@ -21,8 +21,6 @@ import {
 } from "./handDetailSampleDots";
 import type { BodyMapVariant } from "../bodyMapVariant";
 import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
-import { BodyMapDetailSelectAll } from "@/components/body-map/BodyMapDetailSelectAll";
-import { BodyMapDetailBackButton } from "../shared/BodyMapDetailBackButton";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
@@ -242,13 +240,11 @@ const PANEL_LABELS: Record<string, string> = {
 export type HandBodyMapDetailProps = {
   variant: BodyMapVariant;
   papers: readonly ResearchPaper[];
-  onBack: () => void;
 };
 
 export function HandBodyMapDetail({
   variant,
   papers,
-  onBack,
 }: HandBodyMapDetailProps) {
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
@@ -565,10 +561,6 @@ export function HandBodyMapDetail({
   return (
     <div className="body-map-root hand-detail-root">
       <div className="body-map-svg-wrap hand-detail-svg-wrap">
-        <div className="body-map-detail-controls">
-          <BodyMapDetailBackButton onBack={onBack} />
-          <BodyMapDetailSelectAll parent="hand" />
-        </div>
         {parseError ? (
           <p className="hand-detail-error" role="alert">
             {parseError}

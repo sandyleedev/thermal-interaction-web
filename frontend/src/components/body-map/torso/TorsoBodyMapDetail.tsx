@@ -20,8 +20,6 @@ import {
 } from "./torsoDetailSampleDots";
 import type { BodyMapVariant } from "../bodyMapVariant";
 import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
-import { BodyMapDetailSelectAll } from "@/components/body-map/BodyMapDetailSelectAll";
-import { BodyMapDetailBackButton } from "../shared/BodyMapDetailBackButton";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
@@ -120,13 +118,11 @@ function parseTorsoDetailSvg(svgText: string): {
 export type TorsoBodyMapDetailProps = {
   variant: BodyMapVariant;
   papers: readonly ResearchPaper[];
-  onBack: () => void;
 };
 
 export function TorsoBodyMapDetail({
   variant,
   papers,
-  onBack,
 }: TorsoBodyMapDetailProps) {
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
@@ -366,10 +362,6 @@ export function TorsoBodyMapDetail({
   return (
     <div className="body-map-root torso-detail-root">
       <div className="body-map-svg-wrap torso-detail-svg-wrap">
-        <div className="body-map-detail-controls">
-          <BodyMapDetailBackButton onBack={onBack} />
-          <BodyMapDetailSelectAll parent="torso" />
-        </div>
         {torsoParseError ? (
           <p className="torso-detail-error" role="alert">
             {torsoParseError}

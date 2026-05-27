@@ -3,6 +3,8 @@ import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { BODY_MAP_DETAIL_REGIONS } from "@/lib/research/bodyMapChipLabels";
 import type { BodyMapParentRegion } from "@/lib/research/bodyMapRegions";
 import BodyMap from "./full-body/BodyMap";
+import { BodyMapDetailSelectAll } from "@/components/body-map/BodyMapDetailSelectAll";
+import { BodyMapDetailBackButton } from "./shared/BodyMapDetailBackButton";
 import { BodyMapSelectionChips } from "./BodyMapSelectionChips";
 import type { BodyMapVariant } from "./bodyMapVariant";
 import { HeadBodyMapDetail } from "./head/HeadBodyMapDetail";
@@ -120,66 +122,74 @@ export function BodyMapPanel() {
             Area view
           </button>
         </div>
-        <div className="body-map-toolbar-actions">
-          <button
-            type="button"
-            className="other-filters-clear-all"
-            disabled={selectedBodyMapChips.length === 0}
-            onClick={clearBodyMapChips}
-          >
-            Clear
-          </button>
-        </div>
       </div>
       <div className="panel-content panel-content-center">
         <div className="body-map-panel-stage">
-          <BodyMapSelectionChips
-            chips={selectedBodyMapChips}
-            onRemoveChip={(chip) =>
-              removeBodyMapChip(chip.parent, chip.subpart)
-            }
-          />
+          {selectedBodyMapChips.length > 0 ? (
+            <div className="body-map-selection-block">
+              <div className="body-map-selection-actions">
+                <button
+                  type="button"
+                  className="other-filters-clear-all"
+                  onClick={clearBodyMapChips}
+                >
+                  Clear
+                </button>
+              </div>
+              <BodyMapSelectionChips
+                chips={selectedBodyMapChips}
+                onRemoveChip={(chip) =>
+                  removeBodyMapChip(chip.parent, chip.subpart)
+                }
+              />
+            </div>
+          ) : null}
+          {activeDetailRegion ? (
+            <div
+              className={
+                selectedBodyMapChips.length > 0
+                  ? "body-map-detail-controls body-map-detail-controls--with-chips"
+                  : "body-map-detail-controls body-map-detail-controls--no-chips"
+              }
+            >
+              <BodyMapDetailBackButton onBack={exitBodyMapDetail} />
+              <BodyMapDetailSelectAll parent={activeDetailRegion} />
+            </div>
+          ) : null}
           {showHeadDetail ? (
             <HeadBodyMapDetail
               variant={variant}
               papers={headDetailPapers}
-              onBack={exitBodyMapDetail}
             />
           ) : showNeckDetail ? (
             <NeckBodyMapDetail
               variant={variant}
               papers={neckDetailPapers}
-              onBack={exitBodyMapDetail}
             />
           ) : showTorsoDetail ? (
             <TorsoBodyMapDetail
               variant={variant}
               papers={torsoDetailPapers}
-              onBack={exitBodyMapDetail}
             />
           ) : showArmDetail ? (
             <ArmBodyMapDetail
               variant={variant}
               papers={armDetailPapers}
-              onBack={exitBodyMapDetail}
             />
           ) : showHandDetail ? (
             <HandBodyMapDetail
               variant={variant}
               papers={handDetailPapers}
-              onBack={exitBodyMapDetail}
             />
           ) : showFootDetail ? (
             <FootBodyMapDetail
               variant={variant}
               papers={footDetailPapers}
-              onBack={exitBodyMapDetail}
             />
           ) : showLegDetail ? (
             <LegBodyMapDetail
               variant={variant}
               papers={legDetailPapers}
-              onBack={exitBodyMapDetail}
             />
           ) : (
             <BodyMap

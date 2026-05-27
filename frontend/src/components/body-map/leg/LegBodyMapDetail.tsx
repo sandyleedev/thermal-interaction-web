@@ -15,13 +15,11 @@ import { ArmDetailPanelMap } from "../arm/ArmDetailPanelMap";
 import {
   buildLegAreaDensityDotsByHitId,
   buildLegDotsByHitId,
-  LEG_DETAIL_VIEWBOX,
+  resolveLegDetailViewBox,
   type LegShapeSpec,
 } from "./legDetailSampleDots";
 import type { BodyMapVariant } from "../bodyMapVariant";
 import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
-import { BodyMapDetailSelectAll } from "@/components/body-map/BodyMapDetailSelectAll";
-import { BodyMapDetailBackButton } from "../shared/BodyMapDetailBackButton";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
@@ -40,7 +38,7 @@ const LEG_RAW_DOTS_DENSITY_CELL_SIZE = 2;
 const LEG_RAW_DOTS_DENSITY_THRESHOLDS = 30;
 
 const LEG_SILHOUETTE_STROKE_WIDTH = 3;
-const LEG_GENERAL_RING_STROKE_WIDTH = 8;
+const LEG_GENERAL_RING_STROKE_WIDTH = 12;
 
 const LEG_FILL_HIT_IDS = [...LEG_DETAIL_HIT_IDS] as const;
 
@@ -85,7 +83,9 @@ function readLegPathById(doc: Document, id: string): string {
 function parseLegDetailSvg(svgText: string): LegPanelParse {
   const doc = new DOMParser().parseFromString(svgText, "image/svg+xml");
   const svg = doc.querySelector("svg");
-  const viewBox = svg?.getAttribute("viewBox")?.trim() ?? LEG_DETAIL_VIEWBOX;
+  const rawViewBox =
+    svg?.getAttribute("viewBox")?.trim() ?? "0 0 522.10726 1710.7358";
+  const viewBox = resolveLegDetailViewBox(rawViewBox);
 
   const silhouetteD = readLegPathById(doc, LEG_SILHOUETTE_ID);
   const generalOutlineD = readLegPathById(doc, LEG_GENERAL_OUTLINE_ID);
@@ -134,13 +134,11 @@ function countsForPanel(
 export type LegBodyMapDetailProps = {
   variant: BodyMapVariant;
   papers: readonly ResearchPaper[];
-  onBack: () => void;
 };
 
 export function LegBodyMapDetail({
   variant,
   papers,
-  onBack,
 }: LegBodyMapDetailProps) {
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
@@ -325,10 +323,6 @@ export function LegBodyMapDetail({
   return (
     <div className="body-map-root leg-detail-root">
       <div className="body-map-svg-wrap leg-detail-svg-wrap">
-        <div className="body-map-detail-controls">
-          <BodyMapDetailBackButton onBack={onBack} />
-          <BodyMapDetailSelectAll parent="leg" />
-        </div>
         {parseError ? (
           <p className="leg-detail-error" role="alert">
             {parseError}
