@@ -7,6 +7,7 @@ import {
   DURATION_MIN_S,
   normToDuration,
   durationToNorm,
+  durationTickNorm,
   formatDurationForUi,
 } from "./durationPanelUtils";
 import {
@@ -242,7 +243,7 @@ export function DurationPanel() {
                 <div
                   key={`tick-${s}`}
                   className="duration-slider-minor-tick"
-                  style={{ left: sliderLeftForNorm(durationToNorm(s)) }}
+                  style={{ left: sliderLeftForNorm(durationTickNorm(s)) }}
                   aria-hidden
                 />
               ))}
@@ -339,7 +340,7 @@ export function DurationPanel() {
               <span
                 key={s}
                 className="duration-slider-tick"
-                style={{ left: sliderLeftForNorm(durationToNorm(s)) }}
+                style={{ left: sliderLeftForNorm(durationTickNorm(s)) }}
               >
                 {label}
               </span>

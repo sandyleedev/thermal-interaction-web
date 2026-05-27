@@ -1,16 +1,24 @@
 import { clientXToInsetNorm } from "@/components/range-slider/horizontalRangeTrackInset";
 
-/** Seconds; wide span (1s … 1 week) mapped logarithmically on the slider. */
+/** Seconds; filter range caps at one week (high handle shows 1wk+). */
+export const DURATION_WEEK_S = 7 * 24 * 3600;
 export const DURATION_MIN_S = 1;
-export const DURATION_MAX_S = 7 * 24 * 3600;
+export const DURATION_MAX_S = DURATION_WEEK_S;
+/** Log axis for tick/label row only — extends past one week so "1week" sits left of the 1wk+ tail. */
+export const DURATION_AXIS_LABEL_MAX_S = 14 * 24 * 3600;
 
-const LOG_MIN = Math.log10(DURATION_MIN_S);
 const LOG_MAX = Math.log10(DURATION_MAX_S);
-const LOG_SPAN = LOG_MAX - LOG_MIN;
+const LOG_LABEL_MAX = Math.log10(DURATION_AXIS_LABEL_MAX_S);
+const LOG_BREAK = Math.log10(5);
+const LOG_LONG_SPAN = LOG_MAX - LOG_BREAK;
+const LOG_LABEL_LONG_SPAN = LOG_LABEL_MAX - LOG_BREAK;
 
-/** Major ticks: readable units on a log axis (1s … 1week). */
+/** 1s–5s uses a short linear prefix; 5s+ is log-scaled on the rest of the track. */
+const DURATION_SHORT_BREAK_S = 5;
+const DURATION_SHORT_VISUAL_FRACTION = 0.05;
+
+/** Major ticks: readable units (5s … 1week; track still starts at 1s). */
 export const DURATION_MAJOR_TICKS = [
-  { s: 1, label: "1s" },
   { s: 5, label: "5s" },
   { s: 10, label: "10s" },
   { s: 30, label: "30s" },
@@ -18,21 +26,56 @@ export const DURATION_MAJOR_TICKS = [
   { s: 600, label: "10min" },
   { s: 3600, label: "1h" },
   { s: 86400, label: "1day" },
-  { s: DURATION_MAX_S, label: "1week" },
+  { s: DURATION_WEEK_S, label: "1week" },
 ] as const;
+
+function durationToVisualNorm(seconds: number, logLongSpan: number): number {
+  const s = clampDurationS(seconds);
+  if (s <= DURATION_SHORT_BREAK_S) {
+    const u = (s - DURATION_MIN_S) / (DURATION_SHORT_BREAK_S - DURATION_MIN_S);
+    return u * DURATION_SHORT_VISUAL_FRACTION;
+  }
+  const logNorm = (Math.log10(s) - LOG_BREAK) / logLongSpan;
+  return (
+    DURATION_SHORT_VISUAL_FRACTION +
+    Math.min(1, Math.max(0, logNorm)) * (1 - DURATION_SHORT_VISUAL_FRACTION)
+  );
+}
+
+function visualNormToDurationSeconds(norm: number, logLongSpan: number): number {
+  const t = Math.min(1, Math.max(0, norm));
+  if (t <= DURATION_SHORT_VISUAL_FRACTION) {
+    const u = t / DURATION_SHORT_VISUAL_FRACTION;
+    return clampDurationS(
+      DURATION_MIN_S + u * (DURATION_SHORT_BREAK_S - DURATION_MIN_S),
+    );
+  }
+  const logNorm = (t - DURATION_SHORT_VISUAL_FRACTION) / (1 - DURATION_SHORT_VISUAL_FRACTION);
+  const logS = LOG_BREAK + logNorm * logLongSpan;
+  return clampDurationS(Math.pow(10, logS));
+}
 
 export function clampDurationS(seconds: number): number {
   return Math.min(DURATION_MAX_S, Math.max(DURATION_MIN_S, seconds));
 }
 
 export function durationToNorm(seconds: number): number {
-  const s = clampDurationS(seconds);
-  return (Math.log10(s) - LOG_MIN) / LOG_SPAN;
+  return durationToVisualNorm(seconds, LOG_LONG_SPAN);
+}
+
+/** Label/tick row only: 1week sits left of the track end reserved for 1wk+. */
+export function durationToLabelNorm(seconds: number): number {
+  return durationToVisualNorm(seconds, LOG_LABEL_LONG_SPAN);
+}
+
+export function durationTickNorm(seconds: number): number {
+  return seconds === DURATION_WEEK_S
+    ? durationToLabelNorm(seconds)
+    : durationToNorm(seconds);
 }
 
 export function normToDuration(norm: number): number {
-  const t = Math.min(1, Math.max(0, norm));
-  return clampDurationS(Math.pow(10, LOG_MIN + t * LOG_SPAN));
+  return visualNormToDurationSeconds(norm, LOG_LONG_SPAN);
 }
 
 export function clientXToDuration(clientX: number, rect: DOMRect): number {
