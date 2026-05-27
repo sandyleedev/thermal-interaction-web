@@ -19,6 +19,15 @@ import {
 } from "../shared/bodyMapHeatmapColors";
 import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
 import {
+  BodyMapHoverTooltip,
+  type BodyMapTooltipState,
+} from "../shared/BodyMapHoverTooltip";
+import {
+  isL1BilateralPartWithoutDetail,
+  l1BilateralPartTooltip,
+  simpleBodyMapTooltip,
+} from "@/lib/research/bodyMapBilateralTooltips";
+import {
   buildBodyMapAreaDensityContoursByPart,
   createBodyMapAreaContourGeoPath,
   maxContourValueFromLayers,
@@ -37,7 +46,10 @@ import {
   type BodyMapRegion,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
-import { REQUIRE_DOTS_INSIDE_BODY_OUTLINE } from "../bodyMapSampleDots";
+import {
+  REQUIRE_DOTS_INSIDE_BODY_OUTLINE,
+  resolveBilateralSubpathSide,
+} from "../bodyMapSampleDots";
 import { type FullBodyMapPart, useBodyMapPartDots } from "./useBodyMapPartDots";
 
 /**
@@ -47,8 +59,6 @@ import { type FullBodyMapPart, useBodyMapPartDots } from "./useBodyMapPartDots";
  * - Level 2 zoomed SVG + fine hit targets will live in a separate component later; filtering hooks already exist
  *   on context (`selectedBodyMapChips` + `BodyMapSelection.selectedChips`).
  */
-type TooltipState = { label: string; count: number; x: number; y: number };
-
 const HEATMAP_DOT_RADIUS = 75;
 const HEATMAP_DOT_OPACITY_MIN = 0.12;
 const HEATMAP_DOT_OPACITY_MAX = 0.32;
@@ -139,8 +149,11 @@ export function BodyMap({
   const rawDotsLegendGradientId = `body-map-raw-dots-legend-${uid}`;
   const rawDotsSoftBlurId = `body-map-raw-dots-soft-blur-${uid}`;
   const wholeBodyRingGlowFilterId = `body-map-wb-ring-glow-${uid}`;
-  const [tooltip, setTooltip] = useState<TooltipState | null>(null);
+  const [tooltip, setTooltip] = useState<BodyMapTooltipState | null>(null);
   const [hoveredPartId, setHoveredPartId] = useState<string | null>(null);
+  const [hoveredSubpathIndex, setHoveredSubpathIndex] = useState<number | null>(
+    null,
+  );
   const [silhouetteStatus, setSilhouetteStatus] = useState<
     "loading" | "ready" | "error"
   >("loading");
@@ -265,18 +278,21 @@ export function BodyMap({
 
   const clearPointerHover = useCallback(() => {
     setHoveredPartId(null);
+    setHoveredSubpathIndex(null);
     setTooltip(null);
   }, []);
 
   const handleWholeBodyRingEnter = useCallback(
     (e: PointerEvent<SVGPathElement>) => {
       setHoveredPartId(WHOLE_BODY_GENERAL_COUNT_KEY);
-      setTooltip({
-        label: "General",
-        count: wholeBodyGeneralPaperCount,
-        x: e.clientX,
-        y: e.clientY,
-      });
+      setTooltip(
+        simpleBodyMapTooltip(
+          "General",
+          wholeBodyGeneralPaperCount,
+          e.clientX,
+          e.clientY,
+        ),
+      );
     },
     [wholeBodyGeneralPaperCount],
   );
@@ -286,18 +302,39 @@ export function BodyMap({
   }, [onPartClick]);
 
   const handlePartEnter = useCallback(
-    (part: BodyPart) => {
+    (part: BodyPart, subpathIndex: number) => {
       return (e: PointerEvent<SVGPathElement>) => {
         setHoveredPartId(part.id);
-        setTooltip({
-          label: part.label,
-          count: partPaperMap[part.id] ?? 0,
-          x: e.clientX,
-          y: e.clientY,
-        });
+        setHoveredSubpathIndex(subpathIndex);
+        const count = partPaperMap[part.id] ?? 0;
+        const papers = heatmapDotPapers ?? [];
+        if (
+          isL1BilateralPartWithoutDetail(part.id) &&
+          papers.length > 0
+        ) {
+          const hoverSide = resolveBilateralSubpathSide(
+            part.subpaths,
+            subpathIndex,
+          );
+          setTooltip(
+            l1BilateralPartTooltip(
+              papers,
+              part.id,
+              part.label,
+              count,
+              hoverSide,
+              e.clientX,
+              e.clientY,
+            ),
+          );
+          return;
+        }
+        setTooltip(
+          simpleBodyMapTooltip(part.label, count, e.clientX, e.clientY),
+        );
       };
     },
-    [partPaperMap],
+    [partPaperMap, heatmapDotPapers],
   );
 
   const handlePartMove = useCallback((e: PointerEvent<SVGPathElement>) => {
@@ -466,39 +503,41 @@ export function BodyMap({
                     />
                   ) : null}
                   {bodyPartsForHitTargets.flatMap((part) =>
-                    part.subpaths.map((sp, i) => (
+                    part.subpaths.map((sp, i) => {
+                      const partHovered = hoveredPartId === part.id;
+                      const subpathHovered =
+                        partHovered &&
+                        (!isL1BilateralPartWithoutDetail(part.id) ||
+                          hoveredSubpathIndex === i);
+                      const chipHighlighted = isRegionChipSelected(part.id);
+                      const showHoverFill = subpathHovered || chipHighlighted;
+                      return (
                       <path
                         key={`${part.id}-hit-${i}`}
                         id={`${part.id}-hit-${i}`}
                         d={sp.d}
                         transform={sp.transform}
                         fill={
-                          hoveredPartId === part.id ||
-                          isRegionChipSelected(part.id)
+                          showHoverFill
                             ? `url(#${hoverGradientId})`
                             : "transparent"
                         }
-                        fillOpacity={
-                          hoveredPartId === part.id ||
-                          isRegionChipSelected(part.id)
-                            ? 0.78
-                            : 1
-                        }
+                        fillOpacity={showHoverFill ? 0.78 : 1}
                         filter={
-                          hoveredPartId === part.id ||
-                          isRegionChipSelected(part.id)
+                          showHoverFill
                             ? `url(#${softFillFilterId})`
                             : undefined
                         }
                         stroke="none"
                         pointerEvents="all"
                         style={{ cursor: "pointer" }}
-                        onPointerEnter={handlePartEnter(part)}
+                        onPointerEnter={handlePartEnter(part, i)}
                         onPointerMove={handlePartMove}
                         onPointerLeave={handlePartLeave}
                         onClick={handlePartClick(part)}
                       />
-                    )),
+                      );
+                    }),
                   )}
                 </g>
               </g>
@@ -661,17 +700,7 @@ export function BodyMap({
         />
       ) : null}
 
-      {tooltip ? (
-        <div
-          className="body-map-tooltip"
-          role="tooltip"
-          style={{ left: tooltip.x + 12, top: tooltip.y + 12 }}
-        >
-          <div className="body-map-tooltip-title">
-            {tooltip.label}: {tooltip.count.toLocaleString()} papers
-          </div>
-        </div>
-      ) : null}
+      <BodyMapHoverTooltip tooltip={tooltip} />
     </div>
   );
 }

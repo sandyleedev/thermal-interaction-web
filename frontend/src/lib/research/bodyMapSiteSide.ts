@@ -122,6 +122,32 @@ export function countPapersWithExplicitSideForSite(
   return n;
 }
 
+export function paperHasExplicitSideForParent(
+  paper: BodySitesCarrier,
+  parent: BodyMapParentRegion,
+  side: "left" | "right",
+): boolean {
+  for (const s of paper.bodySites ?? []) {
+    const resolved = resolveBodySite(s);
+    if (resolved.parent !== parent) continue;
+    if (normalizeBodySiteSide(s.side) !== side) continue;
+    return true;
+  }
+  return false;
+}
+
+export function countPapersWithExplicitSideForParent(
+  papers: readonly BodySitesCarrier[],
+  parent: BodyMapParentRegion,
+  side: "left" | "right",
+): number {
+  let n = 0;
+  for (const p of papers) {
+    if (paperHasExplicitSideForParent(p, parent, side)) n += 1;
+  }
+  return n;
+}
+
 export function formatPaperCount(count: number): string {
   return `${count.toLocaleString()} paper${count === 1 ? "" : "s"}`;
 }

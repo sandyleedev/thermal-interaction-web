@@ -1,6 +1,8 @@
 import type { BodyMapTooltipState } from "@/components/body-map/shared/BodyMapHoverTooltip";
+import type { BodyMapParentRegion } from "@/lib/research/bodyMapRegions";
 import {
   buildBilateralHoverTooltipLines,
+  countPapersWithExplicitSideForParent,
   countPapersWithExplicitSideForSite,
   type BodyMapHoverTooltipLine,
 } from "@/lib/research/bodyMapSiteSide";
@@ -247,4 +249,43 @@ export function simpleBodyMapTooltip(
     x,
     y,
   };
+}
+
+/** L1 parts with bilateral SVG subpaths but no zoomed detail map (wrist, ankle). */
+const L1_BILATERAL_PARTS_WITHOUT_DETAIL = new Set<BodyMapParentRegion>([
+  "wrist",
+  "ankle",
+]);
+
+export function isL1BilateralPartWithoutDetail(
+  parent: BodyMapParentRegion,
+): parent is "wrist" | "ankle" {
+  return L1_BILATERAL_PARTS_WITHOUT_DETAIL.has(parent);
+}
+
+export function l1BilateralPartTooltip(
+  papers: readonly ResearchPaper[],
+  parent: "wrist" | "ankle",
+  displayLabel: string,
+  totalCount: number,
+  hoverSide: "left" | "right" | null,
+  x: number,
+  y: number,
+): BodyMapTooltipState {
+  const label = displayLabel.toLowerCase();
+  const sideCount =
+    hoverSide == null
+      ? 0
+      : countPapersWithExplicitSideForParent(papers, parent, hoverSide);
+  return tooltipAt(
+    buildBilateralHoverTooltipLines(
+      label,
+      totalCount,
+      hoverSide,
+      label,
+      sideCount,
+    ),
+    x,
+    y,
+  );
 }

@@ -705,6 +705,23 @@ function leftRightIndicesFromSubpaths(subpaths: readonly BodySubpath[]): {
     : { rightIdx: 1, leftIdx: 0 };
 }
 
+/** Which lateral side a silhouette subpath represents (wrist/ankle L1 hover). */
+export function resolveBilateralSubpathSide(
+  subpaths: readonly BodySubpath[],
+  subpathIndex: number,
+): "left" | "right" | null {
+  const sp = subpaths[subpathIndex];
+  if (!sp) return null;
+  const label = (sp.label ?? "").toLowerCase();
+  if (label.includes("left")) return "left";
+  if (label.includes("right")) return "right";
+  if (subpaths.length !== 2) return null;
+  const { leftIdx, rightIdx } = leftRightIndicesFromSubpaths(subpaths);
+  if (subpathIndex === leftIdx) return "left";
+  if (subpathIndex === rightIdx) return "right";
+  return null;
+}
+
 /**
  * One dot per matching body site on this coarse map part; bilateral unspecified sites
  * are distributed to one side (left or right), not duplicated on both.
