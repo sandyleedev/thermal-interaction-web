@@ -356,6 +356,77 @@ export function paperMatchesHandFineSelection(
   );
 }
 
+/** Foot zoom map hit ids (general ring uses `general`). Paint order: later = on top. */
+export const FOOT_DETAIL_HIT_IDS = ["sole", "toes"] as const;
+
+export type FootDetailHitId = (typeof FOOT_DETAIL_HIT_IDS)[number];
+
+export type FootDetailSide = "left" | "right";
+
+const FOOT_DETAIL_HIT_ID_SET = new Set<string>([
+  ...FOOT_DETAIL_HIT_IDS,
+  "general",
+]);
+
+/** True when a body site's optional `side` should appear on the given foot panel. */
+export function footSiteMatchesPanelSide(
+  site: { side?: string },
+  panelSide: FootDetailSide,
+): boolean {
+  const sd = (site.side ?? "").trim().toLowerCase();
+  if (sd === panelSide) return true;
+  if (sd === "" || sd === "unspecified") return true;
+  return false;
+}
+
+function footExactSubForSide(
+  paper: BodySitesCarrier,
+  sub: string,
+  panelSide: FootDetailSide,
+): boolean {
+  const sl = sub.toLowerCase();
+  for (const s of paper.bodySites ?? []) {
+    const resolved = resolveBodySite(s);
+    if (resolved.parent !== "foot") continue;
+    if (resolved.subregion.trim().toLowerCase() !== sl) continue;
+    if (!footSiteMatchesPanelSide(s, panelSide)) continue;
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Foot L2 zoom on one panel: `general` matches only `foot → general` sites for that side.
+ */
+export function paperMatchesFootFineSelectionForSide(
+  paper: BodySitesCarrier,
+  hit: string,
+  panelSide: FootDetailSide,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  switch (h) {
+    case "general":
+      return footExactSubForSide(paper, "general", panelSide);
+    case "sole":
+      return footExactSubForSide(paper, "sole", panelSide);
+    case "toes":
+      return footExactSubForSide(paper, "toes", panelSide);
+    default:
+      return false;
+  }
+}
+
+/** Foot L2 zoom (either side): used for filter chips and aggregate counts. */
+export function paperMatchesFootFineSelection(
+  paper: BodySitesCarrier,
+  hit: string,
+): boolean {
+  return (
+    paperMatchesFootFineSelectionForSide(paper, hit, "left") ||
+    paperMatchesFootFineSelectionForSide(paper, hit, "right")
+  );
+}
+
 /** True when a body site's optional `side` should appear on the given arm panel. */
 export function armSiteMatchesPanelSide(
   site: { side?: string },
@@ -574,6 +645,10 @@ export function paperMatchesBodyMapFineSelection(
 
   if (parent === "hand" && HAND_DETAIL_HIT_ID_SET.has(needle)) {
     return paperMatchesHandFineSelection(paper, needle);
+  }
+
+  if (parent === "foot" && FOOT_DETAIL_HIT_ID_SET.has(needle)) {
+    return paperMatchesFootFineSelection(paper, needle);
   }
 
   for (const s of paper.bodySites ?? []) {

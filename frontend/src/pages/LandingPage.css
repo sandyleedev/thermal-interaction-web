@@ -590,6 +590,93 @@
   left: auto;
 }
 
+.foot-detail-back {
+  position: absolute;
+  top: 0.8rem;
+  left: 0.5rem;
+  z-index: 3;
+  margin: 0;
+  padding: 0.28rem 0.55rem;
+  border: 1px solid rgba(148, 163, 184, 0.55);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.94);
+  color: #475569;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+.foot-detail-back:hover {
+  color: #0f172a;
+  border-color: rgba(100, 116, 139, 0.65);
+  background: #fff;
+}
+
+.foot-detail-loading,
+.foot-detail-error {
+  margin: 0.5rem 0 0;
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.foot-detail-stage {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(0.5rem, 4vw, 1.75rem);
+  width: 100%;
+  min-height: 0;
+  flex: 1 1 0;
+  padding: 0.35rem 0.5rem 0.5rem;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.foot-detail-side-panel {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 0;
+  max-width: min(48%, 12rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.landing-body-map .foot-detail-svg-wrap {
+  padding: 3.5rem 0.75rem 1rem;
+}
+
+.landing-body-map .foot-detail-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: min(22vh, 160px);
+  max-height: min(32vh, 240px);
+}
+
+.foot-detail-view-label {
+  margin: 0.25rem 0 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #334155;
+  letter-spacing: -0.02em;
+}
+
+.landing-body-map .foot-detail-legend {
+  margin-top: 0.35rem;
+}
+
+.body-map-detail-controls .foot-detail-back {
+  position: static;
+  top: auto;
+  left: auto;
+}
+
 .body-map-panel-stage,
 .body-map-full-body-stage {
   display: flex;
