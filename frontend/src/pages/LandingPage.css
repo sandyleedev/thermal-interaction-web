@@ -1,18 +1,14 @@
 .landing-root {
   --range-slider-value-pill-gap: 5px;
-  --filter-chip-border: rgba(251, 207, 232, 0.92);
-  --filter-chip-bg: #fffbfc;
+  --filter-chip-border: rgba(203, 213, 225, 0.95);
+  --filter-chip-bg: #fafafa;
   --filter-chip-color: #57534e;
-  --filter-chip-accent: #e879a9;
-  --filter-chip-selected-border: rgba(219, 39, 119, 0.34);
-  --filter-chip-selected-bg: linear-gradient(
-    to bottom,
-    rgba(255, 228, 230, 0.82),
-    rgba(251, 207, 232, 0.68)
-  );
-  --filter-chip-selected-color: #9f1239;
-  --filter-chip-selected-shadow: 0 0 0 1px rgba(219, 39, 119, 0.05);
-  --filter-chip-selected-accent: #be185d;
+  --filter-chip-accent: #64748b;
+  --filter-chip-selected-border: rgba(251, 207, 232, 0.92);
+  --filter-chip-selected-bg: #fffbfc;
+  --filter-chip-selected-color: #57534e;
+  --filter-chip-selected-shadow: none;
+  --filter-chip-selected-accent: #e879a9;
   --distribution-rose-fill: rgba(252, 225, 233, 0.82);
   --distribution-rose-selection: rgba(249, 210, 224, 0.86);
   --distribution-rose-stroke: #e879a9;
@@ -672,7 +668,7 @@
   border: none;
   border-radius: 50%;
   background: transparent;
-  color: var(--filter-chip-accent);
+  color: var(--filter-chip-selected-accent);
   font-size: 0.95rem;
   font-weight: 600;
   line-height: 1;
@@ -1687,6 +1683,11 @@
 }
 
 .filter-chip:hover {
+  background: #f1f5f9;
+  border-color: rgba(148, 163, 184, 0.85);
+}
+
+.filter-chip--selected:hover {
   background: rgba(255, 228, 230, 0.78);
   border-color: rgba(244, 114, 182, 0.58);
 }
@@ -1707,14 +1708,23 @@
 }
 
 .filter-chip,
-.results-paper-chip,
-.body-map-selection-chip {
+.results-paper-chip {
   color: var(--filter-chip-color);
   background: var(--filter-chip-bg);
   border: 1px solid var(--filter-chip-border);
   border-radius: 999px;
   letter-spacing: -0.015em;
   line-height: 1.25;
+}
+
+.body-map-selection-chip {
+  color: var(--filter-chip-selected-color);
+  background: var(--filter-chip-selected-bg);
+  border: 1px solid var(--filter-chip-selected-border);
+  border-radius: 999px;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  box-shadow: var(--filter-chip-selected-shadow);
 }
 
 .filter-chip--selected {
@@ -1811,9 +1821,9 @@
 }
 
 .results-page-size-btn--active {
-  color: var(--filter-chip-accent);
-  background: var(--filter-chip-bg);
-  border-color: var(--filter-chip-border);
+  color: var(--filter-chip-selected-accent);
+  background: var(--filter-chip-selected-bg);
+  border-color: var(--filter-chip-selected-border);
   box-shadow: none;
 }
 
@@ -1898,9 +1908,9 @@
 }
 
 .results-pagination-page--current {
-  color: var(--filter-chip-accent);
-  background: var(--filter-chip-bg);
-  border-color: var(--filter-chip-border);
+  color: var(--filter-chip-selected-accent);
+  background: var(--filter-chip-selected-bg);
+  border-color: var(--filter-chip-selected-border);
   box-shadow: none;
   cursor: default;
 }
