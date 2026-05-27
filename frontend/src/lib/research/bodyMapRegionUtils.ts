@@ -239,7 +239,124 @@ const ARM_DETAIL_HIT_ID_SET = new Set<string>([
   "general",
 ]);
 
-/** True when a body site’s optional `side` should appear on the given arm panel. */
+/** Hand zoom map hit ids (general ring uses `general`). Paint order: later = on top. */
+export const HAND_INNER_DETAIL_HIT_IDS = [
+  "palm",
+  "fingers",
+  "fingertips",
+  "thenar-eminence",
+] as const;
+
+export const HAND_OUTER_DETAIL_HIT_IDS = ["hand-back"] as const;
+
+export const HAND_DETAIL_HIT_IDS = [
+  ...HAND_INNER_DETAIL_HIT_IDS,
+  ...HAND_OUTER_DETAIL_HIT_IDS,
+] as const;
+
+export type HandDetailHitId = (typeof HAND_DETAIL_HIT_IDS)[number];
+
+export type HandDetailSide = "left" | "right";
+
+export type HandDetailSurface = "inner" | "outer";
+
+export type HandDetailPanel = {
+  side: HandDetailSide;
+  surface: HandDetailSurface;
+};
+
+const HAND_DETAIL_HIT_ID_SET = new Set<string>([
+  ...HAND_DETAIL_HIT_IDS,
+  "general",
+]);
+
+const HAND_INNER_HIT_ID_SET = new Set<string>(HAND_INNER_DETAIL_HIT_IDS);
+
+const HAND_OUTER_HIT_ID_SET = new Set<string>(HAND_OUTER_DETAIL_HIT_IDS);
+
+/** True when a body site's optional `side` should appear on the given hand panel. */
+export function handSiteMatchesPanelSide(
+  site: { side?: string },
+  panelSide: HandDetailSide,
+): boolean {
+  const sd = (site.side ?? "").trim().toLowerCase();
+  if (sd === panelSide) return true;
+  if (sd === "" || sd === "unspecified") return true;
+  return false;
+}
+
+function handHitMatchesPanelSurface(
+  hit: string,
+  surface: HandDetailSurface,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  if (h === "general") return true;
+  if (surface === "inner") return HAND_INNER_HIT_ID_SET.has(h);
+  return HAND_OUTER_HIT_ID_SET.has(h);
+}
+
+function handExactSubForPanel(
+  paper: BodySitesCarrier,
+  sub: string,
+  panel: HandDetailPanel,
+): boolean {
+  const sl = sub.toLowerCase();
+  for (const s of paper.bodySites ?? []) {
+    const resolved = resolveBodySite(s);
+    if (resolved.parent !== "hand") continue;
+    if (resolved.subregion.trim().toLowerCase() !== sl) continue;
+    if (!handSiteMatchesPanelSide(s, panel.side)) continue;
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Hand L2 zoom on one panel: `general` matches only `hand → general` sites for that side.
+ * Inner panels count palm / fingertips / fingers / thenar-eminence; outer counts hand-back.
+ */
+export function paperMatchesHandFineSelectionForPanel(
+  paper: BodySitesCarrier,
+  hit: string,
+  panel: HandDetailPanel,
+): boolean {
+  const h = hit.trim().toLowerCase();
+  if (!handHitMatchesPanelSurface(h, panel.surface)) return false;
+  switch (h) {
+    case "general":
+      return handExactSubForPanel(paper, "general", panel);
+    case "palm":
+      return handExactSubForPanel(paper, "palm", panel);
+    case "fingertips":
+      return handExactSubForPanel(paper, "fingertips", panel);
+    case "fingers":
+      return handExactSubForPanel(paper, "fingers", panel);
+    case "thenar-eminence":
+      return handExactSubForPanel(paper, "thenar-eminence", panel);
+    case "hand-back":
+      return handExactSubForPanel(paper, "hand-back", panel);
+    default:
+      return false;
+  }
+}
+
+/** Hand L2 zoom (any panel): used for filter chips and aggregate counts. */
+export function paperMatchesHandFineSelection(
+  paper: BodySitesCarrier,
+  hit: string,
+): boolean {
+  const panels: HandDetailPanel[] = [
+    { side: "left", surface: "inner" },
+    { side: "right", surface: "inner" },
+    { side: "left", surface: "outer" },
+    { side: "right", surface: "outer" },
+  ];
+  return panels.some((panel) =>
+    paperMatchesHandFineSelectionForPanel(paper, hit, panel),
+  );
+}
+
+/** True when a body site's optional `side` should appear on the given arm panel. */
 export function armSiteMatchesPanelSide(
   site: { side?: string },
   panelSide: ArmDetailSide,
@@ -453,6 +570,10 @@ export function paperMatchesBodyMapFineSelection(
 
   if (parent === "arm" && ARM_DETAIL_HIT_ID_SET.has(needle)) {
     return paperMatchesArmFineSelection(paper, needle);
+  }
+
+  if (parent === "hand" && HAND_DETAIL_HIT_ID_SET.has(needle)) {
+    return paperMatchesHandFineSelection(paper, needle);
   }
 
   for (const s of paper.bodySites ?? []) {

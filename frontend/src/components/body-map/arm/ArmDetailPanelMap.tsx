@@ -1,17 +1,61 @@
-import { useMemo, type PointerEvent } from "react";
+import { useMemo, type PointerEvent, type SVGProps } from "react";
 import { contourDensity, geoPath } from "d3";
 import type { ContourMultiPolygon } from "d3-contour";
 import type { ArmShapeSpec } from "./armDetailSampleDots";
 import type { BodyMapVariant } from "../bodyMapVariant";
 import { countToPerceptualNormalized } from "../bodyMapVisualization";
 
-type ArmPathLayer = { d: string; transform?: string; layerKey: string };
+type ShapeLayer =
+  | { kind: "path"; d: string; transform?: string; layerKey: string }
+  | {
+      kind: "ellipse";
+      cx: number;
+      cy: number;
+      rx: number;
+      ry: number;
+      transform?: string;
+      layerKey: string;
+    };
 
-function armSpecLayers(hitId: string, spec: ArmShapeSpec): ArmPathLayer[] {
+function specToLayers(hitId: string, spec: ArmShapeSpec): ShapeLayer[] {
   if (spec.kind === "path") {
-    return [{ d: spec.d, transform: spec.transform, layerKey: hitId }];
+    return [{ kind: "path", d: spec.d, transform: spec.transform, layerKey: hitId }];
   }
-  return [];
+  return [
+    {
+      kind: "ellipse",
+      cx: spec.cx,
+      cy: spec.cy,
+      rx: spec.rx,
+      ry: spec.ry,
+      transform: spec.transform,
+      layerKey: hitId,
+    },
+  ];
+}
+
+function ShapeLayerGraphic({
+  layer,
+  layerTransform,
+  ...rest
+}: {
+  layer: ShapeLayer;
+  layerTransform: (transform?: string) => string | undefined;
+} & SVGProps<SVGPathElement & SVGEllipseElement>) {
+  const transform = layerTransform(layer.transform);
+  if (layer.kind === "path") {
+    return <path d={layer.d} transform={transform} {...rest} />;
+  }
+  return (
+    <ellipse
+      cx={layer.cx}
+      cy={layer.cy}
+      rx={layer.rx}
+      ry={layer.ry}
+      transform={transform}
+      {...rest}
+    />
+  );
 }
 
 function heatmapContrastT(t: number): number {
@@ -53,6 +97,10 @@ export type ArmDetailPanelMapProps = {
   onGeneralRingClick: () => void;
   generalRingActive: boolean;
   generalRingHovered: boolean;
+  horizontalFlip?: boolean;
+  interactiveFillHitIds?: readonly string[];
+  /** When false, the outline ring is omitted (e.g. outer hand = single hand-back region). */
+  showGeneralRing?: boolean;
 };
 
 export function ArmDetailPanelMap({
@@ -90,6 +138,9 @@ export function ArmDetailPanelMap({
   onGeneralRingClick,
   generalRingActive,
   generalRingHovered,
+  horizontalFlip = false,
+  interactiveFillHitIds,
+  showGeneralRing = true,
 }: ArmDetailPanelMapProps) {
   const hoverGradientId = `${idPrefix}-hover`;
   const softFillFilterId = `${idPrefix}-soft`;
@@ -139,6 +190,48 @@ export function ArmDetailPanelMap({
   }, [rawDotsContoursByHit]);
 
   const rawDotsContourPath = useMemo(() => geoPath(), []);
+
+  const contentFlipTransform = horizontalFlip
+    ? `translate(${vbW}, 0) scale(-1, 1)`
+    : undefined;
+
+  const layerTransform = (transform?: string) => {
+    if (!contentFlipTransform) return transform;
+    if (!transform) return contentFlipTransform;
+    return `${contentFlipTransform} ${transform}`;
+  };
+
+  const pointerFillHitIds = interactiveFillHitIds ?? fillHitIds;
+
+  const renderPointerFillHits = (keyPrefix: string) =>
+    pointerFillHitIds.flatMap((hitId) => {
+      const spec = shapeByHit.get(hitId);
+      if (!spec) return [];
+      const selected =
+        !suppressSelectedFineFillWhileGeneralHover && isHitSelected(hitId);
+      const active = hoveredHitId === hitId || selected;
+      const fillPaint = active ? `url(#${hoverGradientId})` : "transparent";
+      const common = {
+        fill: fillPaint,
+        fillOpacity: active ? 0.78 : 1,
+        filter: active ? `url(#${softFillFilterId})` : undefined,
+        stroke: "none" as const,
+        pointerEvents: "all" as const,
+        style: { cursor: "pointer" as const },
+        onPointerEnter: onFillHitEnter(hitId),
+        onPointerMove,
+        onPointerLeave,
+        onClick: () => onToggleHit(hitId),
+      };
+      return specToLayers(hitId, spec).map((layer) => (
+        <ShapeLayerGraphic
+          key={`${keyPrefix}${layer.layerKey}`}
+          layer={layer}
+          layerTransform={layerTransform}
+          {...common}
+        />
+      ));
+    });
 
   return (
     <svg
@@ -221,29 +314,31 @@ export function ArmDetailPanelMap({
             result="areaMaskSoft"
           />
         </filter>
-        <mask
-          id={generalRingMaskId}
-          maskUnits="userSpaceOnUse"
-          maskContentUnits="userSpaceOnUse"
-          x={0}
-          y={0}
-          width={vbW}
-          height={vbH}
-        >
-          <rect x={0} y={0} width={vbW} height={vbH} fill="white" />
-          {fillHitIds.flatMap((hitId) => {
-            const spec = shapeByHit.get(hitId);
-            if (!spec) return [];
-            return armSpecLayers(hitId, spec).map((layer) => (
-              <path
-                key={`general-mask-${layer.layerKey}`}
-                d={layer.d}
-                transform={layer.transform}
-                fill="black"
-              />
-            ));
-          })}
-        </mask>
+        {showGeneralRing ? (
+          <mask
+            id={generalRingMaskId}
+            maskUnits="userSpaceOnUse"
+            maskContentUnits="userSpaceOnUse"
+            x={0}
+            y={0}
+            width={vbW}
+            height={vbH}
+          >
+            <rect x={0} y={0} width={vbW} height={vbH} fill="white" />
+            {fillHitIds.flatMap((hitId) => {
+              const spec = shapeByHit.get(hitId);
+              if (!spec) return [];
+              return specToLayers(hitId, spec).map((layer) => (
+                <ShapeLayerGraphic
+                  key={`general-mask-${layer.layerKey}`}
+                  layer={layer}
+                  layerTransform={layerTransform}
+                  fill="black"
+                />
+              ));
+            })}
+          </mask>
+        ) : null}
         {fillHitIds.map((hitId) => {
           const spec = shapeByHit.get(hitId);
           if (!spec) return null;
@@ -260,11 +355,11 @@ export function ArmDetailPanelMap({
               height={vbH}
             >
               <rect x={0} y={0} width={vbW} height={vbH} fill="black" />
-              {armSpecLayers(hitId, spec).map((layer) => (
-                <path
+              {specToLayers(hitId, spec).map((layer) => (
+                <ShapeLayerGraphic
                   key={`area-mask-${layer.layerKey}`}
-                  d={layer.d}
-                  transform={layer.transform}
+                  layer={layer}
+                  layerTransform={layerTransform}
                   fill="white"
                   filter={`url(#${areaMaskFeatherFilterId})`}
                 />
@@ -276,7 +371,7 @@ export function ArmDetailPanelMap({
 
       <path
         d={silhouetteD}
-        transform={silhouetteTransform}
+        transform={layerTransform(silhouetteTransform)}
         fill="none"
         stroke="#1e293b"
         strokeOpacity={0.45}
@@ -362,34 +457,7 @@ export function ArmDetailPanelMap({
         </g>
       ) : null}
 
-      {fillHitIds.flatMap((hitId) => {
-        const spec = shapeByHit.get(hitId);
-        if (!spec) return [];
-        const selected =
-          !suppressSelectedFineFillWhileGeneralHover && isHitSelected(hitId);
-        const active = hoveredHitId === hitId || selected;
-        const fillPaint = active ? `url(#${hoverGradientId})` : "transparent";
-        const common = {
-          fill: fillPaint,
-          fillOpacity: active ? 0.78 : 1,
-          filter: active ? `url(#${softFillFilterId})` : undefined,
-          stroke: "none" as const,
-          pointerEvents: "all" as const,
-          style: { cursor: "pointer" as const },
-          onPointerEnter: onFillHitEnter(hitId),
-          onPointerMove,
-          onPointerLeave,
-          onClick: () => onToggleHit(hitId),
-        };
-        return armSpecLayers(hitId, spec).map((layer) => (
-          <path
-            key={layer.layerKey}
-            d={layer.d}
-            transform={layer.transform}
-            {...common}
-          />
-        ));
-      })}
+      {showGeneralRing ? renderPointerFillHits("") : null}
 
       {variant === "countHeatmap" ? (
         <g pointerEvents="none">
@@ -415,40 +483,46 @@ export function ArmDetailPanelMap({
         </g>
       ) : null}
 
-      {/* Hit target: ring excludes subpart interiors so fine regions stay clickable. */}
-      <path
-        d={generalOutlineD}
-        transform={generalOutlineTransform}
-        fill="none"
-        stroke="transparent"
-        strokeWidth={generalRingStrokeWidth}
-        vectorEffect="nonScalingStroke"
-        strokeLinejoin="round"
-        strokeLinecap="round"
-        pointerEvents="stroke"
-        mask={`url(#${generalRingMaskId})`}
-        style={{ cursor: "pointer" }}
-        onPointerEnter={onGeneralRingEnter}
-        onPointerMove={onPointerMove}
-        onPointerLeave={onPointerLeave}
-        onClick={onGeneralRingClick}
-        aria-label={`${sideLabel} arm general (outline)`}
-      />
-      {/* Visual: full hand–shoulder outline without mask (avoids gaps at subpart seams). */}
-      {generalRingActive || generalRingHovered ? (
-        <path
-          d={generalOutlineD}
-          transform={generalOutlineTransform}
-          fill="none"
-          stroke="#fbcfe8"
-          strokeOpacity={generalRingHovered ? 1 : 0.92}
-          strokeWidth={generalRingStrokeWidth}
-          vectorEffect="nonScalingStroke"
-          strokeLinejoin="round"
-          strokeLinecap="round"
-          pointerEvents="none"
-          aria-hidden
-        />
+      {!showGeneralRing ? renderPointerFillHits("top-") : null}
+
+      {showGeneralRing ? (
+        <>
+          {/* Hit target: ring excludes subpart interiors so fine regions stay clickable. */}
+          <path
+            d={generalOutlineD}
+            transform={layerTransform(generalOutlineTransform)}
+            fill="none"
+            stroke="transparent"
+            strokeWidth={generalRingStrokeWidth}
+            vectorEffect="nonScalingStroke"
+            strokeLinejoin="round"
+            strokeLinecap="round"
+            pointerEvents="stroke"
+            mask={`url(#${generalRingMaskId})`}
+            style={{ cursor: "pointer" }}
+            onPointerEnter={onGeneralRingEnter}
+            onPointerMove={onPointerMove}
+            onPointerLeave={onPointerLeave}
+            onClick={onGeneralRingClick}
+            aria-label={`${sideLabel} arm general (outline)`}
+          />
+          {/* Visual: full hand–shoulder outline without mask (avoids gaps at subpart seams). */}
+          {generalRingActive || generalRingHovered ? (
+            <path
+              d={generalOutlineD}
+              transform={layerTransform(generalOutlineTransform)}
+              fill="none"
+              stroke="#fbcfe8"
+              strokeOpacity={generalRingHovered ? 1 : 0.92}
+              strokeWidth={generalRingStrokeWidth}
+              vectorEffect="nonScalingStroke"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              pointerEvents="none"
+              aria-hidden
+            />
+          ) : null}
+        </>
       ) : null}
     </svg>
   );

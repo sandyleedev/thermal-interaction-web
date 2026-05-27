@@ -4,6 +4,7 @@ import {
 } from "@/lib/research/bodyMapRegions";
 import {
   ARM_DETAIL_HIT_IDS,
+  HAND_DETAIL_HIT_IDS,
   HEAD_DETAIL_HIT_IDS,
   NECK_DETAIL_HIT_IDS,
   paperHasWholeBodyGeneralSite,
@@ -49,6 +50,8 @@ export function getSelectableSubpartIds(
       return ["general", ...TORSO_DETAIL_HIT_IDS];
     case "arm":
       return ["general", ...ARM_DETAIL_HIT_IDS];
+    case "hand":
+      return ["general", ...HAND_DETAIL_HIT_IDS];
     case "wholeBody":
       return ["general"];
     default:
