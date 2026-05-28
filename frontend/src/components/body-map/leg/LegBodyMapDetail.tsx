@@ -37,7 +37,7 @@ import {
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
 
-const HEATMAP_DOT_RADIUS = 16;
+const HEATMAP_DOT_RADIUS = 80;
 const HEATMAP_DOT_OPACITY_MIN = 0.22;
 const HEATMAP_DOT_OPACITY_MAX = 0.52;
 const MAX_HEATMAP_DOTS_PER_HIT = MAX_HEATMAP_DOTS_PER_REGION;
@@ -150,10 +150,7 @@ export type LegBodyMapDetailProps = {
   papers: readonly ResearchPaper[];
 };
 
-export function LegBodyMapDetail({
-  variant,
-  papers,
-}: LegBodyMapDetailProps) {
+export function LegBodyMapDetail({ variant, papers }: LegBodyMapDetailProps) {
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
 
