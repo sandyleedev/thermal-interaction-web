@@ -12,17 +12,25 @@
     "maxTempC": null,
     "minDurationSec": 1.9,
     "maxDurationSec": 10.0,
-    "senses": ["haptic-tactile", "thermal-alone"],
+    "senses": [
+      "haptic-tactile"
+    ],
     "thermalPerceptionMeasure": "Study 1 and 2: participants report if they feel a \"single continuous moving stroke\". Specifically: \nStudy 1: Binary motion detection --- Section 4.3 (page 5-6):\nMeasure: Probability of perceiving thermal motion (binary yes/no).\nAnalysis: RM-ANOVA on perception probability.\n\nStudy 2: Psychophysical thresholds --- Section 5.2 (page 7):\nMeasures: Lower threshold (minimum duration for perception), Upper threshold (maximum duration for perception), Speed range (cm/s) derived from duration thresholds.\n\nStudy 3: Qualitative interviews --- Section 6.2 (page 9):\nSemi-structured interview lasting approximately 12 minutes, colleted qualitative feedback on: Immersion, Clarity of motion, Realism, Enjoyment, Comfort.",
     "thermalCuePurpose": "Create illusory feeling of thermal motion - for more engaging and realistic experience in VR.\nThey introduce \"thermal motion\", and achieve \"thermal referral illusions\"",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": "Tegway S043A030040",
     "mainActuatorSize": "30×40×2.3 mm",
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": "Max temperature difference: 64°C (between two sides)",
-    "otherSensoryActuators": ["ERM vibrotactile"],
-    "auxiliaryHardware": ["Heat sink"],
+    "otherSensoryActuators": [
+      "ERM vibrotactile"
+    ],
+    "auxiliaryHardware": [
+      "Heat sink"
+    ],
     "heatControlMethod": "Open-loop; temperature sensor used in preliminary study only. Voltage mapping pre-calibrated lookup table used.",
     "powerConsumption": "5.7V, 6A",
     "temporalParameters": "Warm up: 1s; Cooldown: 20s",
@@ -55,8 +63,11 @@
     "maxDurationSec": 600.0,
     "senses": [],
     "thermalPerceptionMeasure": "Interview and description with tools (body map and sensual evaluation instrument) (page 5).",
-    "thermalCuePurpose": "---Side note: This work trying to: \nUnderstand how people perceive and articulate full-body heat experiences\nIdentify experiential dimensions of heat beyond simple hot/cold descriptions\nInform future thermal experience design for HCI applications",
-    "thermalTransferModes": ["conduction", "convection"],
+    "thermalCuePurpose": "--Side note:\nThis work trying to: \nUnderstand how people perceive and articulate full-body heat experiences\nIdentify experiential dimensions of heat beyond simple hot/cold descriptions\nInform future thermal experience design for HCI applications",
+    "thermalTransferModes": [
+      "conduction",
+      "convection"
+    ],
     "mainActuatorForTemperatureSensation": null,
     "mainActuatorModel": null,
     "mainActuatorSize": null,
@@ -67,10 +78,14 @@
     "heatControlMethod": null,
     "powerConsumption": null,
     "temporalParameters": null,
-    "otherNote": "Focused on the moment of ’löyly’, which is when water is poured onto the sauna stones",
+    "otherNote": "focused on the moment of ’löyly’, which is when water is poured onto the sauna stones",
     "technicalSummary": "This study explored how people experience intense full-body heat in a traditional Finnish sauna, rather than testing an artificial thermal device. Participants sat in an 80–90°C sauna and described their sensations through interviews, body maps, and tactile objects, focusing especially on the moment when water is poured onto hot stones. The study shows that heat experiences involve more than “hot” or “cold”, including feelings such as pressure, tingling, movement, discomfort, and body-wide distribution.",
-    "materialsInContactWithSkin": ["air-gas"],
-    "materials": ["air-gas"],
+    "materialsInContactWithSkin": [
+      "air-gas"
+    ],
+    "materials": [
+      "air-gas"
+    ],
     "bodyPartsInvolved": "Full body heat sensation in a sauna.",
     "bodySites": [
       {
@@ -94,17 +109,25 @@
     "maxTempC": null,
     "minDurationSec": 3.0,
     "maxDurationSec": 3.0,
-    "senses": ["haptic-tactile", "thermal-alone"],
+    "senses": [
+      "haptic-tactile"
+    ],
     "thermalPerceptionMeasure": "Questionnarie. 5-point (-2 to 2). Mesured \"strength\" and \"duration\" of cold sensation.\nThey tasted ice cream under two conditions and rated which felt colder, using comparative judgments rather than absolute ratings.",
     "thermalCuePurpose": "Provide external cold stimuli for people who are too sensitive to eat cold food, such as dentin hypersensitivity, without altering the food's actual temperature.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": "KURAG Electronics PLC",
     "mainActuatorSize": null,
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": null,
     "otherSensoryActuators": [],
-    "auxiliaryHardware": ["Heat sink", "Fan", "Thermistor"],
+    "auxiliaryHardware": [
+      "Heat sink",
+      "Fan",
+      "Thermistor"
+    ],
     "heatControlMethod": "Thermistor feedback control",
     "powerConsumption": "24V, 10A",
     "temporalParameters": "Cooling rate: ~1.0°C per second.\nWarming rate (after stimulus): ~0.7°C per second.\nDuration: 3 seconds for timed conditions: before or at the moment of swollowing, all the time, and no coldness.\nTiming synchronization: Aligned with swallowing or mastication.",
@@ -135,17 +158,25 @@
     "maxTempC": null,
     "minDurationSec": 5.0,
     "maxDurationSec": 7.0,
-    "senses": ["thermal-alone", "haptic-tactile"],
+    "senses": [
+      "haptic-tactile"
+    ],
     "thermalPerceptionMeasure": "Three-question method with binary responses (yes/no) to determine referral state. See p6.\nQ1: \"I felt the thermal sensations\" (yes/no) - validates thermal detection\nQ2: \"Please select the region where you felt strong (hot/warm) sensations\" (thermal location vs tactile location)\nQ3: \"Did you also feel (hot/warm) sensations in the other region?\" (yes/no)",
     "thermalCuePurpose": "To investigate a newly discovered thermal illusion called \"thermal masking\" where illusory thermal sensation at a tactile location can completely mask the original thermal sensation.\nThe research explores how combining thermal and vibrotactile stimuli can create perceptual effects where thermal sensation migrates from the actual thermal source to the vibrotactile location.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": "Tegway ThermoReal",
     "mainActuatorSize": "30×40×2.3mm; bend radius 7.5mm",
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": "Maximum temperature difference: 64°C at 6A current and 5.7V voltage",
-    "otherSensoryActuators": ["ERM vibrotactile"],
-    "auxiliaryHardware": ["Programmable digital power supply (Korad KD6005P)"],
+    "otherSensoryActuators": [
+      "ERM vibrotactile"
+    ],
+    "auxiliaryHardware": [
+      "Programmable digital power supply (Korad KD6005P)"
+    ],
     "heatControlMethod": null,
     "powerConsumption": "6A, 5.7V max",
     "temporalParameters": "Duration: 5 seconds\nResponse time: ~1 second",
@@ -153,7 +184,7 @@
     "technicalSummary": "This study explored whether warmth or coldness can feel as if it comes from a different place on the skin. The researchers placed a flexible Peltier thermal actuator and ERM vibration motors on the forearm, then tested whether vibration could shift or mask the perceived location of the thermal sensation. The results suggest that designers may be able to create the feeling of thermal feedback across a larger area using fewer heating or cooling devices.",
     "materialsInContactWithSkin": [],
     "materials": [],
-    "bodyPartsInvolved": "Study 1 & 2: ventral side of the forearm. --- page 5, 8\nStudy 3: Thermal at ventral center, tactile on dorsal (opposite) side. --- page 10",
+    "bodyPartsInvolved": "Study 1 &2: ventral side of the forearm. --- page 5, 8\nStudy 3: Thermal at ventral center, tactile on dorsal (opposite) side. --- page 10",
     "bodySites": [
       {
         "region": "arm",
@@ -181,10 +212,17 @@
     "maxTempC": 38.0,
     "minDurationSec": 1.0,
     "maxDurationSec": 5.0,
-    "senses": ["thermal-alone", "haptic-tactile", "visual"],
+    "senses": [
+      "haptic-tactile",
+      "visual"
+    ],
     "thermalPerceptionMeasure": "Study 1 (page 5):\n4-point Likert scale: 0 (not at all) to 3 (significant) for warmth intensity\nBody drawings: Participants drew perceived thermal areas on tablet with stylus\nThermal detection rate: Yes/no whether thermal sensation was felt (Q1)\n\nStudy 2 (page 7):\nVisual Analogue Scale (VAS): Continuous slider from \"Not at all\" to \"Very much\" for warmth\nReaction time: Time to press spacebar when feeling warmth\nSkin temperature measurements via thermistors\n\nStudy 3 (page 10):\n7-point Likert scale: Continuity of warmth/coolness movement (1: discrete/no movement to 7: perfectly continuous)\n\nStudy 4 (page 11-12):\nStaircase method: Participants compared hydroptical water to reference water, reporting which felt warmer\nReference water temperature adjusted until perceived equality\nWater temperature of subjective equality calculated from last 4 reversals\n\nPhysical measurements (all studies):\nSkin temperature via thermistors (Alpha Technics)\nWater temperature monitoring",
     "thermalCuePurpose": "Provide a new way of displaying thermal cues. --- The system provides thermal feedback through visible light shining on skin submerged in water. This allows:\nControl of perceived water temperature without changing actual water temperature.\nApparent motion of warmth and coolness sensations along the skin.\nApplications in VR, shared water experiences, and therapeutic uses.",
-    "thermalTransferModes": ["conduction", "convection", "radiation"],
+    "thermalTransferModes": [
+      "conduction",
+      "convection",
+      "radiation"
+    ],
     "mainActuatorForTemperatureSensation": "Visible light LEDs + water",
     "mainActuatorModel": "100W Chip-on-Board LEDs: CHANZON 1DGL-JC-100W",
     "mainActuatorSize": null,
@@ -200,8 +238,12 @@
     "temporalParameters": "Duration: 1-5 seconds depending on study\nSkin temperature change rate: ~1-2°C per second\nAdaptation period: 20 seconds between trials",
     "otherNote": "Mechanism: Light passes through water and is absorbed by skin, directly heating it. Cooling occurs passively when lights turn off and water absorbs heat from skin.\nStudy 1: Different spectra wavelength/color. Blue (460-470nm), Green (520-525nm), Cool-White (6000-6500K), Warm-White (3000-3500K)\nStudy 2: Different illuminance. 210, 433, 635 klux.\nStudy 3: Stimuli duration 200-1000ms for apparent motion, and stimuli onset asynchrony (SOA)\n\nSpatial parameters:\nDistance: 50mm from LED to skin (standard across studies)\nSpacing for apparent motion: 80mm between LED rows",
     "technicalSummary": "This study introduced “hydroptical thermal feedback”, a method that makes skin feel warmer or cooler by shining visible light through water onto the hand. The system used 100W LED lights, Arduino-based control, PWM light intensity adjustment, and a water setup kept around 25–26°C, so the perceived water temperature could change without directly changing the water temperature itself. Across four small psychophysical studies, the authors tested light colour, brightness, apparent motion, and perceived water temperature, showing that light-based heating in water can create spatial and moving thermal sensations on the hand.",
-    "materialsInContactWithSkin": ["liquids-gels"],
-    "materials": ["liquids-gels"],
+    "materialsInContactWithSkin": [
+      "liquids-gels"
+    ],
+    "materials": [
+      "liquids-gels"
+    ],
     "bodyPartsInvolved": "Right hand and wrist all in water, light is only on the palm.",
     "bodySites": [
       {
@@ -230,10 +272,14 @@
     "maxTempC": null,
     "minDurationSec": 1.32,
     "maxDurationSec": 2.3,
-    "senses": ["visual", "thermal-alone"],
+    "senses": [
+      "visual"
+    ],
     "thermalPerceptionMeasure": "In sum: JND, forced-choice: Y/N.\n\nMultiple methods across three tasks:\nTask 1: Just Noticeable Difference (JND) - Staircase Method (page 5):\nParticipants compare two sets of 5 breaths (one with thermal stimulus, one without)\nForced choice: \"Does one set feel easier to breathe?\"\nTemperature adjusted by 0.5°C increments based on response\nStaircase ends after 4 reversals or 20 trials\nJND = average temperature at reversals\n\nTask 2: Range Characterization (pages 5-6):\nStarting from JND, participants compare consecutive intensity levels\nIf difference noticed, establishes new distinguishable level\nContinues until discomfort/pain or 20 trials\nMeasures number of perceivable levels and temperature steps between them\n\nTask 3: Qualitative Interview (page 6):\nOpen-ended descriptions of sensations\nPrompted analogies to real-world experiences\nFeedback about study experience\n\nQualitative coding (page 6, Figure 10):\nTranscribed comments classified as:\nAirflow (breathing, patency, congestion, ease/difficulty)\nTemperature (hot/cold sensations)\nTactile (tingling, skin sensations, pain)\n\n\nPhysical measurements:\nSkin temperature: Thin 10kΩ thermistors (TME, B3950)\nAir pressure: Differential sensor monitoring breathing\nBaseline temperature: Thermistor + silicone tube (1mm ID, 2mm OD) in nostril",
     "thermalCuePurpose": "Augment breathing,  \"caracterise the relationship between in-nose thermal stimulation and perceived nasal airflow\", and in page 1: \"We propose, engineer, and study a novel method to augment the feeling of breathing—enabling interactive applications to let users feel like they are inhaling more/less air (perceived nasal airflow). We achieve this effect by cooling or heating the nose in sync with the user's inhalation. \nThe system provides thermal feedback via Peltier elements positioned inside the nose, synchronized with breathing (page 1, Abstract; page 2, Figure 1).\nIn the JND test, it's just the thermal cue, while in the demonstration, they designed VR env and invited users to try out.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": "Custom Thermoelectric 00711-5L31-03CA-S",
     "mainActuatorSize": "8×8 mm",
@@ -250,8 +296,12 @@
     "temporalParameters": "Synchronization latency: 0.21 ± 0.67 s average\nInhalation duration: 1.81 ± 0.49 s average",
     "otherNote": "Physical design:\nIn-nose weight: 7g (Peltiers + sensors)\nBehind-ear weight: 26g (microcontroller, battery, etc.)\nForm factor: Nose clip worn across septum\n\nTemperature increments: 0.5°C steps in staircase method",
     "technicalSummary": "This study tested a nose-worn thermal device that changes how easy or difficult breathing feels without physically blocking airflow. The system placed two small Peltier elements inside the nostrils, detected inhalation with an air-pressure sensor, and synchronised heating or cooling with each breath using an ESP32-based controller. The results showed that cooling the nasal area could make breathing feel easier, while heating could make it feel more restricted, suggesting applications in VR, meditation, mask comfort, exercise, and breathing-related interaction design.",
-    "materialsInContactWithSkin": ["air-gas"],
-    "materials": ["air-gas"],
+    "materialsInContactWithSkin": [
+      "air-gas"
+    ],
+    "materials": [
+      "air-gas"
+    ],
     "bodyPartsInvolved": "sal (in one nostril).\n\nTarget area include: \nNasal septum (wall dividing nostrils) \nNasal mucosa \nTurbinates region",
     "bodySites": [
       {
@@ -275,10 +325,14 @@
     "maxTempC": null,
     "minDurationSec": 30.0,
     "maxDurationSec": 30.0,
-    "senses": ["thermal-alone", "olfactory"],
+    "senses": [
+      "olfactory"
+    ],
     "thermalPerceptionMeasure": "Questionnarie. 9-point. Specifically:\n\nStudy 1 (Duration, page 6-7) --- 9-point Likert scale for cold intensity:\n\n[1: \"Do not feel at all\", 9: \"Cold as ice\"]\nMeasured after 15, 30, 60, 120 minutes post-application.\nControl: Fan-only condition (no alcohol) on opposite hand.\n\nStudy 2 (Perfume, page 9) --- 9-point bipolar Likert scale for thermal sensation:\n\n[-4: \"very cold\", 0: neutral, +4: \"very hot\"]\n\nTemporal-Check-All-That-Apply (TCATA) method:\n\nParticipants press GUI button whenever sensation changes OR at least once per minute.\nCaptures temporal dynamics of thermal sensation over 30-minute sessions.\n\nThree conditions compared:\n\nPerfume (alcohol + menthol fragrance)\n90 vol% ethanol only\nFan-only (no chemical application)\n\nPost-study qualitative feedback:\n\nOpen-ended descriptions of sensations\nComparisons to real-world experiences",
     "thermalCuePurpose": "A new way of providing cooling sensation (because peltier is less energy efficient and complicated to set up) --- Ubiquitous, energy-efficient cold sensation feedback leveraging alcohol's widespread availability post-COVID-19.\n\nApplications demonstrated:\nVR experiences: MP (Magic Points) representation - cold feedback intensity decreases as \"magic power\" depletes (pages 2-3)\nNotifications: Silent, ambient cold feedback (page 4)\nRelaxation: Pomodoro timer combining cold + scent during breaks (page 11)\nMaterial rendering: Simulating textures via thermal properties (page 3-4)",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Alcohol or perfume + fan",
     "mainActuatorModel": "Alcohol: 0.3 g of purified 80 vol% ethanol-water. WHO hand sanitizer standard\nFan: PENGLIN 2PCS 2510\nPerfume: 90 vol% ethanol to match EDT 5-15% fragrance range",
     "mainActuatorSize": "25mm fan; 25mm square gauze cartridge",
@@ -297,8 +351,14 @@
     "temporalParameters": "High fan speed: 100% duty ratio (~0.15°C/s cooling, ~8°C max drop)\nMedium fan speed: 50% duty ratio\nLow: 25% duty ratio (~0.02°C/s cooling, ~2°C drop)\n\nLatency: Minimal (evaporation starts immediately)\nDuration per refill: 30-60 minutes effective cooling",
     "otherNote": "The device is designed to be watch-sized (approximately 65×35×15 mm), and Its total weight is kept below 50 g\nAlso compared with water\nAlso compared with menthol-containing perfume\nStimulation area: 25mm square\nBattery life: 5.7 hours continuous fan operation (400mAh)",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["fabrics-textiles", "chemical"],
-    "materials": ["fabrics-textiles", "chemical"],
+    "materialsInContactWithSkin": [
+      "fabrics-textiles",
+      "chemical"
+    ],
+    "materials": [
+      "fabrics-textiles",
+      "chemical"
+    ],
     "bodyPartsInvolved": "Wrist (dorsal side, non-dominant arm) for all studies (pages 5-9), device worn as wristwatch (page 4-5, Figure 4), making wrist the practical location for wearable application.",
     "bodySites": [
       {
@@ -322,7 +382,11 @@
     "maxTempC": null,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["visual", "olfactory", "trigeminal-nerve"],
+    "senses": [
+      "visual",
+      "olfactory",
+      "trigeminal-nerve"
+    ],
     "thermalPerceptionMeasure": "study 1: rate cool or warm.\nStudy 2: ASHRAE scale (7-point, -3 to 3).\n\n--- Specifically:\n\nStudy 1: Trigeminal Scent Comparison (page 6)\nTask: Pairwise comparison of 6 scents + 3 solvents\n\nMeasurement:\nVisual-analog scale (VAS) with 110mm range\nOnly extreme annotations: \"cool\" and \"warm\" endpoints\nNo numerical labels (prevents anchoring bias)\nParticipants rate both stimuli in each pair\n\n\nStudy 2: VR Temperature Rendering (page 7)\nTask: Explore VR scenes (desert oasis, icy mountain) for 2+ minutes\nMeasurement:\nASHRAE 7-point bipolar Likert scale\n\nSpecifically designed for temperature perception\nRange: -3 (cool) to +3 (warm)\nStandard in thermal comfort research",
     "thermalCuePurpose": "create a temperature illusion via scents - a power-efficient alternative to Peltier elements.",
     "thermalTransferModes": [],
@@ -332,14 +396,23 @@
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": null,
     "otherSensoryActuators": [],
-    "auxiliaryHardware": ["Capillary tubes 0.127mm ID", "Mesh for fine spray"],
+    "auxiliaryHardware": [
+      "Capillary tubes 0.127mm ID",
+      "Mesh for fine spray"
+    ],
     "heatControlMethod": "Open-loop; pump activation: 70ms bursts; droplet volume: 1µL per burst",
     "powerConsumption": null,
     "temporalParameters": "Optimal inter-stimulus interval: 6s (warming), 12s (cooling)\nAtomization duration: 1s per stimulus\nOperating latency: 200ms (trigger to mist delivery)",
     "otherNote": "Olfactory pink noise: 7-component mixture for obfuscating scents while preserving trigeminal effect\nTwo-stage mechanism: micropump + atomizer.\nCross-contamination prevention: Narrow capillaries prevent backflow",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["air-gas", "chemical"],
-    "materials": ["air-gas", "chemical"],
+    "materialsInContactWithSkin": [
+      "air-gas",
+      "chemical"
+    ],
+    "materials": [
+      "air-gas",
+      "chemical"
+    ],
     "bodyPartsInvolved": "sal area.\nNasal cavity - specifically trigeminal nerve endings in the nose (page 3)",
     "bodySites": [
       {
@@ -363,10 +436,14 @@
     "maxTempC": 36.0,
     "minDurationSec": 10.0,
     "maxDurationSec": 10.0,
-    "senses": ["thermal-alone", "haptic-tactile"],
+    "senses": [
+      "haptic-tactile"
+    ],
     "thermalPerceptionMeasure": "No direct measure. \n\nThe authors collected preferences and qualitative descriptions of thermal experiences:\nTemperature preference counts: (Table 4, page 6) 5 participants preferred warm, 7 participants preferred cold…\n\nPerception of Temperature Effects on Vibrations via Qualitative interviews (page 5, section 3.3.1).\n\nOpen-ended comments about how temperatures felt: (Page 5, Section 3.3.1) \"Six participants made comments beyond stating a temperature preference, all of which highlighted neutral or negative aspects about thermal cues. Cold stimuli were described as 'sharp' or 'almost painful', while warm stimuli were described as feeling 'alarming', 'dangerous' or 'worrying'\".",
     "thermalCuePurpose": "Investigate what goona happen when combining thermotactile cue with vibrotactile cue - in a lab environment.\nThe goal is to determine if presenting emotionally resonant vibrations at 'appropriate' temperatures (e.g., cold running water) or 'dissonant' temperatures (e.g., a cold heartbeat) significantly reinforces or reduces their emotional resonance.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
@@ -409,10 +486,14 @@
     "maxTempC": 42.5,
     "minDurationSec": 25.0,
     "maxDurationSec": 25.0,
-    "senses": ["thermal-alone", "visual"],
+    "senses": [
+      "visual"
+    ],
     "thermalPerceptionMeasure": "Rate temperature perception, comfort based on Arens et al. [3]. (page 68).\n\nThe authors used four measurement approaches:\nQuantitative Measurements (Likert scales):\nQ1: Temperature Perception - 9-Point Likert scale\n\nQuestion: \"How do you rate the thermal sensation?\"\nScale: ranging from very cold to very hot\n\nQ2: Thermal Comfort - 6-Point Likert scale\n\nQuestion: \"How do you rate the thermal comfort?\"\nScale: ranging from very comfortable to very uncomfortable (no neutral level)\n\nQ3 & Q4: Involvement - 7-Point Likert scales\n\nQ3: \"How much did the visual aspects involve you?\"\nQ4: \"How much did the thermal aspects involve you?\"\nScale: ranging from not involved at all to completely involved\n\nReference: Page 6, Section \"Task and Dependent Variables (DV)\"",
     "thermalCuePurpose": "Investigate the interdependency of visual and thermal stimuli in VR\nEnhance immersion and presence in VR experiences\nUnderstand how visual and thermal stimuli affect temperature perception, involvement, and comfort\n\n--- reference:\nPage 1, Introduction: \"the interdependency of visual and thermal perception in VR is still underexplored\"\nPage 2, bottom: \"In this paper, we close this gap by first introducing Therminator, a thermal display concept, and a system that allows localized thermal haptic feedback on the body with a high degree of freedom in VR\"\nPage 5, Methodology section: Three research questions listed (RQ1-RQ3)",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Water flow through PE-RT tubes\nDiameter: 12 mm\nThermal conductivity: 0.43 W·m⁻¹·K⁻¹ (close to water: 0.59 W·m⁻¹·K⁻¹)\nPressure resistance: up to 1300 kPa at flow temperatures up to 70°C",
     "mainActuatorModel": "PE-RT (polyethylene of raised temperature resistance)",
     "mainActuatorSize": "12mm diameter tubes",
@@ -459,7 +540,9 @@
     "maxTempC": null,
     "minDurationSec": 2.0,
     "maxDurationSec": 2.0,
-    "senses": ["haptic-tactile"],
+    "senses": [
+      "haptic-tactile"
+    ],
     "thermalPerceptionMeasure": "Quantitative Measurements:\n10-point Likert scale - rate the intensity of coldness, pressure, vibration, and pain.\n\nAlso estimate the area of cold sensation,  - Analog scale in millimeters.",
     "thermalCuePurpose": "No proper argument. Very casually, briefly mentioned that thermal percpetion related to VR and presenting atmosphere.\nPage 1, Introduction, paragraph 1: \"it was confirmed that reproducing the temperature sensation along with tactile sensation improves the realism of contacting objects or surrounding environment, leading to better immersion of the VR environment\"\nPage 1, Abstract: \"Furthermore, providing thermal sensation to the arm is expected to enhance immersion in VR content without interfering with hand movements\"\nPage 2, first paragraph: \"Together with pressure and vibratory sensations, that can also be generated by electrical stimulation, we can present rich tactile information by electrical stimulation alone\"",
     "thermalTransferModes": [],
@@ -480,8 +563,14 @@
     "temporalParameters": "Pulse width: 100, 300, or 500 µs\n\nRepetition Frequency:\n100 pps (pulses per second) during 2-second stimulation\nOverall system: 27 Hz when cycling through all 61 electrodes\nPulse Waveform: Stimulating pulse + 100 μs rest period",
     "otherNote": "Electrical stimulation (not purely thermal). One electrode as current source (anode or cathode), surrounding electrodes as return current path\nAnesthetic cream applied 1 hour before. \nGel layer reduces cold sensation. \nPolarity: anodic or cathodic.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["liquids-gels", "metal"],
-    "materials": ["liquids-gels", "metal"],
+    "materialsInContactWithSkin": [
+      "liquids-gels",
+      "metal"
+    ],
+    "materials": [
+      "liquids-gels",
+      "metal"
+    ],
     "bodyPartsInvolved": "Ventral (inside) part of the right forearm",
     "bodySites": [
       {
@@ -505,10 +594,14 @@
     "maxTempC": 40.0,
     "minDurationSec": 300.0,
     "maxDurationSec": 900.0,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": "Study 1: No measurement oon thermal perception.\n\nStudy 2: JND study, page 7. Specifically:\nTask: Compare water temperature between bare hand and DexteriSync hand.\nQuestion: \"Are these two cups the same temperature? Yes or No\".\n\nStarted at different temperatures (17°C or 30°C)\nAdjusted in increments based on responses (1.5-3°C increases, 0.5-1.5°C decreases).\nStopped when participant confirmed cups felt identical.\n\nObjective measures:\nPerceived temperature equivalence point - temperature at which DexteriSync hand felt same as bare hand (24°C).\n\nConfidence check: Verbal confirmation of decision certainty.\n\nTechnical Evaluation: Direct Skin Temperature Measurement.\n\n--- Side note\n\nInstrumentation:\nK-type thermocouple attached to palm-side finger front (volar surface).\nMeasured actual skin temperature changes over time.\n\nMeasurements:\nTemperature readings at multiple time points (0, 5, 10, 15 minutes).\n\nAnalysis:\nPerceived vs. actual temperature comparison.\nLinear regression model fitted: y = -5.304 + 1.136x, R² = 0.44.\nTime-series temperature profiles.",
     "thermalCuePurpose": "They made a thermal I/O exoskeleton to provide a sense of compromised hand dexterity.\n\nSpecifically,\n\nPurpose 1: Morphing Manual Dexterity\nDecrease finger dexterity by cooling fingers\nSimulate compromised dexterity experienced by elderly, neurodivergent individuals (ASD)\nEnable designers to experience embodied knowledge of hand motor challenges\n\nPurpose 2: Morphing Thermal Perception\nCreate thermal grill illusion (perceptual phenomenon)\nSimulate abnormal thermal perception seen in ASD and Multiple Sclerosis populations\nProvide realistic sensory experience of hand disorders",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Water circulation in copper + silicone tubes + Peltier for cooling water",
     "mainActuatorModel": "Copper tube: uxcell\nSilicone tube: uxcell \nSilicone tubes + PID controller",
     "mainActuatorSize": "each finger unit: about 6.2g\nCopper tube/pipe: 22-23mm x 6mm x 0.50mm (L*D*T)\nSilicone tube: 20mm*6mm*1mm (L*D*T)",
@@ -531,8 +624,14 @@
     "temporalParameters": null,
     "otherNote": "Copper tubes (401 W/(m·K) conductivity) on dorsal finger; silicone tubes at knuckles for flexibility. Water circulates through system cooled by Peltier.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["metal", "silicone-based"],
-    "materials": ["metal", "silicone-based"],
+    "materialsInContactWithSkin": [
+      "metal",
+      "silicone-based"
+    ],
+    "materials": [
+      "metal",
+      "silicone-based"
+    ],
     "bodyPartsInvolved": "Dorsal side of index finger and thumb.\nThumb (dominant hand)\nIndex finger (dominant hand).",
     "bodySites": [
       {
@@ -597,10 +696,14 @@
     "maxTempC": null,
     "minDurationSec": 3.5,
     "maxDurationSec": 3.5,
-    "senses": ["thermal-alone", "visual"],
+    "senses": [
+      "visual"
+    ],
     "thermalPerceptionMeasure": "In study 1, participants identify which and how many fingers the cues delivered to. So it's a Y/N cue  type of evaluation.",
     "thermalCuePurpose": "Enhance Realism and Immersion in VR Object Grasping",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": "TES1-03103",
     "mainActuatorSize": "10mm×6mmx1.6mm (LxWxT); 5g",
@@ -642,10 +745,14 @@
     "maxTempC": 40.0,
     "minDurationSec": 3.0,
     "maxDurationSec": 20.0,
-    "senses": ["thermal-alone", "haptic-force"],
+    "senses": [
+      "haptic-force"
+    ],
     "thermalPerceptionMeasure": "Can't tell in study 1, they ask participants to identify the thermal-pressure patterns they felt, but authors did not explain the procedure.\nNot really in study 2. They used HX model to evaluate haptic experience, not specific to temperature or pressure in this case.\n\n--- Side note\nStudy 1 (Recognition Test): Participants identified stimulated patterns and stiffness from 10 combinations (5 patterns × 2 stiffness levels) for both cool and warm stimuli. Results compiled in confusion matrices showing recognition accuracy (Pages 5-6, Sections 4.2.2 and 4.3, Figure 8).\nStudy 2 (User Experience Evaluation): Used the HX (Haptic Experience) model survey with 7-point Likert scales measuring five facets: Autotelic, Expressivity, Immersion, Realism, and Harmony (Page 8, Section 5, and Page 9, Section 5.2, Figure 12).",
     "thermalCuePurpose": "Provide a rapid stimulation for VR, Page 2, Section 1 Introduction.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier (motor-driven, flippable)",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
@@ -662,8 +769,12 @@
     "temporalParameters": "Motor operation speed: 450ms",
     "otherNote": "Servo motors flip peltier elements up to 270° to switch between contact and non-contact. Voltage tested 1.5V–3.0V in 0.5V steps.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["ceramic"],
-    "materials": ["ceramic"],
+    "materialsInContactWithSkin": [
+      "ceramic"
+    ],
+    "materials": [
+      "ceramic"
+    ],
     "bodyPartsInvolved": "In the user study: lower arm, glabrous skin side.\nIn the other demos: bottom of the feet, palm.",
     "bodySites": [
       {
@@ -697,10 +808,14 @@
     "maxTempC": 40.0,
     "minDurationSec": 10.0,
     "maxDurationSec": 10.0,
-    "senses": ["thermal-alone", "visual"],
+    "senses": [
+      "visual"
+    ],
     "thermalPerceptionMeasure": "During the study: Questionnaire, see page 6 (highlighted), and verbal feedback during he study.\nAfter:debriefng conversations.",
     "thermalCuePurpose": "They want to study the influence of the visual cues on perceived thermal location in VR --- for authentic experience. Thermal cues are applied to investigate the spatial localization accuracy of thermal stimuli in dependency to presented visual cues in VR, and to examine the degree of congruence required between thermal stimuli and visual cues for the experience to be perceived as authentic (Page 2, Section 2.2).",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier array (8 elements)",
     "mainActuatorModel": "CP85338",
     "mainActuatorSize": "30×30 mm per Peltier element",
@@ -757,10 +872,14 @@
     "maxTempC": null,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": "No measures. No study.\nThe authors do NOT measure people's thermal perception. There are no user studies, experiments, or evaluations reported in this paper. The work is a system design paper presenting only the technical implementation (Page 2, Section 5 mentions future work will investigate \"user perception and comfort levels\").",
     "thermalCuePurpose": "Thermal cues are used to enhance user immersion in VR --- page 1",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Resistor heating circuit + ultrasonic transducer array",
     "mainActuatorModel": "Resistor: 10-ohm\nUltrasonic transducer: 40kHz center frequency",
     "mainActuatorSize": "20×20 element ultrasonic array; 3cm element spacing → 60cm×60cm display. 1m distance from users",
@@ -779,8 +898,14 @@
     "temporalParameters": "Time-division multiplexing: switching between arrays in 100ms units\nUltrasonic frequency: 40kHz",
     "otherNote": "Non-contact heat delivery. Ultrasonic array creates multiple beams directing heated air toward user. Heating circuit warms air continuously via resistors.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["air-gas", "fabrics-textiles"],
-    "materials": ["air-gas", "fabrics-textiles"],
+    "materialsInContactWithSkin": [
+      "air-gas",
+      "fabrics-textiles"
+    ],
+    "materials": [
+      "air-gas",
+      "fabrics-textiles"
+    ],
     "bodyPartsInvolved": "Not specific. The paper mentions that heated air is directed \"towards the user's body parts\" (Page 1, Section 1) and specifically references \"the user's hands or other body parts\" (Page 2, Section 1). However, no specific body parts are identified for testing or evaluation.",
     "bodySites": [],
     "powerEnergyConsumption": "The total power of the heating circuit is 2.5W (Page 3, Section 3.1)."
@@ -798,16 +923,22 @@
     "maxTempC": null,
     "minDurationSec": 180.0,
     "maxDurationSec": 180.0,
-    "senses": ["thermal-alone", "haptic-force"],
+    "senses": [
+      "haptic-force"
+    ],
     "thermalPerceptionMeasure": "No direct measure.\n\nInstead, they did:\nPain intensity measured using Universal Pain Assessment Tool before and after device use (Page 3, Section 3; Page 4, Figure 5)\nPain Rate Percentage Change (PRPC) calculated using the formula: (Pain Rate Before - Pain Rate After) / Pain Rate Before × 100 (Page 3, Section 3, Equation 1)\nCorrelation between temperature and pain analyzed through mean pain rate at different temperature levels (Page 4, Figure 6)",
     "thermalCuePurpose": "Relive menstrual cramps",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Resistive heaters (embedded in belt)",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": null,
-    "otherSensoryActuators": ["Pneumatic compression belt"],
+    "otherSensoryActuators": [
+      "Pneumatic compression belt"
+    ],
     "auxiliaryHardware": [
       "PIC CMOS Flash Microcontroller",
       "Reed relay",
@@ -851,7 +982,9 @@
     "maxTempC": null,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["visual"],
+    "senses": [
+      "visual"
+    ],
     "thermalPerceptionMeasure": "No measure.\n\nInstead, they measured:\nGrasp Aperture (GAp): Distance between index finger tip and thumb tip during grasp (Page 5, Section \"Metrics - Grasp Aperture,\" Equation 1)\nGrasp Location: Where on the mug participants chose to grasp (handle, body/side, or top) (Page 5, Section \"Grasp Location,\" Figure 5)\nGrasp Type: Classification using Human GRASP taxonomy (power, intermediate, or precision grasps) (Page 5, Section \"Grasp Type\")\nIPQ Presence Questionnaire: 14-item questionnaire measuring General Presence, Spatial Presence, Involvement, and Experience Realism on 7-point scales (Page 5, Section \"Presence Questionnaire\")\nPost-test questionnaire: Assessed perceived usefulness of visual thermal cues and their influence on grasping decisions (Page 5, Section \"Post-Test Questionnaire\")",
     "thermalCuePurpose": "They apply visual thermal cues to study how those cues influence how people grasp cup in VR (grasp metrics in page 5: grasp aperture, type and location).",
     "thermalTransferModes": [],
@@ -886,16 +1019,23 @@
     "maxTempC": 22.0,
     "minDurationSec": 1.5,
     "maxDurationSec": 30.0,
-    "senses": ["thermal-alone", "haptic-tactile"],
+    "senses": [
+      "haptic-tactile"
+    ],
     "thermalPerceptionMeasure": "Evaluation 1 - Haptic Identification in Cold Feedback:\nIdentification accuracy for three tasks measured at three temperature conditions:\nIdentify if haptic intensity increased, decreased, or stayed constant (Page 12, Section 5.3)\nIdentify if haptic diameter increased, decreased, or stayed constant (Page 12, Section 5.3)\nIdentify location of haptic stimulus on hand (9 locations) (Page 12, Section 5.3)\n\nEvaluation 2 - Perceptual threshold: Number of visual particles at which users detected mismatch between haptics and visuals\nPreference ratings: User preference ranking of four rendering schemes in light/heavy conditions (Page 17, Figure 12)\n\nEvaluation 3 - User Experience:\nMeasured across 4 modality conditions: No Feedback, Tactile, Cold, Cold-Tactile\nCold-Tactile feedback.\nSubjective ratings (0-1 scale via visual analog scale):\nImmersion: \"The feedback condition was immersive and kept me engaged\"\nEnjoyment: \"I enjoyed interacting with the scene\"\nOverall Satisfaction: \"I felt that the feedback condition was satisfying\"",
     "thermalCuePurpose": "Create natural experience of snowfakes and raindrops in VR by simulating the cold sensations of snowflakes and raindrops on users' bare hands (Page 1, Abstract; Page 2, Section 1).",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": "Peltier: Walfront B07H6LK1W7. 4 Peltier plates per pack, 6 packs.",
     "mainActuatorSize": null,
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": null,
-    "otherSensoryActuators": ["Ultrasound haptic display", "Airflow by fans"],
+    "otherSensoryActuators": [
+      "Ultrasound haptic display",
+      "Airflow by fans"
+    ],
     "auxiliaryHardware": [
       "Ultrasound haptic display: STRATOS Explore",
       "Peltier cooling system: water pumps (max flow rate: 300𝐿/𝐻",
@@ -913,8 +1053,12 @@
     "temporalParameters": "Airflow: below 0.5 m/s in interaction zone\nAirflow up to 29.2𝑚3/ℎ",
     "otherNote": "Six Peltier packs in hexagon chamber surfaces generate cold airflow. Ultrasound haptic creates focused pressure in mid-air. The radiation force at the focal point 200 mm apart from the board was 1.38 mN\n\nHaptic cue parameters:\nSnowflake melting: 20mm diameter, 120Hz, intensity decays from 100% to 0% over 1.5s\nRaindrop splash: 0-40mm diameter expansion, 120Hz, 100% constant intensity for 3s\n\nAirflow rate in interaction zone: Below 0.5 m/s",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["air-gas"],
-    "materials": ["air-gas"],
+    "materialsInContactWithSkin": [
+      "air-gas"
+    ],
+    "materials": [
+      "air-gas"
+    ],
     "bodyPartsInvolved": "Palm and fingers.\nThe system is specifically designed for bare hands with palms facing upward toward the ultrasound display (Page 4, Section 3.2; Page 11, Section 5.4).",
     "bodySites": [
       {
@@ -943,7 +1087,9 @@
     "maxTempC": null,
     "minDurationSec": null,
     "maxDurationSec": 300.0,
-    "senses": ["visual"],
+    "senses": [
+      "visual"
+    ],
     "thermalPerceptionMeasure": "Hand skin temperature.\n\nThermal comfort: two questionnaires: Bedford thermal scale, thermal sensation scale (page4).\n\n1. Thermal Sensation Scale (Lee et al. [72]):\n\nContinuous visual analog scale (0 to 1)\nQuestion: \"How do you feel at this time?\"\nRange: \"very cold\" (0) to \"very hot\" (1)\nAssessed 3 times during each condition: at 90s, 180s, and 270s\nAdministered in VR during gameplay\n(Page 4, Section 3.2.2; Page 6-7, Figure 3 left)\n\n\n2. Bedford Thermal Comfort Scale [19]:\n\n7-point Likert scale (1 to 7)\nQuestion: \"How would you rate your thermal comfort during the last scene?\"\nRange: \"much too cool\" (1) to \"much too hot\" (7)\nAssessed once after each condition in neutral VE\nAdministered retrospectively\n(Page 4, Section 3.2.2; Page 6-7, Figure 3 right)\n\n\n--- Side note on skin temperature:\n\nContinuously recorded at 4 Hz using thermocouples on both hands\nAverage of both hands calculated\nData transformed by subtracting first observation from each value to center at zero\n(Page 4, Section 3.2.1; Page 5, Section 3.3)",
     "thermalCuePurpose": "\"We conducted a study to investigate the efects of a VE and the user’s avatar on thermal perception and skin temperature.\"",
     "thermalTransferModes": [],
@@ -981,13 +1127,15 @@
     "senses": [
       "visual",
       "auditory",
-      "thermal-alone",
       "haptic-tactile",
       "haptic-force"
     ],
     "thermalPerceptionMeasure": "No meausre. \nThey did not use objective thermal perception measurements (e.g., temperature thresholds, thermal sensation votes, physiological measures).\nOnly the VR experience with a customised questionnaire.\n\n--- Side note\nFor VR experience:\nThe authors used a custom questionnaire with 7-point Likert scale (7 = totally agree, 1 = totally disagree) to measure enjoyment, realism, quality, and immersion. They also conducted short interviews.",
     "thermalCuePurpose": "Enhance VR experience with haptic feedback, thermal feedback is one of the haptic dimensions. Specifically:\n\nThey use thermal cues to enhance immersive environment and interaction in virtual reality. The system recreates multiple tactile sensations including heat sensations in desert environments and cold sensations in snow mountain environments, as well as thermal feedback when manipulating virtual objects like heating iron or quenching hot iron.",
-    "thermalTransferModes": ["radiation", "conduction"],
+    "thermalTransferModes": [
+      "radiation",
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Warming actuators: heat light, heat blower\nCooling actuators: mist maker, atomizers for water spray, electric fan",
     "mainActuatorModel": "Heat light: 250W\nHeat blower: 1300W\nMist maker: 4 ultrasonic mist makers and a 3300 rpm fan\nWater spray: 3 atomisers\nFan: 12V, 8600 rpm",
     "mainActuatorSize": null,
@@ -1003,8 +1151,14 @@
     "temporalParameters": null,
     "otherNote": "Energy-based heat used infrared radiation; flow-based heat used heated-air convection. Combined heat sources exceed 100°C at source. Cooling used ultrasonic mist makers with electric fans to create and distribute cool mist. Wind speed up to 11.5 m/s. Mist module fan: 3300 rpm. Thermal source was positioned 80 cm from the bottom of the device, around the centre height of the user's upper body. Hand-held controller included halogen lamp, fan, and motor; halogen lamp weight: 31g.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["air-gas", "liquids-gels"],
-    "materials": ["air-gas", "liquids-gels"],
+    "materialsInContactWithSkin": [
+      "air-gas",
+      "liquids-gels"
+    ],
+    "materials": [
+      "air-gas",
+      "liquids-gels"
+    ],
     "bodyPartsInvolved": "Whole body and hand, depends: Pages 2-3 (Sections 2.1, 3.1-3.3), Pages 5-6 (Section 5), Pages 8-9 (Section 6.2)\n\nUbiquitous-based haptics:\nThe device is designed to cover the user's whole body when positioned above the head, with effective coverage primarily on the upper body at 80cm height.\nUsers' hands and arms when within the effective area\n\nController-based haptics:\nHands - the controller provides thermal feedback to users' hands during manipulation",
     "bodySites": [
       {
@@ -1038,10 +1192,14 @@
     "maxTempC": 26.0,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["thermal-alone", "visual"],
+    "senses": [
+      "visual"
+    ],
     "thermalPerceptionMeasure": "No direct measures. \n\n--- Some details for reference\nNote: The ASHRAE scale was not used as a direct measurement tool given to participants, but only as the output format of their thermal sensation prediction models.\n\nThey measured the usability of the touchable UI instead:\nBehavioral Measures:\nNumber of setpoint adjustments - counted automatically by the system\nSetpoint positions - initial, final, and all intermediate adjustments recorded\nWhich setpoints tested - recorded when participants touched different temperature settings\nEstimated comfort range - participants defined min/max comfortable setpoint range\n\nQualitative Self-Reports:\nThink-aloud protocols - participants verbalized reasons for setpoint changes during interaction\nOpen-ended questionnaire responses:\n\nStrategy used during session\nFactors influencing setpoint choice\nHow they anticipated thermal sensation changes\nHow they interpreted touch-based thermal sensation\nPerceived mapping between touch and global sensation\n\n7-Point Likert Scale Ratings (NOT ASHRAE scale):\nSession 1 (baseline without thermal feedback): Usability baseline:\nInfluence of UI on setpoint adjustment behavior\n\nSession 2 (with thermal feedback):\nAppropriateness of mapping between touch-based and global sensation\nEase of finding satisfying setpoint\nInfluence of visual feedback on setpoint choice\nInfluence of touch-based sensation on setpoint choice\nEasiness of setpoint adjustment task\nPrecision of setpoint adjustment task\n\nPost-Experience Satisfaction Rating:\nFinal thermal sensation rating: Whether it matched expectations (7-point scale, NOT the ASHRAE -3 to +3 scale):\n\"better than expected\" vs \"matched expectations\" vs \"worse than expected\"\n\nPhysiological Measurement:\nFingertip skin temperature - measured continuously using MCP9808 sensor\n\nPages 5-7 (Sections 6.2, 6.3, 7 - Results)",
     "thermalCuePurpose": "Use immediate thermal feedback to improve the UI of thermostat. (previous works use visual and shape-change for thermostat).",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier, Radiator",
     "mainActuatorModel": "TEC1-12706, 2000 Watt electric radiator",
     "mainActuatorSize": null,
@@ -1085,16 +1243,24 @@
     "maxTempC": null,
     "minDurationSec": 5.0,
     "maxDurationSec": 5.0,
-    "senses": ["thermal-alone", "haptic-tactile", "visual", "auditory"],
+    "senses": [
+      "haptic-tactile",
+      "visual",
+      "auditory"
+    ],
     "thermalPerceptionMeasure": "Study 1,2 - They measure whether people feel the thermal cue, and if yes, draw the thermal location on their hands.\n\n--- Note on details.\nSubjective Perception Measures:\n\nBinary perception detection:\nAsked if participants felt thermal sensations (Yes/No)\nRecorded occurrence rate of perceived thermal sensation\n\nSpatial perception mapping:\nParticipants drew perceived thermal areas on hand images displayed on Samsung tablet using stylus pen\nCreated heatmaps showing distribution and intensity of perceived thermal sensations\nMeasured perceived thermal coverage\n\nResponse time:\nMeasured how quickly participants detected thermal sensations\n\n--\nQualitative Measures (User Study 3):\n\nSemi-structured interviews:\nOpen-ended questions about thermal sensations experienced\nComparisons to real-life experiences\nDescriptions of distinct thermal sensations\nThermal illusions (e.g., wetness sensation)\nSatisfaction with thermal feedback\n\nAudio recordings of study sessions\n\n---\nWhat they did NOT measure:\n\nObjective thermal discrimination thresholds\nJust-noticeable differences (JND)\nThermal sensation intensity ratings on standardized scales\nPhysiological responses (skin conductance, temperature)\nAccuracy of temperature estimation",
     "thermalCuePurpose": "make VR feel more immersive and real.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": "TEGWAY S017A026026",
     "mainActuatorSize": "26×26×2.3 mm",
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": "maximum temperature difference: 64°C between two sides at 2.2V, 6A",
-    "otherSensoryActuators": ["ERM coin-shaped vibrotactile actuators"],
+    "otherSensoryActuators": [
+      "ERM coin-shaped vibrotactile actuators"
+    ],
     "auxiliaryHardware": [
       "Heatsinks: Assmann WSW Components V5619A",
       "Arduino UNO",
@@ -1131,7 +1297,9 @@
     "maxTempC": null,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["thermal-alone", "haptic-tactile"],
+    "senses": [
+      "haptic-tactile"
+    ],
     "thermalPerceptionMeasure": "Bedford thermal scale, from very cold to very hot, 9 levels.\n\nThey also measured congruency and presence, see page 7.\n\n--- Side note.\nWhat was NOT measured:\n\n- Actual skin temperature changes\n- Thermoreceptor activation\n- Physiological thermal responses\n- Thermal discrimination thresholds",
     "thermalCuePurpose": "They want to test the perceived feedback congruency using ultrosound mid-air haptic rendering - in this case, they test on diff states of matter: solid, liquid, gas  (page 5).",
     "thermalTransferModes": [],
@@ -1140,15 +1308,23 @@
     "mainActuatorSize": null,
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": null,
-    "otherSensoryActuators": ["Ultraleap STRATOS"],
-    "auxiliaryHardware": ["Meta Quest 2 headset"],
+    "otherSensoryActuators": [
+      "Ultraleap STRATOS"
+    ],
+    "auxiliaryHardware": [
+      "Meta Quest 2 headset"
+    ],
     "heatControlMethod": null,
     "powerConsumption": null,
     "temporalParameters": null,
     "otherNote": "No physical thermal cues or thermal actuation. Thermal sensation was represented through visual colour cues and mid-air haptics. Visual colour parameters: blue/cool #2F48C5, white/neutral #D1D1D1, red/warm #AB3737. For liquid state, the container was coloured, not the fluid itself. UMH haptic parameters: 100–300 Hz human-perceivable frequency range after downsampling from ultrasonic >20 kHz; spatiotemporal modulation used.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["air-gas"],
-    "materials": ["air-gas"],
+    "materialsInContactWithSkin": [
+      "air-gas"
+    ],
+    "materials": [
+      "air-gas"
+    ],
     "bodyPartsInvolved": "in the paper, but by common sense of mid-air haptic display, it's palm and ventral side of fingers.",
     "bodySites": [],
     "powerEnergyConsumption": null
@@ -1166,10 +1342,16 @@
     "maxTempC": 44.0,
     "minDurationSec": 7.0,
     "maxDurationSec": 10.0,
-    "senses": ["thermal-alone", "visual", "auditory", "haptic-tactile"],
+    "senses": [
+      "visual",
+      "auditory",
+      "haptic-tactile"
+    ],
     "thermalPerceptionMeasure": "Study 1 - Threshold Measurement (Psychophysical Method): psychometric test, yes or no in perception. Forced-choice paradigm - Yes/No response per trial. They measured temperature at which users start perceiving warm sensations, and temperature at which pain begins to be felt.\n\nStudy 2 - Pattern Identification (Indirect thermal perception assessment): ptcp answer which part of their hand they feel the cues (pattern).\n\nStudy 3 - No measure. Subjective Experience (Questionnaire) on immersion, enjoyment and overall satisfaction.\n\n--- Side note:\nWhat is not measured:\n- Absolute temperature discrimination (e.g., \"Is this 35°C or 40°C?\")\n- Thermal comfort scales\n- Just-noticeable differences (JND) for temperature\n- Spatial resolution of thermal perception\n- Temporal sensitivity to temperature changes\n- Physiological responses (skin temperature, sweating)",
     "thermalCuePurpose": "Thermal cues (heated air) nhance realism for VR experience. They want to provide mid-air cue for free-hand interaction in VR.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Resistive heating element, ultrasonic emitter",
     "mainActuatorModel": "Heating: JKFTP120-250 Delonghi ceramic heating element\nUltrasound emitter: STRATOS Explore, Ultraleap",
     "mainActuatorSize": null,
@@ -1187,8 +1369,12 @@
     "temporalParameters": "Maximum temperature reached after 300s; fans operated at 2000 RPM constant",
     "otherNote": "Two ceramic heating elements were symmetrically placed, with one fan behind each heating element to create airflow into the chamber. Heated airflow accumulated in the chamber, while the ultrasound haptic display created a focused pressure point in mid-air, producing a “heated pressure point”. Fan speed rationale: below 2000 RPM caused uneven heat distribution; above 2000 RPM caused a cooling effect. Temperature stability: mean variation 0.09°C, SD 0.02; error rate 0.25%, SD 0.07. DS18B20 resolution: 12-bit, ±0.0625°C accuracy; sensors were placed near the ultrasound focal point inside the chamber and outside for room temperature.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["air-gas"],
-    "materials": ["air-gas"],
+    "materialsInContactWithSkin": [
+      "air-gas"
+    ],
+    "materials": [
+      "air-gas"
+    ],
     "bodyPartsInvolved": "palm and ventral side of fingers. The hand is horizontally outstretched.",
     "bodySites": [
       {
@@ -1220,7 +1406,9 @@
     "senses": [],
     "thermalPerceptionMeasure": "No measure.\nWhat was measured is the length of handheld objects.",
     "thermalCuePurpose": "they are trying to explore how the material property of a VR handle influence perceived length of VR obj.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Solid materials with different thermal conductivity",
     "mainActuatorModel": "Low thermal conductivity material: ABS\nHigh thermal conductivity material: Aluminium",
     "mainActuatorSize": "10 cm length, 4 cm diameter, 73 g",
@@ -1238,7 +1426,11 @@
       "polymers-synthetics",
       "metal"
     ],
-    "materials": ["silicone-based", "polymers-synthetics", "metal"],
+    "materials": [
+      "silicone-based",
+      "polymers-synthetics",
+      "metal"
+    ],
     "bodyPartsInvolved": "hand - palm and fingers",
     "bodySites": [
       {
@@ -1267,10 +1459,14 @@
     "maxTempC": 42.0,
     "minDurationSec": 10.0,
     "maxDurationSec": 10.0,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": "Not measured.\nWhat was measured is subjective mediataion experiences.",
     "thermalCuePurpose": "Wearable + warmth, they  want to explore the effect on meditators' experience.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Polyimide heater pad",
     "mainActuatorModel": "Off-the-shelf polyimide heater pad",
     "mainActuatorSize": "50 mm diameter",
@@ -1290,8 +1486,12 @@
     "temporalParameters": null,
     "otherNote": "Wearable heat pad used on the lower abdomen and lower back. Physical design: red outer fabric layer, grey inner layer, soft meditation-appropriate material, and elastic band for body attachment. The author mentioned thermal pattern parameters such as temperature range and timing pattern, but detailed control parameters were not clearly reported.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["fabrics-textiles"],
-    "materials": ["fabrics-textiles"],
+    "materialsInContactWithSkin": [
+      "fabrics-textiles"
+    ],
+    "materials": [
+      "fabrics-textiles"
+    ],
     "bodyPartsInvolved": "But there were mentions of diff body parts: forehead, stomach, chest, back (section 5.3).",
     "bodySites": [],
     "powerEnergyConsumption": "Not reported.\n\n**Implied power consumption:**\n\n- At 5V: P = 5²/3.7 ≈ **6.76 Watts**\n- But actual usage with 10s on / 15s off cycling\n- **Duty cycle:** 10/(10+15) = 40% active\n- **Average power:** ~2.7W (approximate)"
@@ -1309,17 +1509,24 @@
     "maxTempC": null,
     "minDurationSec": 1.5,
     "maxDurationSec": 1.5,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": "Yes, how accurate and fast participants can identify perceived thermal patterns.",
     "thermalCuePurpose": "No particular purpose. The authors argues that thermal cues draws increased attention in HCI, ear area is sensitive to temperatures, and thermal haptic cue around ear area haven't been investigated.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": "TES1-03103",
     "mainActuatorSize": "10×6×1.4 mm",
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": null,
     "otherSensoryActuators": [],
-    "auxiliaryHardware": ["Arduino Mega", "L298N H-bridge driver"],
+    "auxiliaryHardware": [
+      "Arduino Mega",
+      "L298N H-bridge driver"
+    ],
     "heatControlMethod": "PWM control via Arduino Mega; PWM values 0–255; full duty cycle 255; H-bridge driver used to drive the Peltier modules",
     "powerConsumption": "Max 400 mA at 6V per module",
     "temporalParameters": "Temperature changing rate: 3.5°C/s",
@@ -1350,16 +1557,22 @@
     "maxTempC": 42.0,
     "minDurationSec": 3.75,
     "maxDurationSec": 3.75,
-    "senses": ["thermal-alone", "haptic-force"],
+    "senses": [
+      "haptic-force"
+    ],
     "thermalPerceptionMeasure": "No direct measure.\n\n--- In stead, they did:\nParticipants traced perceived thermal position on iPad interface\nPleasantness ratings on 7-point Likert scale (-3 to 3)\nAnalysis of thermal movement distance (Xdif), position (Xmean), and area (Smean)",
     "thermalCuePurpose": "Create illusory moving sensation with pressure and thermal cues. \n\n---\nCreating stroking sensations for remote interpersonal touch communication, especially relevant during COVID-19 for intimate interactions at a distance.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Water pouches with controlled water flow",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": null,
-    "otherSensoryActuators": ["Air bag for pressure"],
+    "otherSensoryActuators": [
+      "Air bag for pressure"
+    ],
     "auxiliaryHardware": [
       "Water buckets with three different temperatures",
       "tubes",
@@ -1373,8 +1586,12 @@
     "temporalParameters": null,
     "otherNote": "Temperature was delivered through water pouches connected by tubes to three water buckets with different temperatures. Controlled water flow produced temperature changes. An air bag was used to provide pressure.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["fabrics-textiles"],
-    "materials": ["fabrics-textiles"],
+    "materialsInContactWithSkin": [
+      "fabrics-textiles"
+    ],
+    "materials": [
+      "fabrics-textiles"
+    ],
     "bodyPartsInvolved": "fore arm water bag - create illusory moving thermal",
     "bodySites": [
       {
@@ -1398,10 +1615,14 @@
     "maxTempC": 38.0,
     "minDurationSec": 4.0,
     "maxDurationSec": 7.0,
-    "senses": ["thermal-alone", "auditory"],
+    "senses": [
+      "auditory"
+    ],
     "thermalPerceptionMeasure": "EXP1(on chest thermal perception & comfort): perceived thermal intensity. \nperceived intensity (7-point Likert scale)\nperceived comfortness (7-point Likert scale)\nperceptual reaction time\nself-report (think aloud)\nroom and skin temperature",
     "thermalCuePurpose": "augment voice message: \"In our work, we specifically\nexplore the use of a wearable thermal display that can augment\nvoice messages that have missing emotional prosody.\"\n---\n\"augment perception of neutrally-spoken voice messages with affect\" (Abstract, page 1), specifically when \"emotional prosody production can be situationally or medically impaired\" (Abstract, page 1)",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": "TEC1-12706",
     "mainActuatorSize": null,
@@ -1419,8 +1640,12 @@
     "temporalParameters": "Fastest rate of change: 1°C/s",
     "otherNote": "Peltier elements were used for thermal stimulation. The system used TEC1-12706 thermoelectric modules, PID modules with KP value for rate-of-change control, a BTN8982TA DC Motor Control Shield, and a MAX31850 thermocouple-to-digital converter.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["fabrics-textiles"],
-    "materials": ["fabrics-textiles"],
+    "materialsInContactWithSkin": [
+      "fabrics-textiles"
+    ],
+    "materials": [
+      "fabrics-textiles"
+    ],
     "bodyPartsInvolved": "chest wearable (mediated with fabrics):\n\n\"upper (central) chest (i.e., Sternum)\" (Abstract, page 1)",
     "bodySites": [
       {
@@ -1444,17 +1669,24 @@
     "maxTempC": 37.0,
     "minDurationSec": 6.0,
     "maxDurationSec": null,
-    "senses": ["thermal-alone", "auditory"],
+    "senses": [
+      "auditory"
+    ],
     "thermalPerceptionMeasure": "Test 1: Measured the SPR (skin potential response), a psychophysiological measure used to assess emotional arousal during thermal+music conditions (Test 1, p.48).\n \n The pre-main experiment: volunteers were exposed to three levels of temperature variation (1°C, 2°C, and 3°C) and asked to choose the most comfortable range.",
     "thermalCuePurpose": "The authors apply thermal cues to enhance the emotional experience of listening to music. They argue that thermal sense inherently influences human emotions, and that by combining it with music — which also greatly affects emotions — a new medium with an unprecedented emotional experience can be created. (Abstract and Introduction, p.45)",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": "Nihon Tecmo Peltier device",
     "mainActuatorSize": "20×20 mm²",
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": "Safe temperature range: 20–40°C; baseline temperature: 34°C; temperature variation range: ±1°C, ±2°C, or ±3°C selected per participant",
     "otherSensoryActuators": [],
-    "auxiliaryHardware": ["Arduino Nano", "Toshiba TA7291P motor driver"],
+    "auxiliaryHardware": [
+      "Arduino Nano",
+      "Toshiba TA7291P motor driver"
+    ],
     "heatControlMethod": "PD control via PWM output from Arduino Nano; surface temperature controlled by amount and direction of current",
     "powerConsumption": null,
     "temporalParameters": "Dynamic phase: 2s; static phase: set according to music needs; finishing phase: 4s; perception threshold: ~0.5°C/s; maximum rate: 1°C/s before reaching upper limit",
@@ -1520,10 +1752,14 @@
     "maxTempC": 40.0,
     "minDurationSec": null,
     "maxDurationSec": 600.0,
-    "senses": ["haptic-tactile"],
+    "senses": [
+      "haptic-tactile"
+    ],
     "thermalPerceptionMeasure": "No measure on thermal perception, but on pain levels.\n Numerical Rating Scale (NRS, 0–10) used for pain intensity rating, \n McGill pain questionnaire used for indicating the perceived pain type (page 11).",
     "thermalCuePurpose": "The authors apply thermal stimuli (via Peltier heating/cooling) to modulate the intensity and type of pain sensation induced by capsaicin, with the ultimate purpose of enhancing immersion in VR safety education scenarios. Temperature is used as a practical real-time control parameter because changing temperature is faster and more practical than changing capsaicin concentration during interactive use.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
@@ -1549,7 +1785,11 @@
       "chemical",
       "liquids-gels"
     ],
-    "materials": ["silicone-based", "chemical", "liquids-gels"],
+    "materials": [
+      "silicone-based",
+      "chemical",
+      "liquids-gels"
+    ],
     "bodyPartsInvolved": "Wrist, dorsal side.\n \nWhy?\nThe wrist was chosen as a common site for wearable devices and for practical demonstration purposes. The authors note that Douleur is similar in form to a smartwatch/smartband. No specific justification based on thermal sensitivity of the wrist is given. (Sections 3.4 and 2.2)",
     "bodySites": [
       {
@@ -1573,10 +1813,14 @@
     "maxTempC": null,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["thermal-alone", "visual"],
+    "senses": [
+      "visual"
+    ],
     "thermalPerceptionMeasure": "No measure. The authors used the Self-Assessment Manikin (SAM), a non-verbal emotional rating scale measuring pleasure, arousal, and dominance, to assess the effect of thermal feedback on subjective movie experience. No psychophysical thermal threshold measurement was conducted.",
     "thermalCuePurpose": "The authors apply thermal cues to enhance immersive experiences across multiple interactive contexts — particularly to increase the sense of presence and emotional engagement (pleasure and arousal) during movie watching, AR, navigation, and social notification. The broader vision is to use thermal feedback to augment and enhance human perceptions and create new embodied experiences.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": "Two 20×20 mm Peltier elements connected in series",
@@ -1630,17 +1874,26 @@
     "maxTempC": null,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["thermal-alone", "visual", "haptic-force", "auditory"],
+    "senses": [
+      "visual",
+      "haptic-force",
+      "auditory"
+    ],
     "thermalPerceptionMeasure": "No meausre.\n \n However, warmth was mentioned positively in free-response comments: out of 256 hug surveys, the physical warmth of the robot was mentioned positively 100 times (39%). These qualitative mentions served as informal validation of Tenet 2 but no quantitative thermal perception measure was used. (Section 6 Results)",
     "thermalCuePurpose": "The authors apply warmth to make the robot more comfortable and pleasant to hug, fulfilling Tenet 2 --- a hugging robot should be warm --- based on prior validation by Block and Kuchenbecker showing that warmth (alongside softness) is important for delivering good hugging experiences. The warmth is intended to approximate the natural warmth of human touch and enhance the social-physical quality of the hug. (Section 2, 3)",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Commercial heating pad",
     "mainActuatorModel": "Thermophore MaxHeat Deep-Heat Therapy heating pad",
     "mainActuatorSize": null,
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": "Fixed temperature, but exact value not specified",
     "otherSensoryActuators": [],
-    "auxiliaryHardware": ["Inflatable robot torso", "sweatshirt layer"],
+    "auxiliaryHardware": [
+      "Inflatable robot torso",
+      "sweatshirt layer"
+    ],
     "heatControlMethod": "No dynamic control; heating pads continuously on at fixed unspecified temperature",
     "powerConsumption": null,
     "temporalParameters": null,
@@ -1671,17 +1924,25 @@
     "maxTempC": 45.0,
     "minDurationSec": 6.0,
     "maxDurationSec": 6.0,
-    "senses": ["thermal-alone", "auditory"],
+    "senses": [
+      "auditory"
+    ],
     "thermalPerceptionMeasure": "Tangentially. Thermal perception was assessed qualitatively through semi-structured interviews exploring participants' awareness of the thermal patterns, their ability to distinguish patterns, and their perceived bodily origin of the thermal sensations. \n (the discussion is around meditation, attention, body awareness.)",
     "thermalCuePurpose": "The authors apply thermal cues to map meditation states (being mindful, change of state, and mind-wandering ) to the interoceptive sense of thermoception, with the goal of supporting novice meditators' attention regulation by directing focus inward toward bodily sensations rather than toward external stimuli.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Nichrome wire heating pads",
     "mainActuatorModel": null,
     "mainActuatorSize": "1.5×1.5 cm circular heating pad",
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": "Individually calibrated, 35–45°C",
     "otherSensoryActuators": [],
-    "auxiliaryHardware": ["Arduino", "MOSFET", "insulating tape"],
+    "auxiliaryHardware": [
+      "Arduino",
+      "MOSFET",
+      "insulating tape"
+    ],
     "heatControlMethod": "Arduino-controlled actuation via MOSFET; individually calibrated temperature range",
     "powerConsumption": "5V DC",
     "temporalParameters": "6s on, 4s off between actuations; 4 actuations per pattern",
@@ -1717,10 +1978,14 @@
     "maxTempC": 35.0,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": "Eleven adult participants wore the mask and were asked to identify which of five facial zones was being heated (right forehead, left eyebrow, below the left eye, right cheek, chin) without visual confirmation. The measure was accuracy rate.",
     "thermalCuePurpose": "For theatre performance --- The thermal feedback is introduced to solve a specific performer-centred problem: because a mask wearer cannot look in a mirror during performance, they have no way of confirming whether the mask's color has changed as intended. The residual heat from the electrothermal circuit, transmitted through the sponge layer to the skin, gives the wearer a perceptual cue that the change has occurred, allowing them to concentrate on performing without interruption.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Copper tape resistive heating circuit",
     "mainActuatorModel": null,
     "mainActuatorSize": "Circuit sizes tested: 50×25 mm and 50×50 mm",
@@ -1737,8 +2002,12 @@
     "temporalParameters": "Heating duration: 15s; reached 35°C in 7s and 40°C in 14s",
     "otherNote": "The thermal stimuli were produced by electrothermal circuits made from copper tape. Cuts were made in the copper tape at 2.5 mm intervals to create a winding resistive heating pattern. Heat conducted through a sponge cushion layer to the wearer’s skin. Sponge dimensions: 50×15 mm base area, 10 mm thickness. Cable thickness: 0.5 sq. Copper tape was chosen because it is cheap, lightweight, flexible, cuttable with scissors, and suitable for paper-type easy prototyping.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["foam-cushioning"],
-    "materials": ["foam-cushioning"],
+    "materialsInContactWithSkin": [
+      "foam-cushioning"
+    ],
+    "materials": [
+      "foam-cushioning"
+    ],
     "bodyPartsInvolved": "In the user study: \"right side of the forehead, left eyebrow, below the left eye, right cheek, and chin\".",
     "bodySites": [
       {
@@ -1767,10 +2036,14 @@
     "maxTempC": null,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["thermal-alone", "haptic-tactile"],
+    "senses": [
+      "haptic-tactile"
+    ],
     "thermalPerceptionMeasure": "Indirectly. Study 1: They measured haptic perception by asking ptcps to pick one out of nine \"haptic descriptors\". (results in fig 10)\n Study 2, immersion (not thermal perception per se) was rated on a 7-point Likert scale after each VR scene; qualitative comments also captured warm and cold perceptions.",
     "thermalCuePurpose": "The stated goal of the whole system is to expand the haptic design space for interactive and VR contexts.\n The thermal feedback (warming via capsaicin, cooling via menthol) is applied specifically to enhance immersion in VR experiences by creating plausible thermal sensations that match the virtual environment.",
-    "thermalTransferModes": ["chemical"],
+    "thermalTransferModes": [
+      "chemical"
+    ],
     "mainActuatorForTemperatureSensation": "Menthol/capsaicin chemical actuation via micropump",
     "mainActuatorModel": "mp6 piezoelectric micropump",
     "mainActuatorSize": "Open channel contact area: 8.75 cm² for arm device; 0.96 cm² for cheek device",
@@ -1791,7 +2064,11 @@
       "chemical",
       "liquids-gels"
     ],
-    "materials": ["silicone-based", "chemical", "liquids-gels"],
+    "materials": [
+      "silicone-based",
+      "chemical",
+      "liquids-gels"
+    ],
     "bodyPartsInvolved": "In the photo, it's on the face (cheeks) and forearm (ventral).\nCheeks: menthol (cooling) and capsaicin (warming) applied via a mask-style cheek patch beneath the VR headset\nForearm: all five chemicals were also tested on the forearm in Study 1 and some VR experiences in Study 2 (capsaicin warming was specifically on the cheeks in the VR walkthrough, but forearm was the primary Study 1 site)\nThey claim it can be worn anywhere. But it's not. You always need extra fixation to secure it. \n \nWhy these parts?\nThe cheeks were chosen because: (1) they are a natural site for ambient facial sensations (warmth/cold) commonly associated with environmental temperature; and (2) they illustrate the system's ability to deliver chemicals to hard-to-reach locations. \n The forearm was chosen because: (1) it is an ideal site for sensations related to arm-based UIs, which are common in VR; and (2) the sleeve form factor can be adapted to other limbs. An additional practical rationale is given: cheek skin (~38.8μm thick) absorbs chemicals faster than forearm skin (~60.9μm thick), which is relevant to the speed of thermal sensation onset.",
     "bodySites": [
       {
@@ -1820,10 +2097,14 @@
     "maxTempC": null,
     "minDurationSec": 3.0,
     "maxDurationSec": 3.0,
-    "senses": ["thermal-alone", "visual"],
+    "senses": [
+      "visual"
+    ],
     "thermalPerceptionMeasure": "Questionnaire: Participants reported the perception of cold from the device on a Likert scale of 0–10 as part of the post-trial questionnaire. (number, intensity... of chills, page 153, section 4.4.4)",
     "thermalCuePurpose": "\"elicit the sensations underlying the embodied emotion of aesthetic chills\"\n \n Thermal feedback is applied to simulate the somatic sensation of aesthetic chills --- the traversing cold sensation down the spine that characterises the psychogenic shiver experience. \n \n The purpose is to trigger the emotional experience of aesthetic chills by recreating the bodily sensation that normally precedes and constitutes that emotion, grounded in the James-Lange theory of emotions and Schachter-Singer two-factor theory. \n The thermal feedback is positioned as an \"emotional prosthesis\", a device that induces an embodied emotion by replicating its somatic marker. The paper specifically argues that the thermal sensation must match the individual's prior bodily experience (their \"prior\") in order to activate the emotional experience, and the user study tests this matching hypothesis.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
@@ -1879,10 +2160,15 @@
     "maxTempC": null,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["thermal-alone", "olfactory", "visual"],
+    "senses": [
+      "olfactory",
+      "visual"
+    ],
     "thermalPerceptionMeasure": "No measure on the thermal perception.\n Participants rated their \"temperature liking\" on a 9-point hedonic scale as one of the liking dimensions after each stimulus condition. Thermal perception was not assessed independently but folded into the hedonic liking ratings. The Just-About-Right (JAR) scale was used for flavor sensations",
     "thermalCuePurpose": "The broader stated purpose is to investigate how thermal (alongside taste, smell, and colour) stimuli contribute to virtual flavour perception, hedonic liking, and mediated emotions. \n Thermal feedback in the virtual coffee mug is applied to simulate the temperature sensation of drinking hot or cold coffee, as part of a multimodal virtual flavour system.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
@@ -1899,8 +2185,12 @@
     "temporalParameters": null,
     "otherNote": "Peltier module was positioned near the user’s upper lips and nose. A silver metal contact surface was attached to the Peltier, and a heat sink was used to manage excess heat over time. A safety mechanism kept temperatures within a comfortable range, but no threshold values were reported. No specific justification for using Peltier was provided.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["metal"],
-    "materials": ["metal"],
+    "materialsInContactWithSkin": [
+      "metal"
+    ],
+    "materials": [
+      "metal"
+    ],
     "bodyPartsInvolved": "Upper lips and nose area.\nWhy?\nNot specified, self-evident.",
     "bodySites": [
       {
@@ -1929,10 +2219,14 @@
     "maxTempC": 35.0,
     "minDurationSec": 6.0,
     "maxDurationSec": 6.0,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": "No measure.\n \n Perception of the thermal feedback was qualitatively reflected via post-task interviews. All 12 participants reported that they understood the thermal feedback and found the temperatures comfortable and distinguishable.",
     "thermalCuePurpose": "Thermal feedback is applied to communicate navigational information: proximity to the optimal path in a 2D maze --- help people navigate a maze displayed on a screen. It's inspired by the children's game 'Hot-and-Cold.\n \n The longer-term application goal is pedestrian navigation: ambient thermal cues that allow users to focus on their environment rather than mobile displays.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier / thermoelectric cooler unit",
     "mainActuatorModel": "MCPE1-01708NCS, Multicomp",
     "mainActuatorSize": null,
@@ -1982,10 +2276,14 @@
     "maxTempC": 38.0,
     "minDurationSec": 6.0,
     "maxDurationSec": 6.0,
-    "senses": ["thermal-alone", "visual"],
+    "senses": [
+      "visual"
+    ],
     "thermalPerceptionMeasure": "Study 1: After each thermal directional cue, participants answer the direction of the cue and hot/cold cue they were perceiving.\n Study 2: No direct measurement on thermal perception. They asked two questions:\n Q1 — \"How much did the visual aspects of the environment involve you?\" \n Q2 — \"How much did the thermal aspects of the environment involve you?\" (p.5453, Study 2 subsection)",
     "thermalCuePurpose": "Enriching VR immersion in general.\n First, thermal feedback is applied as spatial directional cues --- encoding nine directions via different spatial patterns of hot or cold stimulations on the face for VR navigation. \n Second, thermal feedback is applied for immersive thermal experience.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": "2×1.5 cm per module",
@@ -2035,10 +2333,14 @@
     "maxTempC": 38.0,
     "minDurationSec": 10.0,
     "maxDurationSec": 10.0,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": "No.\n They measured the emotional meaning participants attributed to thermal stimuli.",
     "thermalCuePurpose": "Systematic investigation on thermal-emotion association",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": "2 cm² per module",
@@ -2079,7 +2381,9 @@
     "maxTempC": null,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": "The authors did not measure thermal perception through any psychophysical or physiological instrument. Instead, participants' experiences of cold were captured qualitatively through observation notes, semi-structured group interviews, and open-ended questionnaire responses. Verbal expressions such as feeling cold, freezing, and the desire to go inside were recorded as behavioral and experiential indicators (pp. 7–8, Sections 3.1–3.2).",
     "thermalCuePurpose": "No thermal cues provided.\n The authors explicitly articulate their purpose in studying cold as an environmental factor: they aim to understand how sub-arctic winter conditions (cold, snow, ice) affect the gaming experience for families playing a location-based outdoor mobile game, in order to derive design implications for winter weather game design (Abstract; Section 1 Introduction; Section 5 Discussion). Cold is treated as a contextual constraint to be designed around, not a feedback modality to be designed with.\n Quote: \"how can (sub-arctic) winter conditions affect the gaming experience for families playing a location-based outdoor mobile game\".",
     "thermalTransferModes": [],
@@ -2095,8 +2399,14 @@
     "temporalParameters": null,
     "otherNote": "tural thermal experience only. No artificial thermal actuator, device, or control parameters were used.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["air-gas", "fabrics-textiles"],
-    "materials": ["air-gas", "fabrics-textiles"],
+    "materialsInContactWithSkin": [
+      "air-gas",
+      "fabrics-textiles"
+    ],
+    "materials": [
+      "air-gas",
+      "fabrics-textiles"
+    ],
     "bodyPartsInvolved": "whole body",
     "bodySites": [
       {
@@ -2120,10 +2430,14 @@
     "maxTempC": 42.0,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": "\"Response accuracy\":\n Study 1, participants were trained on different temperature levels and then asked to identify which level was being presented, using a keyboard response. Recognition accuracy was the dependent measure. \n Study 2, participants compared their ability to perceive externally applied temperature stimuli from a 20×20mm Peltier module both with and without wearing the HydroRing in passive mode, again using verbal identification of stimulus levels. Accuracy was compared between baseline and augmented conditions (pp. 918–920, Study 1 and Study 2).",
     "thermalCuePurpose": "They want to provide a light-weight finger-worn haptic device, for XR rendering haptic sensation, without impeding the user's natural tactile sensations of the physical world. \n They used temperature, alongside pressure and vibration, enriches the haptic information channel.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Liquid flow through latex tube; Peltier module for Study 2",
     "mainActuatorModel": "Peltier model not specified",
     "mainActuatorSize": "Study 1: latex tube worn on fingertip; Study 2: 20×20 mm Peltier module",
@@ -2142,8 +2456,12 @@
     "temporalParameters": "Latency: ~6s to change temperature by 5°C",
     "otherNote": "Study 1 used hot and cold water flowing through a latex tube worn on the fingertip. Study 2 used a table-fixed Peltier module with a heatsink, and participants placed their finger on it after it reached the desired temperature. Liquid flow was chosen to keep the fingertip end-effector thin and flexible, avoiding rigid devices that could obstruct natural tactile perception.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["latex"],
-    "materials": ["latex"],
+    "materialsInContactWithSkin": [
+      "latex"
+    ],
+    "materials": [
+      "latex"
+    ],
     "bodyPartsInvolved": "Fingertip, ventral. Dominant hand.",
     "bodySites": [
       {
@@ -2167,10 +2485,14 @@
     "maxTempC": 38.0,
     "minDurationSec": 8.0,
     "maxDurationSec": 30.0,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": "Thermal pattern identification task: participants identified which of six thermal patterns was presented, using a visual template on screen as a reference. Performance was quantified via percentage correct responses and Information Transfer (IT) values in bits. \n ---\n Experiment 1 was an absolute identification study in which participants had to identify which of six thermal patterns was presented on the tips of the index and middle fingers. Skin temperature was also physiologically measured continuously via thermistors throughout all experiments.",
     "thermalCuePurpose": "Investigate the creation and evaluation of thermal icons --- in line with the pursue of multisensory display, to provide another communication channels via sensory feedback.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier / thermoelectric module",
     "mainActuatorModel": "TE-127-1.0-2.5, TE Technology, Inc.",
     "mainActuatorSize": null,
@@ -2220,10 +2542,14 @@
     "maxTempC": null,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "Most of the current thermal modules are evergy-consuming, low resolution, some of them require comprehensive knowledge pack for fabrication. They explored an alternative method for thermal display: use carbon manomaterial. They are trying to \"lower the barrier to the rapid prototyping...\" Page 2.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Carbon nanomaterial heating paint",
     "mainActuatorModel": "Carbo e-Therm PUR 70-350B.01",
     "mainActuatorSize": "Standard sample: 20×10 mm; paint thickness: 85.4 ± 10.4 μm with film applicator, 146.1 ± 28.5 μm with brush",
@@ -2262,10 +2588,14 @@
     "maxTempC": 38.0,
     "minDurationSec": 7.0,
     "maxDurationSec": 7.0,
-    "senses": ["thermal-alone", "visual"],
+    "senses": [
+      "visual"
+    ],
     "thermalPerceptionMeasure": "No measure on people perceiving temperature. Only measured on robot side for temperature control.",
     "thermalCuePurpose": "The authors aim to study how people perceive emotion when robot display thermal cues with facial expression.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
@@ -2308,10 +2638,15 @@
     "maxTempC": null,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["thermal-alone", "haptic-tactile", "visual"],
+    "senses": [
+      "haptic-tactile",
+      "visual"
+    ],
     "thermalPerceptionMeasure": "No --- they measured wetness perception induced by thermal stimuli (cold, dry surfaces), rather than thermal perception per se.\n \n The authors measured the suhjective rating of perceived wetness, rating from 0 (dry)-4 (wet):\n Study 1: Participants rated their wetness sensation on a continuous scale from 0 (dryness) to 4 (feeling of putting a finger in water), along with separate ratings for pressure and friction sensation (same 0–4 scale)\n Study 2: Participants rated wetness perception on a 5-point Likert scale (\"I felt that I just touched [the item]\": 0 = not at all, 4 = exactly the same) for RQ1, and identified the correct wetness level (least wet, middle wet, most wet) from three sequential presentations for RQ2.",
     "thermalCuePurpose": "The purpose is to create an illusive feeling of wetness --- enhance immersive experience in VR by enabling users to feel different types and levels of wetness when interacting with wet virtual objects (ice cube, cola bottle, sponge, glass table).",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "TEC / Peltier plate",
     "mainActuatorModel": null,
     "mainActuatorSize": "38×38 mm TEC plate",
@@ -2333,8 +2668,14 @@
     "temporalParameters": null,
     "otherNote": "TEC plates were used to provide precise, controllable, rapid skin cooling for wetness illusion. In the formative study, a TEC plate was integrated into a modified 3D printer platform for precise position and pressure control. In the Mouillé prototype, TEC plates were attached to copper plates on both sides of the device and connected to fluid cooler modules tubed to a liquid reservoir. The Arduino board controlled two servo motors for stiffness modulation.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["ceramic", "metal"],
-    "materials": ["ceramic", "metal"],
+    "materialsInContactWithSkin": [
+      "ceramic",
+      "metal"
+    ],
+    "materials": [
+      "ceramic",
+      "metal"
+    ],
     "bodyPartsInvolved": "Study 1: ventral side of index finger tip.\nStudy 2: ventral side of finger tips.",
     "bodySites": [
       {
@@ -2358,17 +2699,24 @@
     "maxTempC": null,
     "minDurationSec": 4.0,
     "maxDurationSec": 4.0,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": "Measured indirectly. Only as notification detection performance, not as perceptual characterisation.\n Response time---Time between badge actuation onset and participant button press on a smartphone app.\n Error rate---Proportion of trials in which the participant did not respond within 5 seconds.\n Comfort---5-point Likert scale rating for each Channel × Location pair.\n Perceived urgency of the notification---5-point Likert scale rating per Channel.",
     "thermalCuePurpose": "Heat and Cool are applied as notification delivery channels --- to alert the user to a stimulus in an under-clothing wearable context. \n The goal is to test the feasibility of thermal skin stimulation as one among ten possible methods of delivering on-skin somatosensory notifications through a badge form factor worn under everyday clothing. The broader goal is to understand which notification channels work best across body locations in terms of reaction time, error rate, comfort, and urgency.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": "TEC1-12706",
     "mainActuatorSize": null,
     "overallDeviceSize": "Badge dimensions: 4.4×0.6×4.4 cm; weight: 29 g",
     "mainActuatorPossibleTemperatureRange": "Temperature change: +6°C for Heat, -6°C for Cool",
     "otherSensoryActuators": [],
-    "auxiliaryHardware": ["Power supply", "badge casing"],
+    "auxiliaryHardware": [
+      "Power supply",
+      "badge casing"
+    ],
     "heatControlMethod": "Direct power-driven actuation; exact control method not specified",
     "powerConsumption": "8.8–9.0V DC at 1.03A",
     "temporalParameters": "Actuation duration: 4s total, with 2s ramp + 2s sustained; cooldown time: ~4s to return to baseline",
@@ -2419,10 +2767,15 @@
     "maxTempC": 36.0,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["thermal-alone", "haptic-tactile", "olfactory"],
+    "senses": [
+      "haptic-tactile",
+      "olfactory"
+    ],
     "thermalPerceptionMeasure": "No measure on thermal perception.\n \n Perceived flavor quality is measured on the combination of thermal + electrical + olfactory stimulation. \n A five-point Likert scale feedback questionnaire prepared by considering three factors: \n - level of perception\n - participant's likeliness or preference\n - comparison with a corresponding natural sensation\n (section 4.0.3)",
     "thermalCuePurpose": "Thermal feedback is applied to the tongue to simulate taste sensations.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
@@ -2444,8 +2797,12 @@
     "temporalParameters": null,
     "otherNote": "Peltier module was integrated into a tongue interface and arranged in a sandwich structure with two silver electrodes and a heat sink. Electrical stimulation parameters: 20–200µA, 100–1200Hz, square wave pulses; Sour: 180µA at 800Hz, Spicy/Minty: 20µA at 400Hz. Smell activation used solid perfumes that begin to melt above 40°C, with three 15Ω parallel resistors per compartment. Peltier was chosen because it can heat and cool rapidly.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["metal"],
-    "materials": ["metal"],
+    "materialsInContactWithSkin": [
+      "metal"
+    ],
+    "materials": [
+      "metal"
+    ],
     "bodyPartsInvolved": "The tongue --- specifically the anterior tip of the tongue (4.0.2, 4.0.3). Participants place the tip of their tongue in contact with the two silver electrodes. \n\nWhy?\nThis location was chosen because it is easy to access and monitor electrode placement for all participants, and because the tip of the tongue identifies a variety of sensations even for chemical stimulation, though threshold sensitivity can vary.",
     "bodySites": [
       {
@@ -2469,24 +2826,38 @@
     "maxTempC": 40.0,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["thermal-alone", "haptic-tactile", "haptic-force"],
+    "senses": [
+      "haptic-tactile",
+      "haptic-force"
+    ],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "Thermal is an itegral element of touch, while the haptic device for VR often lack thermal feedback. The purpose was to address the gap in prior haptic devices that often lack thermal feedback, despite it being an integral element of touch. Thermal feedback is used to enhance immersiveness in VR and support tactile communication in digital interactions. Applications include gaming, emotional therapy, and social touch.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": "15–40°C",
-    "otherSensoryActuators": ["Pneumatic silicone bubbles"],
-    "auxiliaryHardware": ["Pneumatic actuation system", "silicone bubbles"],
+    "otherSensoryActuators": [
+      "Pneumatic silicone bubbles"
+    ],
+    "auxiliaryHardware": [
+      "Pneumatic actuation system",
+      "silicone bubbles"
+    ],
     "heatControlMethod": "Current direction controlled heating vs cooling; input power controlled thermal intensity",
     "powerConsumption": null,
     "temporalParameters": null,
     "otherNote": "Peltier modules were integrated into pneumatically actuated silicone bubbles and activated together with inflation. The device combined thermal cues with pneumatic shape/pressure feedback. Peltier was chosen because it can provide both heating and cooling for bidirectional thermal control.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["silicone-based"],
-    "materials": ["silicone-based"],
+    "materialsInContactWithSkin": [
+      "silicone-based"
+    ],
+    "materials": [
+      "silicone-based"
+    ],
     "bodyPartsInvolved": "It's designed as modular wearable, fixed with a fabric layer wrap on body parts. It’s being shown on lower arm (hairy side) and lower leg (lateral) - from fig 3.\n\nThey do mentioned how could people wear on different body parts for a VR scenario (4.0.2) but lack details on where exactly on the body.",
     "bodySites": [
       {
@@ -2515,24 +2886,38 @@
     "maxTempC": null,
     "minDurationSec": 3.0,
     "maxDurationSec": 3.0,
-    "senses": ["thermal-alone", "haptic-tactile", "haptic-force"],
+    "senses": [
+      "haptic-tactile",
+      "haptic-force"
+    ],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "The goal was to test whether warmth improves hug satisfaction from a robot (Hypothesis H2, p.53).",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Resistive heating blanket and heating pad; chemical warming packs",
     "mainActuatorModel": "Sunbeam Quilted Fleece Heated Blanket; Thermophore MaxHeat Deep-Heat heating pad",
     "mainActuatorSize": null,
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": "Warmer than ambient; exact temperature not specified",
     "otherSensoryActuators": [],
-    "auxiliaryHardware": ["Cotton blanket layers", "chemical warming packs"],
+    "auxiliaryHardware": [
+      "Cotton blanket layers",
+      "chemical warming packs"
+    ],
     "heatControlMethod": null,
     "powerConsumption": null,
     "temporalParameters": null,
     "otherNote": "The robot exterior was designed to feel warmer than ambient. A heated blanket with cords sewn into channels between cotton layers, a heating pad on the chest, and four chemical warming packs on the arms were used. No temperature setpoints, current, voltage, or detailed control parameters were reported. No detailed justification was given for choosing resistive or chemical heating over alternatives.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["foam-cushioning", "fabrics-textiles"],
-    "materials": ["foam-cushioning", "fabrics-textiles"],
+    "materialsInContactWithSkin": [
+      "foam-cushioning",
+      "fabrics-textiles"
+    ],
+    "materials": [
+      "foam-cushioning",
+      "fabrics-textiles"
+    ],
     "bodyPartsInvolved": "Primarily the torso (chest and back) and upper/lower arms, as the heating elements were placed on the robot's chest, back, and arms (Section 4, p.53). Participants' bodies press against these surfaces during the hug.",
     "bodySites": [
       {
@@ -2566,10 +2951,15 @@
     "maxTempC": 27.0,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["thermal-alone", "olfactory", "gustatory"],
+    "senses": [
+      "olfactory",
+      "gustatory"
+    ],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "The authors provided thermal cues to change people's flavor perception of a beverage without changing the chemical compondes.",
-    "thermalTransferModes": ["convection"],
+    "thermalTransferModes": [
+      "convection"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
@@ -2610,10 +3000,14 @@
     "maxTempC": 38.0,
     "minDurationSec": 4.0,
     "maxDurationSec": 4.0,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "Thermal simulation is strongly links to social and emotional phenomena. The authors investigate how users subjectively and naïvely interpret thermal stimuli in real-world HCI scenarios, specifically to understand what inherent meanings users associate with warmth and coolness across different information types.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": "2 cm² per module",
@@ -2654,10 +3048,14 @@
     "maxTempC": 38.0,
     "minDurationSec": 60.0,
     "maxDurationSec": 60.0,
-    "senses": ["thermal-alone", "haptic-tactile"],
+    "senses": [
+      "haptic-tactile"
+    ],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "The authors applied thermal feedback to replicate the pain-inducing effects of the Thermal Grill Illusion (TGI) and synthetic heat at safe temperatures, in order to inhibit itch sensation.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier stack inside aluminium pipe roller",
     "mainActuatorModel": "STS T150-85-017S",
     "mainActuatorSize": null,
@@ -2673,8 +3071,12 @@
     "temporalParameters": null,
     "otherNote": "Three Peltier devices were stacked together inside an aluminium pipe roller. One side of the Peltier stack heated one half of the cylindrical roller surface, while the other side cooled the other half. Rolling the device alternately brought the hot and cold surfaces into contact with the skin. No detailed control parameters or justification for using Peltier were reported.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["metal"],
-    "materials": ["metal"],
+    "materialsInContactWithSkin": [
+      "metal"
+    ],
+    "materials": [
+      "metal"
+    ],
     "bodyPartsInvolved": "Cheek (face), used during the main itch-relief user study.",
     "bodySites": [
       {
@@ -2698,17 +3100,23 @@
     "maxTempC": 36.0,
     "minDurationSec": 3.0,
     "maxDurationSec": 12.0,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "The authors applied thermal feedback to convey lane change direction to drivers as an alternative to visual and audio feedback. With the goal of reducing visual distraction and providing unobtrusive navigation cues. \n \n Haptic cues were used to indicate the direction, and under the haptic category, the authors want to try thermal cues as another haptic feedback. [--- This is not a convencing rationale for me.]",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": "2×2 cm Peltier element",
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": null,
     "otherSensoryActuators": [],
-    "auxiliaryHardware": ["Heat sink"],
+    "auxiliaryHardware": [
+      "Heat sink"
+    ],
     "heatControlMethod": null,
     "powerConsumption": null,
     "temporalParameters": null,
@@ -2793,10 +3201,14 @@
     "maxTempC": 50.0,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "Explore thermal as a design quality. The authors apply thermal feedback not for communication of discrete information but to guide bodily attention and reinforce somaesthetic awareness of specific body parts during Feldenkrais exercises.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "DC-powered resistive heating pads",
     "mainActuatorModel": null,
     "mainActuatorSize": "Individual pad: 11×7 cm; cluster of 3 pads covers ~14×18 cm",
@@ -2817,8 +3229,12 @@
     "temporalParameters": "Heating rate: 4–5°C/s; cooling rate: 2–3°C/s after pad switched off",
     "otherNote": "Prototype used three DC-powered resistive heating pads made of polyester filament and conductive metal fibre, encased in protective polyimide film. Pads targeted shoulders, hips, and calves. Memory foam base was 2 cm thick. Participants wore thin cotton shirt and trousers to standardise thermal conductivity. Earlier explored methods included sodium acetate, hand warmers, wheat grain-based heat pads, heat-transmitting light, heat mat, and pumped water in tubes. DC heating pads were chosen because they are simple, flexible, low-voltage, textile-embeddable, and suitable for whole body-part stimulation. Water system was too cumbersome; halogen lights were uncontrollable and too hot; IR lights were difficult to position and control.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["fabrics-textiles"],
-    "materials": ["fabrics-textiles"],
+    "materialsInContactWithSkin": [
+      "fabrics-textiles"
+    ],
+    "materials": [
+      "fabrics-textiles"
+    ],
     "bodyPartsInvolved": "Calves, Shoulders, hips",
     "bodySites": [
       {
@@ -2852,10 +3268,14 @@
     "maxTempC": 24.0,
     "minDurationSec": 180.0,
     "maxDurationSec": 180.0,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "The authors apply cold thermal feedback to trigger frisson, and to enhance aethetic experience of live music performance by sharing the feeling of chills (to audience who may not naturally experience it during music), and to share/propagate frisson among neighboring audience members in a wave-like pattern.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier / thermoelectric cooler module",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
@@ -2898,10 +3318,14 @@
     "maxTempC": 47.0,
     "minDurationSec": 30.0,
     "maxDurationSec": 30.0,
-    "senses": ["thermal-alone", "visual"],
+    "senses": [
+      "visual"
+    ],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "The authors' purpose is to expand users' sensory experience of sketching beyond vision alone, providing new perspectives on their work that may enhance spontaneous and emotional creativity. Secondary goals include increasing immersion, engagement, and overall user experience during 3D sketching in VR. \n (also see figure 3, page 664.)",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": "TEC1-07105",
     "mainActuatorSize": "15×15×4.2 mm",
@@ -2922,8 +3346,12 @@
     "temporalParameters": null,
     "otherNote": "Peltier thermoelectric device was embedded in the pen body. A heat sink was attached using thermal paste, and an axial fan continuously blew ambient air onto the heat sink to maintain efficiency. The authors chose Peltier because it can add or subtract thermal energy, allowing heating and cooling in one device.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["ceramic"],
-    "materials": ["ceramic"],
+    "materialsInContactWithSkin": [
+      "ceramic"
+    ],
+    "materials": [
+      "ceramic"
+    ],
     "bodyPartsInvolved": "The index finger (fingertip)",
     "bodySites": [
       {
@@ -2947,10 +3375,14 @@
     "maxTempC": 23.0,
     "minDurationSec": 900.0,
     "maxDurationSec": 900.0,
-    "senses": ["visual", "thermal-alone"],
+    "senses": [
+      "visual"
+    ],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "They investigated environmental factors' impact, e.g., air flow, temperature, on VR sickness. The cold room condition was introduced to isolate and test whether the body-cooling effect of the airflow (rather than the tactile airflow sensation itself) was responsible for reducing VR sickness scores.",
-    "thermalTransferModes": ["convection"],
+    "thermalTransferModes": [
+      "convection"
+    ],
     "mainActuatorForTemperatureSensation": "Fan airflow and room cooling",
     "mainActuatorModel": "Household pedestal fans",
     "mainActuatorSize": null,
@@ -2991,17 +3423,24 @@
     "maxTempC": null,
     "minDurationSec": 17.09,
     "maxDurationSec": 23.35,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "Use haptic feedback to augmenting remote speech communication with an emotional/hedonic haptic channel, enabling users to express emotions, empathy, agreement/disagreement, and simulated physical touch that speech alone cannot convey.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": "Multicomp PF-031-10-25",
     "mainActuatorSize": null,
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": null,
     "otherSensoryActuators": [],
-    "auxiliaryHardware": ["Aluminium heatsink", "heat-conducting tape"],
+    "auxiliaryHardware": [
+      "Aluminium heatsink",
+      "heat-conducting tape"
+    ],
     "heatControlMethod": null,
     "powerConsumption": null,
     "temporalParameters": null,
@@ -3032,10 +3471,14 @@
     "maxTempC": 38.0,
     "minDurationSec": 10.0,
     "maxDurationSec": 10.0,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "Thermal feedback is investigated as a practical, non-visual, private notification and interaction channel for mobile HCI, suited to environments too noisy for audio or too bumpy for vibrotactile feedback. The authors explicitly state the goal is to \"understand the stimulus characteristics (e.g. intensity and rate of change) that are most effective for arousing sensation in the user\" and to design \"structured feedback for HCI that produces detectable stimuli using hardware designed for use with mobile devices\" (p. 2555). The work is foundational — establishing perceptual design guidelines rather than building a specific application.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier heat pump",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
@@ -3097,7 +3540,9 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "The authors do not use thermal feedback for user feedback. Rather, thermal interaction (hand-warming or water-cooling of a 3D object) is used as an activation mechanism to reveal hidden embedded information readable via thermal imaging. \n The broader goal articulated in the introduction is to create a \"fully-printable method to embed interactive information inside 3D printed objects\" that is invisible to the eye but readable after thermal interaction.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": null,
     "mainActuatorModel": null,
     "mainActuatorSize": null,
@@ -3115,8 +3560,12 @@
     "temporalParameters": null,
     "otherNote": "No active thermal actuator was used. Thermal cues came from passive or externally prepared sources: human hand/body heat regulated with an air-activated hand warmer, heated/cooled sand bags prepared in a warm-cool dual-mode car fridge, and chilled water in a mug. Thermal conductivity values used: PLA ≈ 0.45 W/(m·K), ABS ≈ 0.443 W/(m·K), air ≈ 0.03 W/(m·K).",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["polymers-synthetics"],
-    "materials": ["polymers-synthetics"],
+    "materialsInContactWithSkin": [
+      "polymers-synthetics"
+    ],
+    "materials": [
+      "polymers-synthetics"
+    ],
     "bodyPartsInvolved": "hand",
     "bodySites": [
       {
@@ -3140,10 +3589,14 @@
     "maxTempC": 55.0,
     "minDurationSec": 6.0,
     "maxDurationSec": 6.0,
-    "senses": ["visual", "thermal-alone"],
+    "senses": [
+      "visual"
+    ],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "Unclear - They claim they were trying to share emotions and evoke emotions. It's not clear what exactly what they were focus on. Thermal feedback is used as a \"false-physiological change\" to evoke emotions corresponding to text content read online.\n Thermal stimuli were used to give user a false perception of their own skin temperature in palm.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
@@ -3156,8 +3609,12 @@
     "temporalParameters": null,
     "otherNote": "Peltier was used, but the paper did not report product information, technical specifications, control parameters, or justification for the actuator choice.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["liquids-gels"],
-    "materials": ["liquids-gels"],
+    "materialsInContactWithSkin": [
+      "liquids-gels"
+    ],
+    "materials": [
+      "liquids-gels"
+    ],
     "bodyPartsInvolved": "palm (just palm, no other details)",
     "bodySites": [
       {
@@ -3181,17 +3638,24 @@
     "maxTempC": 37.0,
     "minDurationSec": null,
     "maxDurationSec": null,
-    "senses": ["haptic-tactile", "thermal-alone", "kinesthetic-motion"],
+    "senses": [
+      "haptic-tactile",
+      "kinesthetic-motion"
+    ],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "It is intended to \"reproduce the body temperature\" of a human hand in order to enhance the reality of the touch sensation and support the user's belief that the robotic device is a substitute for the partner's body part. A broader goal is to design a robot-hand type device to enhance the sense of space sharing and social bondung.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Silicone cord heater",
     "mainActuatorModel": null,
     "mainActuatorSize": "1m cord heater",
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": null,
     "otherSensoryActuators": [],
-    "auxiliaryHardware": ["Robotic hand"],
+    "auxiliaryHardware": [
+      "Robotic hand"
+    ],
     "heatControlMethod": null,
     "powerConsumption": null,
     "temporalParameters": null,
@@ -3202,7 +3666,11 @@
       "liquids-gels",
       "polymers-synthetics"
     ],
-    "materials": ["fabrics-textiles", "liquids-gels", "polymers-synthetics"],
+    "materials": [
+      "fabrics-textiles",
+      "liquids-gels",
+      "polymers-synthetics"
+    ],
     "bodyPartsInvolved": "hand - for handholding gesture.",
     "bodySites": [
       {
@@ -3226,10 +3694,14 @@
     "maxTempC": null,
     "minDurationSec": 9.0,
     "maxDurationSec": 9.0,
-    "senses": ["thermal-alone"],
+    "senses": [
+      "thermal-alone"
+    ],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "The main focus of the work is studying the association between scents and data assignment. Temperature of the scented air is one of the four conditions. Thermal feedback is framed as a cross-modal augmentation rather than a primary focus. \n The stated purpose is to use air temperature as a data-encoding sensory channel to convey abstract information - particularly quantitative and nominal data - in an olfactory display context.",
-    "thermalTransferModes": ["convection"],
+    "thermalTransferModes": [
+      "convection"
+    ],
     "mainActuatorForTemperatureSensation": "Resistive heating core for heat; Peltier-based liquid cooling system for coldness",
     "mainActuatorModel": "TEC1-12706 for cooling Peltier modules",
     "mainActuatorSize": null,
@@ -3252,8 +3724,12 @@
     "temporalParameters": null,
     "otherNote": "Heat was produced by a resistive heating core and carried to the user by airflow. Coldness was produced by four TEC1-12706 Peltier modules coupled with an aluminium liquid cooling block and XSPC EC6 coolant loop, then delivered through airflow. Temperature monitoring used sensors on the cooling core, in the coolant reservoir, and adjacent to the heating core. No explicit justification for the actuation method was provided.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["air-gas"],
-    "materials": ["air-gas"],
+    "materialsInContactWithSkin": [
+      "air-gas"
+    ],
+    "materials": [
+      "air-gas"
+    ],
     "bodyPartsInvolved": "I can not figure out through the rest of the description in the paper.",
     "bodySites": [],
     "powerEnergyConsumption": null
@@ -3274,7 +3750,9 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "No justification or explaination on why use thermal as a interactive modality for \"playful experience\" with \"digestive sensor\". \n \n They purpose of the overall system are:\n Always-available play: Subtle heat operates without the user's full attention, supporting continuous, unobtrusive interaction.\n Emotional/pleasant experience: Thermal stimuli can evoke emotional responses and pleasant sensory experiences.\n Bodily awareness: Localized thermal stimuli can increase awareness of one's own body, supporting health and body intelligence.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Flexible conductive yarn heating pads",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
@@ -3291,8 +3769,12 @@
     "temporalParameters": "Body temperature sampled every 10s; system response time: <2.3s for a 1.25°C thermal cue change",
     "otherNote": "Two overlapping flexible conductive yarn heating pads were embedded in a waist belt. Inner body/digestive-system temperature was sensed using a Cortemp digestible sensor, but sensor details were not reported. The system mapped internal body temperature changes to external thermal cues. Technical details and source code were insufficient for replication.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["fabrics-textiles"],
-    "materials": ["fabrics-textiles"],
+    "materialsInContactWithSkin": [
+      "fabrics-textiles"
+    ],
+    "materials": [
+      "fabrics-textiles"
+    ],
     "bodyPartsInvolved": "The waist/abdomen area.",
     "bodySites": [
       {
@@ -3319,7 +3801,9 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "To enhance presence and immersion in VR by providing thermally congruent environmental cues through a Head-monted Display (HMD).\n \n Problem: Unclear description and rationale --- The author stateted that touch is an important communication channel, and deafblind individulals very much relying on touch for communicational purpose. However, the authors choose to add thermal channel on VR headset - blind people don't use that!",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": "15×15 mm per Peltier element",
@@ -3370,13 +3854,17 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "Enhance sense of presence in VR by providing thermal and wind stimuli.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier; fan-generated wind",
     "mainActuatorModel": "Off-the-shelf Peltier cubes, exact model not specified",
     "mainActuatorSize": null,
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": "Final selected stimuli: HS10, +5°C over 10s; CS10, -4.5°C over 10s; tested range: +2°C to +5°C heating, -2.25°C to -6°C cooling",
-    "otherSensoryActuators": ["Fan-generated wind"],
+    "otherSensoryActuators": [
+      "Fan-generated wind"
+    ],
     "auxiliaryHardware": [
       "Heatsinks",
       "full H-Bridge MC33926 motor driver",
@@ -3422,7 +3910,9 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "The primary purpose is to treat electric heat as a creative material --- to transform it from an invisible, abstracted immaterial into a manipulatable, perceivable, and expressive design element within material-driven creative practices (thermoreactive painting, sculpture, clothing). \n \n The Phosphenes tool is built to expose heat's spatial and temporal behaviors to practitioners without electronics domain expertise, enabling them to craft resistive heaters that activate thermoreactive composites in controlled, meaningful ways.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Silver ink inkjet-printed resistive heaters; Peltier used as additional heat/cool source",
     "mainActuatorModel": "AgIC silver inkjet system; Peltier TEC1-12706",
     "mainActuatorSize": "Silver ink thickness: 9 µm; Peltier size not specified",
@@ -3463,7 +3953,9 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "The foucs of this work:\n Creating personalized visual representations of physiological arousal\n Supporting affective awareness and emotion regulation",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Heating pad; Nichrome wire; conductive fabric; Peltier element",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
@@ -3517,13 +4009,17 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "Simulating taste sensations without chemical substances.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": "20–35°C; experimental temperature profile approximately 15–38°C across full session",
-    "otherSensoryActuators": ["Electrical stimulation via silver electrodes"],
+    "otherSensoryActuators": [
+      "Electrical stimulation via silver electrodes"
+    ],
     "auxiliaryHardware": [
       "Two pure silver electrodes",
       "40×15×0.2 mm",
@@ -3537,8 +4033,12 @@
     "temporalParameters": "Rate of temperature change mentioned as important, but exact value not specified; temperature profile shown over approximately 0–125s",
     "otherNote": "Peltier element delivered heating and cooling to two silver electrodes contacting the tip of the tongue. Electrical stimulation used square wave pulses, 50–1000Hz frequency range, and 20–200µA current range across 10 discrete levels. The electrodes were 95% pure silver. Peltier was chosen because it can heat and cool rapidly, making it suitable for dual heating/cooling taste stimulation.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["metal"],
-    "materials": ["metal"],
+    "materialsInContactWithSkin": [
+      "metal"
+    ],
+    "materials": [
+      "metal"
+    ],
     "bodyPartsInvolved": "tip of the tongue",
     "bodySites": [
       {
@@ -3565,7 +4065,9 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "Enabling personalized vib and thermal cues for affect regulational purpose.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Commercial wrist-worn thermal actuator",
     "mainActuatorModel": "Embr Wave",
     "mainActuatorSize": null,
@@ -3606,14 +4108,18 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "Primary: o investigate whether ambient temperature and humidity could affect the usability of thermal feedback. And they want to investigate this not in lab.\n In addition: thermal cues as a means to enhance interaction depth by adding affective dimensions not provided by other modalities",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": "Neutral baseline: 32°C; deviations: ±1°C, ±3°C, ±6°C; absolute stimulus temperatures: 26°C, 29°C, 31°C, 33°C, 35°C, 38°C",
     "otherSensoryActuators": [],
-    "auxiliaryHardware": ["USB-controllable Peltier device"],
+    "auxiliaryHardware": [
+      "USB-controllable Peltier device"
+    ],
     "heatControlMethod": "USB-controllable bidirectional temperature control with 0.1°C accuracy",
     "powerConsumption": null,
     "temporalParameters": "ROC: 1°C/s and 3°C/s; stimulus duration: 10s; inter-stimulus adaptation: 30s return to neutral; initial skin adaptation: 2 minutes at 32°C",
@@ -3652,7 +4158,9 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "Providing directional cues for visually-impared users who need canes. \n \n They motivate this by identifying two limitations of existing feedback modalities (page 1, but not convencing to me): auditory feedback can be interfered with by ambient noise and interrupts conversations, while vibrotactile feedback can be difficult to detect precisely due to natural turbulence during walking or driving. Thermal feedback is proposed as a modality that may not have these disadvantages, and the hand/palm is identified as a body area with high thermal sensitivity commonly used by BVI users in daily information comprehension activities.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Flexible Peltier thermal modules",
     "mainActuatorModel": null,
     "mainActuatorSize": "Active area: 17×75 mm per flexible module",
@@ -3698,14 +4206,18 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "To provide a high degree of presence in the VR diving system: by simulating the real-world phenomenon of thermoclines --- the decrease in ocean temperature with depth.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": null,
     "otherSensoryActuators": [],
-    "auxiliaryHardware": ["Neosports gloves"],
+    "auxiliaryHardware": [
+      "Neosports gloves"
+    ],
     "heatControlMethod": "Depth-to-on-time mapping; Peltier on-time was controlled according to VR ocean depth",
     "powerConsumption": null,
     "temporalParameters": "Peltier on-time varied according to VR ocean depth",
@@ -3739,7 +4251,9 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "Application background is in user-virtual agent coexist in physical-virtual environment. The purpose is to manipulate physical propoties relates to object's location and material. They provide two prototypes and one of which is a thermal table using thermochromic ink. But it's not clear why build this thermal table, and why use the thermochomic ink to explore the concept.\n The broader goal is to investigate whether such persistent physical manipulations improve perceived realism of the virtual agent and overall user experience in Mixed Reality.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": "TEC1-12706",
     "mainActuatorSize": "40×40 mm",
@@ -3781,21 +4295,29 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "The purpose is emotional and experiential. The authors designed reducing temperature on a wearable to represent physical distance between two people. The broader framing is that of Critical Making: the artefacts are discussion artefacts that invite for exchange, reflection, and open conversation about negative emotions connected to living far apart, rather than attempting to solve or overcome the distance.\n \n ---function---\n  The WARMTH manifests the deprivation of closeness, lack of bodily touch and missing of interactions with a distant other person through decreasing and disappearing heat. The thermal feedback is a material embodiment of the emotional experience of bodily distance: when the paired wearables are co-located (representing physical closeness), the heat pads are warm; when dislocated (representing physical separation), the warmth gradually disappears.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Heat pads",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": null,
     "otherSensoryActuators": [],
-    "auxiliaryHardware": ["Textile wearables"],
+    "auxiliaryHardware": [
+      "Textile wearables"
+    ],
     "heatControlMethod": null,
     "powerConsumption": null,
     "temporalParameters": null,
     "otherNote": "Heat pads were embedded within textile wearables as thermal actuators. Product details, temperature range, power, control method, and temporal parameters were not reported. The paper is a pictorial, and no justification or comparison with alternative thermal actuation methods was provided.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["fabrics-textiles"],
-    "materials": ["fabrics-textiles"],
+    "materialsInContactWithSkin": [
+      "fabrics-textiles"
+    ],
+    "materials": [
+      "fabrics-textiles"
+    ],
     "bodyPartsInvolved": "One artifact has the pad on the dorsal side of the neck, the other artifact has a pad on the shoulder and one on the upper back. - The location is determined by the parts of the body feeling warm during a hug.",
     "bodySites": [
       {
@@ -3832,7 +4354,9 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "Study affective touch with a focus on social aspects of communication and interpretaion. Temperature was chosen as one of three haptic modalities because of its strong links to skin receptors and affective communication.\n The purpose is to enable users to compose and send remote digital touch messages that convey affective emotional content (comfort, love, warmth, support, anger, distance, and rejection) to a remote partner, by orchestrating temperature alongside pressure and vibration. Temperature is framed as an emotional amplifier: warm was used for, and perceived to communicate, a feeling of comfort in pain, support, empathy, love; cold was generally used to create a feeling of distance or rejection. \n \n The system is positioned as a research tool to understand how people use temperature for meaningful affective communication, with design implications for future haptic touch devices.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Polyimide heating pad for warming; Peltier for cooling",
     "mainActuatorModel": "Neuftech TEC1-12706 Peltier Element",
     "mainActuatorSize": "Thermal module area: 5×5 cm",
@@ -3852,8 +4376,12 @@
     "temporalParameters": "On/off cycle interval: x × 350 ms for both active and inactive phases; example 50% heat: 2.6s on / 2.6s off; 75% heat: 3.9s on / 3.9s off",
     "otherNote": "The thermal module was located in the base of the mitt and covered a 5×5 cm area. It combined a polyimide heating pad containing polyester filament and Micro Metal Conductive Fibre for warming, and a Neuftech TEC1-12706 Peltier element for cooling. A thin fabric layer prevented direct skin contact and potential harm. Heating was selected by turning the dial clockwise, and cooling by turning it counter-clockwise. This paper provides enough detail to roughly reproduce the control logic, although source code was not provided.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["polymers-synthetics"],
-    "materials": ["polymers-synthetics"],
+    "materialsInContactWithSkin": [
+      "polymers-synthetics"
+    ],
+    "materials": [
+      "polymers-synthetics"
+    ],
     "bodyPartsInvolved": "Hands",
     "bodySites": [
       {
@@ -3880,7 +4408,9 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "The specific purpose of this study is to understand how clothing, an unavoidable environmental factor in real-world use, affects that feedback's detectability and comfort. \n Their stated goal is to construct thermal feedback for a user interface that is usable in a wider range of usage contexts, moving beyond prior work conducted in highly controlled lab settings with direct skin contact.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier heat pumps / thermoelectric devices",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
@@ -3897,8 +4427,12 @@
     "temporalParameters": "ROC: 1°C/s and 3°C/s; stimulus duration: 10s; post-stimulus adaptation: 30s; pre-session skin adaptation: 2 minutes at 32°C",
     "otherNote": "Two Peltiers were used simultaneously to provide a larger stimulus area and allow lower intensity output for detectable sensations. Body locations: thenar eminence, upper thigh, and waist. Materials tested between actuator and skin: none, cotton with conductivity ~0.04 W·m⁻¹·K⁻¹, and nylon with conductivity ~0.25 W·m⁻¹·K⁻¹. Each session had 24 stimuli: 3 intensities × 2 directions × 2 ROCs × 2 presentations. Total stimuli per participant: 72 across 3 sessions. The device appears inherited from Wilson et al. [12].",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["fabrics-textiles"],
-    "materials": ["fabrics-textiles"],
+    "materialsInContactWithSkin": [
+      "fabrics-textiles"
+    ],
+    "materials": [
+      "fabrics-textiles"
+    ],
     "bodyPartsInvolved": "Thenar eminence — the bulbous region of the palm adjoining the thumb, on the non-dominant hand (simulating holding a mobile device)\n Upper thigh of the left leg (simulating a phone in a trouser pocket)\n Waist (simulating a device clipped to a belt)",
     "bodySites": [
       {
@@ -3935,7 +4469,9 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "The authors positioned thermal feedback as a private, non-visual, non-intrusive notification and information channel for smart rings.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "TEC / Peltier elements",
     "mainActuatorModel": "TEC1-00701",
     "mainActuatorSize": "TEC element: 5×5 mm; heat sink: 6×6 mm",
@@ -3982,7 +4518,9 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "Not clearly stated. It seems that the authors came with this idea: heat can be used as a means of creating comfort, soothing menstrual cramps, and supporting bodily awareness and care for the newly-menstruating body.\n In this work, the thermal cue is part of the Menarche bits' feature. The authors just brought the bits to the workshop for ptcps to try.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Heat pads",
     "mainActuatorModel": null,
     "mainActuatorSize": null,
@@ -4081,7 +4619,9 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "IThe purpose of thermal feedback is to simulate real-world ambient temperatures associated with each virtual season, thereby enhancing users' sense of presence in VR.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": "25×25 mm per Peltier element",
@@ -4168,7 +4708,9 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "The authors position thermal feedback as a means to simulate material characteristics on touchscreens, enabling material discrimination without requiring visual attention. \n The purpose is to enrich touch interaction by adding a non-visual, supplemental perceptual channel that can help reduce visual and cognitive load, increase naturalness of touch interactions.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": null,
     "mainActuatorSize": "29.5×29.5×4.1 mm",
@@ -4215,14 +4757,18 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "The authors' purpose was to investigate whether thermal stimuli can systematically influence the emotional perception of images.\n Specifically to understand which thermal parameters (intensity, direction, rate of change) and presentation timing techniques can increase or decrease valence, arousal, and dominance across different image emotion categories. \n The broader goal is to enable designers to harness thermal feedback for affective interface design, giving them control over the emotional responses images can evoke in users on digital devices.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Peltier",
     "mainActuatorModel": "Custom-built two-channel Peltier stimulators",
     "mainActuatorSize": "2 cm² per stimulator",
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": "Neutral baseline: 32°C; stimulus levels: 26°C, 29°C, 35°C, 38°C; deviations: ±3°C and ±6°C from neutral",
     "otherSensoryActuators": [],
-    "auxiliaryHardware": ["Bluetooth microcontroller"],
+    "auxiliaryHardware": [
+      "Bluetooth microcontroller"
+    ],
     "heatControlMethod": "Temperature-controlled Peltier stimulation via Bluetooth microcontroller; detailed control implementation not reported",
     "powerConsumption": null,
     "temporalParameters": "ROC: 1°C/s and 3°C/s in Study 1; ROC: 3°C/s in Study 2; Study 1 stimulus duration: 6s; Study 2 stimulus duration: 3s per phase; adaptation period: 30s between trials",
@@ -4256,14 +4802,19 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "The authors' stated purpose for thermal feedback is as part of the Body-Emotion Model (BEM), to allow the robot to express physiological phenomena that simulate involuntary bodily reactions tied to emotional states, thereby creating a sense of a living presence and communicating the robot's internal states. The robot is designed for potential robot therapy applications for mental healthcare.\n \n Temperature is listed alongside breathing, heartbeating, and bodily movement as one of the physiological expression channels. However, the specific purpose, design rationale, or affective intent of the thermal component is not articulated in detail. The paper focuses its experimental work solely on breathing.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Film heater",
     "mainActuatorModel": "DC12V 5Ω film heater",
     "mainActuatorSize": null,
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": null,
     "otherSensoryActuators": [],
-    "auxiliaryHardware": ["Robot body", "placed from armpits to back"],
+    "auxiliaryHardware": [
+      "Robot body",
+      "placed from armpits to back"
+    ],
     "heatControlMethod": null,
     "powerConsumption": "DC12V; 5Ω",
     "temporalParameters": null,
@@ -4291,13 +4842,17 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "Heat acts as \"an additional modality that can help communicate a sense of touch and a lingering trace of a touch after it has occurred\" - particularly for affectionate touch like holding hands or placing hand on arm.\n Used for mediated social touch - transmitting squeeze + warmth during videochat gestures. Whenever there's a detectable gesture (handshakes, high-fives, hugs, shoulder pats, holding hands), the band activated as long as the gesture. No difference between different gesture except for high-five, which activated for 3s. --- Page 6-7.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "SMA coil spring actuators",
     "mainActuatorModel": "Flexinol SMA wire",
     "mainActuatorSize": "0.012 inch diameter wire",
     "overallDeviceSize": null,
     "mainActuatorPossibleTemperatureRange": "Nominal activation temperature: 70°C; general SMA transformation range: 40–150°C depending on alloy and architecture",
-    "otherSensoryActuators": ["Compression / pressure feedback"],
+    "otherSensoryActuators": [
+      "Compression / pressure feedback"
+    ],
     "auxiliaryHardware": [
       "Arduino Leonardo",
       "bipolar power transistors 2N6292",
@@ -4309,8 +4864,14 @@
     "temporalParameters": "Compression begins ~1s after current applied; full compression at 2.5s; pressure easing begins ~3s after current off; full reset at 10s with mechanical spring assist",
     "otherNote": "SMAs provided thermal feedback as a byproduct of resistive heating while primarily generating compression. Flexinol SMA wire was formed into tightly wound spring actuators. Continuous activation over 3 minutes could cause overheating, and bands were temporarily deactivated in two study cases to prevent burns. Neoprene and aramid fabric were used to shield skin from excessive heat. Typical SMA reset without mechanical assist was 30–60s.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["polymers-synthetics", "fabrics-textiles"],
-    "materials": ["polymers-synthetics", "fabrics-textiles"],
+    "materialsInContactWithSkin": [
+      "polymers-synthetics",
+      "fabrics-textiles"
+    ],
+    "materials": [
+      "polymers-synthetics",
+      "fabrics-textiles"
+    ],
     "bodyPartsInvolved": "Dominant hand (wrist/hand area) --- one SqueezeBand worn here\nUpper arm --- a second SqueezeBand worn here\nNot clear which side.\nAll participants wore two bands total during experiments.",
     "bodySites": [
       {
@@ -4347,7 +4908,9 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "The authors use heat instrumentally as the actuation mechanism to trigger visible thermochromic color animation on skin, not as a perceptual channel in its own right. The purpose is to create \"interactive, functional and aesthetic color animation\" on the body surface as a wearable display for notifications, status indicators, and decorative expression. The thermal cue is a byproduct of the actuation mechanism, not the primary feedback channel.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Conductive yarn resistive heater",
     "mainActuatorModel": "X-Silver silver-coated nylon conductive yarn",
     "mainActuatorSize": "Thickness: 0.02 mm",
@@ -4364,8 +4927,12 @@
     "temporalParameters": "Response time: 0.5–1s; breathing animation: 1–1.5s per cycle; moving animation: 7s; internal succession: 5s",
     "otherNote": "X-Silver silver-coated nylon conductive yarn was used as the primary heating material because of its flexibility and durability compared with alternatives such as silver ink and conductive ink. Conductive yarn resistance: 6Ω/cm. The system was used to actuate thermochromic colour-change patterns.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["silicone-based"],
-    "materials": ["silicone-based"],
+    "materialsInContactWithSkin": [
+      "silicone-based"
+    ],
+    "materials": [
+      "silicone-based"
+    ],
     "bodyPartsInvolved": "Back of hand (4 participants wore for 6 hours)\n Forearm (4 participants wore for 6 hours) --- not clear where on the forearm",
     "bodySites": [
       {
@@ -4397,7 +4964,9 @@
     "senses": [],
     "thermalPerceptionMeasure": null,
     "thermalCuePurpose": "To simulate the warmth that accompanies a physical hug - enhancing the realism of remote embrace via: \n Simulate interpersonal warmth from physical contact during hugging.\n Control thermochromic color-changing display.",
-    "thermalTransferModes": ["conduction"],
+    "thermalTransferModes": [
+      "conduction"
+    ],
     "mainActuatorForTemperatureSensation": "Conductive yarn resistive heater",
     "mainActuatorModel": null,
     "mainActuatorSize": "Conductive yarn resistance: 0.5 Ω/cm",
@@ -4414,8 +4983,12 @@
     "temporalParameters": null,
     "otherNote": "Conductive yarn was woven into pajama fabric and used as a resistive/Joule heating element. The system actuated thermochromic ink: leuco dye 1 changed from dark brown to orange at ~31°C, and leuco dye 2 plus normal dye became yellow at 38°C. No specific temperature target was reported for the warmth/hug feedback function. No explanation was given for choosing conductive yarn.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": ["fabrics-textiles"],
-    "materials": ["fabrics-textiles"],
+    "materialsInContactWithSkin": [
+      "fabrics-textiles"
+    ],
+    "materials": [
+      "fabrics-textiles"
+    ],
     "bodyPartsInvolved": "Twelve upper body locations (front and back of the torso, arms), shown in fig 10.",
     "bodySites": [
       {

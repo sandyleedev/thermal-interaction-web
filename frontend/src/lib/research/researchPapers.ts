@@ -136,8 +136,23 @@ export type ResearchPaper = {
   powerEnergyConsumption?: string | null;
 };
 
-export const ALL_RESEARCH_PAPERS: ResearchPaper[] =
-  researchPapersJson as ResearchPaper[];
+const THERMAL_ALONE_SENSE = "thermal-alone";
+
+/** thermal-alone is only valid when thermal is the sole reported sense. */
+export function normalizeSenses(senses: readonly string[]): string[] {
+  const list = [...senses];
+  if (list.includes(THERMAL_ALONE_SENSE) && list.length > 1) {
+    return list.filter((s) => s !== THERMAL_ALONE_SENSE);
+  }
+  return list;
+}
+
+export const ALL_RESEARCH_PAPERS: ResearchPaper[] = (
+  researchPapersJson as ResearchPaper[]
+).map((p) => ({
+  ...p,
+  senses: normalizeSenses(p.senses ?? []),
+}));
 
 export function getResearchPaperById(id: string): ResearchPaper | undefined {
   return ALL_RESEARCH_PAPERS.find((p) => p.id === id);

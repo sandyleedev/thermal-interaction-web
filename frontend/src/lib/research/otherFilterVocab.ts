@@ -23,7 +23,7 @@ export const OTHER_FILTER_SECTION_TITLES: Record<OtherFilterCategory, string> =
 export const OTHER_FILTER_OPTIONS: Record<OtherFilterCategory, FilterOption[]> =
   {
     senses: [
-      { id: "thermal-alone", label: "Thermal-alone" },
+      { id: "thermal-alone", label: "Thermal-alone" }, // thermal only; omitted when other senses are present
       { id: "haptic-tactile", label: "Haptic-Tactile" },
       { id: "haptic-force", label: "Haptic-Force" },
       { id: "kinesthetic-motion", label: "Kinesthetic/motion" },

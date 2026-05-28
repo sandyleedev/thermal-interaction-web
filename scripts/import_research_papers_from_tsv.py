@@ -91,6 +91,15 @@ SENSE_TOKEN_MAP = {
     "body": "body-general",
 }
 
+THERMAL_ALONE_SENSE = "thermal-alone"
+
+
+def finalize_senses(slugs: list[str]) -> list[str]:
+    """thermal-alone only when no other sense tags are present."""
+    if THERMAL_ALONE_SENSE in slugs and len(slugs) > 1:
+        return [s for s in slugs if s != THERMAL_ALONE_SENSE]
+    return slugs
+
 MATERIAL_TOKEN_MAP = {
     "metal": "metal",
     "ceramic": "ceramic",
@@ -299,7 +308,7 @@ def map_senses(value: str, row_num: int) -> list[str]:
                 tokens.append(mapped)
         else:
             log_inference(row_num, "Multisensory perception (simplify)", f"unmapped token {line!r} — skipped")
-    return tokens
+    return finalize_senses(tokens)
 
 
 def map_materials(value: str) -> list[str]:
