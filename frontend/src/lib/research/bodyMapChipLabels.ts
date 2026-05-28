@@ -25,6 +25,7 @@ const PARENT_CHIP_LABEL: Record<BodyMapParentRegion, string> = {
   wrist: "Wrist",
   hand: "Hand",
   leg: "Leg",
+  gluteal: "Gluteal",
   ankle: "Ankle",
   foot: "Foot",
 };

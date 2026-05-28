@@ -94,6 +94,8 @@ export function dotCohortPlanForResolvedSite(
       return dualFiltered(labels, (lab) => /thigh/i.test(lab)) ?? allLeftRightDual(labels);
     case "leg-crural":
       return dualFiltered(labels, (lab) => /crural/i.test(lab)) ?? allLeftRightDual(labels);
+    case "gluteal":
+      return singleAll(labels);
     case "wrist":
     case "hand":
     case "ankle":

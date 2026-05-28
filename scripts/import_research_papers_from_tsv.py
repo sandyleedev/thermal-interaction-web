@@ -131,6 +131,9 @@ REGION_MAP = {
     "foot": "foot",
     "leg": "leg",
     "ankle": "ankle",
+    "gluteal": "gluteal",
+    "gluteal region": "gluteal",
+    "buttocks": "gluteal",
 }
 
 SUBREGION_MAP = {

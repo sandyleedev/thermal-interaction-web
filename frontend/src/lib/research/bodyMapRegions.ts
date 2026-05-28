@@ -20,6 +20,7 @@ export const BODY_MAP_REGIONS = [
   "wrist",
   "hand",
   "leg",
+  "gluteal",
   "ankle",
   "foot",
 ] as const;
@@ -53,6 +54,7 @@ export const BODY_MAP_PLACEMENT_REGIONS = [
   "leg-general",
   "leg-thigh",
   "leg-crural",
+  "gluteal",
   "ankle",
   "foot",
 ] as const;
@@ -74,6 +76,7 @@ const PLACEMENT_TO_BODY_MAP_REGION = {
   "leg-general": "leg",
   "leg-thigh": "leg",
   "leg-crural": "leg",
+  gluteal: "gluteal",
   ankle: "ankle",
   foot: "foot",
 } as const satisfies Record<BodyMapPlacementRegion, BodyMapRegion>;
@@ -114,6 +117,7 @@ export const BODY_MAP_L2_SUBREGIONS_BY_PARENT = {
     "hand-back",
   ],
   leg: ["general", "thigh", "crural", "crural-region"],
+  gluteal: ["general"],
   ankle: ["general", "ankle"],
   foot: ["general", "sole", "toes"],
 } as const satisfies Readonly<Record<BodyMapParentRegion, readonly string[]>>;

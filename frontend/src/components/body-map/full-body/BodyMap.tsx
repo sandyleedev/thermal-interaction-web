@@ -10,6 +10,7 @@ import type { ContourMultiPolygon } from "d3-contour";
 import { BODY_MAP_VIEW, getBodyMapOutlinePathD } from "../bodyMapOutlinePath";
 import {
   getBodySilhouetteAsset,
+  hitSubpathsForBodyPart,
   loadBodySilhouetteAsset,
 } from "../bodyMapSilhouetteAsset";
 import type { BodyMapVariant } from "../bodyMapVariant";
@@ -93,7 +94,11 @@ const BODY_MAP_HIT_TARGET_ORDER: readonly BodyMapRegion[] = [
   "foot",
   "wrist",
   "ankle",
+  "gluteal",
 ];
+
+/** Invisible fill that still participates in SVG hit-testing (unlike `transparent`). */
+const BODY_MAP_HIT_TARGET_FILL = "rgba(0,0,0,0.004)";
 
 function buildBodyPartsForHitTargets(bodyParts: BodyPart[]): BodyPart[] {
   const byId = new Map(bodyParts.map((p) => [p.id, p]));
@@ -188,6 +193,16 @@ export function BodyMap({
   const bodyPartsForHitTargets = useMemo(
     () => buildBodyPartsForHitTargets(bodyParts),
     [bodyParts],
+  );
+
+  const clippedHitParts = useMemo(
+    () => bodyPartsForHitTargets.filter((part) => part.id !== "gluteal"),
+    [bodyPartsForHitTargets],
+  );
+
+  const glutealHitPart = useMemo(
+    () => bodyPartsForHitTargets.find((part) => part.id === "gluteal"),
+    [bodyPartsForHitTargets],
   );
 
   const outlinePathD = useMemo(
@@ -369,6 +384,58 @@ export function BodyMap({
     [onPartClick],
   );
 
+  const renderPartHitPaths = useCallback(
+    (parts: BodyPart[], keyPrefix: string) =>
+      parts.flatMap((part) =>
+        hitSubpathsForBodyPart(part).flatMap((sp) => {
+          const subpathIndex = part.subpaths.indexOf(sp);
+          if (subpathIndex < 0) return [];
+          const partHovered = hoveredPartId === part.id;
+          const subpathHovered =
+            partHovered &&
+            (!isL1BilateralPartWithoutDetail(part.id) ||
+              hoveredSubpathIndex === subpathIndex);
+          const chipHighlighted = isRegionChipSelected(part.id);
+          const showHoverFill = subpathHovered || chipHighlighted;
+          return (
+            <path
+              key={`${keyPrefix}-${part.id}-hit-${subpathIndex}`}
+              id={`${part.id}-hit-${subpathIndex}`}
+              d={sp.d}
+              transform={sp.transform}
+              fill={
+                showHoverFill
+                  ? `url(#${hoverGradientId})`
+                  : BODY_MAP_HIT_TARGET_FILL
+              }
+              fillOpacity={showHoverFill ? 0.78 : 1}
+              filter={
+                showHoverFill ? `url(#${softFillFilterId})` : undefined
+              }
+              stroke="none"
+              pointerEvents="all"
+              style={{ cursor: "pointer" }}
+              onPointerEnter={handlePartEnter(part, subpathIndex)}
+              onPointerMove={handlePartMove}
+              onPointerLeave={handlePartLeave}
+              onClick={handlePartClick(part)}
+            />
+          );
+        }),
+      ),
+    [
+      handlePartClick,
+      handlePartEnter,
+      handlePartLeave,
+      handlePartMove,
+      hoverGradientId,
+      hoveredPartId,
+      hoveredSubpathIndex,
+      isRegionChipSelected,
+      softFillFilterId,
+    ],
+  );
+
   const ariaLabel =
     variant === "countHeatmap"
       ? "Body map: smooth density heatmap — overlapping dots encode paper concentration per region on a fixed full-dataset scale; whole-body general studies use a full-silhouette tint instead of regional dots; hover regions or the outer figure outline for counts, including whole-body (general)."
@@ -501,6 +568,7 @@ export function BodyMap({
                   width={BODY_MAP_VIEW.w}
                   height={BODY_MAP_VIEW.h}
                   fill="transparent"
+                  pointerEvents="none"
                 />
                 <path
                   transform={`translate(${BODY_MAP_INNER_TX})`}
@@ -518,45 +586,19 @@ export function BodyMap({
                       pointerEvents="none"
                     />
                   ) : null}
-                  {bodyPartsForHitTargets.flatMap((part) =>
-                    part.subpaths.map((sp, i) => {
-                      const partHovered = hoveredPartId === part.id;
-                      const subpathHovered =
-                        partHovered &&
-                        (!isL1BilateralPartWithoutDetail(part.id) ||
-                          hoveredSubpathIndex === i);
-                      const chipHighlighted = isRegionChipSelected(part.id);
-                      const showHoverFill = subpathHovered || chipHighlighted;
-                      return (
-                      <path
-                        key={`${part.id}-hit-${i}`}
-                        id={`${part.id}-hit-${i}`}
-                        d={sp.d}
-                        transform={sp.transform}
-                        fill={
-                          showHoverFill
-                            ? `url(#${hoverGradientId})`
-                            : "transparent"
-                        }
-                        fillOpacity={showHoverFill ? 0.78 : 1}
-                        filter={
-                          showHoverFill
-                            ? `url(#${softFillFilterId})`
-                            : undefined
-                        }
-                        stroke="none"
-                        pointerEvents="all"
-                        style={{ cursor: "pointer" }}
-                        onPointerEnter={handlePartEnter(part, i)}
-                        onPointerMove={handlePartMove}
-                        onPointerLeave={handlePartLeave}
-                        onClick={handlePartClick(part)}
-                      />
-                      );
-                    }),
-                  )}
+                  {renderPartHitPaths(clippedHitParts, "clip")}
                 </g>
               </g>
+
+              {glutealHitPart ? (
+                <g
+                  id="layer1-gluteal"
+                  transform={`translate(${BODY_MAP_INNER_TX})`}
+                  pointerEvents="auto"
+                >
+                  {renderPartHitPaths([glutealHitPart], "gluteal")}
+                </g>
+              ) : null}
 
               <g
                 className="body-map-dots-layer"

@@ -7,8 +7,9 @@
  */
 
 import type { BodyMapRegion } from "@/lib/research/researchPapers";
+import { BODY_MAP_REGIONS } from "@/lib/research/bodyMapRegions";
 
-const SILHOUETTE_URL = "/body-map/body-silhouette-parts.svg";
+const SILHOUETTE_URL = "/body-map/body-silhouette-parts.svg?v=4";
 
 export type SilhouetteBodySubpath = { d: string; transform?: string; label: string };
 
@@ -94,10 +95,40 @@ const PART_INKSCAPE_LABELS: {
       "RightCrural",
     ],
   },
+  {
+    id: "gluteal",
+    label: "Gluteal",
+    labels: ["GlutealRegion"],
+  },
   { id: "ankle", label: "Ankle", labels: ["LeftAnkle", "RightAnkle"] },
   /** Inkscape typo "RIghtFoot"; Illustrator uses `RightFoot`. */
   { id: "foot", label: "Foot", labels: ["LeftFoot", "RIghtFoot", "RightFoot"] },
 ];
+
+/** Leg SVG paths overlapping the gluteal zone — excluded from leg hit targets. */
+export const LEG_LABELS_DEFERRED_TO_GLUTEAL_HITS = new Set([
+  "LeftLeg",
+  "RightLeg",
+  "LeftThigh",
+  "RightThigh",
+]);
+
+export function hitSubpathsForBodyPart(
+  part: {
+    id: BodyMapRegion;
+    subpaths: readonly { d: string; transform?: string; label?: string }[];
+  },
+): { d: string; transform?: string; label?: string }[] {
+  if (part.id === "gluteal") return [...part.subpaths];
+  if (part.id === "leg") {
+    return part.subpaths.filter(
+      (subpath) =>
+        !subpath.label ||
+        !LEG_LABELS_DEFERRED_TO_GLUTEAL_HITS.has(subpath.label),
+    );
+  }
+  return [...part.subpaths];
+}
 
 /** Inkscape label if present, otherwise `id` (Illustrator / cleaned exports). */
 function pathRegionKey(el: Element): string {
@@ -108,6 +139,25 @@ function pathRegionKey(el: Element): string {
   const trimmedInk = ink.trim();
   if (trimmedInk) return trimmedInk;
   return el.getAttribute("id")?.trim() ?? "";
+}
+
+/** One SVG path element may contain multiple subpaths (`M … z M …`). Split for hit-testing. */
+function splitCompoundPathD(d: string): string[] {
+  const trimmed = d.trim();
+  if (!trimmed) return [];
+  const segments = trimmed
+    .split(/(?=M)/)
+    .map((segment) => segment.trim())
+    .filter(Boolean);
+  return segments.length > 0 ? segments : [trimmed];
+}
+
+function silhouetteCacheIsValid(
+  parsed: ParsedSilhouette | null,
+): parsed is ParsedSilhouette {
+  if (!parsed) return false;
+  const ids = new Set(parsed.parts.map((part) => part.id));
+  return BODY_MAP_REGIONS.every((id) => ids.has(id));
 }
 
 function parseSilhouette(svgText: string): ParsedSilhouette {
@@ -153,7 +203,20 @@ function parseSilhouette(svgText: string): ParsedSilhouette {
     const subpaths: SilhouetteBodySubpath[] = [];
     for (const lab of cfg.labels) {
       const d = dByLabel.get(lab);
-      if (d) subpaths.push({ d, label: lab });
+      if (!d) continue;
+      if (lab === "GlutealRegion") {
+        const segments = splitCompoundPathD(d);
+        if (segments.length > 1) {
+          segments.forEach((segmentD) => {
+            subpaths.push({
+              d: segmentD,
+              label: "GlutealRegion",
+            });
+          });
+          continue;
+        }
+      }
+      subpaths.push({ d, label: lab });
     }
     if (subpaths.length === 0) {
       throw new Error(
@@ -168,7 +231,11 @@ function parseSilhouette(svgText: string): ParsedSilhouette {
 
 /** Fetches and parses the silhouette SVG once; safe to call from multiple components. */
 export function loadBodySilhouetteAsset(): Promise<void> {
-  if (cache) return Promise.resolve();
+  if (!silhouetteCacheIsValid(cache)) {
+    cache = null;
+    inflight = null;
+  }
+  if (silhouetteCacheIsValid(cache)) return Promise.resolve();
   inflight ??= (async () => {
     const res = await fetch(SILHOUETTE_URL);
     if (!res.ok) {
