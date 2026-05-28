@@ -30,7 +30,9 @@ type ShapeLayer =
 
 function specToLayers(hitId: string, spec: ArmShapeSpec): ShapeLayer[] {
   if (spec.kind === "path") {
-    return [{ kind: "path", d: spec.d, transform: spec.transform, layerKey: hitId }];
+    return [
+      { kind: "path", d: spec.d, transform: spec.transform, layerKey: hitId },
+    ];
   }
   return [
     {
@@ -177,16 +179,11 @@ export function ArmDetailPanelMap({
     useDeferredAreaViewResult(
       areaViewEnabled,
       () =>
-        buildDetailAreaDensityContoursByHit(
-          fillHitIds,
-          dotsByHitId,
-          viewBox,
-          {
-            cellSize: rawDotsDensityCellSize,
-            bandwidth: rawDotsDensityBandwidth,
-            thresholds: rawDotsDensityThresholds,
-          },
-        ),
+        buildDetailAreaDensityContoursByHit(fillHitIds, dotsByHitId, viewBox, {
+          cellSize: rawDotsDensityCellSize,
+          bandwidth: rawDotsDensityBandwidth,
+          thresholds: rawDotsDensityThresholds,
+        }),
       [
         areaDotsKey,
         dotsByHitId,
@@ -381,10 +378,7 @@ export function ArmDetailPanelMap({
                 ? 1
                 : rawDotsGlobalContourMaxValue;
             return (
-              <g
-                key={`raw-area-${entry.hitId}`}
-                mask={`url(#${softMaskId})`}
-              >
+              <g key={`raw-area-${entry.hitId}`} mask={`url(#${softMaskId})`}>
                 <g filter={`url(#${rawDotsSoftBlurId})`}>
                   {entry.contours.map(
                     (contour: ContourMultiPolygon, i: number) => {

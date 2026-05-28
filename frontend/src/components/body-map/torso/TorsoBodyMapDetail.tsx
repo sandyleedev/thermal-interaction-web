@@ -105,9 +105,7 @@ function parseTorsoDetailSvg(svgText: string): {
   const backD = backPathEl?.getAttribute("d")?.trim();
   shapeByHit.set("back", {
     kind: "path",
-    ...(backD
-      ? readTorsoPath(doc, "Back")
-      : { d: generalOutlineD }),
+    ...(backD ? readTorsoPath(doc, "Back") : { d: generalOutlineD }),
   });
 
   return {

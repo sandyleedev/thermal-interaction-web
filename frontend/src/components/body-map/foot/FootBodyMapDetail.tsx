@@ -38,7 +38,7 @@ import {
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
 
-const HEATMAP_DOT_RADIUS = 14;
+const HEATMAP_DOT_RADIUS = 30;
 const HEATMAP_DOT_OPACITY_MIN = 0.22;
 const HEATMAP_DOT_OPACITY_MAX = 0.52;
 const MAX_HEATMAP_DOTS_PER_HIT = MAX_HEATMAP_DOTS_PER_REGION;
@@ -88,10 +88,7 @@ function ancestorTransformChain(el: Element): string | undefined {
   return transformParts.length > 0 ? transformParts.join(" ") : undefined;
 }
 
-function readFootShapeById(
-  doc: Document,
-  id: string,
-): FootShapeSpec | null {
+function readFootShapeById(doc: Document, id: string): FootShapeSpec | null {
   const pathEl = doc.querySelector(`path[id="${id}"]`);
   if (!pathEl) return null;
   const d = pathEl.getAttribute("d")?.trim();
@@ -186,10 +183,7 @@ export type FootBodyMapDetailProps = {
   papers: readonly ResearchPaper[];
 };
 
-export function FootBodyMapDetail({
-  variant,
-  papers,
-}: FootBodyMapDetailProps) {
+export function FootBodyMapDetail({ variant, papers }: FootBodyMapDetailProps) {
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
 
@@ -203,7 +197,10 @@ export function FootBodyMapDetail({
   >({ left: {}, right: {} });
 
   const footAreaDotsSampleCacheRef = useRef<
-    Map<string, Record<FootDetailSide, Record<string, { x: number; y: number }[]>>>
+    Map<
+      string,
+      Record<FootDetailSide, Record<string, { x: number; y: number }[]>>
+    >
   >(new Map());
 
   useEffect(() => {
@@ -403,8 +400,7 @@ export function FootBodyMapDetail({
 
   const isHitSelected = useCallback(
     (panelSide: FootDetailSide) => {
-      return (hitId: string) =>
-        isBodyMapChipSelected("foot", hitId, panelSide);
+      return (hitId: string) => isBodyMapChipSelected("foot", hitId, panelSide);
     },
     [isBodyMapChipSelected],
   );
@@ -439,10 +435,7 @@ export function FootBodyMapDetail({
   );
 
   const mapsReady =
-    parsed.parse &&
-    !parseError &&
-    svgText !== null &&
-    svgText !== "";
+    parsed.parse && !parseError && svgText !== null && svgText !== "";
 
   const panelCommon = {
     variant,

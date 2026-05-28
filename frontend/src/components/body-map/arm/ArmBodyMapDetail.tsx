@@ -40,7 +40,7 @@ import {
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
 
-const HEATMAP_DOT_RADIUS = 18;
+const HEATMAP_DOT_RADIUS = 50;
 const HEATMAP_DOT_OPACITY_MIN = 0.22;
 const HEATMAP_DOT_OPACITY_MAX = 0.52;
 const MAX_HEATMAP_DOTS_PER_HIT = MAX_HEATMAP_DOTS_PER_REGION;
@@ -189,10 +189,7 @@ export type ArmBodyMapDetailProps = {
   papers: readonly ResearchPaper[];
 };
 
-export function ArmBodyMapDetail({
-  variant,
-  papers,
-}: ArmBodyMapDetailProps) {
+export function ArmBodyMapDetail({ variant, papers }: ArmBodyMapDetailProps) {
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
 
@@ -209,7 +206,10 @@ export function ArmBodyMapDetail({
   >({ left: {}, right: {} });
 
   const armAreaDotsSampleCacheRef = useRef<
-    Map<string, Record<ArmDetailSide, Record<string, { x: number; y: number }[]>>>
+    Map<
+      string,
+      Record<ArmDetailSide, Record<string, { x: number; y: number }[]>>
+    >
   >(new Map());
 
   useEffect(() => {
@@ -280,7 +280,8 @@ export function ArmBodyMapDetail({
     [papers, paperIdsKey],
   );
 
-  const displayCountsBySide = variant === "rawDots" ? countsBySideAreaView : countsBySide;
+  const displayCountsBySide =
+    variant === "rawDots" ? countsBySideAreaView : countsBySide;
 
   const combinedFillCounts = useMemo(() => {
     const m: Record<string, number> = {};
@@ -315,7 +316,10 @@ export function ArmBodyMapDetail({
   }, [leftParsed.parse, rightParsed.parse]);
 
   useLayoutEffect(() => {
-    if (!leftParsed.parse?.shapeByHit.size || !rightParsed.parse?.shapeByHit.size) {
+    if (
+      !leftParsed.parse?.shapeByHit.size ||
+      !rightParsed.parse?.shapeByHit.size
+    ) {
       return;
     }
     let cancelled = false;
@@ -440,8 +444,7 @@ export function ArmBodyMapDetail({
 
   const isHitSelected = useCallback(
     (panelSide: ArmDetailSide) => {
-      return (hitId: string) =>
-        isBodyMapChipSelected("arm", hitId, panelSide);
+      return (hitId: string) => isBodyMapChipSelected("arm", hitId, panelSide);
     },
     [isBodyMapChipSelected],
   );
@@ -512,7 +515,7 @@ export function ArmBodyMapDetail({
       ? (hoveredKey.slice(panelSide.length + 1) ?? null)
       : null;
     const panelGeneralActive =
-      (hoveredKey === `${panelSide}:general`) ||
+      hoveredKey === `${panelSide}:general` ||
       isBodyMapChipSelected("arm", "general", panelSide);
     return (
       <ArmDetailPanelMap
@@ -533,7 +536,9 @@ export function ArmBodyMapDetail({
         onToggleHit={toggleHit(panelSide)}
         onFillHitEnter={handleFillHitEnter(panelSide)}
         onGeneralRingEnter={handleGeneralRingEnter(panelSide)}
-        onGeneralRingClick={() => toggleBodyMapChip("arm", "general", panelSide)}
+        onGeneralRingClick={() =>
+          toggleBodyMapChip("arm", "general", panelSide)
+        }
         generalRingActive={panelGeneralActive}
         {...panelCommon}
       />

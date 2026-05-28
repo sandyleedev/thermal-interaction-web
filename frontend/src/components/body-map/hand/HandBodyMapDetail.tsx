@@ -40,7 +40,7 @@ import {
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
 
-const HEATMAP_DOT_RADIUS = 14;
+const HEATMAP_DOT_RADIUS = 20;
 const HEATMAP_DOT_OPACITY_MIN = 0.22;
 const HEATMAP_DOT_OPACITY_MAX = 0.52;
 const MAX_HEATMAP_DOTS_PER_HIT = MAX_HEATMAP_DOTS_PER_REGION;
@@ -99,10 +99,7 @@ function ancestorTransformChain(el: Element): string | undefined {
   return transformParts.length > 0 ? transformParts.join(" ") : undefined;
 }
 
-function readHandShapeById(
-  doc: Document,
-  id: string,
-): HandShapeSpec | null {
+function readHandShapeById(doc: Document, id: string): HandShapeSpec | null {
   const pathEl = doc.querySelector(`path[id="${id}"]`);
   if (pathEl) {
     const d = pathEl.getAttribute("d")?.trim();
@@ -148,9 +145,7 @@ function parseHandSurfaceSvg(
   const doc = new DOMParser().parseFromString(svgText, "image/svg+xml");
   const svg = doc.querySelector("svg");
   const defaultViewBox =
-    surface === "inner"
-      ? HAND_INNER_DETAIL_VIEWBOX
-      : HAND_OUTER_DETAIL_VIEWBOX;
+    surface === "inner" ? HAND_INNER_DETAIL_VIEWBOX : HAND_OUTER_DETAIL_VIEWBOX;
   const viewBox = svg?.getAttribute("viewBox")?.trim() ?? defaultViewBox;
   const vbParts = viewBox.split(/\s+/).map(Number);
   const viewBoxWidth = vbParts[2] ?? 0;
@@ -161,9 +156,7 @@ function parseHandSurfaceSvg(
   const outline = readHandPathById(doc, HAND_OUTLINE_ID);
 
   const fillHitIds =
-    surface === "inner"
-      ? HAND_INNER_FILL_HIT_IDS
-      : HAND_OUTER_DETAIL_HIT_IDS;
+    surface === "inner" ? HAND_INNER_FILL_HIT_IDS : HAND_OUTER_DETAIL_HIT_IDS;
 
   const shapeByHit = new Map<string, HandShapeSpec>();
   if (surface === "inner") {
@@ -268,10 +261,7 @@ export type HandBodyMapDetailProps = {
   papers: readonly ResearchPaper[];
 };
 
-export function HandBodyMapDetail({
-  variant,
-  papers,
-}: HandBodyMapDetailProps) {
+export function HandBodyMapDetail({ variant, papers }: HandBodyMapDetailProps) {
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
 
@@ -403,8 +393,10 @@ export function HandBodyMapDetail({
 
     const run = () => {
       if (cancelled) return;
-      const next: Record<string, Record<string, { x: number; y: number }[]>> =
-        {};
+      const next: Record<
+        string,
+        Record<string, { x: number; y: number }[]>
+      > = {};
       for (const panel of HAND_PANELS) {
         const parse =
           panel.surface === "inner" ? innerParsed.parse! : outerParsed.parse!;
