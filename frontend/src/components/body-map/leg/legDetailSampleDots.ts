@@ -50,7 +50,7 @@ function legDotSampleOptions(hitId: string): HeadShapeSampleOptions {
  * Which leg-detail hit ids receive a dot for this body site (no dots for `general`).
  */
 export function legContributionHitIds(
-  site: { side?: string },
+  site: { side?: string | null },
   resolved: BodyMapDetailRegion,
   distributionKey: string,
 ): string[] {
@@ -83,7 +83,7 @@ export function legContributionHitIds(
 }
 
 function legContributionHitIdsForAreaView(
-  site: { side?: string },
+  site: { side?: string | null },
   resolved: BodyMapDetailRegion,
 ): string[] {
   if (resolved.parent !== "leg") return [];

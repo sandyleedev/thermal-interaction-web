@@ -54,7 +54,7 @@ function isBodyMapParentRegion(s: string): s is BodyMapParentRegion {
 export function resolveBodySite(site: {
   region: string;
   subregion: string;
-  side?: string;
+  side?: string | null;
 }): BodyMapDetailRegion {
   const rawRegion = site.region.trim();
   const rawSub = (site.subregion ?? "").trim();
@@ -199,7 +199,7 @@ export function bodyMapParentKeysForPaper(
 /** Minimal paper shape so this module stays free of circular imports with `researchPapers.ts`. */
 export type BodySitesCarrier = {
   id?: string;
-  bodySites?: readonly { region: string; subregion: string; side?: string }[];
+  bodySites?: readonly { region: string; subregion: string; side?: string | null }[];
 };
 
 /**
@@ -310,7 +310,7 @@ const HAND_OUTER_HIT_ID_SET = new Set<string>(HAND_OUTER_DETAIL_HIT_IDS);
 
 /** True when a body site's optional `side` should appear on the given hand panel (filters / chips). */
 export function handSiteMatchesPanelSide(
-  site: { side?: string },
+  site: { side?: string | null },
   panelSide: HandDetailSide,
 ): boolean {
   const sd = normalizeBodySiteSide(site.side);
@@ -495,7 +495,7 @@ const FOOT_DETAIL_HIT_ID_SET = new Set<string>([
 
 /** True when a body site's optional `side` should appear on the given foot panel (filters / chips). */
 export function footSiteMatchesPanelSide(
-  site: { side?: string },
+  site: { side?: string | null },
   panelSide: FootDetailSide,
 ): boolean {
   const sd = normalizeBodySiteSide(site.side);
@@ -625,7 +625,7 @@ const LEG_DETAIL_HIT_ID_SET = new Set<string>([
 
 /** True when a body site's optional `side` should appear on the given leg panel (filters / chips). */
 export function legSiteMatchesPanelSide(
-  site: { side?: string },
+  site: { side?: string | null },
   panelSide: LegDetailSide,
 ): boolean {
   const sd = normalizeBodySiteSide(site.side);
@@ -809,7 +809,7 @@ export function paperMatchesLegFineSelection(
 
 /** True when a body site's optional `side` should appear on the given arm panel (filters / chips). */
 export function armSiteMatchesPanelSide(
-  site: { side?: string },
+  site: { side?: string | null },
   panelSide: ArmDetailSide,
 ): boolean {
   const sd = normalizeBodySiteSide(site.side);

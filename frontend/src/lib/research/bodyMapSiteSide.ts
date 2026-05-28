@@ -1,16 +1,23 @@
 import type { BodyMapParentRegion } from "@/lib/research/bodyMapRegions";
 import { resolveBodySite, type BodySitesCarrier } from "@/lib/research/bodyMapRegionUtils";
 
-export type BodySiteSide = "left" | "right" | "unspecified";
+/** Stored in JSON: explicit laterality, or null when unknown. */
+export type BodySiteSide = "left" | "right" | null;
+
+/** Resolved side for matching / dot placement (null in data → unspecified). */
+export type ResolvedBodySiteSide = "left" | "right" | "unspecified";
 
 export type BodyMapHoverTooltipLine = {
   label: string;
   count: number;
 };
 
-/** Normalize raw JSON / legacy values to a canonical lateral side. */
-export function normalizeBodySiteSide(side?: string): BodySiteSide {
-  const sd = (side ?? "").trim().toLowerCase();
+/** Normalize raw JSON (null, legacy "unspecified") to a canonical lateral side. */
+export function normalizeBodySiteSide(
+  side?: BodySiteSide | string | null,
+): ResolvedBodySiteSide {
+  if (side == null) return "unspecified";
+  const sd = String(side).trim().toLowerCase();
   if (sd === "left") return "left";
   if (sd === "right") return "right";
   return "unspecified";
@@ -31,7 +38,7 @@ export function distributedSideForSite(distributionKey: string): "left" | "right
 }
 
 export function siteAssignsToPanelSideForDots(
-  site: { side?: string },
+  site: { side?: string | null },
   panelSide: "left" | "right",
   distributionKey: string,
 ): boolean {
@@ -46,7 +53,7 @@ export function siteAssignsToPanelSideForDots(
  * unspecified appears on both (dot placement still uses {@link siteAssignsToPanelSideForDots}).
  */
 export function siteAssignsToPanelSideForAreaView(
-  site: { side?: string },
+  site: { side?: string | null },
   panelSide: "left" | "right",
 ): boolean {
   const normalized = normalizeBodySiteSide(site.side);
@@ -56,7 +63,7 @@ export function siteAssignsToPanelSideForAreaView(
 }
 
 export function siteAssignsToLateralHitForDots(
-  site: { side?: string },
+  site: { side?: string | null },
   hitSide: "left" | "right",
   distributionKey: string,
 ): boolean {

@@ -55,7 +55,7 @@ function handSurfaceForSubregion(sub: string): HandDetailSurface | null {
  * Which hand-detail hit ids receive a dot for this body site on one panel (no dots for `general`).
  */
 export function handContributionHitIds(
-  site: { side?: string },
+  site: { side?: string | null },
   resolved: BodyMapDetailRegion,
   panel: HandDetailPanel,
   distributionKey: string,
@@ -74,7 +74,7 @@ export function handContributionHitIds(
 }
 
 function handContributionHitIdsForAreaView(
-  site: { side?: string },
+  site: { side?: string | null },
   resolved: BodyMapDetailRegion,
   panel: HandDetailPanel,
 ): string[] {

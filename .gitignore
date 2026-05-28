@@ -10,3 +10,11 @@
 *.njsproj
 *.sln
 *.sw?
+
+# Import sources (keep exports outside the repo; JSON is the app source of truth)
+scripts/*.csv
+scripts/*.tsv
+
+# Python
+__pycache__/
+*.py[cod]

@@ -15,9 +15,19 @@ function trimText(s: string | undefined | null): string | undefined {
 
 const DETAIL_NA = "N/A";
 
-function displayOrNa(value: string | undefined): string {
+const NULLISH_DISPLAY = new Set([
+  "n/a",
+  "na",
+  "not specified",
+  "not reported",
+  "not applicable",
+  "none",
+  "null",
+]);
+
+function displayOrNa(value: string | undefined | null): string {
   const t = trimText(value);
-  if (!t || t === "—") return DETAIL_NA;
+  if (!t || t === "—" || NULLISH_DISPLAY.has(t.toLowerCase())) return DETAIL_NA;
   return t;
 }
 
@@ -62,7 +72,7 @@ function DetailParagraph({
   text,
   preserveLineBreaks = false,
 }: {
-  text: string | undefined;
+  text: string | undefined | null;
   preserveLineBreaks?: boolean;
 }) {
   const t = trimText(text);
@@ -173,7 +183,7 @@ function parseStructuredProseBlocks(text: string): StructuredProseBlock[] {
     .filter((block): block is StructuredProseBlock => block != null);
 }
 
-function DetailStructuredProse({ text }: { text: string | undefined }) {
+function DetailStructuredProse({ text }: { text: string | undefined | null }) {
   const t = trimText(text);
   if (!t) {
     return <p className="paper-detail__prose paper-detail__na">{DETAIL_NA}</p>;
@@ -219,10 +229,10 @@ function formatItemList(items: readonly string[] | undefined): string | undefine
 
 function hardwareFactRows(paper: ResearchPaper): { dt: string; dd: string }[] {
   const rows: { dt: string; dd: string }[] = [];
-  const pushAlways = (dt: string, v: string | undefined) => {
+  const pushAlways = (dt: string, v: string | undefined | null) => {
     rows.push({ dt, dd: trimText(v) ?? DETAIL_NA });
   };
-  const pushIfPresent = (dt: string, v: string | undefined) => {
+  const pushIfPresent = (dt: string, v: string | undefined | null) => {
     const dd = trimText(v);
     if (dd) rows.push({ dt, dd });
   };

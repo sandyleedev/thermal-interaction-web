@@ -18,7 +18,7 @@ export type NeckShapeSpec = HeadShapeSpec;
  * Which neck-detail hit ids receive a dot for this body site (no dots for `general`).
  */
 export function neckContributionHitIds(
-  _site: { side?: string },
+  _site: { side?: string | null },
   resolved: BodyMapDetailRegion,
 ): string[] {
   if (resolved.parent !== "neck") return [];

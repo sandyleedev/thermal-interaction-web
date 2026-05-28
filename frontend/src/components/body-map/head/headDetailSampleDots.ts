@@ -54,7 +54,7 @@ function mulberry32(seed: number) {
  * Which head-detail hit ids receive a dot for this body site (no dots for `general`).
  */
 export function headContributionHitIds(
-  site: { side?: string },
+  site: { side?: string | null },
   resolved: BodyMapDetailRegion,
   distributionKey: string,
 ): string[] {
@@ -94,7 +94,7 @@ export function headContributionHitIds(
 }
 
 function headContributionHitIdsForAreaView(
-  site: { side?: string },
+  site: { side?: string | null },
   resolved: BodyMapDetailRegion,
 ): string[] {
   if (resolved.parent !== "head") return [];

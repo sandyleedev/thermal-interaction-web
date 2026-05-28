@@ -47,7 +47,7 @@ function armDotSampleOptions(
  * Which arm-detail hit ids receive a dot for this body site on one panel (no dots for `general`).
  */
 export function armContributionHitIds(
-  site: { side?: string },
+  site: { side?: string | null },
   resolved: BodyMapDetailRegion,
   panelSide: ArmDetailSide,
   distributionKey: string,
@@ -73,7 +73,7 @@ export function armContributionHitIds(
 }
 
 function armContributionHitIdsForAreaView(
-  site: { side?: string },
+  site: { side?: string | null },
   resolved: BodyMapDetailRegion,
   panelSide: ArmDetailSide,
 ): string[] {

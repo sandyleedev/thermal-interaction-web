@@ -86,7 +86,7 @@ export type { BodySiteSide } from "@/lib/research/bodyMapSiteSide";
  * One measured / stimulated location on the body.
  * - `region` should be an L1 parent (`head`, `arm`, …) or `wholeBody`.
  * - `subregion` is the L2 slug (`forearm`, `palm`, …); use `general` when unknown.
- * - `side` is `left`, `right`, or `unspecified` when laterality is unknown.
+ * - `side` is `left`, `right`, or `null` when laterality is unknown.
  */
 export type BodySite = {
   region: string;
@@ -109,31 +109,31 @@ export type ResearchPaper = {
   minDurationSec: number | null;
   maxDurationSec: number | null;
   senses: string[];
-  thermalPerceptionMeasure?: string;
-  thermalCuePurpose?: string;
+  thermalPerceptionMeasure?: string | null;
+  thermalCuePurpose?: string | null;
   thermalTransferModes: string[];
 
   /** Technical related fields */
-  mainActuatorForTemperatureSensation?: string;
-  mainActuatorModel?: string;
-  mainActuatorSize?: string;
-  overallDeviceSize?: string;
-  mainActuatorPossibleTemperatureRange?: string;
+  mainActuatorForTemperatureSensation?: string | null;
+  mainActuatorModel?: string | null;
+  mainActuatorSize?: string | null;
+  overallDeviceSize?: string | null;
+  mainActuatorPossibleTemperatureRange?: string | null;
   otherSensoryActuators?: string[];
   auxiliaryHardware?: string[];
-  heatControlMethod?: string;
-  powerConsumption?: string;
-  temporalParameters?: string;
-  otherNote?: string;
-  technicalSummary?: string;
+  heatControlMethod?: string | null;
+  powerConsumption?: string | null;
+  temporalParameters?: string | null;
+  otherNote?: string | null;
+  technicalSummary?: string | null;
 
   materialsInContactWithSkin?: string[];
   materials: string[];
 
-  bodyPartsInvolved?: string;
+  bodyPartsInvolved?: string | null;
   bodySites: BodySite[];
 
-  powerEnergyConsumption?: string;
+  powerEnergyConsumption?: string | null;
 };
 
 export const ALL_RESEARCH_PAPERS: ResearchPaper[] =
@@ -146,7 +146,7 @@ export function getResearchPaperById(id: string): ResearchPaper | undefined {
 export function normalizeBodySites(paper: ResearchPaper): BodySite[] {
   return (paper.bodySites ?? []).map((site) => ({
     ...site,
-    side: site.side ?? "unspecified",
+    side: site.side ?? null,
   }));
 }
 

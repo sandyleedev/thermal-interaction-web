@@ -75,23 +75,23 @@ def lateral_mentions(text: str, side: str, keywords: list[str]) -> bool:
     return any(re.search(p, scrubbed) for p in patterns)
 
 
-def infer_side(text: str, region: str, subregion: str) -> str:
+def infer_side(text: str, region: str, subregion: str) -> str | None:
     region_l = region.strip().lower()
     if region_l not in BILATERAL_PARENTS:
-        return "unspecified"
+        return None
 
     sub_l = subregion.strip().lower()
     if region_l == "head" and sub_l not in {"ear", "cheek"}:
-        return "unspecified"
+        return None
 
     t = normalize(text)
     if not t or t in {"n/a", "na"}:
-        return "unspecified"
+        return None
 
     keys = keywords_for_site(region_l, sub_l)
 
     if mentions_both(t, keys):
-        return "unspecified"
+        return None
 
     left = lateral_mentions(t, "left", keys)
     right = lateral_mentions(t, "right", keys)
@@ -101,7 +101,7 @@ def infer_side(text: str, region: str, subregion: str) -> str:
     if right and not left:
         return "right"
 
-    return "unspecified"
+    return None
 
 
 def main() -> None:

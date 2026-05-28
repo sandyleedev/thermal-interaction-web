@@ -33,7 +33,7 @@ function footDotSampleOptions(hitId: string): HeadShapeSampleOptions {
  * Which foot-detail hit ids receive a dot for this body site on one panel (no dots for `general`).
  */
 export function footContributionHitIds(
-  site: { side?: string },
+  site: { side?: string | null },
   resolved: BodyMapDetailRegion,
   panelSide: FootDetailSide,
   distributionKey: string,
@@ -51,7 +51,7 @@ export function footContributionHitIds(
 }
 
 function footContributionHitIdsForAreaView(
-  site: { side?: string },
+  site: { side?: string | null },
   resolved: BodyMapDetailRegion,
   panelSide: FootDetailSide,
 ): string[] {

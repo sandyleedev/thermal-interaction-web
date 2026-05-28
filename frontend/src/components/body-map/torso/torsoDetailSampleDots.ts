@@ -241,7 +241,7 @@ export function sampleDotsInTorsoShape(
  * Which torso-detail hit ids receive a dot for this body site (no dots for `general`).
  */
 export function torsoContributionHitIds(
-  _site: { side?: string },
+  _site: { side?: string | null },
   resolved: BodyMapDetailRegion,
 ): string[] {
   if (resolved.parent !== "torso") return [];
