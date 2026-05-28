@@ -50,3 +50,36 @@ export function maxContourValueFromLayers(
 export function createBodyMapAreaContourGeoPath() {
   return geoPath();
 }
+
+export type DetailAreaDensityContourEntry = {
+  hitId: string;
+  contours: ContourMultiPolygon[];
+};
+
+export function buildDetailAreaDensityContoursByHit(
+  fillHitIds: readonly string[],
+  dotsByHitId: Record<string, { x: number; y: number }[]>,
+  viewBox: string,
+  options: {
+    cellSize: number;
+    bandwidth: number;
+    thresholds: number;
+  },
+): DetailAreaDensityContourEntry[] {
+  const vbParts = viewBox.split(/\s+/).map(Number);
+  const vbW = vbParts[2] ?? 210;
+  const vbH = vbParts[3] ?? 297;
+  const vbY = vbParts[1] ?? 0;
+  const density = contourDensity<{ x: number; y: number }>()
+    .x((d) => d.x)
+    .y((d) => d.y)
+    .size([vbW, vbY + vbH])
+    .cellSize(options.cellSize)
+    .bandwidth(options.bandwidth)
+    .thresholds(options.thresholds);
+  return fillHitIds.flatMap((hitId) => {
+    const points = dotsByHitId[hitId] ?? [];
+    if (points.length < 2) return [];
+    return [{ hitId, contours: density(points) }];
+  });
+}

@@ -8,7 +8,7 @@ import {
   useState,
   type PointerEvent,
 } from "react";
-import { contourDensity, geoPath } from "d3";
+import { geoPath } from "d3";
 import type { ContourMultiPolygon } from "d3-contour";
 import { areaDotsLruPut, areaDotsLruTouch } from "../shared/bodyMapAreaDotsCache";
 import { MAX_HEATMAP_DOTS_PER_REGION } from "../bodyMapSampleDots";
@@ -28,6 +28,12 @@ import {
   detailAreaPinkForCount,
 } from "../shared/bodyMapHeatmapColors";
 import { BodyMapAreaViewFilterDefs } from "../shared/BodyMapAreaViewFilterDefs";
+import { BodyMapAreaViewLoadingOverlay } from "../shared/BodyMapAreaViewLoadingOverlay";
+import { useDeferredAreaViewResult } from "../shared/useDeferredAreaViewResult";
+import {
+  buildDetailAreaDensityContoursByHit,
+  maxContourValueFromLayers,
+} from "../full-body/bodyMapAreaContours";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
@@ -138,6 +144,7 @@ export function NeckBodyMapDetail({
   const [dotsByHitId, setDotsByHitId] = useState<
     Record<string, { x: number; y: number }[]>
   >({});
+  const [isAreaDotsComputing, setIsAreaDotsComputing] = useState(false);
 
   const neckAreaDotsSampleCacheRef = useRef<
     Map<string, Record<string, { x: number; y: number }[]>>
@@ -216,34 +223,40 @@ export function NeckBodyMapDetail({
     return maxVal <= 0 ? [0, 1] : [0, maxVal];
   }, [countsByHit]);
 
-  const neckRawDotsContoursByHit = useMemo(() => {
-    if (variant !== "rawDots") return [];
-    const vbParts = NECK_DETAIL_VIEWBOX.split(/\s+/).map(Number);
-    const vbW = vbParts[2] ?? 210;
-    const vbH = vbParts[3] ?? 297;
-    const vbY = vbParts[1] ?? 0;
-    const density = contourDensity<{ x: number; y: number }>()
-      .x((d: { x: number; y: number }) => d.x)
-      .y((d: { x: number; y: number }) => d.y)
-      .size([vbW, vbY + vbH])
-      .cellSize(NECK_RAW_DOTS_DENSITY_CELL_SIZE)
-      .bandwidth(NECK_RAW_DOTS_DENSITY_BANDWIDTH)
-      .thresholds(NECK_RAW_DOTS_DENSITY_THRESHOLDS);
-    return NECK_FILL_HIT_IDS.flatMap((hitId) => {
-      const points = dotsByHitId[hitId] ?? [];
-      if (points.length < 2) return [];
-      return [{ hitId, contours: density(points) }];
-    });
-  }, [dotsByHitId, variant]);
+  const areaViewEnabled = variant === "rawDots";
+  const areaDotsKey = useMemo(
+    () =>
+      NECK_FILL_HIT_IDS.map(
+        (hitId) => `${hitId}:${(dotsByHitId[hitId] ?? []).length}`,
+      ).join("|"),
+    [dotsByHitId],
+  );
+
+  const {
+    result: neckRawDotsContoursByHit,
+    isComputing: isAreaContoursComputing,
+  } = useDeferredAreaViewResult(
+    areaViewEnabled,
+    () =>
+      buildDetailAreaDensityContoursByHit(
+        NECK_FILL_HIT_IDS,
+        dotsByHitId,
+        NECK_DETAIL_VIEWBOX,
+        {
+          cellSize: NECK_RAW_DOTS_DENSITY_CELL_SIZE,
+          bandwidth: NECK_RAW_DOTS_DENSITY_BANDWIDTH,
+          thresholds: NECK_RAW_DOTS_DENSITY_THRESHOLDS,
+        },
+      ),
+    [areaDotsKey, dotsByHitId],
+  );
 
   const neckRawDotsGlobalContourMaxValue = useMemo(() => {
-    return Math.max(
-      0,
-      ...neckRawDotsContoursByHit.flatMap((entry) =>
-        entry.contours.map((c: ContourMultiPolygon) => c.value ?? 0),
-      ),
-    );
+    return maxContourValueFromLayers(neckRawDotsContoursByHit ?? []);
   }, [neckRawDotsContoursByHit]);
+
+  const areaViewLoading =
+    areaViewEnabled && (isAreaDotsComputing || isAreaContoursComputing);
 
   const neckRawDotsContourPath = useMemo(() => geoPath(), []);
 
@@ -253,18 +266,25 @@ export function NeckBodyMapDetail({
     const areaCacheKey = `${paperIdsKey}\0${shapeByHitKey}`;
 
     if (variant === "rawDots") {
+      setIsAreaDotsComputing(true);
       const cached = areaDotsLruTouch(
         neckAreaDotsSampleCacheRef.current,
         areaCacheKey,
       );
       if (cached) {
         queueMicrotask(() => {
-          if (!cancelled) setDotsByHitId(structuredClone(cached));
+          if (!cancelled) {
+            setDotsByHitId(structuredClone(cached));
+            setIsAreaDotsComputing(false);
+          }
         });
         return () => {
           cancelled = true;
+          setIsAreaDotsComputing(false);
         };
       }
+    } else {
+      setIsAreaDotsComputing(false);
     }
 
     const next =
@@ -285,10 +305,14 @@ export function NeckBodyMapDetail({
     }
 
     queueMicrotask(() => {
-      if (!cancelled) setDotsByHitId(next);
+      if (!cancelled) {
+        setDotsByHitId(next);
+        setIsAreaDotsComputing(false);
+      }
     });
     return () => {
       cancelled = true;
+      setIsAreaDotsComputing(false);
     };
   }, [shapeByHit, paperIdsKey, papers, variant, shapeByHitKey]);
 
@@ -363,6 +387,7 @@ export function NeckBodyMapDetail({
         silhouetteD &&
         generalOutlineD &&
         !neckParseError ? (
+          <BodyMapAreaViewLoadingOverlay visible={areaViewLoading}>
           <svg
             className="body-map-svg neck-detail-svg"
             width="100%"
@@ -501,7 +526,7 @@ export function NeckBodyMapDetail({
 
             {variant === "rawDots" ? (
               <g pointerEvents="none" aria-hidden>
-                {neckRawDotsContoursByHit.map((entry) => {
+                {(neckRawDotsContoursByHit ?? []).map((entry) => {
                   const softMaskId = `neck-detail-area-soft-${uid}-${entry.hitId}`;
                   const partCount = countsByHit[entry.hitId] ?? 0;
                   const fillColor = detailAreaPinkForCount(
@@ -551,7 +576,7 @@ export function NeckBodyMapDetail({
                     </g>
                   );
                 })}
-                {neckRawDotsContoursByHit.length === 0
+                {(neckRawDotsContoursByHit ?? []).length === 0
                   ? NECK_FILL_HIT_IDS.map((hitId) => {
                       const softMaskId = `neck-detail-area-soft-${uid}-${hitId}`;
                       const pts = dotsByHitId[hitId] ?? [];
@@ -690,6 +715,7 @@ export function NeckBodyMapDetail({
               aria-label="Neck general (outline)"
             />
           </svg>
+          </BodyMapAreaViewLoadingOverlay>
         ) : null}
       </div>
 

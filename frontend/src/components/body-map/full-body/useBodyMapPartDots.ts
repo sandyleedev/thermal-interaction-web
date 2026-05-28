@@ -36,10 +36,14 @@ export function useBodyMapPartDots({
   heatmapDotPapers,
   paperCountsKey,
   heatmapPaperIdsKey,
-}: UseBodyMapPartDotsArgs): Record<string, { x: number; y: number }[]> {
+}: UseBodyMapPartDotsArgs): {
+  dotsByPartId: Record<string, { x: number; y: number }[]>;
+  isAreaDotsComputing: boolean;
+} {
   const [dotsByPartId, setDotsByPartId] = useState<
     Record<string, { x: number; y: number }[]>
   >({});
+  const [isAreaDotsComputing, setIsAreaDotsComputing] = useState(false);
 
   const bodyStructureKey = useMemo(
     () => bodyParts.map((p) => `${p.id}:${p.subpaths.length}`).join("|"),
@@ -55,18 +59,25 @@ export function useBodyMapPartDots({
     const areaCacheKey = `${heatmapPaperIdsKey}\0${bodyStructureKey}`;
 
     if (variant === "rawDots") {
+      setIsAreaDotsComputing(true);
       const cached = areaDotsLruTouch(
         areaDotsSampleCacheRef.current,
         areaCacheKey,
       );
       if (cached) {
         queueMicrotask(() => {
-          if (!cancelled) setDotsByPartId(structuredClone(cached));
+          if (!cancelled) {
+            setDotsByPartId(structuredClone(cached));
+            setIsAreaDotsComputing(false);
+          }
         });
         return () => {
           cancelled = true;
+          setIsAreaDotsComputing(false);
         };
       }
+    } else {
+      setIsAreaDotsComputing(false);
     }
 
     const next: Record<string, { x: number; y: number }[]> = {};
@@ -112,10 +123,14 @@ export function useBodyMapPartDots({
     }
 
     queueMicrotask(() => {
-      if (!cancelled) setDotsByPartId(next);
+      if (!cancelled) {
+        setDotsByPartId(next);
+        setIsAreaDotsComputing(false);
+      }
     });
     return () => {
       cancelled = true;
+      setIsAreaDotsComputing(false);
     };
   }, [
     paperCountsKey,
@@ -126,5 +141,5 @@ export function useBodyMapPartDots({
     bodyStructureKey,
   ]);
 
-  return dotsByPartId;
+  return { dotsByPartId, isAreaDotsComputing };
 }

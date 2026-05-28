@@ -13,6 +13,7 @@ import {
   areaDotsLruTouch,
 } from "../shared/bodyMapAreaDotsCache";
 import { TorsoDetailPanelMap } from "./TorsoDetailPanelMap";
+import { BodyMapAreaViewLoadingScope } from "../shared/BodyMapAreaViewLoadingScope";
 import { MAX_HEATMAP_DOTS_PER_REGION } from "../bodyMapSampleDots";
 import {
   buildTorsoAreaDensityDotsByHitId,
@@ -377,7 +378,7 @@ export function TorsoBodyMapDetail({
           </p>
         ) : null}
         {torsoSvgText && silhouetteD && generalOutlineD && !torsoParseError ? (
-          <div className="torso-detail-stage">
+          <BodyMapAreaViewLoadingScope className="torso-detail-stage">
             <div className="torso-detail-back-panel">
               <TorsoDetailPanelMap
                 panel="back"
@@ -406,7 +407,7 @@ export function TorsoBodyMapDetail({
               />
               <p className="torso-detail-view-label">Front</p>
             </div>
-          </div>
+          </BodyMapAreaViewLoadingScope>
         ) : null}
       </div>
 

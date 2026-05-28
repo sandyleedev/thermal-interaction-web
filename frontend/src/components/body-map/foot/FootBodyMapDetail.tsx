@@ -12,6 +12,7 @@ import {
   areaDotsLruTouch,
 } from "../shared/bodyMapAreaDotsCache";
 import { ArmDetailPanelMap } from "../arm/ArmDetailPanelMap";
+import { BodyMapAreaViewLoadingScope } from "../shared/BodyMapAreaViewLoadingScope";
 import { BodyMapHoverTooltip } from "../shared/BodyMapHoverTooltip";
 import type { BodyMapTooltipState } from "../shared/BodyMapHoverTooltip";
 import {
@@ -518,7 +519,7 @@ export function FootBodyMapDetail({
           </p>
         ) : null}
         {mapsReady ? (
-          <div className="foot-detail-stage">
+          <BodyMapAreaViewLoadingScope className="foot-detail-stage">
             <div className="foot-detail-side-panel">
               {renderPanel("left", "Left")}
               <p className="foot-detail-view-label">Left</p>
@@ -527,7 +528,7 @@ export function FootBodyMapDetail({
               {renderPanel("right", "Right")}
               <p className="foot-detail-view-label">Right</p>
             </div>
-          </div>
+          </BodyMapAreaViewLoadingScope>
         ) : null}
       </div>
 

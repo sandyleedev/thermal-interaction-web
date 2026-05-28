@@ -13,6 +13,7 @@ import {
   areaDotsLruTouch,
 } from "../shared/bodyMapAreaDotsCache";
 import { ArmDetailPanelMap } from "./ArmDetailPanelMap";
+import { BodyMapAreaViewLoadingScope } from "../shared/BodyMapAreaViewLoadingScope";
 import { BodyMapHoverTooltip } from "../shared/BodyMapHoverTooltip";
 import type { BodyMapTooltipState } from "../shared/BodyMapHoverTooltip";
 import {
@@ -556,7 +557,7 @@ export function ArmBodyMapDetail({
           </p>
         ) : null}
         {mapsReady ? (
-          <div className="arm-detail-stage">
+          <BodyMapAreaViewLoadingScope className="arm-detail-stage">
             <div className="arm-detail-side-panel">
               {renderPanel("left", leftParsed.parse!, leftIdPrefix, "Left")}
               <p className="arm-detail-view-label">Left</p>
@@ -565,7 +566,7 @@ export function ArmBodyMapDetail({
               {renderPanel("right", rightParsed.parse!, rightIdPrefix, "Right")}
               <p className="arm-detail-view-label">Right</p>
             </div>
-          </div>
+          </BodyMapAreaViewLoadingScope>
         ) : null}
       </div>
 

@@ -12,6 +12,7 @@ import {
   areaDotsLruTouch,
 } from "../shared/bodyMapAreaDotsCache";
 import { ArmDetailPanelMap } from "../arm/ArmDetailPanelMap";
+import { BodyMapAreaViewLoadingScope } from "../shared/BodyMapAreaViewLoadingScope";
 import { BodyMapHoverTooltip } from "../shared/BodyMapHoverTooltip";
 import type { BodyMapTooltipState } from "../shared/BodyMapHoverTooltip";
 import {
@@ -626,7 +627,7 @@ export function HandBodyMapDetail({
           </p>
         ) : null}
         {mapsReady ? (
-          <div className="hand-detail-stage">
+          <BodyMapAreaViewLoadingScope className="hand-detail-stage">
             <div className="hand-detail-row">
               <div className="hand-detail-panel">
                 {renderPanel({ surface: "inner", side: "left" })}
@@ -647,7 +648,7 @@ export function HandBodyMapDetail({
                 <p className="hand-detail-view-label">Outer · Right</p>
               </div>
             </div>
-          </div>
+          </BodyMapAreaViewLoadingScope>
         ) : null}
       </div>
 

@@ -18,6 +18,8 @@ import {
   interpolatePinkDensityTone,
 } from "../shared/bodyMapHeatmapColors";
 import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
+import { BodyMapAreaViewLoadingOverlay } from "../shared/BodyMapAreaViewLoadingOverlay";
+import { useDeferredAreaViewResult } from "../shared/useDeferredAreaViewResult";
 import {
   BodyMapHoverTooltip,
   type BodyMapTooltipState,
@@ -203,7 +205,7 @@ export function BodyMap({
     [heatmapDotPapers],
   );
 
-  const dotsByPartId = useBodyMapPartDots({
+  const { dotsByPartId, isAreaDotsComputing } = useBodyMapPartDots({
     variant,
     bodyParts,
     heatmapDotPapers,
@@ -251,14 +253,27 @@ export function BodyMap({
     };
   }, [wholeBodyGeneralPaperCount, countColorDomain]);
 
-  const rawDotsContoursByPart = useMemo<
-    { partId: BodyMapRegion; contours: ContourMultiPolygon[] }[]
-  >(() => {
-    if (variant !== "rawDots") return [];
-    return buildBodyMapAreaDensityContoursByPart(bodyParts, dotsByPartId);
-  }, [dotsByPartId, variant, bodyParts]);
+  const areaViewEnabled = variant === "rawDots";
+  const areaDotsKey = useMemo(
+    () =>
+      bodyParts
+        .map((part) => `${part.id}:${(dotsByPartId[part.id] ?? []).length}`)
+        .join("|"),
+    [bodyParts, dotsByPartId],
+  );
+
+  const { result: rawDotsContoursByPart, isComputing: isAreaContoursComputing } =
+    useDeferredAreaViewResult(
+      areaViewEnabled,
+      () => buildBodyMapAreaDensityContoursByPart(bodyParts, dotsByPartId),
+      [areaDotsKey, bodyParts, dotsByPartId],
+    );
+
+  const areaViewLoading =
+    areaViewEnabled && (isAreaDotsComputing || isAreaContoursComputing);
+
   const rawDotsGlobalContourMaxValue = useMemo(
-    () => maxContourValueFromLayers(rawDotsContoursByPart),
+    () => maxContourValueFromLayers(rawDotsContoursByPart ?? []),
     [rawDotsContoursByPart],
   );
   const rawDotsContourPath = useMemo(
@@ -365,7 +380,8 @@ export function BodyMap({
 
   return (
     <div className="body-map-root">
-      <div className="body-map-svg-wrap">
+      <BodyMapAreaViewLoadingOverlay visible={areaViewLoading}>
+        <div className="body-map-svg-wrap">
         {silhouetteStatus === "loading" ? (
           <p className="body-map-loading">Loading body map…</p>
         ) : null}
@@ -577,7 +593,7 @@ export function BodyMap({
                 ) : null}
                 {variant === "rawDots" ? (
                   <g filter={`url(#${rawDotsSoftBlurId})`}>
-                    {rawDotsContoursByPart.flatMap((entry) => {
+                    {(rawDotsContoursByPart ?? []).flatMap((entry) => {
                       const partCount = partPaperMap[entry.partId] ?? 0;
                       const countStrength = countToPerceptualNormalized(
                         partCount,
@@ -613,7 +629,7 @@ export function BodyMap({
                         },
                       );
                     })}
-                    {rawDotsContoursByPart.length === 0
+                    {(rawDotsContoursByPart ?? []).length === 0
                       ? bodyParts.flatMap((part) => {
                           const dots = dotsByPartId[part.id] ?? [];
                           return dots.map((p, i) => (
@@ -681,7 +697,8 @@ export function BodyMap({
             </g>
           </svg>
         ) : null}
-      </div>
+        </div>
+      </BodyMapAreaViewLoadingOverlay>
 
       {silhouetteStatus === "ready" ? (
         <BodyMapHeatmapLegend

@@ -1,5 +1,5 @@
 import { useMemo, type PointerEvent, type SVGProps } from "react";
-import { contourDensity, geoPath } from "d3";
+import { geoPath } from "d3";
 import type { ContourMultiPolygon } from "d3-contour";
 import type { ArmShapeSpec } from "./armDetailSampleDots";
 import type { BodyMapVariant } from "../bodyMapVariant";
@@ -9,6 +9,12 @@ import {
   detailAreaPinkForCount,
 } from "../shared/bodyMapHeatmapColors";
 import { BodyMapAreaViewFilterDefs } from "../shared/BodyMapAreaViewFilterDefs";
+import { useBodyMapAreaViewLoadingReporter } from "../shared/BodyMapAreaViewLoadingScope";
+import { useDeferredAreaViewResult } from "../shared/useDeferredAreaViewResult";
+import {
+  buildDetailAreaDensityContoursByHit,
+  maxContourValueFromLayers,
+} from "../full-body/bodyMapAreaContours";
 
 type ShapeLayer =
   | { kind: "path"; d: string; transform?: string; layerKey: string }
@@ -157,44 +163,51 @@ export function ArmDetailPanelMap({
   const vbParts = viewBox.split(/\s+/).map(Number);
   const vbW = vbParts[2] ?? 281;
   const vbH = vbParts[3] ?? 750;
-  const vbY = vbParts[1] ?? 0;
 
-  const rawDotsContoursByHit = useMemo(() => {
-    if (variant !== "rawDots") return [];
-    const density = contourDensity<{ x: number; y: number }>()
-      .x((d) => d.x)
-      .y((d) => d.y)
-      .size([vbW, vbY + vbH])
-      .cellSize(rawDotsDensityCellSize)
-      .bandwidth(rawDotsDensityBandwidth)
-      .thresholds(rawDotsDensityThresholds);
-    return fillHitIds.flatMap((hitId) => {
-      const points = dotsByHitId[hitId] ?? [];
-      if (points.length < 2) return [];
-      return [{ hitId, contours: density(points) }];
-    });
-  }, [
-    dotsByHitId,
-    fillHitIds,
-    rawDotsDensityBandwidth,
-    rawDotsDensityCellSize,
-    rawDotsDensityThresholds,
-    variant,
-    vbH,
-    vbW,
-    vbY,
-  ]);
+  const areaViewEnabled = variant === "rawDots";
+  const areaDotsKey = useMemo(
+    () =>
+      fillHitIds
+        .map((hitId) => `${hitId}:${(dotsByHitId[hitId] ?? []).length}`)
+        .join("|"),
+    [dotsByHitId, fillHitIds],
+  );
+
+  const { result: rawDotsContoursByHit, isComputing: isAreaContoursComputing } =
+    useDeferredAreaViewResult(
+      areaViewEnabled,
+      () =>
+        buildDetailAreaDensityContoursByHit(
+          fillHitIds,
+          dotsByHitId,
+          viewBox,
+          {
+            cellSize: rawDotsDensityCellSize,
+            bandwidth: rawDotsDensityBandwidth,
+            thresholds: rawDotsDensityThresholds,
+          },
+        ),
+      [
+        areaDotsKey,
+        dotsByHitId,
+        fillHitIds,
+        rawDotsDensityBandwidth,
+        rawDotsDensityCellSize,
+        rawDotsDensityThresholds,
+        viewBox,
+      ],
+    );
 
   const rawDotsGlobalContourMaxValue = useMemo(() => {
-    return Math.max(
-      0,
-      ...rawDotsContoursByHit.flatMap((entry) =>
-        entry.contours.map((c: ContourMultiPolygon) => c.value ?? 0),
-      ),
-    );
+    return maxContourValueFromLayers(rawDotsContoursByHit ?? []);
   }, [rawDotsContoursByHit]);
 
   const rawDotsContourPath = useMemo(() => geoPath(), []);
+
+  useBodyMapAreaViewLoadingReporter(
+    `${idPrefix}-area-view`,
+    areaViewEnabled && isAreaContoursComputing,
+  );
 
   const contentFlipTransform = horizontalFlip
     ? `translate(${vbW}, 0) scale(-1, 1)`
@@ -355,7 +368,7 @@ export function ArmDetailPanelMap({
 
       {variant === "rawDots" ? (
         <g pointerEvents="none" aria-hidden>
-          {rawDotsContoursByHit.map((entry) => {
+          {(rawDotsContoursByHit ?? []).map((entry) => {
             const softMaskId = `${idPrefix}-area-soft-${entry.hitId}`;
             const partCount = countsByHit[entry.hitId] ?? 0;
             const fillColor = detailAreaPinkForCount(
@@ -405,7 +418,7 @@ export function ArmDetailPanelMap({
               </g>
             );
           })}
-          {rawDotsContoursByHit.length === 0
+          {(rawDotsContoursByHit ?? []).length === 0
             ? fillHitIds.map((hitId) => {
                 const softMaskId = `${idPrefix}-area-soft-${hitId}`;
                 const pts = dotsByHitId[hitId] ?? [];

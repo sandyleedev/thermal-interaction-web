@@ -12,6 +12,7 @@ import {
   areaDotsLruTouch,
 } from "../shared/bodyMapAreaDotsCache";
 import { ArmDetailPanelMap } from "../arm/ArmDetailPanelMap";
+import { BodyMapAreaViewLoadingScope } from "../shared/BodyMapAreaViewLoadingScope";
 import { BodyMapHoverTooltip } from "../shared/BodyMapHoverTooltip";
 import type { BodyMapTooltipState } from "../shared/BodyMapHoverTooltip";
 import {
@@ -361,7 +362,7 @@ export function LegBodyMapDetail({
           </p>
         ) : null}
         {mapsReady ? (
-          <div className="leg-detail-stage">
+          <BodyMapAreaViewLoadingScope className="leg-detail-stage">
             <ArmDetailPanelMap
               sideLabel="Leg"
               viewBox={parsed.parse!.viewBox}
@@ -399,7 +400,7 @@ export function LegBodyMapDetail({
               generalRingHovered={generalRingHovered}
               showGeneralRing
             />
-          </div>
+          </BodyMapAreaViewLoadingScope>
         ) : null}
       </div>
 
