@@ -20,7 +20,6 @@ export type PaperDisplay = {
   authors: string;
   publicationYear?: number;
   publicationVenue?: string;
-  bodySitesSummary: string;
   transferMode: string;
   temperatureRange: string;
   duration: string;
@@ -139,16 +138,6 @@ export function formatBodySiteLine(site: BodySite): string {
 }
 
 /**
- * Format all body sites for one paper.
- * e.g. two sites → "Arm - Forearm; Hand - Palm (Left)"; none → "-"
- */
-function formatBodySitesDisplay(p: ResearchPaper): string {
-  const sites = normalizeBodySites(p);
-  if (sites.length === 0) return "";
-  return sites.map(formatBodySiteLine).join("; ");
-}
-
-/**
  * Convert a slug into a title-case label.
  * e.g. "haptic-tactile" → "Haptic Tactile"
  */
@@ -164,10 +153,11 @@ export function titleCaseOption(s: string): string {
  * e.g. ResearchPaper → PaperDisplay with title, keywords, temperatureRange, …
  */
 function buildPaperDisplay(p: ResearchPaper): PaperDisplay {
+  const bodySiteKeywords = normalizeBodySites(p).map(formatBodySiteLine);
   const tagCandidates = [
     ...p.senses.map(titleCaseOption),
     ...p.materials.map(titleCaseOption),
-    formatBodySitesDisplay(p),
+    ...bodySiteKeywords,
     ...p.thermalTransferModes.map(titleCaseOption),
   ];
   const keywords = [
@@ -183,7 +173,6 @@ function buildPaperDisplay(p: ResearchPaper): PaperDisplay {
     ...(p.publicationVenue?.trim()
       ? { publicationVenue: p.publicationVenue.trim() }
       : {}),
-    bodySitesSummary: formatBodySitesDisplay(p),
     transferMode: p.thermalTransferModes.length
       ? p.thermalTransferModes.join(", ")
       : "—",
