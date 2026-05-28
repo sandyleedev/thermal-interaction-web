@@ -238,7 +238,7 @@ function hardwareFactRows(paper: ResearchPaper): { dt: string; dd: string }[] {
     paper.mainActuatorPossibleTemperatureRange,
   );
   pushAlways("Heat Control Method", paper.heatControlMethod);
-  pushIfPresent("Power consumption", paper.powerConsumption);
+  pushAlways("Power consumption", paper.powerConsumption);
   pushIfPresent("Temporal Parameters", paper.temporalParameters);
   pushIfPresent(
     "Other Sensory Actuators",
@@ -355,11 +355,11 @@ export function PaperDetailPage() {
             />
           </DetailBlock>
 
-          <DetailBlock title="Measuring method for thermal perception">
+          <DetailBlock title="How did they measure thermal perception">
             <DetailStructuredProse text={paper.thermalPerceptionMeasure} />
           </DetailBlock>
 
-          <DetailBlock title="Purpose of thermal cues">
+          <DetailBlock title="Purpose of applying thermal cues">
             <DetailParagraph text={paper.thermalCuePurpose} />
           </DetailBlock>
 
