@@ -96,7 +96,7 @@ export type BodySite = {
 
 export type ResearchPaper = {
   id: string;
-  title?: string;
+  title: string;
   authors?: string;
   publicationYear?: number;
   publicationVenue?: string;

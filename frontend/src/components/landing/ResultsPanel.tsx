@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { resolvePaperPreview } from "@/data/paperPreviews";
+import { formatPaperDisplay } from "@/lib/research/formatPaperDisplay";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { PaperThumbnailPlaceholder } from "@/components/landing/PaperThumbnailPlaceholder";
 
@@ -205,7 +205,7 @@ export function ResultsPanel() {
   const skipScrollOnMountRef = useRef(true);
 
   const rows = useMemo(
-    () => filteredPapers.map((p) => resolvePaperPreview(p)),
+    () => filteredPapers.map((p) => formatPaperDisplay(p)),
     [filteredPapers],
   );
 
@@ -269,11 +269,15 @@ export function ResultsPanel() {
                 <div className="results-paper-card__body">
                   <h3 className="results-paper-card__title">{paper.title}</h3>
                   <p className="results-paper-card__meta">
-                    {listAuthorsLabel(paper.authors)}
-                    <span className="results-paper-card__meta-sep"> · </span>
-                    {paper.publicationYear}
-                    <span className="results-paper-card__meta-sep"> · </span>
-                    {paper.publicationVenue}
+                    {[
+                      listAuthorsLabel(paper.authors),
+                      paper.publicationYear != null
+                        ? String(paper.publicationYear)
+                        : null,
+                      paper.publicationVenue ?? null,
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
                   </p>
                   <div className="results-paper-card__tags">
                     {paper.keywords.map((tag, i) => (

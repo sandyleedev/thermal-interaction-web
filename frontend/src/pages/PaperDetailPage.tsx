@@ -4,7 +4,7 @@ import {
   getResearchPaperById,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
-import { resolvePaperPreview, titleCaseOption } from "@/data/paperPreviews";
+import { formatPaperDisplay, titleCaseOption } from "@/lib/research/formatPaperDisplay";
 import { PaperThumbnailPlaceholder } from "@/components/landing/PaperThumbnailPlaceholder";
 import "@/pages/LandingPage.css";
 
@@ -261,13 +261,13 @@ function hardwareFactRows(paper: ResearchPaper): { dt: string; dd: string }[] {
 export function PaperDetailPage() {
   const { paperId } = useParams<{ paperId: string }>();
   const paper = paperId ? getResearchPaperById(paperId) : undefined;
-  const preview = paper ? resolvePaperPreview(paper) : undefined;
+  const display = paper ? formatPaperDisplay(paper) : undefined;
 
   if (!paperId) {
     return <Navigate to="/" replace />;
   }
 
-  if (!paper || !preview) {
+  if (!paper || !display) {
     return (
       <div className="paper-detail-page paper-detail-page--bare">
         <div className="paper-detail paper-detail--missing">
@@ -297,17 +297,24 @@ export function PaperDetailPage() {
           </Link>
           <div className="paper-detail__hero">
             <PaperThumbnailPlaceholder
-              label={preview.title}
-              imageUrls={preview.thumbnailUrls}
+              label={display.title}
+              imageUrls={display.thumbnailUrls}
             />
             <div className="paper-detail__titles">
-              <h1 className="paper-detail__title">{preview.title}</h1>
-              <p className="paper-detail__authors">{preview.authors}</p>
-              <p className="paper-detail__meta-line">
-                <span>{preview.publicationYear}</span>
-                <span aria-hidden> · </span>
-                <span>{preview.publicationVenue}</span>
-              </p>
+              <h1 className="paper-detail__title">{display.title}</h1>
+              <p className="paper-detail__authors">{display.authors}</p>
+              {(display.publicationYear != null || display.publicationVenue) && (
+                <p className="paper-detail__meta-line">
+                  {[
+                    display.publicationYear != null
+                      ? String(display.publicationYear)
+                      : null,
+                    display.publicationVenue ?? null,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </p>
+              )}
               {primaryLink ? (
                 <p className="paper-detail__link-line">
                   <a
@@ -345,11 +352,11 @@ export function PaperDetailPage() {
           />
           <DetailFactChipGroup
             title="Temperature range"
-            values={[displayOrNa(preview.temperatureRange)]}
+            values={[displayOrNa(display.temperatureRange)]}
           />
           <DetailFactChipGroup
             title="Duration"
-            values={[displayOrNa(preview.duration)]}
+            values={[displayOrNa(display.duration)]}
           />
           <DetailFactChipGroup
             title="Material(s) in contact with skin"
