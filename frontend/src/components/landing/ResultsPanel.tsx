@@ -2,12 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { KeywordSearchPanel } from "@/components/landing/KeywordSearchPanel";
 import { formatPaperDisplay } from "@/lib/research/formatPaperDisplay";
-import {
-  DEFAULT_KEYWORD_SEARCH,
-  filterPapersByKeyword,
-  hasActiveKeywordSearch,
-  type KeywordSearchQuery,
-} from "@/lib/research/paperKeywordSearch";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { PaperThumbnailPlaceholder } from "@/components/landing/PaperThumbnailPlaceholder";
 
@@ -203,25 +197,24 @@ function ResultsPaginationNav({
 }
 
 export function ResultsPanel() {
-  const { filteredPapers, filteredPaperCount, totalPaperCount } =
-    useResearchFilter();
-  const [keywordSearch, setKeywordSearch] =
-    useState<KeywordSearchQuery>(DEFAULT_KEYWORD_SEARCH);
+  const {
+    filteredPapers,
+    filteredPaperCount,
+    facetFilteredPaperCount,
+    totalPaperCount,
+    keywordSearch,
+    setKeywordSearch,
+    hasActiveKeywordSearch,
+  } = useResearchFilter();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState<ResultsPageSize>(
     DEFAULT_RESULTS_PAGE_SIZE,
   );
   const skipScrollOnMountRef = useRef(true);
 
-  const keywordFilteredPapers = useMemo(
-    () => filterPapersByKeyword(filteredPapers, keywordSearch),
-    [filteredPapers, keywordSearch],
-  );
-  const hasKeywordQuery = hasActiveKeywordSearch(keywordSearch);
-
   const rows = useMemo(
-    () => keywordFilteredPapers.map((p) => formatPaperDisplay(p)),
-    [keywordFilteredPapers],
+    () => filteredPapers.map((p) => formatPaperDisplay(p)),
+    [filteredPapers],
   );
 
   const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
@@ -255,12 +248,12 @@ export function ResultsPanel() {
         <h2 className="panel-title">Results</h2>
         <div className="panel-content landing-results-inner">
           <p className="landing-results-summary">
-            <strong>{rows.length.toLocaleString()}</strong>
+            <strong>{filteredPaperCount.toLocaleString()}</strong>
             {" papers match"}
-            {hasKeywordQuery ? (
+            {hasActiveKeywordSearch ? (
               <span className="landing-results-out-of">
                 {" "}
-                (of {filteredPaperCount.toLocaleString()} after filters)
+                (of {facetFilteredPaperCount.toLocaleString()} after filters)
               </span>
             ) : (
               <span className="landing-results-out-of">

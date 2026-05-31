@@ -36,9 +36,22 @@ import {
   DURATION_MIN_S,
 } from "@/components/duration-panel/durationPanelUtils";
 import {
+  DEFAULT_KEYWORD_SEARCH,
+  filterPapersByKeyword,
+  hasActiveKeywordSearch,
+  type KeywordSearchQuery,
+} from "@/lib/research/paperKeywordSearch";
+import {
   TEMP_AXIS_MAX,
   TEMP_AXIS_MIN,
 } from "@/components/temperature-panel/temperaturePanelUtils";
+
+function applyKeywordFilter(
+  papers: readonly ResearchPaper[],
+  keywordSearch: KeywordSearchQuery,
+): ResearchPaper[] {
+  return filterPapersByKeyword(papers, keywordSearch);
+}
 
 type ResearchFilterContextValue = {
   /** Full dataset size from loaded research data. */
@@ -50,7 +63,12 @@ type ResearchFilterContextValue = {
   /** Temperature + other filters only; used for duration range coverage labels. */
   durationDensityPapers: ResearchPaper[];
   filteredPapers: ResearchPaper[];
+  /** Papers after temp, duration, other, and body-map filters — keyword excluded. */
+  facetFilteredPaperCount: number;
   filteredPaperCount: number;
+  keywordSearch: KeywordSearchQuery;
+  setKeywordSearch: (search: KeywordSearchQuery) => void;
+  hasActiveKeywordSearch: boolean;
   /** Paper counts per merged body region when all filters (including body map) apply. */
   paperCountsByBodyRegion: Record<string, number>;
   /**
@@ -150,6 +168,8 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
     useState(false);
   const [includeUnspecifiedDuration, setIncludeUnspecifiedDuration] =
     useState(false);
+  const [keywordSearch, setKeywordSearch] =
+    useState<KeywordSearchQuery>(DEFAULT_KEYWORD_SEARCH);
 
   const bodyMapSelection: BodyMapSelection = useMemo(
     () => ({
@@ -305,7 +325,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
     setSelectedBodyMapChips([]);
   }, []);
 
-  const filteredPapers = useMemo(
+  const facetFilteredPapers = useMemo(
     () =>
       filterResearchPapers(
         ALL_RESEARCH_PAPERS,
@@ -328,7 +348,12 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
     ],
   );
 
-  const temperatureDensityPapers = useMemo(
+  const filteredPapers = useMemo(
+    () => applyKeywordFilter(facetFilteredPapers, keywordSearch),
+    [facetFilteredPapers, keywordSearch],
+  );
+
+  const facetTemperatureDensityPapers = useMemo(
     () =>
       filterResearchPapersIgnoringTemperature(
         ALL_RESEARCH_PAPERS,
@@ -346,7 +371,12 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       rangeFilterOptions,
     ],
   );
-  const durationDensityPapers = useMemo(
+  const temperatureDensityPapers = useMemo(
+    () => applyKeywordFilter(facetTemperatureDensityPapers, keywordSearch),
+    [facetTemperatureDensityPapers, keywordSearch],
+  );
+
+  const facetDurationDensityPapers = useMemo(
     () =>
       filterResearchPapersIgnoringDuration(
         ALL_RESEARCH_PAPERS,
@@ -357,6 +387,10 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
         rangeFilterOptions,
       ),
     [tempLowC, tempHighC, otherSelections, bodyMapSelection, rangeFilterOptions],
+  );
+  const durationDensityPapers = useMemo(
+    () => applyKeywordFilter(facetDurationDensityPapers, keywordSearch),
+    [facetDurationDensityPapers, keywordSearch],
   );
 
   const optionCounts = useMemo(
@@ -370,6 +404,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
         otherSelections,
         bodyMapSelection,
         rangeFilterOptions,
+        keywordSearch,
       ),
     [
       tempLowC,
@@ -379,6 +414,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       otherSelections,
       bodyMapSelection,
       rangeFilterOptions,
+      keywordSearch,
     ],
   );
 
@@ -387,7 +423,7 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
     [filteredPapers],
   );
 
-  const bodyMapPaperPool = useMemo(
+  const facetBodyMapPaperPool = useMemo(
     () =>
       filterResearchPapers(
         ALL_RESEARCH_PAPERS,
@@ -409,6 +445,11 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
     ],
   );
 
+  const bodyMapPaperPool = useMemo(
+    () => applyKeywordFilter(facetBodyMapPaperPool, keywordSearch),
+    [facetBodyMapPaperPool, keywordSearch],
+  );
+
   const bodyMapRegionCounts = useMemo(
     () => aggregateBodyCounts(bodyMapPaperPool),
     [bodyMapPaperPool],
@@ -421,7 +462,11 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       temperatureDensityPapers,
       durationDensityPapers,
       filteredPapers,
+      facetFilteredPaperCount: facetFilteredPapers.length,
       filteredPaperCount: filteredPapers.length,
+      keywordSearch,
+      setKeywordSearch,
+      hasActiveKeywordSearch: hasActiveKeywordSearch(keywordSearch),
       paperCountsByBodyRegion,
       bodyMapPaperPool,
       bodyMapRegionCounts,
@@ -459,6 +504,8 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       temperatureDensityPapers,
       durationDensityPapers,
       filteredPapers,
+      facetFilteredPapers.length,
+      keywordSearch,
       paperCountsByBodyRegion,
       bodyMapPaperPool,
       bodyMapRegionCounts,

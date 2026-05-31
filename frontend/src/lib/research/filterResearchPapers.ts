@@ -4,6 +4,11 @@ import {
   type OtherFilterCategory,
 } from "@/lib/research/otherFilterVocab";
 import {
+  filterPapersByKeyword,
+  DEFAULT_KEYWORD_SEARCH,
+  type KeywordSearchQuery,
+} from "@/lib/research/paperKeywordSearch";
+import {
   type BodyMapChipSelection,
   paperMatchesBodyMapChip,
 } from "@/lib/research/bodyMapChipSelection";
@@ -311,19 +316,23 @@ export function otherFilterOptionCounts(
   selections: OtherFilterSelections,
   bodyMapSelection?: BodyMapSelection,
   rangeOpts?: RangeFilterOptions,
+  keywordSearch?: KeywordSearchQuery,
 ): Record<OtherFilterCategory, Record<string, number>> {
   const out = {} as Record<OtherFilterCategory, Record<string, number>>;
   for (const cat of OTHER_FILTER_CATEGORY_ORDER) {
-    const pool = filterPapersExceptOtherCategory(
-      papers,
-      tempLowC,
-      tempHighC,
-      durationLowS,
-      durationHighS,
-      selections,
-      cat,
-      bodyMapSelection,
-      rangeOpts,
+    const pool = filterPapersByKeyword(
+      filterPapersExceptOtherCategory(
+        papers,
+        tempLowC,
+        tempHighC,
+        durationLowS,
+        durationHighS,
+        selections,
+        cat,
+        bodyMapSelection,
+        rangeOpts,
+      ),
+      keywordSearch ?? DEFAULT_KEYWORD_SEARCH,
     );
     const optionIds = OPTION_IDS_BY_CATEGORY[cat];
     const m: Record<string, number> = {};
