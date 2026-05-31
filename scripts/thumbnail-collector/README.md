@@ -11,6 +11,7 @@ Install dependencies:
 ## Files
 
 - process.js: Handles the normal workflow for downloading images from HTML pages.
+- browser-download-snippet.js: DevTools console snippet for ACM HTML paper pages.
 - process-skipped.js: Handles skipped rows that require manual PDF viewer screenshots.
 - targets.sample.csv: Sample CSV file structure.
 - targets.csv: Working file used locally. This is ignored by Git.
@@ -32,7 +33,7 @@ For each pending row:
 
 1. Open the URL in your browser.
 2. Navigate to the HTML page.
-3. Run the browser console snippet to download the first image.
+3. Paste `browser-download-snippet.js` into the browser DevTools console (or copy from terminal output).
 4. Return to the terminal and press Enter.
 5. The script moves the latest downloaded image into output/ and renames it using the DOI.
 

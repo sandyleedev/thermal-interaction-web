@@ -5,6 +5,7 @@ const readline = require("readline");
 
 const CSV_FILE = path.join(__dirname, "targets.csv");
 const OUTPUT_DIR = path.join(__dirname, "output");
+const BROWSER_SNIPPET_FILE = path.join(__dirname, "browser-download-snippet.js");
 const DOWNLOADS_DIR = path.join(process.env.HOME, "Downloads");
 
 function readCsv(filePath) {
@@ -145,6 +146,20 @@ async function moveDownloadedFileToOutput(doi) {
   };
 }
 
+async function printBrowserDownloadSnippet() {
+  try {
+    const snippet = await fs.promises.readFile(BROWSER_SNIPPET_FILE, "utf8");
+    console.log("Paste this into the browser DevTools console:");
+    console.log("----------------------------------------------");
+    console.log(snippet.trim());
+    console.log("----------------------------------------------");
+  } catch {
+    console.log(
+      `Snippet file not found: ${BROWSER_SNIPPET_FILE}`,
+    );
+  }
+}
+
 async function main() {
   const rows = await readCsv(CSV_FILE);
   const pendingRows = rows.filter((row) => row.status === "pending");
@@ -166,7 +181,7 @@ async function main() {
     console.log(`URL  : ${row.url}`);
     console.log("======================================");
     console.log("Open the page in your browser and navigate to the HTML page.");
-    console.log("Then run the console snippet to download the image.");
+    await printBrowserDownloadSnippet();
     console.log("");
 
     const answer = await ask(
