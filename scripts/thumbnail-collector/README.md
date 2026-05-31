@@ -33,7 +33,7 @@ For each pending row:
 
 1. Open the URL in your browser.
 2. Navigate to the HTML page.
-3. Paste `browser-download-snippet.js` into the browser DevTools console (or copy from terminal output).
+3. Paste `browser-download-snippet.js` into the browser DevTools console.
 4. Return to the terminal and press Enter.
 5. The script moves the latest downloaded image into output/ and renames it using the DOI.
 
