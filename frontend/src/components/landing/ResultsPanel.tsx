@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { KeywordSearchPanel } from "@/components/landing/KeywordSearchPanel";
 import { formatPaperDisplay } from "@/lib/research/formatPaperDisplay";
+import { saveLandingScrollPosition } from "@/lib/navigation/landingScrollRestore";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { PaperThumbnailPlaceholder } from "@/components/landing/PaperThumbnailPlaceholder";
 
@@ -279,6 +280,7 @@ export function ResultsPanel() {
               <Link
                 to={`/paper/${paper.id}`}
                 className="results-paper-card"
+                onClick={saveLandingScrollPosition}
               >
                 <div className="results-paper-card__thumb">
                   <PaperThumbnailPlaceholder

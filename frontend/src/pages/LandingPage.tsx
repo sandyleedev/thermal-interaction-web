@@ -4,7 +4,9 @@ import { DurationPanel } from "@/components/duration-panel/DurationPanel";
 import { Header } from "@/components/landing/Header";
 import { OtherFilterCategoryPanel } from "@/components/landing/OtherFiltersPanel";
 import { OTHER_FILTER_CATEGORY_ORDER } from "@/lib/research/otherFilterVocab";
+import { consumeLandingScrollRestore } from "@/lib/navigation/landingScrollRestore";
 import { ResultsPanel } from "@/components/landing/ResultsPanel";
+import { ScrollToTopButton } from "@/components/landing/ScrollToTopButton";
 import { TemperaturePanelHorizontal } from "@/components/temperature-panel/TemperaturePanelHorizontal";
 import "@/pages/LandingPage.css";
 
@@ -13,6 +15,13 @@ import "@/pages/LandingPage.css";
  */
 export function LandingPage() {
   useEffect(() => {
+    const savedY = consumeLandingScrollRestore();
+    if (savedY != null) {
+      requestAnimationFrame(() => {
+        window.scrollTo(0, savedY);
+      });
+      return;
+    }
     window.scrollTo(0, 0);
   }, []);
 
@@ -40,6 +49,7 @@ export function LandingPage() {
           <ResultsPanel />
         </div>
       </div>
+      <ScrollToTopButton />
     </div>
   );
 }

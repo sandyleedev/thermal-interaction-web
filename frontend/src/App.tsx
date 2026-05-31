@@ -7,19 +7,14 @@ import { PaperDetailPage } from "@/pages/PaperDetailPage";
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <ResearchFilterProvider>
-              <LandingPage />
-            </ResearchFilterProvider>
-          }
-        />
-        <Route path="/info" element={<InfoPage />} />
-        <Route path="/paper/:paperId" element={<PaperDetailPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <ResearchFilterProvider>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/info" element={<InfoPage />} />
+          <Route path="/paper/:paperId" element={<PaperDetailPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </ResearchFilterProvider>
     </BrowserRouter>
   );
 }

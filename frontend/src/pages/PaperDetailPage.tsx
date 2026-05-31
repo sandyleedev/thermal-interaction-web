@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useEffect } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
 import {
   getResearchPaperById,
@@ -260,6 +261,11 @@ function hardwareFactRows(paper: ResearchPaper): { dt: string; dd: string }[] {
 
 export function PaperDetailPage() {
   const { paperId } = useParams<{ paperId: string }>();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [paperId]);
+
   const paper = paperId ? getResearchPaperById(paperId) : undefined;
   const display = paper ? formatPaperDisplay(paper) : undefined;
 
