@@ -299,6 +299,7 @@ export function PaperDetailPage() {
             <PaperThumbnailPlaceholder
               label={display.title}
               imageUrls={display.thumbnailUrls}
+              expandable
             />
             <div className="paper-detail__titles">
               <h1 className="paper-detail__title">{display.title}</h1>
