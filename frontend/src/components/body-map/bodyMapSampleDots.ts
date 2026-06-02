@@ -456,7 +456,7 @@ function allocateIntegerShares(
   if (tw <= 0) return Array.from({ length: n }, () => 0);
   const raw = weights.map((w) => (total * w) / tw);
   const floors = raw.map((x) => Math.floor(x));
-  let rem = total - floors.reduce((a, b) => a + b, 0);
+  const rem = total - floors.reduce((a, b) => a + b, 0);
   const order = raw
     .map((x, i) => ({ i, f: x - (floors[i] ?? 0) }))
     .sort((a, b) => b.f - a.f);
@@ -667,9 +667,7 @@ export function resolveAreaDensitySampleCount(
   if (maxPaperCountAmongHits <= 0) {
     return Math.min(maxSamples, Math.max(minSamples, minSamples));
   }
-  const scaled = Math.round(
-    (paperCount / maxPaperCountAmongHits) * maxSamples,
-  );
+  const scaled = Math.round((paperCount / maxPaperCountAmongHits) * maxSamples);
   return Math.min(maxSamples, Math.max(minSamples, scaled));
 }
 
