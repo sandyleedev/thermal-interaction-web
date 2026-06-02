@@ -117,7 +117,7 @@ function countHeadHit(
   return papers.filter((p) => paperMatchesHeadFineSelection(p, hitId)).length;
 }
 
-/** Single asset: `head-subpart-outline-wide.svg` (head-face, head-outline, fine regions). */
+/** Single asset: `head.svg` (head-face, head-outline, fine regions). */
 function parseHeadDetailWideSvg(svgText: string): {
   silhouetteD: string;
   generalOutlineD: string;
@@ -181,10 +181,7 @@ export type HeadBodyMapDetailProps = {
   papers: readonly ResearchPaper[];
 };
 
-export function HeadBodyMapDetail({
-  variant,
-  papers,
-}: HeadBodyMapDetailProps) {
+export function HeadBodyMapDetail({ variant, papers }: HeadBodyMapDetailProps) {
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
 
@@ -210,7 +207,7 @@ export function HeadBodyMapDetail({
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/body-map/head-subpart-outline-wide.svg")
+    fetch("/body-map/head.svg")
       .then((r) => {
         if (!r.ok) throw new Error(`head map HTTP ${r.status}`);
         return r.text();
@@ -461,344 +458,348 @@ export function HeadBodyMapDetail({
         generalOutlineD &&
         !headParseError ? (
           <BodyMapAreaViewLoadingOverlay visible={areaViewLoading}>
-          <svg
-            className="body-map-svg head-detail-svg"
-            width="100%"
-            height="auto"
-            viewBox={HEAD_DETAIL_VIEWBOX}
-            preserveAspectRatio="xMidYMin meet"
-            role="img"
-            aria-label="Head detail body map: subregions for filtered papers"
-          >
-            <defs>
-              <linearGradient
-                id={hoverGradientId}
-                gradientUnits="userSpaceOnUse"
-                x1={20}
-                y1={0}
-                x2={120}
-                y2={297}
-              >
-                <stop offset="0%" stopColor="#e0f2fe" stopOpacity={0.75} />
-                <stop offset="50%" stopColor="#bae6fd" stopOpacity={0.65} />
-                <stop offset="100%" stopColor="#7dd3fc" stopOpacity={0.55} />
-              </linearGradient>
-              <filter
-                id={softFillFilterId}
-                x="-50%"
-                y="-50%"
-                width="200%"
-                height="200%"
-                colorInterpolationFilters="sRGB"
-              >
-                <feGaussianBlur in="SourceGraphic" stdDeviation="6.8" />
-              </filter>
-              <radialGradient
-                id={heatDotRadialGradientId}
-                gradientUnits="objectBoundingBox"
-                cx="0.5"
-                cy="0.5"
-                r="0.5"
-              >
-                <stop offset="0%" stopColor="#be185d" stopOpacity="1" />
-                <stop offset="38%" stopColor="#db2777" stopOpacity="0.72" />
-                <stop offset="72%" stopColor="#fb7185" stopOpacity="0.28" />
-                <stop offset="100%" stopColor="#ffe4e6" stopOpacity="0" />
-              </radialGradient>
-              <BodyMapAreaViewFilterDefs
-                rawDotsSoftBlurId={rawDotsSoftBlurId}
-                areaMaskFeatherFilterId={areaMaskFeatherFilterId}
-              />
-              <mask
-                id={generalRingMaskId}
-                maskUnits="userSpaceOnUse"
-                maskContentUnits="userSpaceOnUse"
-                x={0}
-                y={0}
-                width={vbW}
-                height={vbH}
-              >
-                <rect x={0} y={0} width={vbW} height={vbH} fill="white" />
-                <path d={maskFaceD} fill="black" />
-                {/*
+            <svg
+              className="body-map-svg head-detail-svg"
+              width="100%"
+              height="auto"
+              viewBox={HEAD_DETAIL_VIEWBOX}
+              preserveAspectRatio="xMidYMin meet"
+              role="img"
+              aria-label="Head detail body map: subregions for filtered papers"
+            >
+              <defs>
+                <linearGradient
+                  id={hoverGradientId}
+                  gradientUnits="userSpaceOnUse"
+                  x1={20}
+                  y1={0}
+                  x2={120}
+                  y2={297}
+                >
+                  <stop offset="0%" stopColor="#e0f2fe" stopOpacity={0.75} />
+                  <stop offset="50%" stopColor="#bae6fd" stopOpacity={0.65} />
+                  <stop offset="100%" stopColor="#7dd3fc" stopOpacity={0.55} />
+                </linearGradient>
+                <filter
+                  id={softFillFilterId}
+                  x="-50%"
+                  y="-50%"
+                  width="200%"
+                  height="200%"
+                  colorInterpolationFilters="sRGB"
+                >
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="6.8" />
+                </filter>
+                <radialGradient
+                  id={heatDotRadialGradientId}
+                  gradientUnits="objectBoundingBox"
+                  cx="0.5"
+                  cy="0.5"
+                  r="0.5"
+                >
+                  <stop offset="0%" stopColor="#be185d" stopOpacity="1" />
+                  <stop offset="38%" stopColor="#db2777" stopOpacity="0.72" />
+                  <stop offset="72%" stopColor="#fb7185" stopOpacity="0.28" />
+                  <stop offset="100%" stopColor="#ffe4e6" stopOpacity="0" />
+                </radialGradient>
+                <BodyMapAreaViewFilterDefs
+                  rawDotsSoftBlurId={rawDotsSoftBlurId}
+                  areaMaskFeatherFilterId={areaMaskFeatherFilterId}
+                />
+                <mask
+                  id={generalRingMaskId}
+                  maskUnits="userSpaceOnUse"
+                  maskContentUnits="userSpaceOnUse"
+                  x={0}
+                  y={0}
+                  width={vbW}
+                  height={vbH}
+                >
+                  <rect x={0} y={0} width={vbW} height={vbH} fill="white" />
+                  <path d={maskFaceD} fill="black" />
+                  {/*
                   Hide general-ring stroke anywhere it sits over fine subparts (cheek, ear, …),
                   and over the face interior (head-face) so the ring reads as an outer band only.
                 */}
-                {HEAD_FILL_HIT_IDS.map((hitId) => {
-                  const spec = shapeByHit.get(hitId);
-                  if (!spec) return null;
-                  if (spec.kind === "path") {
+                  {HEAD_FILL_HIT_IDS.map((hitId) => {
+                    const spec = shapeByHit.get(hitId);
+                    if (!spec) return null;
+                    if (spec.kind === "path") {
+                      return (
+                        <path
+                          key={`general-mask-${hitId}`}
+                          d={spec.d}
+                          transform={spec.transform}
+                          fill="black"
+                        />
+                      );
+                    }
                     return (
-                      <path
-                        key={`general-mask-${hitId}`}
-                        d={spec.d}
-                        transform={spec.transform}
-                        fill="black"
-                      />
-                    );
-                  }
-                  return (
-                    <ellipse
-                      key={`general-mask-${hitId}`}
-                      cx={spec.cx}
-                      cy={spec.cy}
-                      rx={spec.rx}
-                      ry={spec.ry}
-                      transform={spec.transform}
-                      fill="black"
-                    />
-                  );
-                })}
-              </mask>
-              {HEAD_FILL_HIT_IDS.map((hitId) => {
-                const spec = shapeByHit.get(hitId);
-                if (!spec) return null;
-                const softMaskId = `head-detail-area-soft-${uid}-${hitId}`;
-                return (
-                  <mask
-                    key={softMaskId}
-                    id={softMaskId}
-                    maskUnits="userSpaceOnUse"
-                    maskContentUnits="userSpaceOnUse"
-                    x={0}
-                    y={0}
-                    width={vbW}
-                    height={vbH}
-                  >
-                    <rect x={0} y={0} width={vbW} height={vbH} fill="black" />
-                    {spec.kind === "path" ? (
-                      <path
-                        d={spec.d}
-                        transform={spec.transform}
-                        fill="white"
-                        filter={`url(#${areaMaskFeatherFilterId})`}
-                      />
-                    ) : (
                       <ellipse
+                        key={`general-mask-${hitId}`}
                         cx={spec.cx}
                         cy={spec.cy}
                         rx={spec.rx}
                         ry={spec.ry}
                         transform={spec.transform}
-                        fill="white"
-                        filter={`url(#${areaMaskFeatherFilterId})`}
+                        fill="black"
                       />
-                    )}
-                  </mask>
-                );
-              })}
-            </defs>
-
-            <path
-              d={silhouetteD}
-              fill="none"
-              stroke="#1e293b"
-              strokeOpacity={0.45}
-              strokeWidth={1}
-              vectorEffect="nonScalingStroke"
-              pointerEvents="none"
-            />
-
-            {variant === "rawDots" ? (
-              <g pointerEvents="none" aria-hidden>
-                {(headRawDotsContoursByHit ?? []).map((entry) => {
-                  const softMaskId = `head-detail-area-soft-${uid}-${entry.hitId}`;
-                  const partCount = countsByHit[entry.hitId] ?? 0;
-                  const fillColor = detailAreaPinkForCount(
-                    partCount,
-                    countsByHit,
-                    HEAD_FILL_HIT_IDS,
-                  );
-                  const globalMax =
-                    headRawDotsGlobalContourMaxValue <= 0
-                      ? 1
-                      : headRawDotsGlobalContourMaxValue;
+                    );
+                  })}
+                </mask>
+                {HEAD_FILL_HIT_IDS.map((hitId) => {
+                  const spec = shapeByHit.get(hitId);
+                  if (!spec) return null;
+                  const softMaskId = `head-detail-area-soft-${uid}-${hitId}`;
                   return (
-                    <g
-                      key={`head-raw-area-${entry.hitId}`}
-                      mask={`url(#${softMaskId})`}
+                    <mask
+                      key={softMaskId}
+                      id={softMaskId}
+                      maskUnits="userSpaceOnUse"
+                      maskContentUnits="userSpaceOnUse"
+                      x={0}
+                      y={0}
+                      width={vbW}
+                      height={vbH}
                     >
-                      <g filter={`url(#${rawDotsSoftBlurId})`}>
-                        {entry.contours.map(
-                          (contour: ContourMultiPolygon, i: number) => {
-                            const d = headRawDotsContourPath(contour);
-                            if (!d) return null;
-                            const value = contour.value ?? 0;
-                            const normalized = Math.min(
-                              1,
-                              Math.max(0, value / globalMax),
-                            );
-                            const contrastAdjusted = Math.pow(normalized, 1.35);
-                            const opacity = detailAreaContourOpacity(
-                              contrastAdjusted,
-                              partCount,
-                              countsByHit,
-                              HEAD_FILL_HIT_IDS,
-                            );
-                            return (
-                              <path
-                                key={`head-raw-density-${entry.hitId}-${i}`}
-                                d={d}
-                                fill={fillColor}
-                                fillOpacity={opacity}
-                                stroke="none"
-                                pointerEvents="none"
-                              />
-                            );
-                          },
-                        )}
-                      </g>
-                    </g>
+                      <rect x={0} y={0} width={vbW} height={vbH} fill="black" />
+                      {spec.kind === "path" ? (
+                        <path
+                          d={spec.d}
+                          transform={spec.transform}
+                          fill="white"
+                          filter={`url(#${areaMaskFeatherFilterId})`}
+                        />
+                      ) : (
+                        <ellipse
+                          cx={spec.cx}
+                          cy={spec.cy}
+                          rx={spec.rx}
+                          ry={spec.ry}
+                          transform={spec.transform}
+                          fill="white"
+                          filter={`url(#${areaMaskFeatherFilterId})`}
+                        />
+                      )}
+                    </mask>
                   );
                 })}
-                {(headRawDotsContoursByHit ?? []).length === 0
-                  ? HEAD_FILL_HIT_IDS.map((hitId) => {
-                      const softMaskId = `head-detail-area-soft-${uid}-${hitId}`;
-                      const pts = dotsByHitId[hitId] ?? [];
-                      if (pts.length === 0) return null;
-                      const partCount = countsByHit[hitId] ?? 0;
-                      const fillColor = detailAreaPinkForCount(
-                        partCount,
-                        countsByHit,
-                        HEAD_FILL_HIT_IDS,
-                      );
-                      const fallbackOpacity = detailAreaContourOpacity(
-                        1,
-                        partCount,
-                        countsByHit,
-                        HEAD_FILL_HIT_IDS,
-                      );
-                      return (
-                        <g
-                          key={`head-raw-fallback-wrap-${hitId}`}
-                          mask={`url(#${softMaskId})`}
-                        >
-                          <g filter={`url(#${rawDotsSoftBlurId})`}>
-                            {pts.map((p, i) => (
-                              <circle
-                                key={`head-raw-fallback-${hitId}-${i}`}
-                                cx={p.x}
-                                cy={p.y}
-                                r={3.8}
-                                fill={fillColor}
-                                fillOpacity={fallbackOpacity}
-                              />
-                            ))}
-                          </g>
-                        </g>
-                      );
-                    })
-                  : null}
-              </g>
-            ) : null}
+              </defs>
 
-            {HEAD_FILL_HIT_IDS.map((hitId) => {
-              const spec = shapeByHit.get(hitId);
-              if (!spec) return null;
-              const selected =
-                !suppressSelectedFineFillWhileGeneralHover &&
-                isBodyMapChipSelected("head", hitId);
-              const hoverHitIds =
-                hoveredHitId && BODY_MAP_DETAIL_SELECTION_MODE === "merged"
-                  ? mergedHoverPairHitIds("head", hoveredHitId)
-                  : hoveredHitId
-                    ? [hoveredHitId]
-                    : [];
-              const active = hoverHitIds.includes(hitId) || selected;
-              const fillPaint = active
-                ? `url(#${hoverGradientId})`
-                : "transparent";
-              const common = {
-                fill: fillPaint,
-                fillOpacity: active ? 0.78 : 1,
-                filter: active ? `url(#${softFillFilterId})` : undefined,
-                stroke: "none" as const,
-                pointerEvents: "all" as const,
-                style: { cursor: "pointer" as const },
-                onPointerEnter: handleFillHitEnter(hitId),
-                onPointerMove: handleMove,
-                onPointerLeave: clearHover,
-                onClick: () => toggleFine(hitId),
-              };
-              if (spec.kind === "path") {
+              <path
+                d={silhouetteD}
+                fill="none"
+                stroke="#1e293b"
+                strokeOpacity={0.45}
+                strokeWidth={1}
+                vectorEffect="nonScalingStroke"
+                pointerEvents="none"
+              />
+
+              {variant === "rawDots" ? (
+                <g pointerEvents="none" aria-hidden>
+                  {(headRawDotsContoursByHit ?? []).map((entry) => {
+                    const softMaskId = `head-detail-area-soft-${uid}-${entry.hitId}`;
+                    const partCount = countsByHit[entry.hitId] ?? 0;
+                    const fillColor = detailAreaPinkForCount(
+                      partCount,
+                      countsByHit,
+                      HEAD_FILL_HIT_IDS,
+                    );
+                    const globalMax =
+                      headRawDotsGlobalContourMaxValue <= 0
+                        ? 1
+                        : headRawDotsGlobalContourMaxValue;
+                    return (
+                      <g
+                        key={`head-raw-area-${entry.hitId}`}
+                        mask={`url(#${softMaskId})`}
+                      >
+                        <g filter={`url(#${rawDotsSoftBlurId})`}>
+                          {entry.contours.map(
+                            (contour: ContourMultiPolygon, i: number) => {
+                              const d = headRawDotsContourPath(contour);
+                              if (!d) return null;
+                              const value = contour.value ?? 0;
+                              const normalized = Math.min(
+                                1,
+                                Math.max(0, value / globalMax),
+                              );
+                              const contrastAdjusted = Math.pow(
+                                normalized,
+                                1.35,
+                              );
+                              const opacity = detailAreaContourOpacity(
+                                contrastAdjusted,
+                                partCount,
+                                countsByHit,
+                                HEAD_FILL_HIT_IDS,
+                              );
+                              return (
+                                <path
+                                  key={`head-raw-density-${entry.hitId}-${i}`}
+                                  d={d}
+                                  fill={fillColor}
+                                  fillOpacity={opacity}
+                                  stroke="none"
+                                  pointerEvents="none"
+                                />
+                              );
+                            },
+                          )}
+                        </g>
+                      </g>
+                    );
+                  })}
+                  {(headRawDotsContoursByHit ?? []).length === 0
+                    ? HEAD_FILL_HIT_IDS.map((hitId) => {
+                        const softMaskId = `head-detail-area-soft-${uid}-${hitId}`;
+                        const pts = dotsByHitId[hitId] ?? [];
+                        if (pts.length === 0) return null;
+                        const partCount = countsByHit[hitId] ?? 0;
+                        const fillColor = detailAreaPinkForCount(
+                          partCount,
+                          countsByHit,
+                          HEAD_FILL_HIT_IDS,
+                        );
+                        const fallbackOpacity = detailAreaContourOpacity(
+                          1,
+                          partCount,
+                          countsByHit,
+                          HEAD_FILL_HIT_IDS,
+                        );
+                        return (
+                          <g
+                            key={`head-raw-fallback-wrap-${hitId}`}
+                            mask={`url(#${softMaskId})`}
+                          >
+                            <g filter={`url(#${rawDotsSoftBlurId})`}>
+                              {pts.map((p, i) => (
+                                <circle
+                                  key={`head-raw-fallback-${hitId}-${i}`}
+                                  cx={p.x}
+                                  cy={p.y}
+                                  r={3.8}
+                                  fill={fillColor}
+                                  fillOpacity={fallbackOpacity}
+                                />
+                              ))}
+                            </g>
+                          </g>
+                        );
+                      })
+                    : null}
+                </g>
+              ) : null}
+
+              {HEAD_FILL_HIT_IDS.map((hitId) => {
+                const spec = shapeByHit.get(hitId);
+                if (!spec) return null;
+                const selected =
+                  !suppressSelectedFineFillWhileGeneralHover &&
+                  isBodyMapChipSelected("head", hitId);
+                const hoverHitIds =
+                  hoveredHitId && BODY_MAP_DETAIL_SELECTION_MODE === "merged"
+                    ? mergedHoverPairHitIds("head", hoveredHitId)
+                    : hoveredHitId
+                      ? [hoveredHitId]
+                      : [];
+                const active = hoverHitIds.includes(hitId) || selected;
+                const fillPaint = active
+                  ? `url(#${hoverGradientId})`
+                  : "transparent";
+                const common = {
+                  fill: fillPaint,
+                  fillOpacity: active ? 0.78 : 1,
+                  filter: active ? `url(#${softFillFilterId})` : undefined,
+                  stroke: "none" as const,
+                  pointerEvents: "all" as const,
+                  style: { cursor: "pointer" as const },
+                  onPointerEnter: handleFillHitEnter(hitId),
+                  onPointerMove: handleMove,
+                  onPointerLeave: clearHover,
+                  onClick: () => toggleFine(hitId),
+                };
+                if (spec.kind === "path") {
+                  return (
+                    <path
+                      key={hitId}
+                      d={spec.d}
+                      transform={spec.transform}
+                      {...common}
+                    />
+                  );
+                }
                 return (
-                  <path
+                  <ellipse
                     key={hitId}
-                    d={spec.d}
+                    cx={spec.cx}
+                    cy={spec.cy}
+                    rx={spec.rx}
+                    ry={spec.ry}
                     transform={spec.transform}
                     {...common}
                   />
                 );
-              }
-              return (
-                <ellipse
-                  key={hitId}
-                  cx={spec.cx}
-                  cy={spec.cy}
-                  rx={spec.rx}
-                  ry={spec.ry}
-                  transform={spec.transform}
-                  {...common}
-                />
-              );
-            })}
+              })}
 
-            {variant === "countHeatmap" ? (
-              <g pointerEvents="none">
-                {HEAD_FILL_HIT_IDS.flatMap((hitId) => {
-                  const pts = dotsByHitId[hitId] ?? [];
-                  const c = countsByHit[hitId] ?? 0;
-                  const t = countToPerceptualNormalized(c, countColorDomain);
-                  const tAdj = heatmapContrastT(t);
-                  const opacity =
-                    HEATMAP_DOT_OPACITY_MIN +
-                    (HEATMAP_DOT_OPACITY_MAX - HEATMAP_DOT_OPACITY_MIN) * tAdj;
-                  return pts.map((p, i) => (
-                    <circle
-                      key={`${hitId}-${i}`}
-                      cx={p.x}
-                      cy={p.y}
-                      r={HEATMAP_DOT_RADIUS}
-                      fill={`url(#${heatDotRadialGradientId})`}
-                      fillOpacity={opacity}
-                    />
-                  ));
-                })}
-              </g>
-            ) : null}
+              {variant === "countHeatmap" ? (
+                <g pointerEvents="none">
+                  {HEAD_FILL_HIT_IDS.flatMap((hitId) => {
+                    const pts = dotsByHitId[hitId] ?? [];
+                    const c = countsByHit[hitId] ?? 0;
+                    const t = countToPerceptualNormalized(c, countColorDomain);
+                    const tAdj = heatmapContrastT(t);
+                    const opacity =
+                      HEATMAP_DOT_OPACITY_MIN +
+                      (HEATMAP_DOT_OPACITY_MAX - HEATMAP_DOT_OPACITY_MIN) *
+                        tAdj;
+                    return pts.map((p, i) => (
+                      <circle
+                        key={`${hitId}-${i}`}
+                        cx={p.x}
+                        cy={p.y}
+                        r={HEATMAP_DOT_RADIUS}
+                        fill={`url(#${heatDotRadialGradientId})`}
+                        fillOpacity={opacity}
+                      />
+                    ));
+                  })}
+                </g>
+              ) : null}
 
-            {/* General ring: paint last so it sits above fills and density layers. */}
-            <path
-              d={generalOutlineD}
-              fill="none"
-              stroke={generalRingActive ? "#fbcfe8" : "transparent"}
-              strokeOpacity={
-                generalRingHovered ? 1 : generalRingActive ? 0.92 : 1
-              }
-              strokeWidth={10}
-              vectorEffect="nonScalingStroke"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-              pointerEvents="stroke"
-              mask={`url(#${generalRingMaskId})`}
-              style={{ cursor: "pointer" }}
-              onPointerEnter={(e) => {
-                setHoveredHitId("general");
-                setTooltip(
-                  simpleBodyMapTooltip(
-                    HEAD_HIT_LABELS.general,
-                    countsByHit.general ?? 0,
-                    e.clientX,
-                    e.clientY,
-                  ),
-                );
-              }}
-              onPointerMove={handleMove}
-              onPointerLeave={clearHover}
-              onClick={() => toggleBodyMapChip("head", "general")}
-              aria-label="Head general (outline)"
-            />
-          </svg>
+              {/* General ring: paint last so it sits above fills and density layers. */}
+              <path
+                d={generalOutlineD}
+                fill="none"
+                stroke={generalRingActive ? "#fbcfe8" : "transparent"}
+                strokeOpacity={
+                  generalRingHovered ? 1 : generalRingActive ? 0.92 : 1
+                }
+                strokeWidth={10}
+                vectorEffect="nonScalingStroke"
+                strokeLinejoin="round"
+                strokeLinecap="round"
+                pointerEvents="stroke"
+                mask={`url(#${generalRingMaskId})`}
+                style={{ cursor: "pointer" }}
+                onPointerEnter={(e) => {
+                  setHoveredHitId("general");
+                  setTooltip(
+                    simpleBodyMapTooltip(
+                      HEAD_HIT_LABELS.general,
+                      countsByHit.general ?? 0,
+                      e.clientX,
+                      e.clientY,
+                    ),
+                  );
+                }}
+                onPointerMove={handleMove}
+                onPointerLeave={clearHover}
+                onClick={() => toggleBodyMapChip("head", "general")}
+                aria-label="Head general (outline)"
+              />
+            </svg>
           </BodyMapAreaViewLoadingOverlay>
         ) : null}
       </div>

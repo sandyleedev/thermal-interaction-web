@@ -58,7 +58,7 @@ import { type FullBodyMapPart, useBodyMapPartDots } from "./useBodyMapPartDots";
 /**
  * Full-body map (Level 1 only in this file).
  *
- * - Part geometry is parsed from `public/body-map/body-silhouette-parts.svg` (see `bodyMapSilhouetteAsset.ts`).
+ * - Part geometry is parsed from `public/body-map/full-body.svg` (see `bodyMapSilhouetteAsset.ts`).
  * - Level 2 zoomed SVG + fine hit targets will live in a separate component later; filtering hooks already exist
  *   on context (`selectedBodyMapChips` + `BodyMapSelection.selectedChips`).
  */

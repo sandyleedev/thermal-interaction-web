@@ -215,7 +215,7 @@ export function ArmBodyMapDetail({ variant, papers }: ArmBodyMapDetailProps) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/body-map/arm-left-subpart-outline.svg")
+    fetch("/body-map/arm-left.svg")
       .then((r) => {
         if (!r.ok) throw new Error(`left arm map HTTP ${r.status}`);
         return r.text();
@@ -233,7 +233,7 @@ export function ArmBodyMapDetail({ variant, papers }: ArmBodyMapDetailProps) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/body-map/arm-right-subpart-outline.svg")
+    fetch("/body-map/arm-right.svg")
       .then((r) => {
         if (!r.ok) throw new Error(`right arm map HTTP ${r.status}`);
         return r.text();

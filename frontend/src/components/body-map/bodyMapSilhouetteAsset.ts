@@ -1,5 +1,5 @@
 /**
- * L1 body map geometry from `public/body-map/body-silhouette-parts.svg`
+ * L1 body map geometry from `public/body-map/full-body.svg`
  * (loaded at runtime; add new map SVGs under `public/body-map/` the same way).
  *
  * Inkscape `inkscape:label` values are grouped into merged SVG hit regions (`BodyMapRegion`).
@@ -9,9 +9,13 @@
 import type { BodyMapRegion } from "@/lib/research/researchPapers";
 import { BODY_MAP_REGIONS } from "@/lib/research/bodyMapRegions";
 
-const SILHOUETTE_URL = "/body-map/body-silhouette-parts.svg?v=4";
+const SILHOUETTE_URL = "/body-map/full-body.svg";
 
-export type SilhouetteBodySubpath = { d: string; transform?: string; label: string };
+export type SilhouetteBodySubpath = {
+  d: string;
+  transform?: string;
+  label: string;
+};
 
 export type SilhouetteBodyPart = {
   id: BodyMapRegion;
@@ -111,12 +115,10 @@ export const LEG_LABELS_DEFERRED_TO_GLUTEAL_HITS = new Set([
   "RightLeg",
 ]);
 
-export function hitSubpathsForBodyPart(
-  part: {
-    id: BodyMapRegion;
-    subpaths: readonly { d: string; transform?: string; label?: string }[];
-  },
-): { d: string; transform?: string; label?: string }[] {
+export function hitSubpathsForBodyPart(part: {
+  id: BodyMapRegion;
+  subpaths: readonly { d: string; transform?: string; label?: string }[];
+}): { d: string; transform?: string; label?: string }[] {
   if (part.id === "gluteal") return [...part.subpaths];
   if (part.id === "leg") {
     return part.subpaths.filter(

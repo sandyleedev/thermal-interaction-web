@@ -97,7 +97,7 @@ function readTorsoPath(
   return { d, transform: pathEl?.getAttribute("transform") ?? undefined };
 }
 
-/** Single asset: `torso-subpart-outline.svg` (Base, Torso outline, subparts). */
+/** Single asset: `torso.svg` (Base, Torso outline, subparts). */
 function parseTorsoDetailSvg(svgText: string): {
   silhouetteD: string;
   generalOutlineD: string;
@@ -162,7 +162,7 @@ export function TorsoBodyMapDetail({
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/body-map/torso-subpart-outline.svg")
+    fetch("/body-map/torso.svg")
       .then((r) => {
         if (!r.ok) throw new Error(`torso map HTTP ${r.status}`);
         return r.text();
