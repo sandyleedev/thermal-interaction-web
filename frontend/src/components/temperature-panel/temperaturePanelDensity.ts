@@ -2,9 +2,9 @@ import {
   TEMP_AXIS_MAX,
   TEMP_AXIS_MIN,
   tempToX,
-  tempToY,
-} from "./temperaturePanelUtils";
+} from "@/components/temperature-panel/temperaturePanelUtils";
 
+/** 1 / sqrt(2π), used by the Gaussian kernel. */
 const INV_SQRT_2PI = 1 / Math.sqrt(2 * Math.PI);
 
 function gaussianKernel(delta: number, bandwidth: number): number {
@@ -12,90 +12,33 @@ function gaussianKernel(delta: number, bandwidth: number): number {
   return (INV_SQRT_2PI / bandwidth) * Math.exp(-0.5 * z * z);
 }
 
-/** Gaussian KDE at temperature t (°C). */
-export function kdeAt(
+/** KDE density value at one temperature sample point (°C). */
+function kdeAt(
   tempC: number,
   samples: readonly number[],
   bandwidth: number,
 ): number {
   if (samples.length === 0) return 0;
   let sum = 0;
-  for (const x of samples) {
-    sum += gaussianKernel(tempC - x, bandwidth);
+  for (const sampleTempC of samples) {
+    sum += gaussianKernel(tempC - sampleTempC, bandwidth);
   }
   return sum / samples.length;
 }
 
 export type KdePathResult = {
+  /** SVG path for the KDE line. */
   lineD: string;
+  /** Closed SVG path for area fill under the KDE line. */
   areaD: string;
+  /** Raw polyline points (useful for debugging or future overlays). */
   points: { x: number; y: number }[];
 };
 
 /**
- * Smooth KDE polyline + closed area (for fill) in SVG coords.
- * `dotZoneRight` is the x where the KDE strip starts; density extends to `plotWidth`.
- * Optional `kdeStripInsetPx` narrows the horizontal density span.
- */
-export function buildKdePaths(
-  samples: readonly number[],
-  plotHeight: number,
-  plotWidth: number,
-  dotZoneRight: number,
-  options?: {
-    bandwidth?: number;
-    steps?: number;
-    /** Symmetric inset from strip edges into which density maps (px). */
-    kdeStripInsetPx?: number;
-  },
-): KdePathResult {
-  const bandwidth = options?.bandwidth ?? 5.5;
-  const steps = options?.steps ?? 72;
-  const inset = Math.max(0, options?.kdeStripInsetPx ?? 0);
-  const kdeLeft = dotZoneRight + 2 + inset;
-  const kdeRight = plotWidth - 2 - inset;
-
-  const points: { y: number; density: number }[] = [];
-  for (let i = 0; i <= steps; i++) {
-    const tempC =
-      TEMP_AXIS_MAX - (i / steps) * (TEMP_AXIS_MAX - TEMP_AXIS_MIN);
-    const y = tempToY(tempC, plotHeight);
-    const density = kdeAt(tempC, samples, bandwidth);
-    points.push({ y, density });
-  }
-
-  let maxD = 1e-12;
-  for (const p of points) {
-    maxD = Math.max(maxD, p.density);
-  }
-
-  const lineParts: string[] = [];
-  const xs: number[] = [];
-  for (let i = 0; i < points.length; i++) {
-    const x =
-      kdeLeft + (points[i].density / maxD) * (kdeRight - kdeLeft);
-    xs.push(x);
-    const cmd = i === 0 ? "M" : "L";
-    lineParts.push(`${cmd} ${x.toFixed(2)} ${points[i].y.toFixed(2)}`);
-  }
-
-  const y0 = points[0].y;
-  const yLast = points[points.length - 1].y;
-  let areaD = `M ${kdeRight.toFixed(2)} ${y0.toFixed(2)} L ${xs[0].toFixed(2)} ${y0.toFixed(2)}`;
-  for (let i = 1; i < points.length; i++) {
-    areaD += ` L ${xs[i].toFixed(2)} ${points[i].y.toFixed(2)}`;
-  }
-  areaD += ` L ${kdeRight.toFixed(2)} ${yLast.toFixed(2)} Z`;
-
-  return {
-    lineD: lineParts.join(" "),
-    areaD,
-    points: points.map((p, i) => ({ x: xs[i], y: p.y })),
-  };
-}
-
-/**
- * Horizontal KDE: x = temperature (cold left → hot right), y = density upward.
+ * Build horizontal KDE SVG paths.
+ * x-axis: temperature (cold left → hot right)
+ * y-axis: density (higher means more papers around that temperature)
  */
 export function buildKdePathsHorizontal(
   samples: readonly number[],
@@ -104,56 +47,56 @@ export function buildKdePathsHorizontal(
   padding: { left: number; right: number; top: number; bottom: number },
   options?: { bandwidth?: number; steps?: number },
 ): KdePathResult {
+  // Gaussian spread in °C: larger = smoother curve, smaller = sharper peaks.
   const bandwidth = options?.bandwidth ?? 5.5;
+  // Number of temperature samples along the axis (more = smoother SVG path).
   const steps = options?.steps ?? 72;
-  const innerW = plotWidth - padding.left - padding.right;
-  const innerH = plotHeight - padding.top - padding.bottom;
-  const baselineY = plotHeight - padding.bottom;
+  const plotInnerWidth = plotWidth - padding.left - padding.right;
+  const plotInnerHeight = plotHeight - padding.top - padding.bottom;
+  const densityBaselineY = plotHeight - padding.bottom;
 
-  const points: { x: number; density: number }[] = [];
+  const densityByTemperature: { x: number; density: number }[] = [];
   for (let i = 0; i <= steps; i++) {
-    const tempC =
-      TEMP_AXIS_MIN + (i / steps) * (TEMP_AXIS_MAX - TEMP_AXIS_MIN);
-    const x = padding.left + tempToX(tempC, innerW);
+    const tempC = TEMP_AXIS_MIN + (i / steps) * (TEMP_AXIS_MAX - TEMP_AXIS_MIN);
+    const x = padding.left + tempToX(tempC, plotInnerWidth);
     const density = kdeAt(tempC, samples, bandwidth);
-    points.push({ x, density });
+    densityByTemperature.push({ x, density });
   }
 
-  let maxD = 1e-12;
-  for (const p of points) {
-    maxD = Math.max(maxD, p.density);
+  let maxDensity = 1e-12;
+  for (const sample of densityByTemperature) {
+    maxDensity = Math.max(maxDensity, sample.density);
   }
 
-  const yScale = Math.max(4, innerH - 6) * 0.92;
+  const densityHeightScale = Math.max(4, plotInnerHeight - 6) * 0.92;
   const lineParts: string[] = [];
   const linePoints: { x: number; y: number }[] = [];
-  for (let i = 0; i < points.length; i++) {
-    const y = baselineY - (points[i].density / maxD) * yScale;
+  for (let i = 0; i < densityByTemperature.length; i++) {
+    const point = densityByTemperature[i];
+    const y =
+      densityBaselineY - (point.density / maxDensity) * densityHeightScale;
     const cmd = i === 0 ? "M" : "L";
-    lineParts.push(`${cmd} ${points[i].x.toFixed(2)} ${y.toFixed(2)}`);
-    linePoints.push({ x: points[i].x, y });
+    lineParts.push(`${cmd} ${point.x.toFixed(2)} ${y.toFixed(2)}`);
+    linePoints.push({ x: point.x, y });
   }
 
-  const x0 = points[0].x;
-  const xLast = points[points.length - 1].x;
-  const y0 = baselineY - (points[0].density / maxD) * yScale;
-  const yb = baselineY;
-  let areaD = `M ${x0.toFixed(2)} ${yb.toFixed(2)} L ${x0.toFixed(2)} ${y0.toFixed(2)}`;
-  for (let i = 1; i < points.length; i++) {
-    const yi = baselineY - (points[i].density / maxD) * yScale;
-    areaD += ` L ${points[i].x.toFixed(2)} ${yi.toFixed(2)}`;
+  const firstX = densityByTemperature[0].x;
+  const lastX = densityByTemperature[densityByTemperature.length - 1].x;
+  const firstCurveY =
+    densityBaselineY -
+    (densityByTemperature[0].density / maxDensity) * densityHeightScale;
+  let areaD = `M ${firstX.toFixed(2)} ${densityBaselineY.toFixed(2)} L ${firstX.toFixed(2)} ${firstCurveY.toFixed(2)}`;
+  for (let i = 1; i < densityByTemperature.length; i++) {
+    const point = densityByTemperature[i];
+    const curveY =
+      densityBaselineY - (point.density / maxDensity) * densityHeightScale;
+    areaD += ` L ${point.x.toFixed(2)} ${curveY.toFixed(2)}`;
   }
-  areaD += ` L ${xLast.toFixed(2)} ${yb.toFixed(2)} Z`;
+  areaD += ` L ${lastX.toFixed(2)} ${densityBaselineY.toFixed(2)} Z`;
 
   return {
     lineD: lineParts.join(" "),
     areaD,
     points: linePoints,
   };
-}
-
-/** Stable pseudo-random in [-1, 1] for horizontal jitter. */
-export function jitter11(seed: number, index: number): number {
-  const x = Math.sin(seed * 12.9898 + index * 43758.5453) * 43758.5453123;
-  return (x - Math.floor(x)) * 2 - 1;
 }

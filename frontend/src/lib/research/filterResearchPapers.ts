@@ -1,4 +1,3 @@
-import { rangeOverlapsFilter } from "@/components/temperature-panel/temperaturePanelUtils";
 import {
   OTHER_FILTER_CATEGORY_ORDER,
   type OtherFilterCategory,
@@ -52,14 +51,27 @@ const DEFAULT_RANGE_OPTS: Required<RangeFilterOptions> = {
   includeUnspecifiedDuration: true,
 };
 
-function resolvedRangeOpts(opts?: RangeFilterOptions): Required<RangeFilterOptions> {
+function resolvedRangeOpts(
+  opts?: RangeFilterOptions,
+): Required<RangeFilterOptions> {
   return {
     includeUnspecifiedTemperature:
       opts?.includeUnspecifiedTemperature ??
       DEFAULT_RANGE_OPTS.includeUnspecifiedTemperature,
     includeUnspecifiedDuration:
-      opts?.includeUnspecifiedDuration ?? DEFAULT_RANGE_OPTS.includeUnspecifiedDuration,
+      opts?.includeUnspecifiedDuration ??
+      DEFAULT_RANGE_OPTS.includeUnspecifiedDuration,
   };
+}
+
+/** True when [rangeMin, rangeMax] and [filterLow, filterHigh] overlap (both ends inclusive). */
+function rangesOverlap(
+  rangeMin: number,
+  rangeMax: number,
+  filterLow: number,
+  filterHigh: number,
+): boolean {
+  return rangeMax >= filterLow && rangeMin <= filterHigh;
 }
 
 /** Temperature axis: overlap with slider, or pass/fail when bounds are missing. */
@@ -70,14 +82,16 @@ export function paperMatchesTemperatureAxis(
   includeUnspecified: boolean,
 ): boolean {
   if (p.minTempC == null || p.maxTempC == null) return includeUnspecified;
-  return rangeOverlapsFilter(p.minTempC, p.maxTempC, tempLowC, tempHighC);
+  return rangesOverlap(p.minTempC, p.maxTempC, tempLowC, tempHighC);
 }
 
 /**
  * True when the paper has a numeric duration range that should participate in overlap checks
  * and KDE samples. `0`/`0` is treated as an unknown placeholder (same as `null`).
  */
-export function paperHasReportedDurationRange(p: ResearchPaper): boolean {
+export function paperHasReportedDurationRange(
+  p: ResearchPaper,
+): p is ResearchPaper & { minDurationSec: number; maxDurationSec: number } {
   if (p.minDurationSec == null || p.maxDurationSec == null) return false;
   if (p.minDurationSec === 0 && p.maxDurationSec === 0) return false;
   return true;
@@ -91,25 +105,12 @@ export function paperMatchesDurationAxis(
   includeUnspecified: boolean,
 ): boolean {
   if (!paperHasReportedDurationRange(p)) return includeUnspecified;
-  return durationRangeOverlapsFilter(
+  return rangesOverlap(
     p.minDurationSec,
     p.maxDurationSec,
     durationLowS,
     durationHighS,
   );
-}
-
-/**
- * Like {@link rangeOverlapsFilter}: missing bounds mean this axis does not exclude the paper.
- */
-export function durationRangeOverlapsFilter(
-  minS: number | null | undefined,
-  maxS: number | null | undefined,
-  filterLowS: number,
-  filterHighS: number,
-): boolean {
-  if (minS == null || maxS == null) return true;
-  return maxS >= filterLowS && minS <= filterHighS;
 }
 
 /** OR within each category; AND across categories. Empty selection for a category imposes no constraint. */

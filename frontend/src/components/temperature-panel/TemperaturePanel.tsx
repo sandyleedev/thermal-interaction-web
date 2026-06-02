@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useId, useMemo, useRef } from "react";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { paperMatchesTemperatureAxis } from "@/lib/research/filterResearchPapers";
-import { buildKdePathsHorizontal } from "./temperaturePanelDensity";
+import { buildKdePathsHorizontal } from "@/components/temperature-panel/temperaturePanelDensity";
 import {
   DistributionViolinDefs,
   DISTRIBUTION_PINK_AREA,
@@ -13,24 +13,29 @@ import {
   TEMP_AXIS_MAX,
   TEMP_AXIS_MIN,
   tempToNorm,
-} from "./temperaturePanelUtils";
+} from "@/components/temperature-panel/temperaturePanelUtils";
 
 const PLOT_W = 320;
+const PLOT_H = 58;
 const TRACK_H = 22;
 const SLIDER_EDGE_INSET_PX = 0;
+const PAD = { left: 10, right: 10, top: 3, bottom: 7 } as const;
 
 type DragHandle = "low" | "high" | null;
 
+/** Keep a number inside the 0..1 range. */
 function clamp01(v: number): number {
   return Math.min(1, Math.max(0, v));
 }
 
+/** Convert pointer X position into normalized track position (0..1). */
 function normFromClientX(clientX: number, rect: DOMRect): number {
   const w = rect.width - SLIDER_EDGE_INSET_PX * 2;
   if (w <= 0) return 0.5;
   return clamp01((clientX - rect.left - SLIDER_EDGE_INSET_PX) / w);
 }
 
+/** Convert normalized position (0..1) to CSS left value for handle/tick placement. */
 function sliderLeftForNorm(norm: number): string {
   const n = clamp01(norm);
   const i = SLIDER_EDGE_INSET_PX;
@@ -38,7 +43,11 @@ function sliderLeftForNorm(norm: number): string {
   return `calc(${i}px + (100% - ${w}px) * ${n})`;
 }
 
-function sliderRangeStyle(rangeLeft: number, rangeWidth: number): { left: string; width: string } {
+/** Convert selected range to CSS left/width for track highlight and dim areas. */
+function sliderRangeStyle(
+  rangeLeft: number,
+  rangeWidth: number,
+): { left: string; width: string } {
   const i = SLIDER_EDGE_INSET_PX;
   const w = i * 2;
   return {
@@ -47,28 +56,18 @@ function sliderRangeStyle(rangeLeft: number, rangeWidth: number): { left: string
   };
 }
 
+/** Return CSS left value for the right edge of the selected range. */
 function sliderRightEdge(rangeLeft: number, rangeWidth: number): string {
   const i = SLIDER_EDGE_INSET_PX;
   const w = i * 2;
   return `calc(${i}px + (100% - ${w}px) * ${clamp01(rangeLeft + rangeWidth)})`;
 }
 
-export type TemperaturePanelHorizontalProps = {
-  /** Shorter plot and tighter chrome for compact center column usage. */
-  compact?: boolean;
-};
-
 /**
  * Horizontal temperature panel with a bottom range slider (cold left -> hot right).
  */
-export function TemperaturePanelHorizontal({
-  compact = false,
-}: TemperaturePanelHorizontalProps = {}) {
+export function TemperaturePanel() {
   const violinClipId = useId().replace(/:/g, "");
-  const PLOT_H = compact ? 58 : 88;
-  const PAD = compact
-    ? { left: 10, right: 10, top: 3, bottom: 7 }
-    : { left: 10, right: 10, top: 6, bottom: 10 };
 
   const trackRef = useRef<HTMLDivElement>(null);
   const {
@@ -89,6 +88,7 @@ export function TemperaturePanelHorizontal({
     rangeRef.current = { low: filterLow, high: filterHigh };
   }, [filterLow, filterHigh]);
 
+  /** Center temperature per paper: (minTempC + maxTempC) / 2, used for KDE input. */
   const centerTemps = useMemo(
     () =>
       temperatureDensityPapers
@@ -97,30 +97,35 @@ export function TemperaturePanelHorizontal({
     [temperatureDensityPapers],
   );
 
+  /** KDE paths for the temperature distribution violin plot. */
   const kdePaths = useMemo(
-    () =>
-      buildKdePathsHorizontal(centerTemps, PLOT_W, PLOT_H, PAD),
-    [centerTemps, compact],
+    () => buildKdePathsHorizontal(centerTemps, PLOT_W, PLOT_H, PAD),
+    [centerTemps],
   );
 
-  const moveDrag = useCallback((e: PointerEvent) => {
-    const el = trackRef.current;
-    if (!el || !dragRef.current) return;
-    const rect = el.getBoundingClientRect();
-    const n = normFromClientX(e.clientX, rect);
-    const t = TEMP_AXIS_MIN + n * (TEMP_AXIS_MAX - TEMP_AXIS_MIN);
-    const { low, high } = rangeRef.current;
-    if (dragRef.current === "low") {
-      const next = Math.min(t, high - 0.5);
-      rangeRef.current = { low: next, high };
-      setTempRange(next, high);
-    } else {
-      const next = Math.max(t, low + 0.5);
-      rangeRef.current = { low, high: next };
-      setTempRange(low, next);
-    }
-  }, [setTempRange]);
+  /** Update low/high temperature while dragging a handle. */
+  const moveDrag = useCallback(
+    (e: PointerEvent) => {
+      const el = trackRef.current;
+      if (!el || !dragRef.current) return;
+      const rect = el.getBoundingClientRect();
+      const n = normFromClientX(e.clientX, rect);
+      const t = TEMP_AXIS_MIN + n * (TEMP_AXIS_MAX - TEMP_AXIS_MIN);
+      const { low, high } = rangeRef.current;
+      if (dragRef.current === "low") {
+        const next = Math.min(t, high - 0.5);
+        rangeRef.current = { low: next, high };
+        setTempRange(next, high);
+      } else {
+        const next = Math.max(t, low + 0.5);
+        rangeRef.current = { low, high: next };
+        setTempRange(low, next);
+      }
+    },
+    [setTempRange],
+  );
 
+  /** Finish dragging and restore cursor state. */
   const endDrag = useCallback(() => {
     dragRef.current = null;
     document.body.style.cursor = "";
@@ -146,6 +151,7 @@ export function TemperaturePanelHorizontal({
   const lowHandleNearEdge = nLow <= 0.02;
   const highHandleNearEdge = nHigh >= 0.98;
 
+  /** True when two slider handles are close enough to risk label overlap. */
   const handlesClose = rangeWidth < 0.14;
   const temperatureAxisTotal = temperatureDensityPapers.length;
   const temperatureAxisSelected = useMemo(
@@ -166,7 +172,9 @@ export function TemperaturePanelHorizontal({
     ],
   );
   const temperatureSelectionRatioPct =
-    temperatureAxisTotal > 0 ? (temperatureAxisSelected / temperatureAxisTotal) * 100 : 0;
+    temperatureAxisTotal > 0
+      ? (temperatureAxisSelected / temperatureAxisTotal) * 100
+      : 0;
   const innerW = PLOT_W - PAD.left - PAD.right;
   const innerH = PLOT_H - PAD.top - PAD.bottom;
   const violinSelectionX = PAD.left + innerW * rangeLeft;
@@ -182,6 +190,7 @@ export function TemperaturePanelHorizontal({
     filterHigh !== TEMP_AXIS_MAX ||
     includeUnspecifiedTemperature;
 
+  /** Tick labels for the temperature slider (100°C, 75°C, 50°C, 25°C, 0°C, -10°C). */
   const tickLabels = [100, 75, 50, 25, 0, -10];
 
   return (
@@ -190,8 +199,6 @@ export function TemperaturePanelHorizontal({
         "landing-panel",
         "landing-panel-top",
         "landing-temperature-panel",
-        "landing-temperature-panel--horizontal",
-        compact && "landing-temperature-panel--compact",
       ]
         .filter(Boolean)
         .join(" ")}
@@ -207,10 +214,10 @@ export function TemperaturePanelHorizontal({
           Clear
         </button>
       </div>
-      <div className="panel-content temperature-panel-content temperature-panel-content--horizontal">
-        <div className="temperature-panel-plot temperature-panel-plot--horizontal">
+      <div className="panel-content temperature-panel-content">
+        <div className="temperature-panel-plot">
           <svg
-            className="temperature-distribution-svg temperature-distribution-svg--horizontal"
+            className="temperature-distribution-svg"
             viewBox={`0 0 ${PLOT_W} ${PLOT_H}`}
             preserveAspectRatio="xMidYMid meet"
             role="img"
@@ -251,22 +258,22 @@ export function TemperaturePanelHorizontal({
           </svg>
         </div>
 
-        <div className="temperature-slider-row temperature-slider-row--horizontal">
+        <div className="temperature-slider-row">
           <div
             ref={trackRef}
-            className="temperature-slider-track temperature-slider-track--horizontal"
+            className="temperature-slider-track"
             style={{ height: TRACK_H }}
           >
-            <div className="temperature-slider-track-fill temperature-slider-track-fill--horizontal">
-              <div className="temperature-slider-track-gradient temperature-slider-track-gradient--horizontal" />
+            <div className="temperature-slider-track-fill">
+              <div className="temperature-slider-track-gradient" />
               <div
-                className="temperature-slider-track-dim temperature-slider-track-dim--horizontal"
+                className="temperature-slider-track-dim"
                 style={{
                   width: sliderRangeStyle(rangeLeft, rangeWidth).left,
                 }}
               />
               <div
-                className="temperature-slider-track-dim temperature-slider-track-dim--horizontal temperature-slider-track-dim--horizontal-right"
+                className="temperature-slider-track-dim temperature-slider-track-dim--right"
                 style={{
                   left: sliderRightEdge(rangeLeft, rangeWidth),
                 }}
@@ -347,11 +354,11 @@ export function TemperaturePanelHorizontal({
               </span>
             </div>
           </div>
-          <div className="temperature-slider-ticks temperature-slider-ticks--horizontal">
+          <div className="temperature-slider-ticks">
             {tickLabels.map((t) => (
               <span
                 key={t}
-                className="temperature-slider-tick temperature-slider-tick--horizontal"
+                className="temperature-slider-tick"
                 style={{ left: sliderLeftForNorm(tempToNorm(t)) }}
               >
                 {t}°

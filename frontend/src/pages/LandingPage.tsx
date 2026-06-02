@@ -7,7 +7,7 @@ import { OTHER_FILTER_CATEGORY_ORDER } from "@/lib/research/otherFilterVocab";
 import { consumeLandingScrollRestore } from "@/lib/navigation/landingScrollRestore";
 import { ResultsPanel } from "@/components/landing/ResultsPanel";
 import { ScrollToTopButton } from "@/components/landing/ScrollToTopButton";
-import { TemperaturePanelHorizontal } from "@/components/temperature-panel/TemperaturePanelHorizontal";
+import { TemperaturePanel } from "@/components/temperature-panel/TemperaturePanel";
 import "@/pages/LandingPage.css";
 
 /**
@@ -34,7 +34,7 @@ export function LandingPage() {
         </div>
         <div className="landing-layout-col landing-layout-col-center">
           <div className="landing-filters-scroll">
-            <TemperaturePanelHorizontal compact />
+            <TemperaturePanel />
             <DurationPanel />
             {OTHER_FILTER_CATEGORY_ORDER.map((category, index) => (
               <OtherFilterCategoryPanel

@@ -1,13 +1,13 @@
 /**
- * Horizontal range thumbs use width 20px and translateX(-50%). Inset the draggable
- * axis so min/max centers stay mostly inside the pill; slightly less than half width
- * (8px vs 10px) reduces visible “dead” margin at the ends without much overflow.
+ * Slider thumbs are centered with `translateX(-50%)`.
+ * We keep an inset on both ends so thumb centers do not sit on the exact track edges.
+ * This makes edge dragging feel more natural while keeping end overflow small.
  */
 export const HORIZONTAL_RANGE_THUMB_INSET_PX = 8;
 export const HORIZONTAL_RANGE_THUMB_WIDTH_PX =
   HORIZONTAL_RANGE_THUMB_INSET_PX * 2;
 
-/** Map pointer X to [0, 1] along the inset segment (matches thumb center positions). */
+/** Converts a mouse/touch X position (clientX) into a normalized slider value between 0 and 1 */
 export function clientXToInsetNorm(
   clientX: number,
   rect: DOMRect,
@@ -16,42 +16,4 @@ export function clientXToInsetNorm(
   const w = rect.width - 2 * insetPx;
   if (w <= 0) return 0.5;
   return Math.min(1, Math.max(0, (clientX - rect.left - insetPx) / w));
-}
-
-/** CSS `left` for thumb center: `translateX(-50%)` is applied on the handle. */
-export function thumbCenterLeftCalc(n: number): string {
-  const i = HORIZONTAL_RANGE_THUMB_INSET_PX;
-  const w = HORIZONTAL_RANGE_THUMB_WIDTH_PX;
-  return `calc(${i}px + (100% - ${w}px) * ${n})`;
-}
-
-/** Inset-aware span under the track (dim / selection), same basis as thumbs. */
-export function insetRangeLayerStyle(rangeLeft: number, rangeWidth: number): {
-  left: string;
-  width: string;
-} {
-  const i = HORIZONTAL_RANGE_THUMB_INSET_PX;
-  const w = HORIZONTAL_RANGE_THUMB_WIDTH_PX;
-  return {
-    left: `calc(${i}px + (100% - ${w}px) * ${rangeLeft})`,
-    width: `calc((100% - ${w}px) * ${rangeWidth})`,
-  };
-}
-
-export function insetDimLeftWidth(rangeLeft: number): { width: string } {
-  const i = HORIZONTAL_RANGE_THUMB_INSET_PX;
-  const w = HORIZONTAL_RANGE_THUMB_WIDTH_PX;
-  return {
-    width: `calc(${i}px + (100% - ${w}px) * ${rangeLeft})`,
-  };
-}
-
-/** Left edge of the right dim segment; pair with `right: 0` in CSS. */
-export function insetDimRightLeftEdge(
-  rangeLeft: number,
-  rangeWidth: number,
-): string {
-  const i = HORIZONTAL_RANGE_THUMB_INSET_PX;
-  const w = HORIZONTAL_RANGE_THUMB_WIDTH_PX;
-  return `calc(${i}px + (100% - ${w}px) * ${rangeLeft + rangeWidth})`;
 }
