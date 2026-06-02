@@ -100,6 +100,10 @@ const BODY_MAP_HIT_TARGET_ORDER: readonly BodyMapRegion[] = [
 /** Invisible fill that still participates in SVG hit-testing (unlike `transparent`). */
 const BODY_MAP_HIT_TARGET_FILL = "rgba(0,0,0,0.004)";
 
+function shouldMirrorBilateralHover(partId: BodyMapRegion): boolean {
+  return partId === "wrist" || partId === "ankle";
+}
+
 function buildBodyPartsForHitTargets(bodyParts: BodyPart[]): BodyPart[] {
   const byId = new Map(bodyParts.map((p) => [p.id, p]));
   const ordered = BODY_MAP_HIT_TARGET_ORDER.map((id) => byId.get(id)).filter(
@@ -394,6 +398,7 @@ export function BodyMap({
           const subpathHovered =
             partHovered &&
             (!isL1BilateralPartWithoutDetail(part.id) ||
+              shouldMirrorBilateralHover(part.id) ||
               hoveredSubpathIndex === subpathIndex);
           const chipHighlighted = isRegionChipSelected(part.id);
           const showHoverFill = subpathHovered || chipHighlighted;

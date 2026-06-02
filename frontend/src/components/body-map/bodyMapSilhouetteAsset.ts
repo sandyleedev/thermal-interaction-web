@@ -109,8 +109,6 @@ const PART_INKSCAPE_LABELS: {
 export const LEG_LABELS_DEFERRED_TO_GLUTEAL_HITS = new Set([
   "LeftLeg",
   "RightLeg",
-  "LeftThigh",
-  "RightThigh",
 ]);
 
 export function hitSubpathsForBodyPart(

@@ -29,6 +29,10 @@ import {
 import type { BodyMapVariant } from "../bodyMapVariant";
 import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
+import {
+  BODY_MAP_DETAIL_SELECTION_MODE,
+  mergedHoverPairHitIds,
+} from "@/lib/research/bodyMapDetailSelectionMode";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   LEG_DETAIL_HIT_IDS,
@@ -373,6 +377,13 @@ export function LegBodyMapDetail({ variant, papers }: LegBodyMapDetailProps) {
               dotsByHitId={dotsByHitId}
               countsByHit={countsByHit}
               hoveredHitId={hoveredHitId}
+              hoveredHitIds={
+                hoveredHitId && BODY_MAP_DETAIL_SELECTION_MODE === "merged"
+                  ? mergedHoverPairHitIds("leg", hoveredHitId)
+                  : hoveredHitId
+                    ? [hoveredHitId]
+                    : []
+              }
               variant={variant}
               heatmapDotRadius={HEATMAP_DOT_RADIUS}
               heatmapDotOpacityMin={HEATMAP_DOT_OPACITY_MIN}

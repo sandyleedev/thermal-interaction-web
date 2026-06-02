@@ -12,6 +12,7 @@ import {
   paperMatchesFootFineSelection,
   paperMatchesHandFineSelection,
   paperMatchesLegFineSelection,
+  paperMatchesTorsoFineSelection,
   type ArmDetailSide,
   type FootDetailSide,
   type HandDetailPanel,
@@ -41,7 +42,7 @@ function bilateralLines(
   totalLabel: string,
   papers: readonly ResearchPaper[],
   totalMatch: (paper: ResearchPaper) => boolean,
-  parent: "arm" | "hand" | "foot" | "leg" | "head",
+  parent: "arm" | "hand" | "foot" | "leg" | "head" | "torso",
   subregion: string,
   side: "left" | "right" | null,
 ): BodyMapHoverTooltipLine[] {
@@ -232,6 +233,26 @@ export function headBilateralTooltip(
       meta.side,
       meta.label,
       sideCount,
+    ),
+    x,
+    y,
+  );
+}
+
+export function torsoShoulderBilateralTooltip(
+  papers: readonly ResearchPaper[],
+  side: "left" | "right",
+  x: number,
+  y: number,
+): BodyMapTooltipState {
+  return tooltipAt(
+    bilateralLines(
+      "shoulder",
+      papers,
+      (p) => paperMatchesTorsoFineSelection(p, "shoulder"),
+      "torso",
+      "shoulder",
+      side,
     ),
     x,
     y,

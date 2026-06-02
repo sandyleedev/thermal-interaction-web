@@ -42,6 +42,10 @@ import {
   maxContourValueFromLayers,
 } from "../full-body/bodyMapAreaContours";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
+import {
+  BODY_MAP_DETAIL_SELECTION_MODE,
+  mergedHoverPairHitIds,
+} from "@/lib/research/bodyMapDetailSelectionMode";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   paperMatchesHeadFineSelection,
@@ -694,7 +698,13 @@ export function HeadBodyMapDetail({
               const selected =
                 !suppressSelectedFineFillWhileGeneralHover &&
                 isBodyMapChipSelected("head", hitId);
-              const active = hoveredHitId === hitId || selected;
+              const hoverHitIds =
+                hoveredHitId && BODY_MAP_DETAIL_SELECTION_MODE === "merged"
+                  ? mergedHoverPairHitIds("head", hoveredHitId)
+                  : hoveredHitId
+                    ? [hoveredHitId]
+                    : [];
+              const active = hoverHitIds.includes(hitId) || selected;
               const fillPaint = active
                 ? `url(#${hoverGradientId})`
                 : "transparent";

@@ -38,6 +38,8 @@ const SUBPART_CHIP_LABEL: Partial<
     nose: "Nose",
     lip: "Lip",
     tongue: "Tongue",
+    ear: "Ear",
+    cheek: "Cheek",
     "left-ear": "Ear (left)",
     "right-ear": "Ear (right)",
     "left-cheek": "Cheek (left)",
@@ -51,6 +53,8 @@ const SUBPART_CHIP_LABEL: Partial<
     chest: "Chest",
     abdomen: "Abdomen",
     shoulder: "Shoulder",
+    "left-shoulder": "Shoulder (left)",
+    "right-shoulder": "Shoulder (right)",
     back: "Back",
   },
   arm: {

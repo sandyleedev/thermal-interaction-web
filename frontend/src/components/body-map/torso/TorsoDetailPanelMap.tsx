@@ -65,6 +65,7 @@ export type TorsoDetailPanelMapProps = {
   rawDotsDensityCellSize: number;
   rawDotsDensityThresholds: number;
   hoveredHitId: string | null;
+  hoveredHitIds?: readonly string[];
   isHitSelected: (hitId: string) => boolean;
   suppressSelectedFineFillWhileGeneralHover: boolean;
   onFillHitEnter: (hitId: string) => (e: PointerEvent<SVGElement>) => void;
@@ -100,6 +101,7 @@ export function TorsoDetailPanelMap({
   rawDotsDensityCellSize,
   rawDotsDensityThresholds,
   hoveredHitId,
+  hoveredHitIds,
   isHitSelected,
   suppressSelectedFineFillWhileGeneralHover,
   onFillHitEnter,
@@ -378,7 +380,8 @@ export function TorsoDetailPanelMap({
         if (!spec) return [];
         const selected =
           !suppressSelectedFineFillWhileGeneralHover && isHitSelected(hitId);
-        const active = hoveredHitId === hitId || selected;
+        const active =
+          (hoveredHitIds?.includes(hitId) ?? hoveredHitId === hitId) || selected;
         const fillPaint = active ? `url(#${hoverGradientId})` : "transparent";
         const common = {
           fill: fillPaint,

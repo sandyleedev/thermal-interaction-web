@@ -30,6 +30,7 @@ import {
 import type { BodyMapVariant } from "../bodyMapVariant";
 import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
+import { BODY_MAP_DETAIL_SELECTION_MODE } from "@/lib/research/bodyMapDetailSelectionMode";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   HAND_INNER_DETAIL_HIT_IDS,
@@ -563,12 +564,19 @@ export function HandBodyMapDetail({ variant, papers }: HandBodyMapDetailProps) {
       panel.surface === "inner" ? innerParsed.parse! : outerParsed.parse!;
     const key = panelKey(panel);
     const idPrefix = `${uid}-hand-${panel.surface}-${panel.side}`;
-    const hoveredHitId = hoveredKey?.startsWith(`${key}:`)
-      ? (hoveredKey.slice(key.length + 1) ?? null)
-      : null;
+    const hoveredHitId = (() => {
+      if (!hoveredKey) return null;
+      const splitAt = hoveredKey.lastIndexOf(":");
+      if (splitAt < 0) return null;
+      const hoverPanel = hoveredKey.slice(0, splitAt);
+      const hoverHit = hoveredKey.slice(splitAt + 1);
+      if (!hoverHit) return null;
+      if (BODY_MAP_DETAIL_SELECTION_MODE === "merged") return hoverHit;
+      return hoverPanel === key ? hoverHit : null;
+    })();
     const sideLabel = PANEL_LABELS[key] ?? key;
     const panelGeneralActive =
-      hoveredKey === `${key}:general` ||
+      hoveredHitId === "general" ||
       isBodyMapChipSelected("hand", "general", panel.side);
 
     return (

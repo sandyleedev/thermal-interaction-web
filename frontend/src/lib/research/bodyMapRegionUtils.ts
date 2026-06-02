@@ -250,7 +250,8 @@ const NECK_DETAIL_HIT_ID_SET = new Set<string>([
 export const TORSO_DETAIL_HIT_IDS = [
   "chest",
   "abdomen",
-  "shoulder",
+  "left-shoulder",
+  "right-shoulder",
   "back",
 ] as const;
 
@@ -1037,10 +1038,14 @@ export function paperMatchesHeadFineSelection(
       return headExactSubForSideAreaView(paper, "ear", "left");
     case "right-ear":
       return headExactSubForSideAreaView(paper, "ear", "right");
+    case "ear":
+      return headExactSub(paper, "ear");
     case "left-cheek":
       return headExactSubForSideAreaView(paper, "cheek", "left");
     case "right-cheek":
       return headExactSubForSideAreaView(paper, "cheek", "right");
+    case "cheek":
+      return headExactSub(paper, "cheek");
     default:
       return false;
   }
@@ -1088,6 +1093,21 @@ function torsoExactSub(paper: BodySitesCarrier, sub: string): boolean {
   return false;
 }
 
+function torsoExactSubForSide(
+  paper: BodySitesCarrier,
+  sub: string,
+  side: "left" | "right",
+): boolean {
+  for (const s of paper.bodySites ?? []) {
+    const resolved = resolveBodySite(s);
+    if (resolved.parent !== "torso") continue;
+    if (!subregionMatches(resolved.subregion, sub)) continue;
+    if (!siteAssignsToPanelSideForAreaView(s, side)) continue;
+    return true;
+  }
+  return false;
+}
+
 /**
  * Torso L2 zoom: `general` matches only `torso → general` sites.
  */
@@ -1105,6 +1125,10 @@ export function paperMatchesTorsoFineSelection(
       return torsoExactSub(paper, "abdomen");
     case "shoulder":
       return torsoExactSub(paper, "shoulder");
+    case "left-shoulder":
+      return torsoExactSubForSide(paper, "shoulder", "left");
+    case "right-shoulder":
+      return torsoExactSubForSide(paper, "shoulder", "right");
     case "back":
       return torsoExactSub(paper, "back");
     default:

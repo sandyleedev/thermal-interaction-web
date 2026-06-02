@@ -14,6 +14,8 @@ import {
 } from "../shared/bodyMapAreaDotsCache";
 import { TorsoDetailPanelMap } from "./TorsoDetailPanelMap";
 import { BodyMapAreaViewLoadingScope } from "../shared/BodyMapAreaViewLoadingScope";
+import { BodyMapHoverTooltip } from "../shared/BodyMapHoverTooltip";
+import type { BodyMapTooltipState } from "../shared/BodyMapHoverTooltip";
 import { MAX_HEATMAP_DOTS_PER_REGION } from "../bodyMapSampleDots";
 import {
   buildTorsoAreaDensityDotsByHitId,
@@ -23,7 +25,15 @@ import {
 import type { BodyMapVariant } from "../bodyMapVariant";
 import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
+import {
+  BODY_MAP_DETAIL_SELECTION_MODE,
+  mergedHoverPairHitIds,
+} from "@/lib/research/bodyMapDetailSelectionMode";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
+import {
+  simpleBodyMapTooltip,
+  torsoShoulderBilateralTooltip,
+} from "@/lib/research/bodyMapBilateralTooltips";
 import {
   paperMatchesTorsoFineSelection,
   type ResearchPaper,
@@ -48,7 +58,12 @@ const TORSO_SILHOUETTE_STROKE_WIDTH = 4;
 const TORSO_GENERAL_RING_STROKE_WIDTH = 25;
 
 /** Fill hit ids in paint order (later = on top for pointer priority). */
-const TORSO_FILL_HIT_IDS = ["chest", "abdomen", "shoulder"] as const;
+const TORSO_FILL_HIT_IDS = [
+  "chest",
+  "abdomen",
+  "left-shoulder",
+  "right-shoulder",
+] as const;
 
 const TORSO_BACK_HIT_IDS = ["back"] as const;
 
@@ -62,11 +77,13 @@ const TORSO_HIT_LABELS: Record<string, string> = {
   general: "General",
   chest: "Chest",
   abdomen: "Abdomen",
+  "left-shoulder": "Shoulder (left)",
+  "right-shoulder": "Shoulder (right)",
   shoulder: "Shoulder",
   back: "Back",
 };
 
-type TooltipState = { label: string; count: number; x: number; y: number };
+type TooltipState = BodyMapTooltipState;
 
 function readTorsoPath(
   doc: Document,
@@ -93,12 +110,13 @@ function parseTorsoDetailSvg(svgText: string): {
   const shapeByHit = new Map<string, TorsoShapeSpec>();
   shapeByHit.set("chest", { kind: "path", ...readTorsoPath(doc, "Chest") });
   shapeByHit.set("abdomen", { kind: "path", ...readTorsoPath(doc, "Abdomen") });
-  shapeByHit.set("shoulder", {
-    kind: "path-union",
-    paths: [
-      readTorsoPath(doc, "LeftShoulder"),
-      readTorsoPath(doc, "RightShoulder"),
-    ],
+  shapeByHit.set("left-shoulder", {
+    kind: "path",
+    ...readTorsoPath(doc, "LeftShoulder"),
+  });
+  shapeByHit.set("right-shoulder", {
+    kind: "path",
+    ...readTorsoPath(doc, "RightShoulder"),
   });
   // Back hit: trunk only (`Torso`), not full `Base` (arms/neck). Optional `Back` path if added to SVG.
   const backPathEl = doc.querySelector('path[id="Back"]');
@@ -276,15 +294,28 @@ export function TorsoBodyMapDetail({
     (hitId: string) => {
       return (e: PointerEvent<SVGElement>) => {
         setHoveredHitId(hitId);
-        setTooltip({
-          label: TORSO_HIT_LABELS[hitId] ?? hitId,
-          count: countsByHit[hitId] ?? 0,
-          x: e.clientX,
-          y: e.clientY,
-        });
+        if (hitId === "left-shoulder" || hitId === "right-shoulder") {
+          setTooltip(
+            torsoShoulderBilateralTooltip(
+              papers,
+              hitId.startsWith("left") ? "left" : "right",
+              e.clientX,
+              e.clientY,
+            ),
+          );
+          return;
+        }
+        setTooltip(
+          simpleBodyMapTooltip(
+            TORSO_HIT_LABELS[hitId] ?? hitId,
+            countsByHit[hitId] ?? 0,
+            e.clientX,
+            e.clientY,
+          ),
+        );
       };
     },
-    [countsByHit],
+    [countsByHit, papers],
   );
 
   const handleMove = useCallback((e: PointerEvent<SVGElement>) => {
@@ -305,6 +336,16 @@ export function TorsoBodyMapDetail({
     [isBodyMapChipSelected],
   );
 
+  const hoveredHitIds = useMemo(
+    () =>
+      hoveredHitId
+        ? BODY_MAP_DETAIL_SELECTION_MODE === "merged"
+          ? mergedHoverPairHitIds("torso", hoveredHitId)
+          : [hoveredHitId]
+        : [],
+    [hoveredHitId],
+  );
+
   const generalRingHovered = hoveredHitId === "general";
   const generalRingActive =
     generalRingHovered || isBodyMapChipSelected("torso", "general");
@@ -322,12 +363,14 @@ export function TorsoBodyMapDetail({
   const handleGeneralRingEnter = useCallback(
     (e: PointerEvent<SVGElement>) => {
       setHoveredHitId("general");
-      setTooltip({
-        label: TORSO_HIT_LABELS.general,
-        count: countsByHit.general ?? 0,
-        x: e.clientX,
-        y: e.clientY,
-      });
+      setTooltip(
+        simpleBodyMapTooltip(
+          TORSO_HIT_LABELS.general,
+          countsByHit.general ?? 0,
+          e.clientX,
+          e.clientY,
+        ),
+      );
     },
     [countsByHit],
   );
@@ -357,6 +400,7 @@ export function TorsoBodyMapDetail({
     onGeneralRingClick: () => toggleBodyMapChip("torso", "general"),
     generalRingActive,
     generalRingHovered,
+    hoveredHitIds,
   };
 
   return (
@@ -395,7 +439,7 @@ export function TorsoBodyMapDetail({
               <TorsoDetailPanelMap
                 panel="front"
                 svgClassName="body-map-svg torso-detail-svg torso-detail-svg--front"
-                ariaLabel="Torso front: chest, abdomen, shoulder, and general outline"
+                ariaLabel="Torso front: chest, abdomen, left/right shoulder, and general outline"
                 idPrefix={frontIdPrefix}
                 fillHitIds={TORSO_FILL_HIT_IDS}
                 showGeneralRing
@@ -423,21 +467,7 @@ export function TorsoBodyMapDetail({
         />
       ) : null}
 
-      {tooltip ? (
-        <div
-          className="body-map-tooltip"
-          style={{
-            position: "fixed",
-            left: tooltip.x + 12,
-            top: tooltip.y + 12,
-            zIndex: 50,
-            pointerEvents: "none",
-          }}
-        >
-          <div className="body-map-tooltip-title">{tooltip.label}</div>
-          <div>{tooltip.count} papers</div>
-        </div>
-      ) : null}
+      <BodyMapHoverTooltip tooltip={tooltip} />
     </div>
   );
 }

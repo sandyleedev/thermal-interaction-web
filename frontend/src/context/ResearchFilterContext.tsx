@@ -41,6 +41,7 @@ import {
   hasActiveKeywordSearch,
   type KeywordSearchQuery,
 } from "@/lib/research/paperKeywordSearch";
+import { canonicalizeDetailSelection } from "@/lib/research/bodyMapDetailSelectionMode";
 import {
   TEMP_AXIS_MAX,
   TEMP_AXIS_MIN,
@@ -237,7 +238,9 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       subpart?: string | null,
       side?: Extract<BodySiteSide, "left" | "right">,
     ) => {
-      const key = bodyMapChipKey({ parent, subpart, side });
+      const key = bodyMapChipKey(
+        canonicalizeDetailSelection(parent, subpart, side),
+      );
       return selectedBodyMapChips.some((c) => bodyMapChipKey(c) === key);
     },
     [selectedBodyMapChips],
@@ -249,7 +252,9 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       subpart?: string | null,
       side?: Extract<BodySiteSide, "left" | "right">,
     ) => {
-      const key = bodyMapChipKey({ parent, subpart, side });
+      const key = bodyMapChipKey(
+        canonicalizeDetailSelection(parent, subpart, side),
+      );
       setSelectedBodyMapChips((prev) =>
         prev.filter((c) => bodyMapChipKey(c) !== key),
       );
@@ -263,13 +268,18 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
       subpart?: string | null,
       side?: Extract<BodySiteSide, "left" | "right">,
     ) => {
-      const key = bodyMapChipKey({ parent, subpart, side });
+      const normalizedSelection = canonicalizeDetailSelection(
+        parent,
+        subpart,
+        side,
+      );
+      const key = bodyMapChipKey(normalizedSelection);
       setSelectedBodyMapChips((prev) => {
         const idx = prev.findIndex((c) => bodyMapChipKey(c) === key);
         if (idx >= 0) {
           return [...prev.slice(0, idx), ...prev.slice(idx + 1)];
         }
-        return [...prev, { parent, subpart: subpart ?? undefined, side }];
+        return [...prev, normalizedSelection];
       });
     },
     [],
@@ -285,9 +295,12 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
   const areAllBodyMapSubpartsSelected = useCallback(
     (parent: BodyMapParentRegion) => {
       const chips = getSelectableChipsForParent(parent);
-      return chips.every((chip) =>
-        selectedBodyMapChips.some((c) => bodyMapChipKey(c) === bodyMapChipKey(chip)),
-      );
+      return chips.every((chip) => {
+        const key = bodyMapChipKey(
+          canonicalizeDetailSelection(chip.parent, chip.subpart, chip.side),
+        );
+        return selectedBodyMapChips.some((c) => bodyMapChipKey(c) === key);
+      });
     },
     [selectedBodyMapChips],
   );
@@ -297,9 +310,14 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
     setSelectedBodyMapChips((prev) => {
       const next = [...prev];
       for (const chip of chips) {
-        const key = bodyMapChipKey(chip);
+        const normalizedSelection = canonicalizeDetailSelection(
+          chip.parent,
+          chip.subpart,
+          chip.side,
+        );
+        const key = bodyMapChipKey(normalizedSelection);
         if (!next.some((c) => bodyMapChipKey(c) === key)) {
-          next.push(chip);
+          next.push(normalizedSelection);
         }
       }
       return next;

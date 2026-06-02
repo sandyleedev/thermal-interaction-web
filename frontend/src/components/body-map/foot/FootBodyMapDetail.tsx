@@ -29,6 +29,7 @@ import {
 import type { BodyMapVariant } from "../bodyMapVariant";
 import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
+import { BODY_MAP_DETAIL_SELECTION_MODE } from "@/lib/research/bodyMapDetailSelectionMode";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   FOOT_DETAIL_HIT_IDS,
@@ -459,11 +460,15 @@ export function FootBodyMapDetail({ variant, papers }: FootBodyMapDetailProps) {
   const renderPanel = (panelSide: FootDetailSide, sideLabel: string) => {
     const parse = parsed.parse!;
     const idPrefix = `${uid}-foot-${panelSide}`;
-    const hoveredHitId = hoveredKey?.startsWith(`${panelSide}:`)
-      ? (hoveredKey.slice(panelSide.length + 1) ?? null)
-      : null;
+    const hoveredHitId = (() => {
+      if (!hoveredKey) return null;
+      const [hoverSide, hoverHit] = hoveredKey.split(":");
+      if (!hoverHit) return null;
+      if (BODY_MAP_DETAIL_SELECTION_MODE === "merged") return hoverHit;
+      return hoverSide === panelSide ? hoverHit : null;
+    })();
     const panelGeneralActive =
-      hoveredKey === `${panelSide}:general` ||
+      hoveredHitId === "general" ||
       isBodyMapChipSelected("foot", "general", panelSide);
 
     return (
