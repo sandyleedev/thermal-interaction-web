@@ -10,13 +10,13 @@ import {
 import {
   areaDotsLruPut,
   areaDotsLruTouch,
-} from "../shared/bodyMapAreaDotsCache";
-import { ArmDetailPanelMap } from "../arm/ArmDetailPanelMap";
-import { BodyMapAreaViewLoadingScope } from "../shared/BodyMapAreaViewLoadingScope";
-import { BodyMapHoverTooltip } from "../shared/BodyMapHoverTooltip";
-import type { BodyMapTooltipState } from "../shared/BodyMapHoverTooltip";
+} from "@/components/body-map/shared/bodyMapAreaDotsCache";
+import { ArmDetailPanelMap } from "@/components/body-map/arm/ArmDetailPanelMap";
+import { BodyMapAreaViewLoadingScope } from "@/components/body-map/shared/BodyMapAreaViewLoadingScope";
+import { BodyMapHoverTooltip } from "@/components/body-map/shared/BodyMapHoverTooltip";
+import type { BodyMapTooltipState } from "@/components/body-map/shared/BodyMapHoverTooltip";
 import {
-  footBilateralTooltip,
+  explicitSideBilateralTooltip,
   simpleBodyMapTooltip,
 } from "@/lib/research/bodyMapBilateralTooltips";
 import { MAX_HEATMAP_DOTS_PER_REGION } from "../bodyMapSampleDots";
@@ -33,6 +33,7 @@ import { BODY_MAP_DETAIL_SELECTION_MODE } from "@/lib/research/bodyMapDetailSele
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   FOOT_DETAIL_HIT_IDS,
+  paperMatchesFootFineSelection,
   paperMatchesFootFineSelectionForSideDots,
   paperMatchesFootFineSelectionForSideAreaView,
   type FootDetailSide,
@@ -369,11 +370,13 @@ export function FootBodyMapDetail({ variant, papers }: FootBodyMapDetailProps) {
                   e.clientX,
                   e.clientY,
                 )
-              : footBilateralTooltip(
+              : explicitSideBilateralTooltip(
                   papers,
+                  FOOT_HIT_LABELS[hitId] ?? hitId,
+                  "foot",
                   hitId,
                   panelSide,
-                  FOOT_HIT_LABELS[hitId] ?? hitId,
+                  (p) => paperMatchesFootFineSelection(p, hitId),
                   e.clientX,
                   e.clientY,
                 ),

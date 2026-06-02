@@ -1,5 +1,8 @@
 import type { BodyMapParentRegion } from "@/lib/research/bodyMapRegions";
-import { resolveBodySite, type BodySitesCarrier } from "@/lib/research/bodyMapRegionUtils";
+import {
+  resolveBodySite,
+  type BodySitesCarrier,
+} from "@/lib/research/bodyMapRegionUtils";
 
 /** Stored in JSON: explicit laterality, or null when unknown. */
 export type BodySiteSide = "left" | "right" | null;
@@ -33,7 +36,9 @@ export function hashStringToSeed(s: string): number {
 }
 
 /** Deterministic left/right pick so unspecified sites split ~evenly across panels. */
-export function distributedSideForSite(distributionKey: string): "left" | "right" {
+export function distributedSideForSite(
+  distributionKey: string,
+): "left" | "right" {
   return hashStringToSeed(distributionKey) % 2 === 0 ? "left" : "right";
 }
 
@@ -70,6 +75,7 @@ export function siteAssignsToLateralHitForDots(
   return siteAssignsToPanelSideForDots(site, hitSide, distributionKey);
 }
 
+/** List of body regions that have both sides (left and right). */
 const BILATERAL_BODY_MAP_PARENTS = new Set<BodyMapParentRegion>([
   "arm",
   "hand",
@@ -79,12 +85,12 @@ const BILATERAL_BODY_MAP_PARENTS = new Set<BodyMapParentRegion>([
   "ankle",
 ]);
 
-export function isBilateralBodyMapParent(
-  parent: BodyMapParentRegion,
-): boolean {
+/** Check if a parent is bilateral. */
+export function isBilateralBodyMapParent(parent: BodyMapParentRegion): boolean {
   return BILATERAL_BODY_MAP_PARENTS.has(parent);
 }
 
+/** Check if a subregion matches another subregion. */
 export function subregionMatches(a: string, b: string): boolean {
   const al = a.trim().toLowerCase();
   const bl = b.trim().toLowerCase();
@@ -100,6 +106,7 @@ export function subregionMatches(a: string, b: string): boolean {
   return false;
 }
 
+/** Check if a paper has an explicit side for a site. - singular count*/
 export function paperHasExplicitSideForSite(
   paper: BodySitesCarrier,
   parent: BodyMapParentRegion,
@@ -116,6 +123,7 @@ export function paperHasExplicitSideForSite(
   return false;
 }
 
+/** Check if a paper has an explicit side for a site. - array count*/
 export function countPapersWithExplicitSideForSite(
   papers: readonly BodySitesCarrier[],
   parent: BodyMapParentRegion,
@@ -129,6 +137,7 @@ export function countPapersWithExplicitSideForSite(
   return n;
 }
 
+/** Check if a paper has an explicit side for a parent. - singular count*/
 export function paperHasExplicitSideForParent(
   paper: BodySitesCarrier,
   parent: BodyMapParentRegion,
@@ -143,6 +152,7 @@ export function paperHasExplicitSideForParent(
   return false;
 }
 
+/** Count papers that match a predicate. - array count*/
 export function countPapersWithExplicitSideForParent(
   papers: readonly BodySitesCarrier[],
   parent: BodyMapParentRegion,
@@ -155,11 +165,12 @@ export function countPapersWithExplicitSideForParent(
   return n;
 }
 
+/** Format a paper count as a string with pluralization. - paper / papers */
 export function formatPaperCount(count: number): string {
   return `${count.toLocaleString()} paper${count === 1 ? "" : "s"}`;
 }
 
-/** Two-line bilateral tooltip: total subregion count, optional explicit side count. */
+/** Make Two-line bilateral tooltip: total subregion count, optional explicit side count. */
 export function buildBilateralHoverTooltipLines(
   totalLabel: string,
   totalCount: number,

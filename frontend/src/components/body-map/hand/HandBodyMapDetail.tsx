@@ -16,7 +16,7 @@ import { BodyMapAreaViewLoadingScope } from "../shared/BodyMapAreaViewLoadingSco
 import { BodyMapHoverTooltip } from "../shared/BodyMapHoverTooltip";
 import type { BodyMapTooltipState } from "../shared/BodyMapHoverTooltip";
 import {
-  handBilateralTooltip,
+  explicitSideBilateralTooltip,
   simpleBodyMapTooltip,
 } from "@/lib/research/bodyMapBilateralTooltips";
 import { MAX_HEATMAP_DOTS_PER_REGION } from "../bodyMapSampleDots";
@@ -35,6 +35,7 @@ import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   HAND_INNER_DETAIL_HIT_IDS,
   HAND_OUTER_DETAIL_HIT_IDS,
+  paperMatchesHandFineSelection,
   paperMatchesHandFineSelectionForPanelDots,
   paperMatchesHandFineSelectionForPanelAreaView,
   type HandDetailPanel,
@@ -465,11 +466,13 @@ export function HandBodyMapDetail({ variant, papers }: HandBodyMapDetailProps) {
                   e.clientX,
                   e.clientY,
                 )
-              : handBilateralTooltip(
+              : explicitSideBilateralTooltip(
                   papers,
-                  hitId,
-                  panel,
                   HAND_HIT_LABELS[hitId] ?? hitId,
+                  "hand",
+                  hitId,
+                  panel.side,
+                  (p) => paperMatchesHandFineSelection(p, hitId),
                   e.clientX,
                   e.clientY,
                 ),

@@ -17,7 +17,7 @@ import { BodyMapAreaViewLoadingScope } from "../shared/BodyMapAreaViewLoadingSco
 import { BodyMapHoverTooltip } from "../shared/BodyMapHoverTooltip";
 import type { BodyMapTooltipState } from "../shared/BodyMapHoverTooltip";
 import {
-  armBilateralTooltip,
+  explicitSideBilateralTooltip,
   simpleBodyMapTooltip,
 } from "@/lib/research/bodyMapBilateralTooltips";
 import { MAX_HEATMAP_DOTS_PER_REGION } from "../bodyMapSampleDots";
@@ -35,6 +35,7 @@ import { BODY_MAP_DETAIL_SELECTION_MODE } from "@/lib/research/bodyMapDetailSele
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   ARM_DETAIL_HIT_IDS,
+  paperMatchesArmFineSelection,
   paperMatchesArmFineSelectionForSideDots,
   paperMatchesArmFineSelectionForSideAreaView,
   type ArmDetailSide,
@@ -413,11 +414,13 @@ export function ArmBodyMapDetail({ variant, papers }: ArmBodyMapDetailProps) {
                   e.clientX,
                   e.clientY,
                 )
-              : armBilateralTooltip(
+              : explicitSideBilateralTooltip(
                   papers,
+                  ARM_HIT_LABELS[hitId] ?? hitId,
+                  "arm",
                   hitId,
                   panelSide,
-                  ARM_HIT_LABELS[hitId] ?? hitId,
+                  (p) => paperMatchesArmFineSelection(p, hitId),
                   e.clientX,
                   e.clientY,
                 ),

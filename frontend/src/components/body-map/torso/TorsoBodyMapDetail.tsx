@@ -31,8 +31,8 @@ import {
 } from "@/lib/research/bodyMapDetailSelectionMode";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
+  explicitSideBilateralTooltip,
   simpleBodyMapTooltip,
-  torsoShoulderBilateralTooltip,
 } from "@/lib/research/bodyMapBilateralTooltips";
 import {
   paperMatchesTorsoFineSelection,
@@ -296,9 +296,13 @@ export function TorsoBodyMapDetail({
         setHoveredHitId(hitId);
         if (hitId === "left-shoulder" || hitId === "right-shoulder") {
           setTooltip(
-            torsoShoulderBilateralTooltip(
+            explicitSideBilateralTooltip(
               papers,
+              "shoulder",
+              "torso",
+              "shoulder",
               hitId.startsWith("left") ? "left" : "right",
+              (p) => paperMatchesTorsoFineSelection(p, "shoulder"),
               e.clientX,
               e.clientY,
             ),

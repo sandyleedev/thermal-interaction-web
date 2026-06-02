@@ -8,17 +8,18 @@ import {
 } from "@/lib/research/bodyMapSiteSide";
 import {
   countPapersWithBodySubregion,
-  paperMatchesArmFineSelection,
-  paperMatchesFootFineSelection,
-  paperMatchesHandFineSelection,
   paperMatchesLegFineSelection,
-  paperMatchesTorsoFineSelection,
-  type ArmDetailSide,
-  type FootDetailSide,
-  type HandDetailPanel,
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
 
+type BilateralTooltipParent =
+  | "arm"
+  | "hand"
+  | "foot"
+  | "leg"
+  | "torso";
+
+/** Count papers that match a predicate. */
 function countMatching(
   papers: readonly ResearchPaper[],
   pred: (paper: ResearchPaper) => boolean,
@@ -30,6 +31,7 @@ function countMatching(
   return n;
 }
 
+/** Create a tooltip state from hover lines and position. */
 function tooltipAt(
   lines: BodyMapHoverTooltipLine[],
   x: number,
@@ -38,11 +40,12 @@ function tooltipAt(
   return { lines, x, y };
 }
 
+/** Build hover lines for a bilateral hit (total count + side count). */
 function bilateralLines(
   totalLabel: string,
   papers: readonly ResearchPaper[],
   totalMatch: (paper: ResearchPaper) => boolean,
-  parent: "arm" | "hand" | "foot" | "leg" | "head" | "torso",
+  parent: BilateralTooltipParent | "head",
   subregion: string,
   side: "left" | "right" | null,
 ): BodyMapHoverTooltipLine[] {
@@ -60,70 +63,23 @@ function bilateralLines(
   );
 }
 
-export function armBilateralTooltip(
+/**
+ * Tooltip for a bilateral detail hit: total papers matching `paperMatches`, plus
+ * count with an explicit left/right on `subregion`.
+ */
+export function explicitSideBilateralTooltip(
   papers: readonly ResearchPaper[],
-  hitId: string,
-  panelSide: ArmDetailSide,
   displayLabel: string,
+  parent: BilateralTooltipParent,
+  subregion: string,
+  side: "left" | "right",
+  paperMatches: (paper: ResearchPaper) => boolean,
   x: number,
   y: number,
 ): BodyMapTooltipState {
   const label = displayLabel.toLowerCase();
   return tooltipAt(
-    bilateralLines(
-      label,
-      papers,
-      (p) => paperMatchesArmFineSelection(p, hitId),
-      "arm",
-      hitId,
-      panelSide,
-    ),
-    x,
-    y,
-  );
-}
-
-export function handBilateralTooltip(
-  papers: readonly ResearchPaper[],
-  hitId: string,
-  panel: HandDetailPanel,
-  displayLabel: string,
-  x: number,
-  y: number,
-): BodyMapTooltipState {
-  const label = displayLabel.toLowerCase();
-  return tooltipAt(
-    bilateralLines(
-      label,
-      papers,
-      (p) => paperMatchesHandFineSelection(p, hitId),
-      "hand",
-      hitId,
-      panel.side,
-    ),
-    x,
-    y,
-  );
-}
-
-export function footBilateralTooltip(
-  papers: readonly ResearchPaper[],
-  hitId: string,
-  panelSide: FootDetailSide,
-  displayLabel: string,
-  x: number,
-  y: number,
-): BodyMapTooltipState {
-  const label = displayLabel.toLowerCase();
-  return tooltipAt(
-    bilateralLines(
-      label,
-      papers,
-      (p) => paperMatchesFootFineSelection(p, hitId),
-      "foot",
-      hitId,
-      panelSide,
-    ),
+    bilateralLines(label, papers, paperMatches, parent, subregion, side),
     x,
     y,
   );
@@ -167,15 +123,13 @@ export function legBilateralTooltip(
 ): BodyMapTooltipState | null {
   const meta = LEG_HIT_META[hitId];
   if (!meta) return null;
-  return tooltipAt(
-    bilateralLines(
-      meta.label,
-      papers,
-      (p) => paperMatchesLegFineSelection(p, meta.totalHit),
-      "leg",
-      meta.subregion,
-      meta.side,
-    ),
+  return explicitSideBilateralTooltip(
+    papers,
+    meta.label,
+    "leg",
+    meta.subregion,
+    meta.side,
+    (p) => paperMatchesLegFineSelection(p, meta.totalHit),
     x,
     y,
   );
@@ -233,26 +187,6 @@ export function headBilateralTooltip(
       meta.side,
       meta.label,
       sideCount,
-    ),
-    x,
-    y,
-  );
-}
-
-export function torsoShoulderBilateralTooltip(
-  papers: readonly ResearchPaper[],
-  side: "left" | "right",
-  x: number,
-  y: number,
-): BodyMapTooltipState {
-  return tooltipAt(
-    bilateralLines(
-      "shoulder",
-      papers,
-      (p) => paperMatchesTorsoFineSelection(p, "shoulder"),
-      "torso",
-      "shoulder",
-      side,
     ),
     x,
     y,
