@@ -12,11 +12,11 @@ import {
   type HeadShapeSampleOptions,
   type HeadShapeSpec,
   sampleDotsInHeadShape,
-} from "../head/headDetailSampleDots";
+} from "@/components/body-map/head/headDetailSampleDots";
 import {
   maxHitTargetCount,
   resolveAreaDensitySampleCount,
-} from "../bodyMapSampleDots";
+} from "@/components/body-map/bodyMapSampleDots";
 
 /** Small pad so the general-ring stroke is not clipped at the SVG bottom edge. */
 export const LEG_DETAIL_VIEWBOX_STROKE_PAD = 20;

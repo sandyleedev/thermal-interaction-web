@@ -1,4 +1,4 @@
-import { BODY_MAP_VIEW, getBodyMapOutlinePathD } from "./bodyMapOutlinePath";
+import { BODY_MAP_VIEW, getBodyMapOutlinePathD } from "@/components/body-map/bodyMapOutlinePath";
 import {
   bodyMapPlacementRegionsForDetail,
   bodyMapRegionForPlacement,
@@ -7,7 +7,7 @@ import {
   type ResearchPaper,
 } from "@/lib/research/researchPapers";
 import type { BodyMapRegion } from "@/lib/research/bodyMapRegions";
-import { dotCohortPlanForResolvedSite } from "./bodyMapDotCohorts";
+import { dotCohortPlanForResolvedSite } from "@/components/body-map/bodyMapDotCohorts";
 import {
   distributedSideForSite,
   normalizeBodySiteSide,

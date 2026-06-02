@@ -1,20 +1,20 @@
 import { useMemo, type PointerEvent, type SVGProps } from "react";
 import { geoPath } from "d3";
 import type { ContourMultiPolygon } from "d3-contour";
-import type { ArmShapeSpec } from "./armDetailSampleDots";
-import type { BodyMapVariant } from "../bodyMapVariant";
-import { countToPerceptualNormalized } from "../bodyMapVisualization";
+import type { ArmShapeSpec } from "@/components/body-map/arm/armDetailSampleDots";
+import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
+import { countToPerceptualNormalized } from "@/components/body-map/bodyMapVisualization";
 import {
   detailAreaContourOpacity,
   detailAreaPinkForCount,
-} from "../shared/bodyMapHeatmapColors";
-import { BodyMapAreaViewFilterDefs } from "../shared/BodyMapAreaViewFilterDefs";
-import { useBodyMapAreaViewLoadingReporter } from "../shared/BodyMapAreaViewLoadingScope";
-import { useDeferredAreaViewResult } from "../shared/useDeferredAreaViewResult";
+} from "@/components/body-map/shared/bodyMapHeatmapColors";
+import { BodyMapAreaViewFilterDefs } from "@/components/body-map/shared/BodyMapAreaViewFilterDefs";
+import { useBodyMapAreaViewLoadingReporter } from "@/components/body-map/shared/BodyMapAreaViewLoadingScope";
+import { useDeferredAreaViewResult } from "@/components/body-map/shared/useDeferredAreaViewResult";
 import {
   buildDetailAreaDensityContoursByHit,
   maxContourValueFromLayers,
-} from "../full-body/bodyMapAreaContours";
+} from "@/components/body-map/full-body/bodyMapAreaContours";
 
 type ShapeLayer =
   | { kind: "path"; d: string; transform?: string; layerKey: string }

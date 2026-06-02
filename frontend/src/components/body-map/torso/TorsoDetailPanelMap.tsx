@@ -4,20 +4,20 @@ import type { ContourMultiPolygon } from "d3-contour";
 import {
   TORSO_DETAIL_VIEWBOX,
   type TorsoShapeSpec,
-} from "./torsoDetailSampleDots";
-import type { BodyMapVariant } from "../bodyMapVariant";
-import { countToPerceptualNormalized } from "../bodyMapVisualization";
+} from "@/components/body-map/torso/torsoDetailSampleDots";
+import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
+import { countToPerceptualNormalized } from "@/components/body-map/bodyMapVisualization";
 import {
   detailAreaContourOpacity,
   detailAreaPinkForCount,
-} from "../shared/bodyMapHeatmapColors";
-import { BodyMapAreaViewFilterDefs } from "../shared/BodyMapAreaViewFilterDefs";
-import { useBodyMapAreaViewLoadingReporter } from "../shared/BodyMapAreaViewLoadingScope";
-import { useDeferredAreaViewResult } from "../shared/useDeferredAreaViewResult";
+} from "@/components/body-map/shared/bodyMapHeatmapColors";
+import { BodyMapAreaViewFilterDefs } from "@/components/body-map/shared/BodyMapAreaViewFilterDefs";
+import { useBodyMapAreaViewLoadingReporter } from "@/components/body-map/shared/BodyMapAreaViewLoadingScope";
+import { useDeferredAreaViewResult } from "@/components/body-map/shared/useDeferredAreaViewResult";
 import {
   buildDetailAreaDensityContoursByHit,
   maxContourValueFromLayers,
-} from "../full-body/bodyMapAreaContours";
+} from "@/components/body-map/full-body/bodyMapAreaContours";
 
 type TorsoPathLayer = { d: string; transform?: string; layerKey: string };
 

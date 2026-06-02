@@ -7,24 +7,24 @@ import {
   type PointerEvent,
 } from "react";
 import type { ContourMultiPolygon } from "d3-contour";
-import { BODY_MAP_VIEW, getBodyMapOutlinePathD } from "../bodyMapOutlinePath";
+import { BODY_MAP_VIEW, getBodyMapOutlinePathD } from "@/components/body-map/bodyMapOutlinePath";
 import {
   getBodySilhouetteAsset,
   hitSubpathsForBodyPart,
   loadBodySilhouetteAsset,
-} from "../bodyMapSilhouetteAsset";
-import type { BodyMapVariant } from "../bodyMapVariant";
+} from "@/components/body-map/bodyMapSilhouetteAsset";
+import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
 import {
   heatmapContrastT,
   interpolatePinkDensityTone,
-} from "../shared/bodyMapHeatmapColors";
-import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
-import { BodyMapAreaViewLoadingOverlay } from "../shared/BodyMapAreaViewLoadingOverlay";
-import { useDeferredAreaViewResult } from "../shared/useDeferredAreaViewResult";
+} from "@/components/body-map/shared/bodyMapHeatmapColors";
+import { BodyMapHeatmapLegend } from "@/components/body-map/shared/BodyMapHeatmapLegend";
+import { BodyMapAreaViewLoadingOverlay } from "@/components/body-map/shared/BodyMapAreaViewLoadingOverlay";
+import { useDeferredAreaViewResult } from "@/components/body-map/shared/useDeferredAreaViewResult";
 import {
   BodyMapHoverTooltip,
   type BodyMapTooltipState,
-} from "../shared/BodyMapHoverTooltip";
+} from "@/components/body-map/shared/BodyMapHoverTooltip";
 import {
   isL1BilateralPartWithoutDetail,
   l1BilateralPartTooltip,
@@ -34,11 +34,11 @@ import {
   buildBodyMapAreaDensityContoursByPart,
   createBodyMapAreaContourGeoPath,
   maxContourValueFromLayers,
-} from "./bodyMapAreaContours";
+} from "@/components/body-map/full-body/bodyMapAreaContours";
 import {
   countToPerceptualNormalized,
   getRegionCountForBodyMapPart,
-} from "../bodyMapVisualization";
+} from "@/components/body-map/bodyMapVisualization";
 import {
   bodyMapParentHasChipSelection,
   type BodyMapChipSelection,
@@ -52,8 +52,8 @@ import {
 import {
   REQUIRE_DOTS_INSIDE_BODY_OUTLINE,
   resolveBilateralSubpathSide,
-} from "../bodyMapSampleDots";
-import { type FullBodyMapPart, useBodyMapPartDots } from "./useBodyMapPartDots";
+} from "@/components/body-map/bodyMapSampleDots";
+import { type FullBodyMapPart, useBodyMapPartDots } from "@/components/body-map/full-body/useBodyMapPartDots";
 
 /**
  * Full-body map (Level 1 only in this file).

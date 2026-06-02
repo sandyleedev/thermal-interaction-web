@@ -13,28 +13,28 @@ import type { ContourMultiPolygon } from "d3-contour";
 import {
   areaDotsLruPut,
   areaDotsLruTouch,
-} from "../shared/bodyMapAreaDotsCache";
-import { MAX_HEATMAP_DOTS_PER_REGION } from "../bodyMapSampleDots";
+} from "@/components/body-map/shared/bodyMapAreaDotsCache";
+import { MAX_HEATMAP_DOTS_PER_REGION } from "@/components/body-map/bodyMapSampleDots";
 import {
   buildNeckAreaDensityDotsByHitId,
   buildNeckDotsByHitId,
   NECK_DETAIL_VIEWBOX,
   type NeckShapeSpec,
-} from "./neckDetailSampleDots";
-import type { BodyMapVariant } from "../bodyMapVariant";
-import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
-import { countToPerceptualNormalized } from "../bodyMapVisualization";
+} from "@/components/body-map/neck/neckDetailSampleDots";
+import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
+import { BodyMapHeatmapLegend } from "@/components/body-map/shared/BodyMapHeatmapLegend";
+import { countToPerceptualNormalized } from "@/components/body-map/bodyMapVisualization";
 import {
   detailAreaContourOpacity,
   detailAreaPinkForCount,
-} from "../shared/bodyMapHeatmapColors";
-import { BodyMapAreaViewFilterDefs } from "../shared/BodyMapAreaViewFilterDefs";
-import { BodyMapAreaViewLoadingOverlay } from "../shared/BodyMapAreaViewLoadingOverlay";
-import { useDeferredAreaViewResult } from "../shared/useDeferredAreaViewResult";
+} from "@/components/body-map/shared/bodyMapHeatmapColors";
+import { BodyMapAreaViewFilterDefs } from "@/components/body-map/shared/BodyMapAreaViewFilterDefs";
+import { BodyMapAreaViewLoadingOverlay } from "@/components/body-map/shared/BodyMapAreaViewLoadingOverlay";
+import { useDeferredAreaViewResult } from "@/components/body-map/shared/useDeferredAreaViewResult";
 import {
   buildDetailAreaDensityContoursByHit,
   maxContourValueFromLayers,
-} from "../full-body/bodyMapAreaContours";
+} from "@/components/body-map/full-body/bodyMapAreaContours";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {

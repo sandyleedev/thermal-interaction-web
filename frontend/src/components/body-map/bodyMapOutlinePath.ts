@@ -2,7 +2,7 @@
  * User-space viewBox + outer silhouette `d` for the body map and for temp SVG in `bodyMapSampleDots`.
  * Outline `d` comes from {@link getBodySilhouetteAsset} after {@link loadBodySilhouetteAsset}.
  */
-import { getBodySilhouetteAsset } from "./bodyMapSilhouetteAsset";
+import { getBodySilhouetteAsset } from "@/components/body-map/bodyMapSilhouetteAsset";
 
 /**
  * Cropped viewport (legacy framing): trims ~70px at the top of the raw SVG viewBox so the

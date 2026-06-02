@@ -7,8 +7,8 @@ import {
 import {
   maxHitTargetCount,
   resolveAreaDensitySampleCount,
-} from "../bodyMapSampleDots";
-import type { HeadShapeSpec } from "../head/headDetailSampleDots";
+} from "@/components/body-map/bodyMapSampleDots";
+import type { HeadShapeSpec } from "@/components/body-map/head/headDetailSampleDots";
 
 export const TORSO_DETAIL_VIEWBOX = "0 0 438.83116 564";
 

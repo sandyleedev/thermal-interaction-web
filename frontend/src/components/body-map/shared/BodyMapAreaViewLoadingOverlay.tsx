@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import {
   BodyMapAreaViewLoadingScope,
   useBodyMapAreaViewLoadingReporter,
-} from "./BodyMapAreaViewLoadingScope";
+} from "@/components/body-map/shared/BodyMapAreaViewLoadingScope";
 
 type BodyMapAreaViewLoadingOverlayProps = {
   visible: boolean;

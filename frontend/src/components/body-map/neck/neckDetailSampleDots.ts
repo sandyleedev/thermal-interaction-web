@@ -4,11 +4,11 @@ import { normalizeBodySites, type ResearchPaper } from "@/lib/research/researchP
 import {
   type HeadShapeSpec,
   sampleDotsInHeadShape,
-} from "../head/headDetailSampleDots";
+} from "@/components/body-map/head/headDetailSampleDots";
 import {
   maxHitTargetCount,
   resolveAreaDensitySampleCount,
-} from "../bodyMapSampleDots";
+} from "@/components/body-map/bodyMapSampleDots";
 
 export const NECK_DETAIL_VIEWBOX = "0 0 210 297";
 

@@ -1,16 +1,16 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import type { BodyMapVariant } from "../bodyMapVariant";
+import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
 import {
   collectHeatmapDotPlacementTargetsForCoarsePart,
   MAX_HEATMAP_DOTS_PER_REGION,
   sampleHeatmapAreaDensityDots,
   sampleHeatmapDotPlacements,
   type BodySubpath,
-} from "../bodyMapSampleDots";
+} from "@/components/body-map/bodyMapSampleDots";
 import {
   areaDotsLruPut,
   areaDotsLruTouch,
-} from "../shared/bodyMapAreaDotsCache";
+} from "@/components/body-map/shared/bodyMapAreaDotsCache";
 import type { BodyMapRegion, ResearchPaper } from "@/lib/research/researchPapers";
 
 export type FullBodyMapPart = {

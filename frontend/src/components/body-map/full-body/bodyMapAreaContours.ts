@@ -1,8 +1,8 @@
 import { contourDensity, geoPath } from "d3";
 import type { ContourMultiPolygon } from "d3-contour";
-import { BODY_MAP_VIEW } from "../bodyMapOutlinePath";
+import { BODY_MAP_VIEW } from "@/components/body-map/bodyMapOutlinePath";
 import type { BodyMapRegion } from "@/lib/research/researchPapers";
-import type { BodySubpath } from "../bodyMapSampleDots";
+import type { BodySubpath } from "@/components/body-map/bodyMapSampleDots";
 
 export type BodyMapAreaContourPart = {
   id: BodyMapRegion;

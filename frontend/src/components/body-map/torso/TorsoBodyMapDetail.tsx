@@ -11,19 +11,19 @@ import {
 import {
   areaDotsLruPut,
   areaDotsLruTouch,
-} from "../shared/bodyMapAreaDotsCache";
-import { TorsoDetailPanelMap } from "./TorsoDetailPanelMap";
-import { BodyMapAreaViewLoadingScope } from "../shared/BodyMapAreaViewLoadingScope";
-import { BodyMapHoverTooltip } from "../shared/BodyMapHoverTooltip";
-import type { BodyMapTooltipState } from "../shared/BodyMapHoverTooltip";
-import { MAX_HEATMAP_DOTS_PER_REGION } from "../bodyMapSampleDots";
+} from "@/components/body-map/shared/bodyMapAreaDotsCache";
+import { TorsoDetailPanelMap } from "@/components/body-map/torso/TorsoDetailPanelMap";
+import { BodyMapAreaViewLoadingScope } from "@/components/body-map/shared/BodyMapAreaViewLoadingScope";
+import { BodyMapHoverTooltip } from "@/components/body-map/shared/BodyMapHoverTooltip";
+import type { BodyMapTooltipState } from "@/components/body-map/shared/BodyMapHoverTooltip";
+import { MAX_HEATMAP_DOTS_PER_REGION } from "@/components/body-map/bodyMapSampleDots";
 import {
   buildTorsoAreaDensityDotsByHitId,
   buildTorsoDotsByHitId,
   type TorsoShapeSpec,
-} from "./torsoDetailSampleDots";
-import type { BodyMapVariant } from "../bodyMapVariant";
-import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
+} from "@/components/body-map/torso/torsoDetailSampleDots";
+import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
+import { BodyMapHeatmapLegend } from "@/components/body-map/shared/BodyMapHeatmapLegend";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import {
   BODY_MAP_DETAIL_SELECTION_MODE,

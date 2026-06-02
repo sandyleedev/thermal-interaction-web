@@ -12,11 +12,11 @@ import {
   type HeadShapeSampleOptions,
   type HeadShapeSpec,
   sampleDotsInHeadShape,
-} from "../head/headDetailSampleDots";
+} from "@/components/body-map/head/headDetailSampleDots";
 import {
   maxHitTargetCount,
   resolveAreaDensitySampleCount,
-} from "../bodyMapSampleDots";
+} from "@/components/body-map/bodyMapSampleDots";
 
 export const ARM_LEFT_DETAIL_VIEWBOX = "0 0 281.3336 750.20129";
 export const ARM_RIGHT_DETAIL_VIEWBOX = "0 0 282.18663 750.20129";

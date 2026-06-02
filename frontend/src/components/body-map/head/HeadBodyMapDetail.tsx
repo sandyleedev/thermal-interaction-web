@@ -13,34 +13,34 @@ import type { ContourMultiPolygon } from "d3-contour";
 import {
   areaDotsLruPut,
   areaDotsLruTouch,
-} from "../shared/bodyMapAreaDotsCache";
-import { MAX_HEATMAP_DOTS_PER_REGION } from "../bodyMapSampleDots";
+} from "@/components/body-map/shared/bodyMapAreaDotsCache";
+import { MAX_HEATMAP_DOTS_PER_REGION } from "@/components/body-map/bodyMapSampleDots";
 import {
   buildHeadAreaDensityDotsByHitId,
   buildHeadDotsByHitId,
   HEAD_DETAIL_VIEWBOX,
   type HeadShapeSpec,
-} from "./headDetailSampleDots";
-import type { BodyMapVariant } from "../bodyMapVariant";
-import { BodyMapHoverTooltip } from "../shared/BodyMapHoverTooltip";
-import type { BodyMapTooltipState } from "../shared/BodyMapHoverTooltip";
+} from "@/components/body-map/head/headDetailSampleDots";
+import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
+import { BodyMapHoverTooltip } from "@/components/body-map/shared/BodyMapHoverTooltip";
+import type { BodyMapTooltipState } from "@/components/body-map/shared/BodyMapHoverTooltip";
 import {
   headBilateralTooltip,
   simpleBodyMapTooltip,
 } from "@/lib/research/bodyMapBilateralTooltips";
-import { BodyMapHeatmapLegend } from "../shared/BodyMapHeatmapLegend";
-import { countToPerceptualNormalized } from "../bodyMapVisualization";
+import { BodyMapHeatmapLegend } from "@/components/body-map/shared/BodyMapHeatmapLegend";
+import { countToPerceptualNormalized } from "@/components/body-map/bodyMapVisualization";
 import {
   detailAreaContourOpacity,
   detailAreaPinkForCount,
-} from "../shared/bodyMapHeatmapColors";
-import { BodyMapAreaViewFilterDefs } from "../shared/BodyMapAreaViewFilterDefs";
-import { BodyMapAreaViewLoadingOverlay } from "../shared/BodyMapAreaViewLoadingOverlay";
-import { useDeferredAreaViewResult } from "../shared/useDeferredAreaViewResult";
+} from "@/components/body-map/shared/bodyMapHeatmapColors";
+import { BodyMapAreaViewFilterDefs } from "@/components/body-map/shared/BodyMapAreaViewFilterDefs";
+import { BodyMapAreaViewLoadingOverlay } from "@/components/body-map/shared/BodyMapAreaViewLoadingOverlay";
+import { useDeferredAreaViewResult } from "@/components/body-map/shared/useDeferredAreaViewResult";
 import {
   buildDetailAreaDensityContoursByHit,
   maxContourValueFromLayers,
-} from "../full-body/bodyMapAreaContours";
+} from "@/components/body-map/full-body/bodyMapAreaContours";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import {
   BODY_MAP_DETAIL_SELECTION_MODE,

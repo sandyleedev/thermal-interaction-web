@@ -8,7 +8,7 @@ import { normalizeBodySites, type ResearchPaper } from "@/lib/research/researchP
 import {
   maxHitTargetCount,
   resolveAreaDensitySampleCount,
-} from "../bodyMapSampleDots";
+} from "@/components/body-map/bodyMapSampleDots";
 
 export const HEAD_DETAIL_VIEWBOX = "0 0 210 297";
 
