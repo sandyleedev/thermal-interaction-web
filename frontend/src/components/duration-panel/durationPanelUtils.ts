@@ -29,6 +29,7 @@ export const DURATION_MAJOR_TICKS = [
   { s: DURATION_WEEK_S, label: "1week" },
 ] as const;
 
+/** Convert duration seconds to normalized position (0..1) on the piecewise log axis. */
 function durationToVisualNorm(seconds: number, logLongSpan: number): number {
   const s = clampDurationS(seconds);
   if (s <= DURATION_SHORT_BREAK_S) {
@@ -42,7 +43,11 @@ function durationToVisualNorm(seconds: number, logLongSpan: number): number {
   );
 }
 
-function visualNormToDurationSeconds(norm: number, logLongSpan: number): number {
+/** Convert normalized position (0..1) back to duration seconds on the piecewise log axis. */
+function visualNormToDurationSeconds(
+  norm: number,
+  logLongSpan: number,
+): number {
   const t = Math.min(1, Math.max(0, norm));
   if (t <= DURATION_SHORT_VISUAL_FRACTION) {
     const u = t / DURATION_SHORT_VISUAL_FRACTION;
@@ -50,15 +55,18 @@ function visualNormToDurationSeconds(norm: number, logLongSpan: number): number 
       DURATION_MIN_S + u * (DURATION_SHORT_BREAK_S - DURATION_MIN_S),
     );
   }
-  const logNorm = (t - DURATION_SHORT_VISUAL_FRACTION) / (1 - DURATION_SHORT_VISUAL_FRACTION);
+  const logNorm =
+    (t - DURATION_SHORT_VISUAL_FRACTION) / (1 - DURATION_SHORT_VISUAL_FRACTION);
   const logS = LOG_BREAK + logNorm * logLongSpan;
   return clampDurationS(Math.pow(10, logS));
 }
 
+/** Clamp duration seconds to the global domain. */
 export function clampDurationS(seconds: number): number {
   return Math.min(DURATION_MAX_S, Math.max(DURATION_MIN_S, seconds));
 }
 
+/** Convert duration seconds to normalized position (0..1) on the piecewise log axis. */
 export function durationToNorm(seconds: number): number {
   return durationToVisualNorm(seconds, LOG_LONG_SPAN);
 }
@@ -68,16 +76,19 @@ export function durationToLabelNorm(seconds: number): number {
   return durationToVisualNorm(seconds, LOG_LABEL_LONG_SPAN);
 }
 
+/** Convert duration seconds to normalized position (0..1) on the piecewise log axis. */
 export function durationTickNorm(seconds: number): number {
   return seconds === DURATION_WEEK_S
     ? durationToLabelNorm(seconds)
     : durationToNorm(seconds);
 }
 
+/** Convert normalized position (0..1) back to duration seconds on the piecewise log axis. */
 export function normToDuration(norm: number): number {
   return visualNormToDurationSeconds(norm, LOG_LONG_SPAN);
 }
 
+/** Convert client X to duration seconds (after padding). */
 export function clientXToDuration(clientX: number, rect: DOMRect): number {
   return normToDuration(clientXToInsetNorm(clientX, rect));
 }

@@ -2,6 +2,7 @@
 export const TEMP_AXIS_MIN = -10;
 export const TEMP_AXIS_MAX = 100;
 
+/** Clamp temperature to the global domain. */
 export function clampTemp(c: number): number {
   return Math.min(TEMP_AXIS_MAX, Math.max(TEMP_AXIS_MIN, c));
 }
