@@ -40,6 +40,7 @@ export function bodyMapChipKey(selection: BodyMapChipSelection): string {
   const sub = normalizeBodyMapSubpart(selection.subpart);
   const side = selection.side?.trim().toLowerCase();
   if (sub && side) return `${selection.parent}:${sub}:${side}`;
+  if (side) return `${selection.parent}::${side}`;
   if (sub) return `${selection.parent}:${sub}`;
   return selection.parent;
 }

@@ -15,6 +15,7 @@ import { FootBodyMapDetail } from "./foot/FootBodyMapDetail";
 import { LegBodyMapDetail } from "./leg/LegBodyMapDetail";
 import { TorsoBodyMapDetail } from "./torso/TorsoBodyMapDetail";
 import { paperTouchesBodyMapParent } from "@/lib/research/researchPapers";
+import { isL1BilateralPartWithoutDetail } from "@/lib/research/bodyMapBilateralTooltips";
 
 export function BodyMapPanel() {
   const [variant, setVariant] = useState<BodyMapVariant>("countHeatmap");
@@ -82,13 +83,17 @@ export function BodyMapPanel() {
   const showLegDetail = activeDetailRegion === "leg";
 
   const handleFullBodyPartClick = useCallback(
-    (region: BodyMapParentRegion) => {
+    (region: BodyMapParentRegion, side?: "left" | "right") => {
       if (BODY_MAP_DETAIL_REGIONS.has(region)) {
         navigateToBodyMapDetail(region);
         return;
       }
       if (region === "wholeBody") {
         toggleBodyMapChip("wholeBody", "general");
+        return;
+      }
+      if (side && isL1BilateralPartWithoutDetail(region)) {
+        toggleBodyMapChip(region, null, side);
         return;
       }
       toggleBodyMapChip(region);

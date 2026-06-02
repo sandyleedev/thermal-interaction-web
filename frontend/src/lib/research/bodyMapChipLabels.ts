@@ -98,7 +98,12 @@ function formatSubpartSlug(slug: string): string {
 export function bodyMapChipLabel(selection: BodyMapChipSelection): string {
   const sub = selection.subpart?.trim().toLowerCase() ?? "";
   const side = selection.side;
-  if (!sub) return PARENT_CHIP_LABEL[selection.parent] ?? selection.parent;
+  if (!sub) {
+    const base = PARENT_CHIP_LABEL[selection.parent] ?? selection.parent;
+    if (side === "left") return `${base} (left)`;
+    if (side === "right") return `${base} (right)`;
+    return base;
+  }
   /** Detail-map “general” ring = whole L1 region; show Head / Torso, not “General”. */
   if (sub === "general") {
     const base = PARENT_CHIP_LABEL[selection.parent] ?? selection.parent;

@@ -126,7 +126,10 @@ type BodyMapProps = {
   variant?: BodyMapVariant;
   /** Chip selections — L1 parents highlighted when any chip targets that parent. */
   selectedBodyMapChips?: readonly BodyMapChipSelection[];
-  onPartClick?: (region: BodyMapParentRegion) => void;
+  onPartClick?: (
+    region: BodyMapParentRegion,
+    side?: "left" | "right",
+  ) => void;
 };
 
 export function BodyMap({
@@ -376,8 +379,13 @@ export function BodyMap({
   const handlePartLeave = clearPointerHover;
 
   const handlePartClick = useCallback(
-    (part: BodyPart) => {
+    (part: BodyPart, subpathIndex: number) => {
       return () => {
+        if (isL1BilateralPartWithoutDetail(part.id)) {
+          const side = resolveBilateralSubpathSide(part.subpaths, subpathIndex);
+          onPartClick?.(part.id, side ?? undefined);
+          return;
+        }
         onPartClick?.(part.id);
       };
     },
@@ -395,7 +403,20 @@ export function BodyMap({
             partHovered &&
             (!isL1BilateralPartWithoutDetail(part.id) ||
               hoveredSubpathIndex === subpathIndex);
-          const chipHighlighted = isRegionChipSelected(part.id);
+          const chipHighlighted = isL1BilateralPartWithoutDetail(part.id)
+            ? (() => {
+                const subpathSide = resolveBilateralSubpathSide(
+                  part.subpaths,
+                  subpathIndex,
+                );
+                if (!subpathSide) return isRegionChipSelected(part.id);
+                return selectedBodyMapChips.some(
+                  (chip) =>
+                    chip.parent === part.id &&
+                    (chip.side == null || chip.side === subpathSide),
+                );
+              })()
+            : isRegionChipSelected(part.id);
           const showHoverFill = subpathHovered || chipHighlighted;
           return (
             <path
@@ -418,7 +439,7 @@ export function BodyMap({
               onPointerEnter={handlePartEnter(part, subpathIndex)}
               onPointerMove={handlePartMove}
               onPointerLeave={handlePartLeave}
-              onClick={handlePartClick(part)}
+              onClick={handlePartClick(part, subpathIndex)}
             />
           );
         }),
@@ -432,6 +453,7 @@ export function BodyMap({
       hoveredPartId,
       hoveredSubpathIndex,
       isRegionChipSelected,
+      selectedBodyMapChips,
       softFillFilterId,
     ],
   );
