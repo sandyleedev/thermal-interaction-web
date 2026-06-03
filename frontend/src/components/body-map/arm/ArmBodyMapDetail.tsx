@@ -31,6 +31,7 @@ import {
 import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
 import { BodyMapHeatmapLegend } from "@/components/body-map/shared/BodyMapHeatmapLegend";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
+import { publicAssetUrl } from "@/lib/publicAssetUrl";
 import { BODY_MAP_DETAIL_SELECTION_MODE } from "@/lib/research/bodyMapDetailSelectionMode";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
@@ -216,7 +217,7 @@ export function ArmBodyMapDetail({ variant, papers }: ArmBodyMapDetailProps) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/body-map/arm-left.svg")
+    fetch(publicAssetUrl("body-map/arm-left.svg"))
       .then((r) => {
         if (!r.ok) throw new Error(`left arm map HTTP ${r.status}`);
         return r.text();
@@ -234,7 +235,7 @@ export function ArmBodyMapDetail({ variant, papers }: ArmBodyMapDetailProps) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/body-map/arm-right.svg")
+    fetch(publicAssetUrl("body-map/arm-right.svg"))
       .then((r) => {
         if (!r.ok) throw new Error(`right arm map HTTP ${r.status}`);
         return r.text();

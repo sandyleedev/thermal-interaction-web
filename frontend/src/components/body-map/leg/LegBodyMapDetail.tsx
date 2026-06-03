@@ -29,6 +29,7 @@ import {
 import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
 import { BodyMapHeatmapLegend } from "@/components/body-map/shared/BodyMapHeatmapLegend";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
+import { publicAssetUrl } from "@/lib/publicAssetUrl";
 import {
   BODY_MAP_DETAIL_SELECTION_MODE,
   mergedHoverPairHitIds,
@@ -173,7 +174,7 @@ export function LegBodyMapDetail({ variant, papers }: LegBodyMapDetailProps) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/body-map/leg.svg")
+    fetch(publicAssetUrl("body-map/leg.svg"))
       .then((r) => {
         if (!r.ok) throw new Error(`leg map HTTP ${r.status}`);
         return r.text();

@@ -4,9 +4,16 @@ import { LandingPage } from "@/pages/LandingPage";
 import { InfoPage } from "@/pages/InfoPage";
 import { PaperDetailPage } from "@/pages/PaperDetailPage";
 
+/** Strip trailing slash; omit basename when serving from domain root. */
+function routerBasename(): string | undefined {
+  const base = import.meta.env.BASE_URL;
+  if (base === "/") return undefined;
+  return base.replace(/\/$/, "");
+}
+
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={routerBasename()}>
       <ResearchFilterProvider>
         <Routes>
           <Route path="/" element={<LandingPage />} />

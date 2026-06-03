@@ -29,6 +29,7 @@ import {
 import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
 import { BodyMapHeatmapLegend } from "@/components/body-map/shared/BodyMapHeatmapLegend";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
+import { publicAssetUrl } from "@/lib/publicAssetUrl";
 import { BODY_MAP_DETAIL_SELECTION_MODE } from "@/lib/research/bodyMapDetailSelectionMode";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
@@ -207,7 +208,7 @@ export function FootBodyMapDetail({ variant, papers }: FootBodyMapDetailProps) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/body-map/foot.svg")
+    fetch(publicAssetUrl("body-map/foot.svg"))
       .then((r) => {
         if (!r.ok) throw new Error(`foot map HTTP ${r.status}`);
         return r.text();

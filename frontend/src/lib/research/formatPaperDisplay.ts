@@ -3,6 +3,7 @@
  */
 
 import { paperHasReportedDurationRange } from "@/lib/research/filterResearchPapers";
+import { publicAssetUrl } from "@/lib/publicAssetUrl";
 import {
   ALL_RESEARCH_PAPERS,
   normalizeBodySites,
@@ -35,7 +36,7 @@ export type PaperDisplay = {
 function thumbnailUrlsForDoi(doi?: string): string[] {
   if (!doi) return [];
   const key = doi.replace(/\//g, "_");
-  const base = `/paper-thumbnails/${key}`;
+  const base = publicAssetUrl(`paper-thumbnails/${key}`);
   return [`${base}.jpg`, `${base}.jpeg`, `${base}.png`, `${base}.webp`];
 }
 

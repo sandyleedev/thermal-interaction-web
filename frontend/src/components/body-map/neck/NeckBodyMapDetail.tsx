@@ -36,6 +36,7 @@ import {
   maxContourValueFromLayers,
 } from "@/components/body-map/full-body/bodyMapAreaContours";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
+import { publicAssetUrl } from "@/lib/publicAssetUrl";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
   paperMatchesNeckFineSelection,
@@ -153,7 +154,7 @@ export function NeckBodyMapDetail({ variant, papers }: NeckBodyMapDetailProps) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/body-map/neck.svg")
+    fetch(publicAssetUrl("body-map/neck.svg"))
       .then((r) => {
         if (!r.ok) throw new Error(`neck map HTTP ${r.status}`);
         return r.text();

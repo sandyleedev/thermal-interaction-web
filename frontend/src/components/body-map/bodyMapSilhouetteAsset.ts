@@ -6,10 +6,11 @@
  * The "Base" path is the full silhouette outline (clip + stroke), not a hover part.
  */
 
+import { publicAssetUrl } from "@/lib/publicAssetUrl";
 import type { BodyMapRegion } from "@/lib/research/researchPapers";
 import { BODY_MAP_REGIONS } from "@/lib/research/bodyMapRegions";
 
-const SILHOUETTE_URL = "/body-map/full-body.svg";
+const SILHOUETTE_URL = publicAssetUrl("body-map/full-body.svg");
 
 export type SilhouetteBodySubpath = {
   d: string;

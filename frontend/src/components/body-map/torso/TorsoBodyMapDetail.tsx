@@ -25,6 +25,7 @@ import {
 import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
 import { BodyMapHeatmapLegend } from "@/components/body-map/shared/BodyMapHeatmapLegend";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
+import { publicAssetUrl } from "@/lib/publicAssetUrl";
 import {
   BODY_MAP_DETAIL_SELECTION_MODE,
   mergedHoverPairHitIds,
@@ -162,7 +163,7 @@ export function TorsoBodyMapDetail({
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/body-map/torso.svg")
+    fetch(publicAssetUrl("body-map/torso.svg"))
       .then((r) => {
         if (!r.ok) throw new Error(`torso map HTTP ${r.status}`);
         return r.text();

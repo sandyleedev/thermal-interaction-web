@@ -42,6 +42,7 @@ import {
   maxContourValueFromLayers,
 } from "@/components/body-map/full-body/bodyMapAreaContours";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
+import { publicAssetUrl } from "@/lib/publicAssetUrl";
 import {
   BODY_MAP_DETAIL_SELECTION_MODE,
   mergedHoverPairHitIds,
@@ -207,7 +208,7 @@ export function HeadBodyMapDetail({ variant, papers }: HeadBodyMapDetailProps) {
 
   useEffect(() => {
     let cancelled = false;
-    fetch("/body-map/head.svg")
+    fetch(publicAssetUrl("body-map/head.svg"))
       .then((r) => {
         if (!r.ok) throw new Error(`head map HTTP ${r.status}`);
         return r.text();

@@ -30,6 +30,7 @@ import {
 import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
 import { BodyMapHeatmapLegend } from "@/components/body-map/shared/BodyMapHeatmapLegend";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
+import { publicAssetUrl } from "@/lib/publicAssetUrl";
 import { BODY_MAP_DETAIL_SELECTION_MODE } from "@/lib/research/bodyMapDetailSelectionMode";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
 import {
@@ -284,11 +285,11 @@ export function HandBodyMapDetail({ variant, papers }: HandBodyMapDetailProps) {
   useEffect(() => {
     let cancelled = false;
     Promise.all([
-      fetch("/body-map/hand-inner.svg").then((r) => {
+      fetch(publicAssetUrl("body-map/hand-inner.svg")).then((r) => {
         if (!r.ok) throw new Error(`hand inner map HTTP ${r.status}`);
         return r.text();
       }),
-      fetch("/body-map/hand-outer.svg").then((r) => {
+      fetch(publicAssetUrl("body-map/hand-outer.svg")).then((r) => {
         if (!r.ok) throw new Error(`hand outer map HTTP ${r.status}`);
         return r.text();
       }),
