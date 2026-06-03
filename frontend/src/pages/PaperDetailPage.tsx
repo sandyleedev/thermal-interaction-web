@@ -32,6 +32,18 @@ function displayOrNa(value: string | undefined | null): string {
   return t;
 }
 
+function isDetailNa(value: string | undefined | null): boolean {
+  return displayOrNa(value) === DETAIL_NA;
+}
+
+function DetailNaChip() {
+  return (
+    <div className="paper-detail__tags paper-detail__tags--section">
+      <span className="paper-detail__tag">{DETAIL_NA}</span>
+    </div>
+  );
+}
+
 function paperPrimaryLink(p: ResearchPaper): string | undefined {
   const u = trimText(p.url);
   if (u) return u;
@@ -77,6 +89,7 @@ function DetailParagraph({
   preserveLineBreaks?: boolean;
 }) {
   const t = trimText(text);
+  if (isDetailNa(text)) return <DetailNaChip />;
   return (
     <p
       className={
@@ -85,7 +98,7 @@ function DetailParagraph({
           : "paper-detail__prose"
       }
     >
-      {t ?? DETAIL_NA}
+      {t}
     </p>
   );
 }
@@ -101,9 +114,7 @@ function DetailChipRow({
     .map((x) => titleCaseOption(String(x).trim()))
     .filter(Boolean);
   if (hideWhenEmpty && labels.length === 0) return null;
-  if (labels.length === 0) {
-    return <p className="paper-detail__prose paper-detail__na">{DETAIL_NA}</p>;
-  }
+  if (labels.length === 0) return <DetailNaChip />;
   return (
     <div className="paper-detail__tags paper-detail__tags--section">
       {labels.map((t, i) => (
@@ -117,8 +128,8 @@ function DetailChipRow({
 
 function DetailValueChips({ values }: { values: readonly string[] }) {
   const labels = values.map((v) => v.trim()).filter(Boolean);
-  if (labels.length === 0) {
-    return <p className="paper-detail__prose paper-detail__na">{DETAIL_NA}</p>;
+  if (labels.length === 0 || (labels.length === 1 && labels[0] === DETAIL_NA)) {
+    return <DetailNaChip />;
   }
   return (
     <div className="paper-detail__tags paper-detail__tags--section">
@@ -186,14 +197,10 @@ function parseStructuredProseBlocks(text: string): StructuredProseBlock[] {
 
 function DetailStructuredProse({ text }: { text: string | undefined | null }) {
   const t = trimText(text);
-  if (!t) {
-    return <p className="paper-detail__prose paper-detail__na">{DETAIL_NA}</p>;
-  }
+  if (!t || isDetailNa(text)) return <DetailNaChip />;
 
   const blocks = parseStructuredProseBlocks(t);
-  if (blocks.length === 0) {
-    return <p className="paper-detail__prose paper-detail__na">{DETAIL_NA}</p>;
-  }
+  if (blocks.length === 0) return <DetailNaChip />;
 
   return (
     <div className="paper-detail__structured-prose">
@@ -395,7 +402,13 @@ export function PaperDetailPage() {
                   className="paper-detail__fact paper-detail__fact--wide"
                 >
                   <dt>{row.dt}</dt>
-                  <dd>{row.dd}</dd>
+                  <dd>
+                    {row.dd === DETAIL_NA ? (
+                      <span className="paper-detail__tag">{DETAIL_NA}</span>
+                    ) : (
+                      row.dd
+                    )}
+                  </dd>
                 </div>
               ))}
             </dl>
