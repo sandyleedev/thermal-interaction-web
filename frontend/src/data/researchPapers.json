@@ -36,8 +36,6 @@
     "temporalParameters": "Warm up: 1s; Cooldown: 20s",
     "otherNote": "Stimulus onset asynchrony (SOA) used.\nRelative temperature (-15°C to +9°C) used compared neutral skin temperature.",
     "technicalSummary": "Peltier thermal actuators and small vibration motors on the forearm, creating a “flowing” thermal illusion even though the devices stayed in fixed positions. Tested in VR scenarios.\n\n(Original suggestion)\nThis study explored how to make people feel as if warmth or coldness is moving across the skin. The researchers placed Peltier thermal actuators and small vibration motors on the forearm, creating a “flowing” thermal illusion even though the devices stayed in fixed positions. They tested this in lab studies and VR scenarios, showing that moving thermal feedback could make virtual experiences feel more dynamic and immersive.",
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Ventral (inner) side of the forearm, between wrist and elbow.",
     "bodySites": [
       {
@@ -46,7 +44,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "2",
@@ -80,21 +79,18 @@
     "temporalParameters": null,
     "otherNote": "focused on the moment of ’löyly’, which is when water is poured onto the sauna stones",
     "technicalSummary": "This study explored how people experience intense full-body heat in a traditional Finnish sauna, rather than testing an artificial thermal device. Participants sat in an 80–90°C sauna and described their sensations through interviews, body maps, and tactile objects, focusing especially on the moment when water is poured onto hot stones. The study shows that heat experiences involve more than “hot” or “cold”, including feelings such as pressure, tingling, movement, discomfort, and body-wide distribution.",
-    "materialsInContactWithSkin": [
-      "air-gas"
-    ],
-    "materials": [
-      "air-gas"
-    ],
     "bodyPartsInvolved": "Full body heat sensation in a sauna.",
     "bodySites": [
       {
-        "region": "wholeBody",
+        "region": "whole-body",
         "subregion": "general",
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "air-gas"
+    ]
   },
   {
     "id": "3",
@@ -133,8 +129,6 @@
     "temporalParameters": "Cooling rate: ~1.0°C per second.\nWarming rate (after stimulus): ~0.7°C per second.\nDuration: 3 seconds for timed conditions: before or at the moment of swollowing, all the time, and no coldness.\nTiming synchronization: Aligned with swallowing or mastication.",
     "otherNote": "Pressure: Standardized via 207g belt with 100g weights on each side.",
     "technicalSummary": "This study tested whether cooling the back of the neck can make ice cream feel colder while eating. Participants wore a Peltier-based cooling device on the posterior neck and ate ice cream under different timing conditions, such as cooling before swallowing, during swallowing, continuously, or not at all. The results suggest that synchronising a short cold stimulus with swallowing can enhance perceived food coldness without changing the actual temperature of the food.",
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Posterior neck (page 1, Abstract and Figure 1)",
     "bodySites": [
       {
@@ -143,7 +137,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "4",
@@ -182,8 +177,6 @@
     "temporalParameters": "Duration: 5 seconds\nResponse time: ~1 second",
     "otherNote": "Vibrotactile parameters:\nWarm/hot: 10mN at 175Hz\nCool/cold: 14mN at 225Hz\nDistance levels: 4cm, 8cm, 16cm, 24cm (Study 2)",
     "technicalSummary": "This study explored whether warmth or coldness can feel as if it comes from a different place on the skin. The researchers placed a flexible Peltier thermal actuator and ERM vibration motors on the forearm, then tested whether vibration could shift or mask the perceived location of the thermal sensation. The results suggest that designers may be able to create the feeling of thermal feedback across a larger area using fewer heating or cooling devices.",
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Study 1 &2: ventral side of the forearm. --- page 5, 8\nStudy 3: Thermal at ventral center, tactile on dorsal (opposite) side. --- page 10",
     "bodySites": [
       {
@@ -197,7 +190,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Not reported.\nAuthors acknowledge \"lower energy consumption compared to traditional methods\" but provide no quantitative data"
+    "powerEnergyConsumption": "Not reported.\nAuthors acknowledge \"lower energy consumption compared to traditional methods\" but provide no quantitative data",
+    "materialsInContactWithSkin": []
   },
   {
     "id": "5",
@@ -238,12 +232,6 @@
     "temporalParameters": "Duration: 1-5 seconds depending on study\nSkin temperature change rate: ~1-2°C per second\nAdaptation period: 20 seconds between trials",
     "otherNote": "Mechanism: Light passes through water and is absorbed by skin, directly heating it. Cooling occurs passively when lights turn off and water absorbs heat from skin.\nStudy 1: Different spectra wavelength/color. Blue (460-470nm), Green (520-525nm), Cool-White (6000-6500K), Warm-White (3000-3500K)\nStudy 2: Different illuminance. 210, 433, 635 klux.\nStudy 3: Stimuli duration 200-1000ms for apparent motion, and stimuli onset asynchrony (SOA)\n\nSpatial parameters:\nDistance: 50mm from LED to skin (standard across studies)\nSpacing for apparent motion: 80mm between LED rows",
     "technicalSummary": "This study introduced “hydroptical thermal feedback”, a method that makes skin feel warmer or cooler by shining visible light through water onto the hand. The system used 100W LED lights, Arduino-based control, PWM light intensity adjustment, and a water setup kept around 25–26°C, so the perceived water temperature could change without directly changing the water temperature itself. Across four small psychophysical studies, the authors tested light colour, brightness, apparent motion, and perceived water temperature, showing that light-based heating in water can create spatial and moving thermal sensations on the hand.",
-    "materialsInContactWithSkin": [
-      "liquids-gels"
-    ],
-    "materials": [
-      "liquids-gels"
-    ],
     "bodyPartsInvolved": "Right hand and wrist all in water, light is only on the palm.",
     "bodySites": [
       {
@@ -257,7 +245,10 @@
         "side": "right"
       }
     ],
-    "powerEnergyConsumption": "100W LED lights (per unit): --- page 5\n6W peak during inhalation, \nBattery life: ~22 min continuous use (300mAh battery)\n\nCool-White LED --- page 7\nTested at multiple intensities\nBatter life: Dependent on duty cycle\n\nPeltier comparison (control) --- page 5\n0.35W (restricted) vs 11.55W (rated)\nBatter life: 0.2 hours at rated power"
+    "powerEnergyConsumption": "100W LED lights (per unit): --- page 5\n6W peak during inhalation, \nBattery life: ~22 min continuous use (300mAh battery)\n\nCool-White LED --- page 7\nTested at multiple intensities\nBatter life: Dependent on duty cycle\n\nPeltier comparison (control) --- page 5\n0.35W (restricted) vs 11.55W (rated)\nBatter life: 0.2 hours at rated power",
+    "materialsInContactWithSkin": [
+      "liquids-gels"
+    ]
   },
   {
     "id": "6",
@@ -296,12 +287,6 @@
     "temporalParameters": "Synchronization latency: 0.21 ± 0.67 s average\nInhalation duration: 1.81 ± 0.49 s average",
     "otherNote": "Physical design:\nIn-nose weight: 7g (Peltiers + sensors)\nBehind-ear weight: 26g (microcontroller, battery, etc.)\nForm factor: Nose clip worn across septum\n\nTemperature increments: 0.5°C steps in staircase method",
     "technicalSummary": "This study tested a nose-worn thermal device that changes how easy or difficult breathing feels without physically blocking airflow. The system placed two small Peltier elements inside the nostrils, detected inhalation with an air-pressure sensor, and synchronised heating or cooling with each breath using an ESP32-based controller. The results showed that cooling the nasal area could make breathing feel easier, while heating could make it feel more restricted, suggesting applications in VR, meditation, mask comfort, exercise, and breathing-related interaction design.",
-    "materialsInContactWithSkin": [
-      "air-gas"
-    ],
-    "materials": [
-      "air-gas"
-    ],
     "bodyPartsInvolved": "sal (in one nostril).\n\nTarget area include: \nNasal septum (wall dividing nostrils) \nNasal mucosa \nTurbinates region",
     "bodySites": [
       {
@@ -310,7 +295,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Not reported."
+    "powerEnergyConsumption": "Not reported.",
+    "materialsInContactWithSkin": [
+      "air-gas"
+    ]
   },
   {
     "id": "7",
@@ -351,14 +339,6 @@
     "temporalParameters": "High fan speed: 100% duty ratio (~0.15°C/s cooling, ~8°C max drop)\nMedium fan speed: 50% duty ratio\nLow: 25% duty ratio (~0.02°C/s cooling, ~2°C drop)\n\nLatency: Minimal (evaporation starts immediately)\nDuration per refill: 30-60 minutes effective cooling",
     "otherNote": "The device is designed to be watch-sized (approximately 65×35×15 mm), and Its total weight is kept below 50 g\nAlso compared with water\nAlso compared with menthol-containing perfume\nStimulation area: 25mm square\nBattery life: 5.7 hours continuous fan operation (400mAh)",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "fabrics-textiles",
-      "chemical"
-    ],
-    "materials": [
-      "fabrics-textiles",
-      "chemical"
-    ],
     "bodyPartsInvolved": "Wrist (dorsal side, non-dominant arm) for all studies (pages 5-9), device worn as wristwatch (page 4-5, Figure 4), making wrist the practical location for wearable application.",
     "bodySites": [
       {
@@ -367,7 +347,11 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Fan only: --- page 5\n0.35W\nBattery life: 5.7 hours (400mAh)\nNote: Primary cooling actuator\n\nPeltier comparison (20mm) --- page 5\n0.35W (tested) vs 11.55W (rated)\nBattery life:0.2 hours at rated power\n Note: ALCool achieves stronger cooling at 0.35W than Peltier at same power\n\nPeltier comparison (30mm) --- page 5\n0.35W (tested) vs 28.28W (rated)\nBattery life: <0.1 hours at rated power\nNote: Larger Peltier still underperforms ALCool at equal power"
+    "powerEnergyConsumption": "Fan only: --- page 5\n0.35W\nBattery life: 5.7 hours (400mAh)\nNote: Primary cooling actuator\n\nPeltier comparison (20mm) --- page 5\n0.35W (tested) vs 11.55W (rated)\nBattery life:0.2 hours at rated power\n Note: ALCool achieves stronger cooling at 0.35W than Peltier at same power\n\nPeltier comparison (30mm) --- page 5\n0.35W (tested) vs 28.28W (rated)\nBattery life: <0.1 hours at rated power\nNote: Larger Peltier still underperforms ALCool at equal power",
+    "materialsInContactWithSkin": [
+      "fabrics-textiles",
+      "chemical"
+    ]
   },
   {
     "id": "8",
@@ -405,14 +389,6 @@
     "temporalParameters": "Optimal inter-stimulus interval: 6s (warming), 12s (cooling)\nAtomization duration: 1s per stimulus\nOperating latency: 200ms (trigger to mist delivery)",
     "otherNote": "Olfactory pink noise: 7-component mixture for obfuscating scents while preserving trigeminal effect\nTwo-stage mechanism: micropump + atomizer.\nCross-contamination prevention: Narrow capillaries prevent backflow",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "air-gas",
-      "chemical"
-    ],
-    "materials": [
-      "air-gas",
-      "chemical"
-    ],
     "bodyPartsInvolved": "sal area.\nNasal cavity - specifically trigeminal nerve endings in the nose (page 3)",
     "bodySites": [
       {
@@ -421,7 +397,11 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Extensively, as power efficiency is a PRIMARY contribution.\n\nPage 2:\n\"our approach uses low-power electronics (only uses 0.25W), and, thus, enables the miniaturization of simple warm or cool sensations.\"\n\nPage 4 - Detailed power comparison:\n\"Our complete prototype uses only 0.25W of power, which is 20 times less than generating actual temperature changes with typical Peltier elements, as these use at least 5W (e.g., the TEFC1-03112).\"\n\nBattery life (page 4):\n0.25W operation: ~18 hours (1200mAh battery)\nScent reservoir life: 5.84 hours per 1mL vial (three vials total)\nLimiting factor: Scent depletion, not battery\n\nComparison to prior work (page 4):\nAmbiotherm: Up to 13W (two Peltiers)\nHutchison et al.: 4× TEFC1-03112 = 20W\nShoichi et al.: 4× KSMH029 = 27.2W\nThis work: \"20-52 times more efficient\""
+    "powerEnergyConsumption": "Extensively, as power efficiency is a PRIMARY contribution.\n\nPage 2:\n\"our approach uses low-power electronics (only uses 0.25W), and, thus, enables the miniaturization of simple warm or cool sensations.\"\n\nPage 4 - Detailed power comparison:\n\"Our complete prototype uses only 0.25W of power, which is 20 times less than generating actual temperature changes with typical Peltier elements, as these use at least 5W (e.g., the TEFC1-03112).\"\n\nBattery life (page 4):\n0.25W operation: ~18 hours (1200mAh battery)\nScent reservoir life: 5.84 hours per 1mL vial (three vials total)\nLimiting factor: Scent depletion, not battery\n\nComparison to prior work (page 4):\nAmbiotherm: Up to 13W (two Peltiers)\nHutchison et al.: 4× TEFC1-03112 = 20W\nShoichi et al.: 4× KSMH029 = 27.2W\nThis work: \"20-52 times more efficient\"",
+    "materialsInContactWithSkin": [
+      "air-gas",
+      "chemical"
+    ]
   },
   {
     "id": "9",
@@ -461,8 +441,6 @@
     "temporalParameters": null,
     "otherNote": "Temperature base/neutral: 30°C; ±6°C shifts. Three discrete levels: 24°C (Cool), 30°C (Neutral), 34°C (Warm after pilot adjustment).",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Palm - specifically the heel of the palm resting on the Peltier element, with fingers draping around the device (on the foams surrounding the peltier).",
     "bodySites": [
       {
@@ -471,7 +449,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "No report"
+    "powerEnergyConsumption": "No report",
+    "materialsInContactWithSkin": []
   },
   {
     "id": "10",
@@ -510,8 +489,6 @@
     "temporalParameters": "RoC: 1.75°C/s on average\nFull temperature change time: 12 seconds (from 22.5°C to 42.5°C) \nThe human skin adapts to the actuators' temperature in 2-5 s",
     "otherNote": "PE-RT tube conductivity: 0.43 W·m⁻¹·K⁻¹; spacing: 5cm; pressure resistance: up to 1300 kPa at flow temperatures up to 70°C.\n\nDesign Parameters:\nTemperature: adjustable range\nArrangement: horizontal, vertical, diagonal tube configurations\nNumber: multiple tubes in network\nShape: straight, curved, bent\nSize/Length: customizable per body part\n\nTemperature Control:\nRange: 18°C to 48°C (adjustable via thermal mixing valve)\nFive discrete test levels: 22.5°C, 27.5°C, 32.5°C, 37.5°C, 42.5°C\n\nFlow Control:\nFlow rate: 40 ml/s (constant)\nMaximum throughput: 6 l/min (pump capacity)\n\nPressure regulation: Limited to 40 ml/s via mechanical pressure regulating valve",
     "technicalSummary": "Hot and cold water supplies blended and pumped through thermally conductive tubes. The PE-RT tubes are thermal resistant and conductive, but not very flexible, typically bending R=10 cm. By connecting with with flexible PVC tubes, the interface can be wrapped around a body.",
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Right arm, abdomen (page 5-6)",
     "bodySites": [
       {
@@ -525,7 +502,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Not explicitly reported - No specific power, voltage, current, or energy consumption data provided."
+    "powerEnergyConsumption": "Not explicitly reported - No specific power, voltage, current, or energy consumption data provided.",
+    "materialsInContactWithSkin": []
   },
   {
     "id": "11",
@@ -563,14 +541,6 @@
     "temporalParameters": "Pulse width: 100, 300, or 500 µs\n\nRepetition Frequency:\n100 pps (pulses per second) during 2-second stimulation\nOverall system: 27 Hz when cycling through all 61 electrodes\nPulse Waveform: Stimulating pulse + 100 μs rest period",
     "otherNote": "Electrical stimulation (not purely thermal). One electrode as current source (anode or cathode), surrounding electrodes as return current path\nAnesthetic cream applied 1 hour before. \nGel layer reduces cold sensation. \nPolarity: anodic or cathodic.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "liquids-gels",
-      "metal"
-    ],
-    "materials": [
-      "liquids-gels",
-      "metal"
-    ],
     "bodyPartsInvolved": "Ventral (inside) part of the right forearm",
     "bodySites": [
       {
@@ -579,7 +549,11 @@
         "side": "right"
       }
     ],
-    "powerEnergyConsumption": "Not explicitly reported in terms of numerical values. However, the paper emphasizes low power consumption as a key advantage:\n\nPage 1, Introduction: \"Electrical stimulation generates a sensation during the presentation and consumes relatively small energy\"\nPage 1, Introduction, comparing to Peltier: \"Using Peltier device for coldness presentation requires high-power consumption\""
+    "powerEnergyConsumption": "Not explicitly reported in terms of numerical values. However, the paper emphasizes low power consumption as a key advantage:\n\nPage 1, Introduction: \"Electrical stimulation generates a sensation during the presentation and consumes relatively small energy\"\nPage 1, Introduction, comparing to Peltier: \"Using Peltier device for coldness presentation requires high-power consumption\"",
+    "materialsInContactWithSkin": [
+      "liquids-gels",
+      "metal"
+    ]
   },
   {
     "id": "12",
@@ -624,14 +598,6 @@
     "temporalParameters": null,
     "otherNote": "Copper tubes (401 W/(m·K) conductivity) on dorsal finger; silicone tubes at knuckles for flexibility. Water circulates through system cooled by Peltier.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "metal",
-      "silicone-based"
-    ],
-    "materials": [
-      "metal",
-      "silicone-based"
-    ],
     "bodyPartsInvolved": "Dorsal side of index finger and thumb.\nThumb (dominant hand)\nIndex finger (dominant hand).",
     "bodySites": [
       {
@@ -640,7 +606,11 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "NOT explicitly reported. Paper mentions Peltier-only systems have \"significant power consumption\" as a limitation."
+    "powerEnergyConsumption": "NOT explicitly reported. Paper mentions Peltier-only systems have \"significant power consumption\" as a limitation.",
+    "materialsInContactWithSkin": [
+      "metal",
+      "silicone-based"
+    ]
   },
   {
     "id": "13",
@@ -671,17 +641,16 @@
     "temporalParameters": null,
     "otherNote": null,
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Discussed diverse body parts including inside/outside.",
     "bodySites": [
       {
-        "region": "wholeBody",
+        "region": "whole-body",
         "subregion": "general",
         "side": null
       }
     ],
-    "powerEnergyConsumption": "N/A\nNot applicable as no device was built."
+    "powerEnergyConsumption": "N/A\nNot applicable as no device was built.",
+    "materialsInContactWithSkin": []
   },
   {
     "id": "14",
@@ -720,8 +689,6 @@
     "temporalParameters": "Temperature change rate: 3.5°C/s; activation: 3.5s on; ramp to target: ~1.5s",
     "otherNote": "Five modules on five fingertips; selectively activated per grasp.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Five fingertips (distal phalanges), on non-dominant hand (page 7) and all participants were right-handed.",
     "bodySites": [
       {
@@ -730,7 +697,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Partially reported.\n\nPower per TEC module:\nReference - Page 5, Section 3.2: \"Each Peltier module draws a maximum of 400mA at 6V when activated\"\nCalculation:\nPower per module: 6V × 0.4A = 2.4 Watts\nMaximum total power: 5 modules × 2.4W = 12 Watts (if all activated simultaneously)\n\nMaximum refrigerating capacity:\nReference - Page 4, Section 3.1: \"maximum refrigerating capacity Qmax = 7.51W\"\nThis is the thermal power (heat pumping capacity), not electrical power.\n\nEnergy per activation:\nNot explicitly calculated, but can be derived:\n\nDuration = 3.5 seconds\nPower = 2.4W per module\nEnergy per activation per module: 2.4W × 3.5s = 8.4 Joules"
+    "powerEnergyConsumption": "Partially reported.\n\nPower per TEC module:\nReference - Page 5, Section 3.2: \"Each Peltier module draws a maximum of 400mA at 6V when activated\"\nCalculation:\nPower per module: 6V × 0.4A = 2.4 Watts\nMaximum total power: 5 modules × 2.4W = 12 Watts (if all activated simultaneously)\n\nMaximum refrigerating capacity:\nReference - Page 4, Section 3.1: \"maximum refrigerating capacity Qmax = 7.51W\"\nThis is the thermal power (heat pumping capacity), not electrical power.\n\nEnergy per activation:\nNot explicitly calculated, but can be derived:\n\nDuration = 3.5 seconds\nPower = 2.4W per module\nEnergy per activation per module: 2.4W × 3.5s = 8.4 Joules",
+    "materialsInContactWithSkin": []
   },
   {
     "id": "15",
@@ -769,12 +737,6 @@
     "temporalParameters": "Motor operation speed: 450ms",
     "otherNote": "Servo motors flip peltier elements up to 270° to switch between contact and non-contact. Voltage tested 1.5V–3.0V in 0.5V steps.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "ceramic"
-    ],
-    "materials": [
-      "ceramic"
-    ],
     "bodyPartsInvolved": "In the user study: lower arm, glabrous skin side.\nIn the other demos: bottom of the feet, palm.",
     "bodySites": [
       {
@@ -793,7 +755,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "The device operates at 1.2W per peltier element (2.0V, 0.6A), totaling 9.6W for controlling eight elements. Powered by 3.7V, 2200 mAh Li-Po battery allowing approximately 51 minutes of operation (Page 4, Section 3.2.2)."
+    "powerEnergyConsumption": "The device operates at 1.2W per peltier element (2.0V, 0.6A), totaling 9.6W for controlling eight elements. Powered by 3.7V, 2200 mAh Li-Po battery allowing approximately 51 minutes of operation (Page 4, Section 3.2.2).",
+    "materialsInContactWithSkin": [
+      "ceramic"
+    ]
   },
   {
     "id": "16",
@@ -832,8 +797,6 @@
     "temporalParameters": "Heating rate: 3°C/s; actuation duration: 10 seconds",
     "otherNote": "Spacing between elements: 7cm equidistant (with exceptions for anatomical considerations: 8.5cm between hand and first lower arm element, 11cm adjacent to elbow joint)",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "From back of a hand all the way up to shoulder edge.\n\nThe left arm was tested, including:\n\nHand (1 location: t_hand)\nLower arm (4 locations: t_lo1, t_lo2, t_lo3, t_lo4)\nUpper arm (3 locations: t_up1, t_up2, t_up3)\n\n(Page 3, Section 3.1; Page 2, Figure 2b)",
     "bodySites": [
       {
@@ -857,7 +820,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Not reported."
+    "powerEnergyConsumption": "Not reported.",
+    "materialsInContactWithSkin": []
   },
   {
     "id": "17",
@@ -898,17 +862,13 @@
     "temporalParameters": "Time-division multiplexing: switching between arrays in 100ms units\nUltrasonic frequency: 40kHz",
     "otherNote": "Non-contact heat delivery. Ultrasonic array creates multiple beams directing heated air toward user. Heating circuit warms air continuously via resistors.",
     "technicalSummary": null,
+    "bodyPartsInvolved": "Not specific. The paper mentions that heated air is directed \"towards the user's body parts\" (Page 1, Section 1) and specifically references \"the user's hands or other body parts\" (Page 2, Section 1). However, no specific body parts are identified for testing or evaluation.",
+    "bodySites": [],
+    "powerEnergyConsumption": "The total power of the heating circuit is 2.5W (Page 3, Section 3.1).",
     "materialsInContactWithSkin": [
       "air-gas",
       "fabrics-textiles"
-    ],
-    "materials": [
-      "air-gas",
-      "fabrics-textiles"
-    ],
-    "bodyPartsInvolved": "Not specific. The paper mentions that heated air is directed \"towards the user's body parts\" (Page 1, Section 1) and specifically references \"the user's hands or other body parts\" (Page 2, Section 1). However, no specific body parts are identified for testing or evaluation.",
-    "bodySites": [],
-    "powerEnergyConsumption": "The total power of the heating circuit is 2.5W (Page 3, Section 3.1)."
+    ]
   },
   {
     "id": "18",
@@ -952,8 +912,6 @@
     "temporalParameters": "Heating time: 180 seconds in experiments\nCooling time: user-configurable",
     "otherNote": "Initial mean temperature of dysmenorrhea patients: 35.22±1.33°C.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "abdominal part  (pelvic area) and lower back are the body parts that receive thermal feedback (Page 1, Abstract; Page 1, Section 1).",
     "bodySites": [
       {
@@ -967,7 +925,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Not reported."
+    "powerEnergyConsumption": "Not reported.",
+    "materialsInContactWithSkin": []
   },
   {
     "id": "19",
@@ -1000,11 +959,10 @@
     "temporalParameters": null,
     "otherNote": "No physical thermal feedback. Visual thermal design in VR: yellow mug (neutral), blue liquid (cold), brown liquid (hot).\nLighting: 2700K warm white fluorescent.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": null,
     "bodySites": [],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "20",
@@ -1053,12 +1011,6 @@
     "temporalParameters": "Airflow: below 0.5 m/s in interaction zone\nAirflow up to 29.2𝑚3/ℎ",
     "otherNote": "Six Peltier packs in hexagon chamber surfaces generate cold airflow. Ultrasound haptic creates focused pressure in mid-air. The radiation force at the focal point 200 mm apart from the board was 1.38 mN\n\nHaptic cue parameters:\nSnowflake melting: 20mm diameter, 120Hz, intensity decays from 100% to 0% over 1.5s\nRaindrop splash: 0-40mm diameter expansion, 120Hz, 100% constant intensity for 3s\n\nAirflow rate in interaction zone: Below 0.5 m/s",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "air-gas"
-    ],
-    "materials": [
-      "air-gas"
-    ],
     "bodyPartsInvolved": "Palm and fingers.\nThe system is specifically designed for bare hands with palms facing upward toward the ultrasound display (Page 4, Section 3.2; Page 11, Section 5.4).",
     "bodySites": [
       {
@@ -1072,7 +1024,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Total power consumption: 2600W\nBreakdown:\n\nPeltier plates: 72W × 24 = 1728W maximum\nWater pumps: 4W × 6 = 24W\nAxial fans: 0.96W × 6 = 5.76W\nUltrasound haptic display: ~4-5W (estimated)\nOther components and power supplies: remainder\n\n(Page 6, Section 3.2)"
+    "powerEnergyConsumption": "Total power consumption: 2600W\nBreakdown:\n\nPeltier plates: 72W × 24 = 1728W maximum\nWater pumps: 4W × 6 = 24W\nAxial fans: 0.96W × 6 = 5.76W\nUltrasound haptic display: ~4-5W (estimated)\nOther components and power supplies: remainder\n\n(Page 6, Section 3.2)",
+    "materialsInContactWithSkin": [
+      "air-gas"
+    ]
   },
   {
     "id": "21",
@@ -1105,11 +1060,10 @@
     "temporalParameters": null,
     "otherNote": "No physical thermal feedback. Visual-only thermal representation in VR using fire/ice-themed environments and avatar hands. Oculus Rift VR headset used: 1080×1200 pixels per eye, 90 Hz, 110° field of view. Global illumination and antialiasing enabled. Fire hands used red-hot glowing shaders/textures and particle systems; ice hands used blueish frozen shaders/textures and particle systems. Avatar mesh, size, and skeleton were kept identical across conditions.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": null,
     "bodySites": [],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "22",
@@ -1151,18 +1105,10 @@
     "temporalParameters": null,
     "otherNote": "Energy-based heat used infrared radiation; flow-based heat used heated-air convection. Combined heat sources exceed 100°C at source. Cooling used ultrasonic mist makers with electric fans to create and distribute cool mist. Wind speed up to 11.5 m/s. Mist module fan: 3300 rpm. Thermal source was positioned 80 cm from the bottom of the device, around the centre height of the user's upper body. Hand-held controller included halogen lamp, fan, and motor; halogen lamp weight: 31g.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "air-gas",
-      "liquids-gels"
-    ],
-    "materials": [
-      "air-gas",
-      "liquids-gels"
-    ],
     "bodyPartsInvolved": "Whole body and hand, depends: Pages 2-3 (Sections 2.1, 3.1-3.3), Pages 5-6 (Section 5), Pages 8-9 (Section 6.2)\n\nUbiquitous-based haptics:\nThe device is designed to cover the user's whole body when positioned above the head, with effective coverage primarily on the upper body at 80cm height.\nUsers' hands and arms when within the effective area\n\nController-based haptics:\nHands - the controller provides thermal feedback to users' hands during manipulation",
     "bodySites": [
       {
-        "region": "wholeBody",
+        "region": "whole-body",
         "subregion": "general",
         "side": null
       },
@@ -1177,7 +1123,11 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Cold component: 133W\nOverall power consumption of all haptic modules: 1683W\nHeat light: 250W\nHeat blower: 1300W"
+    "powerEnergyConsumption": "Cold component: 133W\nOverall power consumption of all haptic modules: 1683W\nHeat light: 250W\nHeat blower: 1300W",
+    "materialsInContactWithSkin": [
+      "air-gas",
+      "liquids-gels"
+    ]
   },
   {
     "id": "23",
@@ -1218,8 +1168,6 @@
     "temporalParameters": null,
     "otherNote": "Closed-loop control using thermometers",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Finger tip: \"we chose fingertips because users primarily interact with thermostats using their hands, especially their fingers\"",
     "bodySites": [
       {
@@ -1228,7 +1176,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Not reported."
+    "powerEnergyConsumption": "Not reported.",
+    "materialsInContactWithSkin": []
   },
   {
     "id": "24",
@@ -1272,8 +1221,6 @@
     "temporalParameters": "Response time heating: ~1s; response time cooling: ~20s; stimulation duration: 5s per trial; pattern update rate: every 2s",
     "otherNote": "Two heatsinks attached per thermal actuator; heatsink size: 6.35×19×4.83 mm. Thermal actuators placed on dorsal side of fingers and lower edge of palm. 5 thermal actuators and 14 vibrotactile actuators used for fingers; 3×3 vibrotactile array used on palm. Vibrotactile parameters: 5.7 mN, 166 Hz, 8 mm diameter × 2.7 mm height. Thermal referral effect used, where thermal sensation is perceived at vibrotactile location instead of actual thermal source. Collision-based activation and real-time localized rendering used. Individual calibration was performed for each participant.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Study 1 - five fingers (ventral and dosal) and palm, see figure 3. They were \"positioned in the center of the proximal phalanx for the thumb and middle phalanges for the other four fngers, on both the ventral (inner) and dorsal (outer) sides\".\nStudy 2 - dosal side of fingers and palm.",
     "bodySites": [
       {
@@ -1282,7 +1229,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Partially reported.\nWhat is reported:\nMaximum power specifications: Thermal actuator can operate at 2.2V and 6A (maximum: 13.2W per actuator)\n\nWhat is NOT reported:\nActual power consumption at the 3°C temperature increase used in studies\nTotal system power consumption\nPower consumption of the complete glove system (with all actuators active)\nBattery specifications or battery life\nEnergy efficiency metrics"
+    "powerEnergyConsumption": "Partially reported.\nWhat is reported:\nMaximum power specifications: Thermal actuator can operate at 2.2V and 6A (maximum: 13.2W per actuator)\n\nWhat is NOT reported:\nActual power consumption at the 3°C temperature increase used in studies\nTotal system power consumption\nPower consumption of the complete glove system (with all actuators active)\nBattery specifications or battery life\nEnergy efficiency metrics",
+    "materialsInContactWithSkin": []
   },
   {
     "id": "25",
@@ -1319,15 +1267,12 @@
     "temporalParameters": null,
     "otherNote": "No physical thermal cues or thermal actuation. Thermal sensation was represented through visual colour cues and mid-air haptics. Visual colour parameters: blue/cool #2F48C5, white/neutral #D1D1D1, red/warm #AB3737. For liquid state, the container was coloured, not the fluid itself. UMH haptic parameters: 100–300 Hz human-perceivable frequency range after downsampling from ultrasonic >20 kHz; spatiotemporal modulation used.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "air-gas"
-    ],
-    "materials": [
-      "air-gas"
-    ],
     "bodyPartsInvolved": "in the paper, but by common sense of mid-air haptic display, it's palm and ventral side of fingers.",
     "bodySites": [],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "air-gas"
+    ]
   },
   {
     "id": "26",
@@ -1369,12 +1314,6 @@
     "temporalParameters": "Maximum temperature reached after 300s; fans operated at 2000 RPM constant",
     "otherNote": "Two ceramic heating elements were symmetrically placed, with one fan behind each heating element to create airflow into the chamber. Heated airflow accumulated in the chamber, while the ultrasound haptic display created a focused pressure point in mid-air, producing a “heated pressure point”. Fan speed rationale: below 2000 RPM caused uneven heat distribution; above 2000 RPM caused a cooling effect. Temperature stability: mean variation 0.09°C, SD 0.02; error rate 0.25%, SD 0.07. DS18B20 resolution: 12-bit, ±0.0625°C accuracy; sensors were placed near the ultrasound focal point inside the chamber and outside for room temperature.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "air-gas"
-    ],
-    "materials": [
-      "air-gas"
-    ],
     "bodyPartsInvolved": "palm and ventral side of fingers. The hand is horizontally outstretched.",
     "bodySites": [
       {
@@ -1388,7 +1327,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "**Partially reported.**\n\n**What IS reported:**\n\n**Heating elements:**\n\n- **Rated power:** 250W per element (at 110V)\n- **Total heating power:** 500W (two elements)\n- **Relationship:** Power ∝ (Voltage)²\n- **Voltage range:** 0V to 110V\n\n**What is NOT reported:**\n\n- Actual power consumption at different voltage levels\n- Fan power consumption\n- Ultrasound haptic display power consumption\n- Total system power consumption\n- Battery specifications (if any)\n- Energy efficiency metrics\n- Operating cost\n\n**Page/Section Reference:** Page 2 (Section 2.1 Design)"
+    "powerEnergyConsumption": "**Partially reported.**\n\n**What IS reported:**\n\n**Heating elements:**\n\n- **Rated power:** 250W per element (at 110V)\n- **Total heating power:** 500W (two elements)\n- **Relationship:** Power ∝ (Voltage)²\n- **Voltage range:** 0V to 110V\n\n**What is NOT reported:**\n\n- Actual power consumption at different voltage levels\n- Fan power consumption\n- Ultrasound haptic display power consumption\n- Total system power consumption\n- Battery specifications (if any)\n- Energy efficiency metrics\n- Operating cost\n\n**Page/Section Reference:** Page 2 (Section 2.1 Design)",
+    "materialsInContactWithSkin": [
+      "air-gas"
+    ]
   },
   {
     "id": "27",
@@ -1421,16 +1363,6 @@
     "temporalParameters": null,
     "otherNote": "No active thermal actuation. Passive materials with different thermal conductivity were used. Low-conductivity handle: 3D-printed ABS plastic, 0.2 W/mK. High-conductivity handle: aluminium cylindrical cover, 2 mm thickness, around 3D-printed ABS core, 226 W/mK. Both handles had the same overall dimensions and weight: 10 cm length, 4 cm diameter, 73 g.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "silicone-based",
-      "polymers-synthetics",
-      "metal"
-    ],
-    "materials": [
-      "silicone-based",
-      "polymers-synthetics",
-      "metal"
-    ],
     "bodyPartsInvolved": "hand - palm and fingers",
     "bodySites": [
       {
@@ -1444,7 +1376,12 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "silicone-based",
+      "polymers-synthetics",
+      "metal"
+    ]
   },
   {
     "id": "28",
@@ -1486,15 +1423,12 @@
     "temporalParameters": null,
     "otherNote": "Wearable heat pad used on the lower abdomen and lower back. Physical design: red outer fabric layer, grey inner layer, soft meditation-appropriate material, and elastic band for body attachment. The author mentioned thermal pattern parameters such as temperature range and timing pattern, but detailed control parameters were not clearly reported.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "fabrics-textiles"
-    ],
-    "materials": [
-      "fabrics-textiles"
-    ],
     "bodyPartsInvolved": "But there were mentions of diff body parts: forehead, stomach, chest, back (section 5.3).",
     "bodySites": [],
-    "powerEnergyConsumption": "Not reported.\n\n**Implied power consumption:**\n\n- At 5V: P = 5²/3.7 ≈ **6.76 Watts**\n- But actual usage with 10s on / 15s off cycling\n- **Duty cycle:** 10/(10+15) = 40% active\n- **Average power:** ~2.7W (approximate)"
+    "powerEnergyConsumption": "Not reported.\n\n**Implied power consumption:**\n\n- At 5V: P = 5²/3.7 ≈ **6.76 Watts**\n- But actual usage with 10s on / 15s off cycling\n- **Duty cycle:** 10/(10+15) = 40% active\n- **Average power:** ~2.7W (approximate)",
+    "materialsInContactWithSkin": [
+      "fabrics-textiles"
+    ]
   },
   {
     "id": "29",
@@ -1532,8 +1466,6 @@
     "temporalParameters": "Temperature changing rate: 3.5°C/s",
     "otherNote": "Thermoelectric Peltier modules were used for heating/cooling. The model was TES1-03103. Detailed target temperature range or actual operating temperature values were not specified.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "auricular skin area (around the ear) - specifically front, top, back, and bottom positions around each ear.",
     "bodySites": [
       {
@@ -1542,7 +1474,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Yes, Maximum 400mA at 6V per Peltier module during stimulation (page 3)"
+    "powerEnergyConsumption": "Yes, Maximum 400mA at 6V per Peltier module during stimulation (page 3)",
+    "materialsInContactWithSkin": []
   },
   {
     "id": "30",
@@ -1586,12 +1519,6 @@
     "temporalParameters": null,
     "otherNote": "Temperature was delivered through water pouches connected by tubes to three water buckets with different temperatures. Controlled water flow produced temperature changes. An air bag was used to provide pressure.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "fabrics-textiles"
-    ],
-    "materials": [
-      "fabrics-textiles"
-    ],
     "bodyPartsInvolved": "fore arm water bag - create illusory moving thermal",
     "bodySites": [
       {
@@ -1600,7 +1527,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Not reported."
+    "powerEnergyConsumption": "Not reported.",
+    "materialsInContactWithSkin": [
+      "fabrics-textiles"
+    ]
   },
   {
     "id": "31",
@@ -1640,12 +1570,6 @@
     "temporalParameters": "Fastest rate of change: 1°C/s",
     "otherNote": "Peltier elements were used for thermal stimulation. The system used TEC1-12706 thermoelectric modules, PID modules with KP value for rate-of-change control, a BTN8982TA DC Motor Control Shield, and a MAX31850 thermocouple-to-digital converter.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "fabrics-textiles"
-    ],
-    "materials": [
-      "fabrics-textiles"
-    ],
     "bodyPartsInvolved": "chest wearable (mediated with fabrics):\n\n\"upper (central) chest (i.e., Sternum)\" (Abstract, page 1)",
     "bodySites": [
       {
@@ -1654,7 +1578,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Not reported."
+    "powerEnergyConsumption": "Not reported.",
+    "materialsInContactWithSkin": [
+      "fabrics-textiles"
+    ]
   },
   {
     "id": "32",
@@ -1692,8 +1619,6 @@
     "temporalParameters": "Dynamic phase: 2s; static phase: set according to music needs; finishing phase: 4s; perception threshold: ~0.5°C/s; maximum rate: 1°C/s before reaching upper limit",
     "otherNote": "The Peltier device was embedded in a headphone-type interface and delivered thermal stimuli to the ear area between the sideburn and the tragus. A water-based system was rejected because it was too large and slow, and an air-based system was rejected because of slower response. Peltier was chosen because it can both warm and cool and has good controllability.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "both ears, specifically the area between the sideburn and the tragus. \n \n Why\n The face/ear area was chosen because the threshold for thermal stimuli on the face is the lowest in the human body, making thermal stimuli more perceptible there. The area between the sideburn and the tragus was selected after briefly testing a number of sites around the ear, seeking a display site large enough to evoke thermal sensations but not cause discomfort from contact with the hard material of the Peltier device. (Hardware, p.46)",
     "bodySites": [
       {
@@ -1702,7 +1627,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Nor reported"
+    "powerEnergyConsumption": "Nor reported",
+    "materialsInContactWithSkin": []
   },
   {
     "id": "33",
@@ -1733,11 +1659,10 @@
     "temporalParameters": null,
     "otherNote": "No implemented thermal cue or physical actuation in the study. The authors proposed Shape Memory Alloys (SMAs) as a possible future actuator. SMAs are metal alloys that change shape when heated by Joule heating from applied current. They were proposed because they can provide both warmth and compression, have small and soft form factors, and can create loose or compressed garment states. Proposed design variables included body location, intensity, and actuation pattern.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "IN the survey, participants could select from: torso, shoulders, upper arms, hands, and neck. (Section 3.1.1)",
     "bodySites": [],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "34",
@@ -1780,16 +1705,6 @@
     "temporalParameters": null,
     "otherNote": "Peltier was used alongside a microfluidic channel and microneedling component for capsaicin delivery. Capsaicin concentration levels: 0.001%, 0.01%, 0.1%. Emission volume: average 0.05 ml per emission. Reservoir capacity: 3.5 ml, about 50 pain events. Peltier was chosen because it allowed easier real-time temperature modulation across 15–40°C than changing capsaicin concentration during use.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "silicone-based",
-      "chemical",
-      "liquids-gels"
-    ],
-    "materials": [
-      "silicone-based",
-      "chemical",
-      "liquids-gels"
-    ],
     "bodyPartsInvolved": "Wrist, dorsal side.\n \nWhy?\nThe wrist was chosen as a common site for wearable devices and for practical demonstration purposes. The authors note that Douleur is similar in form to a smartwatch/smartband. No specific justification based on thermal sensitivity of the wrist is given. (Sections 3.4 and 2.2)",
     "bodySites": [
       {
@@ -1798,7 +1713,12 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "The total power consumption is reported as 10 W when using the Peltier, fan, and micro-pump together. Battery capacity: four LiPo batteries (3.7V, 3400mAh) enable 1.5 hours of continuous operation at 40°C. The maximum current is not reported for the Peltier alone."
+    "powerEnergyConsumption": "The total power consumption is reported as 10 W when using the Peltier, fan, and micro-pump together. Battery capacity: four LiPo batteries (3.7V, 3400mAh) enable 1.5 hours of continuous operation at 40°C. The maximum current is not reported for the Peltier alone.",
+    "materialsInContactWithSkin": [
+      "silicone-based",
+      "chemical",
+      "liquids-gels"
+    ]
   },
   {
     "id": "35",
@@ -1839,8 +1759,6 @@
     "temporalParameters": "Response rate: ~4°C/s; thermal feedback duration: 4s; pre-cue lead: 1s",
     "otherNote": "Two Peltier elements were connected in series to provide both hot and cool sensations. The device was wearable using a stainless steel band with magnet, which also helped heat radiation. A heat sink attachment option was mentioned. No comparative justification against alternative actuation methods was given.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Study 1: \"inner sides of both wrists, both forearms located at the center, on the inner side of the wrist and elbow, and both on both ankles located on the heel side\" (page 5).\n\nWHY?\nThe design criterion of wearability drove the choice of body parts where a band-style device can be worn (similar to a smartwatch). The authors note that multiple body parts were chosen to express motion, embodiment, and to cover a wider area of the body than single-part systems. No specific thermal sensitivity justification for these locations is provided.",
     "bodySites": [
       {
@@ -1859,7 +1777,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Not reported."
+    "powerEnergyConsumption": "Not reported.",
+    "materialsInContactWithSkin": []
   },
   {
     "id": "36",
@@ -1899,8 +1818,6 @@
     "temporalParameters": null,
     "otherNote": "Two commercially available heating pads were placed on the inflatable torso of the robot and covered by a sweatshirt. The choice was carried over from prior HuggieBot work, where warmth was empirically validated as important for hugging robots. Other reported system parameters were for haptic sensing, pressure sensing, and visual detection, not thermal control.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "No specific report. The part of the body involve hugging.",
     "bodySites": [
       {
@@ -1909,7 +1826,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "37",
@@ -1948,8 +1866,6 @@
     "temporalParameters": "6s on, 4s off between actuations; 4 actuations per pattern",
     "otherNote": "Four Nichrome wire heating pads were placed vertically on the upper body from chest to navel, at least 2 cm apart. Three thermal patterns were used: simultaneous pulsating for “being mindful”, ordered sequential top-to-bottom for “change of state”, and random single-pad activation for “mind-wandering”. The outer pad surface was covered with insulating tape to minimise heat transmission through clothing. Nichrome wire was chosen because it is low-power, inexpensive, and malleable, and suitable for on-body necklace-style placement.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "The front upper body from chest to navel, along a vertical axis. (Section 4.1; Figure 3)\n \nWhy?\nThe upper body was chosen because: (1) phenomenological studies of meditation show that meditators commonly experience warmth and interoceptive sensations in the chest and throat area; (2) following the breath naturally involves movement from chest to belly; (3) the chest was identified as the most thermally sensitive area of the upper body in the authors' somadesign exploration. The vertical placement also instantiates the movement-based metaphor (structured vs. random movement from chest to belly). (Sections 3.2, 4.2.1, 4.2.3)",
     "bodySites": [
       {
@@ -1963,7 +1879,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "38",
@@ -2002,12 +1919,6 @@
     "temporalParameters": "Heating duration: 15s; reached 35°C in 7s and 40°C in 14s",
     "otherNote": "The thermal stimuli were produced by electrothermal circuits made from copper tape. Cuts were made in the copper tape at 2.5 mm intervals to create a winding resistive heating pattern. Heat conducted through a sponge cushion layer to the wearer’s skin. Sponge dimensions: 50×15 mm base area, 10 mm thickness. Cable thickness: 0.5 sq. Copper tape was chosen because it is cheap, lightweight, flexible, cuttable with scissors, and suitable for paper-type easy prototyping.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "foam-cushioning"
-    ],
-    "materials": [
-      "foam-cushioning"
-    ],
     "bodyPartsInvolved": "In the user study: \"right side of the forehead, left eyebrow, below the left eye, right cheek, and chin\".",
     "bodySites": [
       {
@@ -2021,7 +1932,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Not reported."
+    "powerEnergyConsumption": "Not reported.",
+    "materialsInContactWithSkin": [
+      "foam-cushioning"
+    ]
   },
   {
     "id": "39",
@@ -2059,16 +1973,6 @@
     "temporalParameters": "End-to-end latency: ~800 ms, including ~750 ms liquid travel time; reservoir volume allowed ~20 minutes of actuation",
     "otherNote": "Chemical thermal illusion was created through transdermal absorption. Menthol 10% in Everclear triggered TRPM8 cold receptors, and capsaicin 0.025% triggered TRPV1 hot receptors. Flow rate: 0.07 ml/s, 4 ml/min. Reservoir volume: 1.2 ml per stimulant. Average absorption over 10 minutes across 119 mm² skin: menthol 0.8 ml, capsaicin 1.0 ml. Cheek skin thickness: ~38.8 µm; forearm skin: ~60.9 µm. The authors chose chemical actuation as a lower-power alternative to Peltiers, which were described as consuming 4–13W each.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "silicone-based",
-      "chemical",
-      "liquids-gels"
-    ],
-    "materials": [
-      "silicone-based",
-      "chemical",
-      "liquids-gels"
-    ],
     "bodyPartsInvolved": "In the photo, it's on the face (cheeks) and forearm (ventral).\nCheeks: menthol (cooling) and capsaicin (warming) applied via a mask-style cheek patch beneath the VR headset\nForearm: all five chemicals were also tested on the forearm in Study 1 and some VR experiences in Study 2 (capsaicin warming was specifically on the cheeks in the VR walkthrough, but forearm was the primary Study 1 site)\nThey claim it can be worn anywhere. But it's not. You always need extra fixation to secure it. \n \nWhy these parts?\nThe cheeks were chosen because: (1) they are a natural site for ambient facial sensations (warmth/cold) commonly associated with environmental temperature; and (2) they illustrate the system's ability to deliver chemicals to hard-to-reach locations. \n The forearm was chosen because: (1) it is an ideal site for sensations related to arm-based UIs, which are common in VR; and (2) the sleeve form factor can be adapted to other limbs. An additional practical rationale is given: cheek skin (~38.8μm thick) absorbs chemicals faster than forearm skin (~60.9μm thick), which is relevant to the speed of thermal sensation onset.",
     "bodySites": [
       {
@@ -2082,7 +1986,12 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "The full device consumes 0.52W at full intensity (two channels active), compared to 4–13W per small Peltier. This ~10× efficiency advantage is highlighted as a key benefit."
+    "powerEnergyConsumption": "The full device consumes 0.52W at full intensity (two channels active), compared to 4–13W per small Peltier. This ~10× efficiency advantage is highlighted as a key benefit.",
+    "materialsInContactWithSkin": [
+      "silicone-based",
+      "chemical",
+      "liquids-gels"
+    ]
   },
   {
     "id": "40",
@@ -2125,8 +2034,6 @@
     "temporalParameters": "Activation duration: 1s per element; total sequence duration: 3s; trigger timing: 30s into a 60s video clip",
     "otherNote": "Five Peltier elements were mounted at different spatial positions along the spine: upper left, upper centre, upper right back, middle back, and lower back. The device produced a traversing cold sensation across the back. The paper also mentions three-point and five-point device versions. Six experimental conditions were used: C1–C5 for different directional thermal patterns and C6 as no thermal feedback control. Peltiers were chosen because they can provide both heating and cooling and can be controlled individually for spatially distributed sequential stimulation.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "shoulder and back: \"upper left, upper center and upper right of the back, one on middle and one on the lower back\". \n \nWhy these locations: (Page 151)\nThe back/spine was chosen because aesthetic chills are physiologically localised primarily in the spinal region, with peripheral sensations in the shoulders and forearms. The authors argue this makes aesthetic chills particularly well-suited for a metasomatic device: (1) the somatic marker of aesthetic chills is spatially isolated from basic emotions (which are largely localised in the face), reducing cross-contamination with other emotional priors; (2) the spinal sensation of \"chills down the spine\" is the defining reported prior of the psychogenic shiver experience; and (3) the universality of this somatic marker across cultures (cited as Ref [30]) supports the choice.",
     "bodySites": [
       {
@@ -2145,7 +2052,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "41",
@@ -2185,12 +2093,6 @@
     "temporalParameters": null,
     "otherNote": "Peltier module was positioned near the user’s upper lips and nose. A silver metal contact surface was attached to the Peltier, and a heat sink was used to manage excess heat over time. A safety mechanism kept temperatures within a comfortable range, but no threshold values were reported. No specific justification for using Peltier was provided.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "metal"
-    ],
-    "materials": [
-      "metal"
-    ],
     "bodyPartsInvolved": "Upper lips and nose area.\nWhy?\nNot specified, self-evident.",
     "bodySites": [
       {
@@ -2204,7 +2106,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Partially. The motor driver for the thermal module consumes approximately 7 Watts. No other energy consumption figures are reported."
+    "powerEnergyConsumption": "Partially. The motor driver for the thermal module consumes approximately 7 Watts. No other energy consumption figures are reported.",
+    "materialsInContactWithSkin": [
+      "metal"
+    ]
   },
   {
     "id": "42",
@@ -2246,8 +2151,6 @@
     "temporalParameters": "Rate of change: ~1°C/s; transition between 29°C and 35°C: ~6s",
     "otherNote": "Three TEC units were placed along the forearm at the wrist, midpoint, and just below the elbow. Temperature feedback was continuously updated and recalculated every move using breadth-first search based on current position. The original transfer mode included Convection, but the thermal stimulus to the skin appears mainly conductive through TEC contact; fan was used for heat dissipation.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Forearm (three points along the arm: wrist, midpoint between wrist and elbow, and just below the elbow.), ventral side.\n \n Why?\n Not specified.\n The arm placement appears to be a pragmatic choice for a wearable device that is easy to put on and remove.",
     "bodySites": [
       {
@@ -2261,7 +2164,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "43",
@@ -2303,8 +2207,6 @@
     "temporalParameters": "Rate of change: ±3°C/s; target reached within 1s; stimulation: 1s ramp + 5s hold; re-adaptation period: 15s",
     "otherNote": "Five Peltier modules were attached to an HMD using a custom 3D-printed rig. T1 sensor contacted the skin during use. The modules were actuated simultaneously only; no sequential or temporal patterns were explored. Peltier modules were chosen because they can both heat and cool at relatively high speed in a compact unit.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "The face: three positions on the forehead (Fp1, FpZ, Fp2 in the EEG 10-20 system) and the area under each eye (modules 4 and 5). (p.5453, Implementation and Figure 2).\n \n Why?\n Not specified.",
     "bodySites": [
       {
@@ -2318,7 +2220,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "44",
@@ -2356,8 +2259,6 @@
     "temporalParameters": "Rate of change: 1°C/s and 3°C/s; 30s neutral baseline maintained between stimuli",
     "otherNote": "Two Peltier modules were placed on a desk facing upward, and participants rested their palm on top. The experiment manipulated warming/cooling direction, rate of change, and temperature change magnitude from a 30°C neutral baseline. No specific justification for using Peltier was provided.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Palm of dominant hand.",
     "bodySites": [
       {
@@ -2366,7 +2267,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "45",
@@ -2399,23 +2301,19 @@
     "temporalParameters": null,
     "otherNote": "tural thermal experience only. No artificial thermal actuator, device, or control parameters were used.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "air-gas",
-      "fabrics-textiles"
-    ],
-    "materials": [
-      "air-gas",
-      "fabrics-textiles"
-    ],
     "bodyPartsInvolved": "whole body",
     "bodySites": [
       {
-        "region": "wholeBody",
+        "region": "whole-body",
         "subregion": "general",
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "air-gas",
+      "fabrics-textiles"
+    ]
   },
   {
     "id": "46",
@@ -2456,12 +2354,6 @@
     "temporalParameters": "Latency: ~6s to change temperature by 5°C",
     "otherNote": "Study 1 used hot and cold water flowing through a latex tube worn on the fingertip. Study 2 used a table-fixed Peltier module with a heatsink, and participants placed their finger on it after it reached the desired temperature. Liquid flow was chosen to keep the fingertip end-effector thin and flexible, avoiding rigid devices that could obstruct natural tactile perception.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "latex"
-    ],
-    "materials": [
-      "latex"
-    ],
     "bodyPartsInvolved": "Fingertip, ventral. Dominant hand.",
     "bodySites": [
       {
@@ -2470,7 +2362,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "latex"
+    ]
   },
   {
     "id": "47",
@@ -2512,8 +2407,6 @@
     "temporalParameters": "Rate of change: 0.7°C/s, 1.5°C/s, 3°C/s; duration: 30s in Experiment 1, 8s in Experiment 2; thermal profiles: square wave, step, ramp",
     "otherNote": "The thermoelectric module was mounted on a heat sink and fan in Experiment 1. In Experiment 2, a water-cooled copper heat sink replaced the fan to provide faster cooling and avoid vibration sensations on the wrist. Thermal profiles included square wave, step, and ramp patterns, with warming and cooling directions. No explicit justification was given for choosing Peltier over other methods in Experiment 1.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Experiment 1: the tips of their right index and middle fingers on the surface of the thermoelectric module\nExperiment 2 & System ID: The wrist, ventral side.",
     "bodySites": [
       {
@@ -2527,7 +2420,8 @@
         "side": "right"
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "48",
@@ -2569,11 +2463,10 @@
     "temporalParameters": "Heating rate: 1.8°C/s at 1V up to 109.2°C/s at 9V; cooling rate: -10°C/s to -22.0°C/s",
     "otherNote": "Commercially available graphene and carbon black mixture in water-based polyurethane resin paint was applied by paintbrush or film applicator between conductive electrodes. Surface resistance: 3.7Ω with film applicator, 3.3Ω with brush, compared with 42.9Ω for silver ink heater. PID gains: Kp = 14, Kd = 0.5, Ki varied per target temperature. The material was chosen because it can generate uniform heat rapidly at low voltages, supports complex shapes, works with various materials, and is low-cost.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": null,
     "bodySites": [],
-    "powerEnergyConsumption": "At 1V: 0.05W (silver ink), 0.2W (carbon nano)\n At 3V: 0.2W (silver ink), 1.8W–2.5W (carbon nano)\n At 6V: 0.9W (silver ink), 7.4W–9.4W (carbon nano)\n At 9V: 2.4W (silver ink), 8.8W–10.7W (carbon nano)\n PID control at 3V: I = 674mA, P = 2W (Fig. 8 caption)\n H-beam: 8V, 326mA (Section 6, p.11)\n (Mostly in section 3.3)"
+    "powerEnergyConsumption": "At 1V: 0.05W (silver ink), 0.2W (carbon nano)\n At 3V: 0.2W (silver ink), 1.8W–2.5W (carbon nano)\n At 6V: 0.9W (silver ink), 7.4W–9.4W (carbon nano)\n At 9V: 2.4W (silver ink), 8.8W–10.7W (carbon nano)\n PID control at 3V: I = 674mA, P = 2W (Fig. 8 caption)\n H-beam: 8V, 326mA (Section 6, p.11)\n (Mostly in section 3.3)",
+    "materialsInContactWithSkin": []
   },
   {
     "id": "49",
@@ -2613,8 +2506,6 @@
     "temporalParameters": "Total duration: 7s per expression; attack: 0–2.45s; sustain: 2.45–4.8s; release: 4.8–7s; maximum warming rate: 6.5°C/s at 27°C; maximum cooling rate: -3.6°C/s at 27°C; inter-stimulus interval: 3 minutes",
     "otherNote": "Twelve thermoelectric modules/Peltier cells with heat sinks were assembled into the robot’s head structure. Thermal expressions used trapezoidal temperature profiles with attack, sustain, and release sections. Warming was used for anger and joy, while cooling was used for fear and sadness. Temperature gradient was also considered. No explicit justification was given for choosing Peltier over alternatives.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "The right hand",
     "bodySites": [
       {
@@ -2623,7 +2514,8 @@
         "side": "right"
       }
     ],
-    "powerEnergyConsumption": "Not reported."
+    "powerEnergyConsumption": "Not reported.",
+    "materialsInContactWithSkin": []
   },
   {
     "id": "50",
@@ -2668,14 +2560,6 @@
     "temporalParameters": null,
     "otherNote": "TEC plates were used to provide precise, controllable, rapid skin cooling for wetness illusion. In the formative study, a TEC plate was integrated into a modified 3D printer platform for precise position and pressure control. In the Mouillé prototype, TEC plates were attached to copper plates on both sides of the device and connected to fluid cooler modules tubed to a liquid reservoir. The Arduino board controlled two servo motors for stiffness modulation.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "ceramic",
-      "metal"
-    ],
-    "materials": [
-      "ceramic",
-      "metal"
-    ],
     "bodyPartsInvolved": "Study 1: ventral side of index finger tip.\nStudy 2: ventral side of finger tips.",
     "bodySites": [
       {
@@ -2684,7 +2568,11 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "ceramic",
+      "metal"
+    ]
   },
   {
     "id": "51",
@@ -2722,8 +2610,6 @@
     "temporalParameters": "Actuation duration: 4s total, with 2s ramp + 2s sustained; cooldown time: ~4s to return to baseline",
     "otherNote": "Exposed Peltier surface was in direct contact with the skin. The Peltier module was used as a compact bidirectional thermal actuator for a wrist-wearable badge. No explicit justification was given beyond consistency with similar wrist-wearable thermal feedback work.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Six locations, fig 4.\n Collar bone\n Shoulder\n Upper arm\n Waist\n Belly button area (front and back---stomach and lower back)",
     "bodySites": [
       {
@@ -2752,7 +2638,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": "Partially reported. Power is given as 8.8–9.0V at 1.03A for Heat and Cool (Fig. 2)"
+    "powerEnergyConsumption": "Partially reported. Power is given as 8.8–9.0V at 1.03A for Heat and Cool (Fig. 2)",
+    "materialsInContactWithSkin": []
   },
   {
     "id": "52",
@@ -2797,12 +2684,6 @@
     "temporalParameters": null,
     "otherNote": "Peltier module was integrated into a tongue interface and arranged in a sandwich structure with two silver electrodes and a heat sink. Electrical stimulation parameters: 20–200µA, 100–1200Hz, square wave pulses; Sour: 180µA at 800Hz, Spicy/Minty: 20µA at 400Hz. Smell activation used solid perfumes that begin to melt above 40°C, with three 15Ω parallel resistors per compartment. Peltier was chosen because it can heat and cool rapidly.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "metal"
-    ],
-    "materials": [
-      "metal"
-    ],
     "bodyPartsInvolved": "The tongue --- specifically the anterior tip of the tongue (4.0.2, 4.0.3). Participants place the tip of their tongue in contact with the two silver electrodes. \n\nWhy?\nThis location was chosen because it is easy to access and monitor electrode placement for all participants, and because the tip of the tongue identifies a variety of sensations even for chemical stimulation, though threshold sensitivity can vary.",
     "bodySites": [
       {
@@ -2811,7 +2692,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "metal"
+    ]
   },
   {
     "id": "53",
@@ -2852,12 +2736,6 @@
     "temporalParameters": null,
     "otherNote": "Peltier modules were integrated into pneumatically actuated silicone bubbles and activated together with inflation. The device combined thermal cues with pneumatic shape/pressure feedback. Peltier was chosen because it can provide both heating and cooling for bidirectional thermal control.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "silicone-based"
-    ],
-    "materials": [
-      "silicone-based"
-    ],
     "bodyPartsInvolved": "It's designed as modular wearable, fixed with a fabric layer wrap on body parts. It’s being shown on lower arm (hairy side) and lower leg (lateral) - from fig 3.\n\nThey do mentioned how could people wear on different body parts for a VR scenario (4.0.2) but lack details on where exactly on the body.",
     "bodySites": [
       {
@@ -2871,7 +2749,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "silicone-based"
+    ]
   },
   {
     "id": "54",
@@ -2910,14 +2791,6 @@
     "temporalParameters": null,
     "otherNote": "The robot exterior was designed to feel warmer than ambient. A heated blanket with cords sewn into channels between cotton layers, a heating pad on the chest, and four chemical warming packs on the arms were used. No temperature setpoints, current, voltage, or detailed control parameters were reported. No detailed justification was given for choosing resistive or chemical heating over alternatives.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "foam-cushioning",
-      "fabrics-textiles"
-    ],
-    "materials": [
-      "foam-cushioning",
-      "fabrics-textiles"
-    ],
     "bodyPartsInvolved": "Primarily the torso (chest and back) and upper/lower arms, as the heating elements were placed on the robot's chest, back, and arms (Section 4, p.53). Participants' bodies press against these surfaces during the hug.",
     "bodySites": [
       {
@@ -2936,7 +2809,11 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "foam-cushioning",
+      "fabrics-textiles"
+    ]
   },
   {
     "id": "55",
@@ -2975,8 +2852,6 @@
     "temporalParameters": null,
     "otherNote": "Peltier device was embedded in a cup holder to deliver thermal stimuli. Two temperature sensors were used: one for room temperature and one for feedback air temperature, with approximately 0.1°C resolution. The ±2°C offset was chosen based on prior physiological research. No explicit justification for choosing Peltier was provided.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "The skin around the nose (nasal skin / nasal region)",
     "bodySites": [
       {
@@ -2985,7 +2860,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "56",
@@ -3023,8 +2899,6 @@
     "temporalParameters": "ROC: 3°C/s fixed; reset duration: 10s between trials; neutral/reset temperature: 30°C",
     "otherNote": "Two 2 cm² Peltier modules were used with a heat sink and controlled wirelessly over Bluetooth. Temperature accuracy was 0.1°C. The experiment varied only temperature delta; ROC and duration were not varied. Minimum usable temperature step was 2°C because 1°C changes were difficult to perceive.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "palm the non-dominant hand )",
     "bodySites": [
       {
@@ -3033,7 +2907,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "57",
@@ -3071,12 +2946,6 @@
     "temporalParameters": null,
     "otherNote": "Three Peltier devices were stacked together inside an aluminium pipe roller. One side of the Peltier stack heated one half of the cylindrical roller surface, while the other side cooled the other half. Rolling the device alternately brought the hot and cold surfaces into contact with the skin. No detailed control parameters or justification for using Peltier were reported.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "metal"
-    ],
-    "materials": [
-      "metal"
-    ],
     "bodyPartsInvolved": "Cheek (face), used during the main itch-relief user study.",
     "bodySites": [
       {
@@ -3085,7 +2954,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "metal"
+    ]
   },
   {
     "id": "58",
@@ -3122,8 +2994,6 @@
     "temporalParameters": null,
     "otherNote": "Peltier element with attached heat sink was designed and built by SAMH Engineering. The paper did not report enough technical or control details to reproduce the setup. No specific justification for using Peltier was provided.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "right hand (not clear it's fingers or palm)",
     "bodySites": [
       {
@@ -3132,7 +3002,8 @@
         "side": "right"
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "59",
@@ -3171,8 +3042,6 @@
     "temporalParameters": "Example response: braid contracts 37% in 8s and returns to original length in 30s",
     "otherNote": "The study focused on thermally actuated fibre/textile materials rather than direct thermal feedback to the user. Thermal stimulus was delivered to the textile either by resistive heating through embedded litz wires/conductive thread or by passive/ambient heat such as body heat, lamp heat, sunlight, or infrared. Faster actuation requires higher current, but safe voltage/current limits were not specified.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "no formal user study. The paper included possible scenarios: \n Chest/breast area - FibeRoBra adaptive sports bra (hand embroidery, Section 7.1.1, p.9)\n Arm/forearm - knitted sleeve prototype shown worn on the human arm (Figure 17c–d, p.14)\n Dog's torso - FurbeRobo compression jacket (Section 7.3.1, p.12–13)",
     "bodySites": [
       {
@@ -3186,7 +3055,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "60",
@@ -3229,12 +3099,6 @@
     "temporalParameters": "Heating rate: 4–5°C/s; cooling rate: 2–3°C/s after pad switched off",
     "otherNote": "Prototype used three DC-powered resistive heating pads made of polyester filament and conductive metal fibre, encased in protective polyimide film. Pads targeted shoulders, hips, and calves. Memory foam base was 2 cm thick. Participants wore thin cotton shirt and trousers to standardise thermal conductivity. Earlier explored methods included sodium acetate, hand warmers, wheat grain-based heat pads, heat-transmitting light, heat mat, and pumped water in tubes. DC heating pads were chosen because they are simple, flexible, low-voltage, textile-embeddable, and suitable for whole body-part stimulation. Water system was too cumbersome; halogen lights were uncontrollable and too hot; IR lights were difficult to position and control.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "fabrics-textiles"
-    ],
-    "materials": [
-      "fabrics-textiles"
-    ],
     "bodyPartsInvolved": "Calves, Shoulders, hips",
     "bodySites": [
       {
@@ -3253,7 +3117,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "fabrics-textiles"
+    ]
   },
   {
     "id": "61",
@@ -3293,8 +3160,6 @@
     "temporalParameters": "Trigger pattern: 5s ON / 5s cool-down; ML study protocol: 3s ON / 5s OFF over 3 minutes; SVM classifier ran every 10s on a 2-minute sliding window",
     "otherNote": "Two TEC/Peltier modules were fixed to a neckband, with exposed heatsinks on the side opposite the user’s skin. The device delivered cold feedback to the neck and was connected to a frisson-sharing server over WiFi. Frisson detection used an SVM classifier based on EDA and HRV features. The setup is difficult to replicate because no source code or electronic schematic was provided. No explanation was given for choosing Peltier.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "The back of the neck (nape of the neck).",
     "bodySites": [
       {
@@ -3303,7 +3168,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "62",
@@ -3346,12 +3212,6 @@
     "temporalParameters": null,
     "otherNote": "Peltier thermoelectric device was embedded in the pen body. A heat sink was attached using thermal paste, and an axial fan continuously blew ambient air onto the heat sink to maintain efficiency. The authors chose Peltier because it can add or subtract thermal energy, allowing heating and cooling in one device.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "ceramic"
-    ],
-    "materials": [
-      "ceramic"
-    ],
     "bodyPartsInvolved": "The index finger (fingertip)",
     "bodySites": [
       {
@@ -3360,7 +3220,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "ceramic"
+    ]
   },
   {
     "id": "63",
@@ -3398,17 +3261,16 @@
     "temporalParameters": null,
     "otherNote": "Three household pedestal fans were placed around the participant to cover all orientations. Wind speed was 3.5 m/s measured at 130 cm distance. The cold condition was produced by cooling the room to 18°C using the existing environmental control of the experiment space.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Not explicitly states, but self-evident: Whole body.",
     "bodySites": [
       {
-        "region": "wholeBody",
+        "region": "whole-body",
         "subregion": "general",
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "64",
@@ -3446,8 +3308,6 @@
     "temporalParameters": null,
     "otherNote": "Peltier module was used with an aluminium heatsink and heat-conducting tape. Technical control details were not reported beyond the hardware components. The exact Multicomp PF-031-10-25 module could not be verified from the provided information, and no explicit justification for using Peltier was given.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "wrist, dorsal side. In the study, \"18 participants used their dominant hand for the input and non-dominant hand for the output and two participants chose the opposite way.\"",
     "bodySites": [
       {
@@ -3456,7 +3316,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "65",
@@ -3497,8 +3358,6 @@
     "temporalParameters": "ROC: 1°C/s and 3°C/s; stimulus duration: 10s; return/adaptation period: 20s",
     "otherNote": "Four independently driven Peltier heat pumps were supported by a custom microcontroller board, but two Peltiers were used per participant session to provide a larger stimulus area. Peltiers were bonded to circuit boards with a heat sink on the opposite side. The setup is difficult to replicate because no source code or detailed implementation was provided. Peltier was chosen because it allows precise temperature control and can provide both heating and cooling from the same device.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Fingertips (glabrous skin)\n Thenar eminence (bulbous palm area adjoining the thumb — glabrous)\n Dorsal surface of the forearm (hairy/non-glabrous skin)\n Dorsal surface of the upper arm (hairy/non-glabrous skin)",
     "bodySites": [
       {
@@ -3522,7 +3381,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "66",
@@ -3560,12 +3420,6 @@
     "temporalParameters": null,
     "otherNote": "No active thermal actuator was used. Thermal cues came from passive or externally prepared sources: human hand/body heat regulated with an air-activated hand warmer, heated/cooled sand bags prepared in a warm-cool dual-mode car fridge, and chilled water in a mug. Thermal conductivity values used: PLA ≈ 0.45 W/(m·K), ABS ≈ 0.443 W/(m·K), air ≈ 0.03 W/(m·K).",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "polymers-synthetics"
-    ],
-    "materials": [
-      "polymers-synthetics"
-    ],
     "bodyPartsInvolved": "hand",
     "bodySites": [
       {
@@ -3574,7 +3428,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "polymers-synthetics"
+    ]
   },
   {
     "id": "67",
@@ -3609,12 +3466,6 @@
     "temporalParameters": null,
     "otherNote": "Peltier was used, but the paper did not report product information, technical specifications, control parameters, or justification for the actuator choice.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "liquids-gels"
-    ],
-    "materials": [
-      "liquids-gels"
-    ],
     "bodyPartsInvolved": "palm (just palm, no other details)",
     "bodySites": [
       {
@@ -3623,7 +3474,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "liquids-gels"
+    ]
   },
   {
     "id": "68",
@@ -3661,16 +3515,6 @@
     "temporalParameters": null,
     "otherNote": "A one-metre silicone cord heater was placed along the palm bones of the robotic hand. No further device specifications, temperature range, power, control method, or justification for using this method were reported.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "fabrics-textiles",
-      "liquids-gels",
-      "polymers-synthetics"
-    ],
-    "materials": [
-      "fabrics-textiles",
-      "liquids-gels",
-      "polymers-synthetics"
-    ],
     "bodyPartsInvolved": "hand - for handholding gesture.",
     "bodySites": [
       {
@@ -3679,7 +3523,12 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "fabrics-textiles",
+      "liquids-gels",
+      "polymers-synthetics"
+    ]
   },
   {
     "id": "69",
@@ -3724,15 +3573,12 @@
     "temporalParameters": null,
     "otherNote": "Heat was produced by a resistive heating core and carried to the user by airflow. Coldness was produced by four TEC1-12706 Peltier modules coupled with an aluminium liquid cooling block and XSPC EC6 coolant loop, then delivered through airflow. Temperature monitoring used sensors on the cooling core, in the coolant reservoir, and adjacent to the heating core. No explicit justification for the actuation method was provided.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "air-gas"
-    ],
-    "materials": [
-      "air-gas"
-    ],
     "bodyPartsInvolved": "I can not figure out through the rest of the description in the paper.",
     "bodySites": [],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "air-gas"
+    ]
   },
   {
     "id": "70",
@@ -3769,12 +3615,6 @@
     "temporalParameters": "Body temperature sampled every 10s; system response time: <2.3s for a 1.25°C thermal cue change",
     "otherNote": "Two overlapping flexible conductive yarn heating pads were embedded in a waist belt. Inner body/digestive-system temperature was sensed using a Cortemp digestible sensor, but sensor details were not reported. The system mapped internal body temperature changes to external thermal cues. Technical details and source code were insufficient for replication.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "fabrics-textiles"
-    ],
-    "materials": [
-      "fabrics-textiles"
-    ],
     "bodyPartsInvolved": "The waist/abdomen area.",
     "bodySites": [
       {
@@ -3783,7 +3623,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "fabrics-textiles"
+    ]
   },
   {
     "id": "71",
@@ -3821,8 +3664,6 @@
     "temporalParameters": null,
     "otherNote": "Six Peltier elements were mounted in the removable foam face interface of an Oculus Quest HMD. The six elements were grouped into three channels: front, left, and right, with two elements per channel. Each channel used an Allegro A3909 H-bridge for bidirectional current control, enabling both heating and cooling via current reversal. The ESP32 module was WiFi-connected to the Oculus. Source code for replication was not available.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Around eyes:\n Forehead (2 Peltier elements, front channel)\n Temples (1 element per side, left and right channels)\n Cheeks (1 element per side, left and right channels)",
     "bodySites": [
       {
@@ -3836,7 +3677,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "72",
@@ -3877,8 +3719,6 @@
     "temporalParameters": "Stimuli duration tested: 2–10s; final duration: 10s; thermal perception latency: 3s heating, 2s cooling; cooling/heating triggered at scene start",
     "otherNote": "Two Peltier elements were mounted on heatsinks in an Ambient Temperature Module worn on the back of the neck. Wind stimuli included direction, speed, and sweep speed. Thermal stimuli varied type, intensity, and duration. Rapid heating/cooling conditions HR4 and CR8 were excluded because they produced pain sensations. Peltier was chosen because it is compact, lightweight, provides both heating and cooling, requires direct skin contact, avoids latency issues of non-contact methods, and can be controlled within a safe temperature range.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Back of the necl and near front face.",
     "bodySites": [
       {
@@ -3892,7 +3732,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "73",
@@ -3931,11 +3772,10 @@
     "temporalParameters": "Rise time range: 6–60s; minimum safe rise time: 6s; example rise times: 6s, 18s, 30s, 45s, 60s",
     "otherNote": "Silver ink was printed in serpentine patterns to form resistive heaters for thermoreactive materials. The toolkit included thermochromic pigment, thermochromic PLA, and thermoreactive clothing as thermoreactive elements. Users could draw heating regions and sub-regions, adjust heater pattern/orientation, and control rise time through resistance. Example power rates for five sub-regions: 2.0W, 0.7W, 0.4W, 0.3W, 0.2W. Example total circuit power: 1.7W; total current: 350mA. Activation energy values: thermochromic liquid crystal 8–12J, thermochromic pigment 55J, thermochromic PLA 757J. Silver ink inkjet printing was chosen for accessible, fast, accurate heater prototyping and spatial heat control.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "This is a fabrication support tool, not specific to particular interfaces.",
     "bodySites": [],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "74",
@@ -3976,8 +3816,6 @@
     "temporalParameters": null,
     "otherNote": "Four heating materials were used to actuate thermochromic materials: soft textile heating pad, bendable/cuttable Nichrome wire, cuttable conductive fabric, and rigid square Peltier element. Heating depends on size, resistance, and current. Conductive fabric surface area affects heat build-up and dissipation time. Peltier provides nearly instantaneous bidirectional heating/cooling but has a fixed rigid shape. Materials were selected because they had been used previously for thermochromic actuation, offered different flexibility and heat dissipation properties, were low-cost, and could be safely used around the body within 21–50°C.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "During heating material exploration (p. 1022, Heating Materials):\n \n Hands and arms — \"This bodily experience involved placing the heating elements on hands or arms\" (Fig. 3g). Participants also used body temperature (from hands) to actuate thermochromic materials by \"placing hands on them, tapping them, holding and pressing, rubbing, or even blowing warm air onto them\" (p. 1022).\n \n For thermochromic material actuation via body heat (p. 1022):\n Hands — used as an actuating tool: placing hands on thermochromic sheets to change their color through body temperature.",
     "bodySites": [
       {
@@ -3991,7 +3829,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "75",
@@ -4033,12 +3872,6 @@
     "temporalParameters": "Rate of temperature change mentioned as important, but exact value not specified; temperature profile shown over approximately 0–125s",
     "otherNote": "Peltier element delivered heating and cooling to two silver electrodes contacting the tip of the tongue. Electrical stimulation used square wave pulses, 50–1000Hz frequency range, and 20–200µA current range across 10 discrete levels. The electrodes were 95% pure silver. Peltier was chosen because it can heat and cool rapidly, making it suitable for dual heating/cooling taste stimulation.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "metal"
-    ],
-    "materials": [
-      "metal"
-    ],
     "bodyPartsInvolved": "tip of the tongue",
     "bodySites": [
       {
@@ -4047,7 +3880,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "metal"
+    ]
   },
   {
     "id": "76",
@@ -4080,8 +3916,6 @@
     "temporalParameters": null,
     "otherNote": "A commercial wrist-worn device, Embr Wave, was used to actuate temperature and deliver temperature-based haptic patterns. The choice was justified by prior use in HCI research, rather than by technical comparison with alternative thermal actuation methods. No detailed control parameters were provided.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Wrist --- participants could choose between the inner (volar) or outer (dorsal) side of the wrist.",
     "bodySites": [
       {
@@ -4090,7 +3924,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "77",
@@ -4125,8 +3960,6 @@
     "temporalParameters": "ROC: 1°C/s and 3°C/s; stimulus duration: 10s; inter-stimulus adaptation: 30s return to neutral; initial skin adaptation: 2 minutes at 32°C",
     "otherNote": "Two Peltiers were placed next to each other to stimulate adjoining areas of the skin. Body locations were the thenar eminence and dorsal wrist. Each location received 24 stimuli: 3 intensities × 2 directions × 2 ROCs × 2 presentations. The device replicated the apparatus from Wilson et al. [23] to allow direct comparison.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Two locations: Thenar eminence and the back of the wrist.",
     "bodySites": [
       {
@@ -4140,7 +3973,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "78",
@@ -4178,8 +4012,6 @@
     "temporalParameters": "Temperature-changing rate: ±3°C/s; stimulus duration: 1.5s; inter-stimulus interval: 15s; reset period between configurations: 5 minutes",
     "otherNote": "Flexible thermal modules were mounted around the grip of a cane. The modules used a matrix of 96 micro Peltier elements without ceramic insulation, making them flexible enough to fit the curved cane grip. Study 1 tested 3, 4, and 5 module configurations, and Study 2 selected 4 modules. Modules were equally spaced around the grip. Each stimulus was repeated twice per configuration, with hot and cold directions tested.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Whoe palm, the hand using the cane in navigation.",
     "bodySites": [
       {
@@ -4188,7 +4020,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "79",
@@ -4223,8 +4056,6 @@
     "temporalParameters": "Peltier on-time varied according to VR ocean depth",
     "otherNote": "One Peltier module was attached to the wrist area of each Neosports glove. The modules were sourced from Adafruit, but exact product details were not reported. VR ocean depth was mapped to Peltier activation time. No explicit justification for using Peltier was provided, though the components appear to have been chosen for practical availability.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Wirst, though unclear which side.\n \n The authors justify this choice because the wrist is one of the prime cooling points of the body due to the radial artery being close to the skin's surface, and local cold on the wrist can give a body-wide sensation of coolness.",
     "bodySites": [
       {
@@ -4233,7 +4064,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "80",
@@ -4273,11 +4105,10 @@
     "temporalParameters": "Cooling rate: 4°C/s; heating rate: 8°C/s",
     "otherNote": "A single TEC1-12706 thermoelectric plate was used with a heat sink and fan to dissipate heat from the bottom side. The system communicated with the control PC via USB at 57 Kbps. Hardware details were reported, but source code would be needed to reproduce the device. No explicit justification for using Peltier was provided.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": null,
     "bodySites": [],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "81",
@@ -4312,12 +4143,6 @@
     "temporalParameters": null,
     "otherNote": "Heat pads were embedded within textile wearables as thermal actuators. Product details, temperature range, power, control method, and temporal parameters were not reported. The paper is a pictorial, and no justification or comparison with alternative thermal actuation methods was provided.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "fabrics-textiles"
-    ],
-    "materials": [
-      "fabrics-textiles"
-    ],
     "bodyPartsInvolved": "One artifact has the pad on the dorsal side of the neck, the other artifact has a pad on the shoulder and one on the upper back. - The location is determined by the parts of the body feeling warm during a hug.",
     "bodySites": [
       {
@@ -4336,7 +4161,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "fabrics-textiles"
+    ]
   },
   {
     "id": "82",
@@ -4376,12 +4204,6 @@
     "temporalParameters": "On/off cycle interval: x × 350 ms for both active and inactive phases; example 50% heat: 2.6s on / 2.6s off; 75% heat: 3.9s on / 3.9s off",
     "otherNote": "The thermal module was located in the base of the mitt and covered a 5×5 cm area. It combined a polyimide heating pad containing polyester filament and Micro Metal Conductive Fibre for warming, and a Neuftech TEC1-12706 Peltier element for cooling. A thin fabric layer prevented direct skin contact and potential harm. Heating was selected by turning the dial clockwise, and cooling by turning it counter-clockwise. This paper provides enough detail to roughly reproduce the control logic, although source code was not provided.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "polymers-synthetics"
-    ],
-    "materials": [
-      "polymers-synthetics"
-    ],
     "bodyPartsInvolved": "Hands",
     "bodySites": [
       {
@@ -4390,7 +4212,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "polymers-synthetics"
+    ]
   },
   {
     "id": "83",
@@ -4427,12 +4252,6 @@
     "temporalParameters": "ROC: 1°C/s and 3°C/s; stimulus duration: 10s; post-stimulus adaptation: 30s; pre-session skin adaptation: 2 minutes at 32°C",
     "otherNote": "Two Peltiers were used simultaneously to provide a larger stimulus area and allow lower intensity output for detectable sensations. Body locations: thenar eminence, upper thigh, and waist. Materials tested between actuator and skin: none, cotton with conductivity ~0.04 W·m⁻¹·K⁻¹, and nylon with conductivity ~0.25 W·m⁻¹·K⁻¹. Each session had 24 stimuli: 3 intensities × 2 directions × 2 ROCs × 2 presentations. Total stimuli per participant: 72 across 3 sessions. The device appears inherited from Wilson et al. [12].",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "fabrics-textiles"
-    ],
-    "materials": [
-      "fabrics-textiles"
-    ],
     "bodyPartsInvolved": "Thenar eminence — the bulbous region of the palm adjoining the thumb, on the non-dominant hand (simulating holding a mobile device)\n Upper thigh of the left leg (simulating a phone in a trouser pocket)\n Waist (simulating a device clipped to a belt)",
     "bodySites": [
       {
@@ -4451,7 +4270,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "fabrics-textiles"
+    ]
   },
   {
     "id": "84",
@@ -4490,8 +4312,6 @@
     "temporalParameters": "Temperature change rate: ±1°C/s; stimulus duration: 3s; inter-trial interval: 25s; hot–cold gap for mixed patterns: 1.2s",
     "otherNote": "TEC elements were embedded in a 3D-printed PLA finger ring. The number of TECs tested was 4, 6, or 8, with simultaneous dual-TEC activation. Room temperature was 27°C. TECs were chosen because prior ring-based resistor systems were slow and heating-only, while TECs support bidirectional heating/cooling and faster response, approximately 1s compared with more than 7s warming in prior resistor systems.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "The rings were worn on the index finger of participants' non-dominant hand, specifically at the proximal phalanx (the base/lower segment of the finger where a ring is typically worn). (Section 5.2)",
     "bodySites": [
       {
@@ -4500,7 +4320,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "85",
@@ -4533,8 +4354,6 @@
     "temporalParameters": null,
     "otherNote": "Soft, flexible heat pads were used to distribute heat against the skin, but the paper did not report product details or technical parameters. Based on participant descriptions, they may have been resistive heating pads or microwavable wheat/rice cushions rather than thermoelectric devices. The paper focused on two design workshops, and the toolkit details may be in referenced work [57]. No explanation was given for the choice of heat pads.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Not specific in the Feldenkrais session.\n Multiple body locations were explored, both by researchers during the A-lab and by participants in their own design concepts:\n \n Chest/lungs area : The Calm-inator (Eva & Lena), for pre-menstrual depressive feelings (Section 5.2, p.8)\n Lower abdomen/stomach: Värme Plagget, U-formen, Korven, Transformer (Sections 5.1, 5.3, 5.4, 5.5)\n Hip bones and hip flexor: U-formen, Korven (Sections 5.3, 5.4)\n Neck and legs: mentioned as secondary use locations for Korven (Section 5.4, p.9)\n Arms: explored informally during the A-lab session (Section 4.2, p.6)",
     "bodySites": [
       {
@@ -4563,7 +4382,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "86",
@@ -4597,11 +4417,10 @@
     "temporalParameters": "Heating time, cooling time, heating area, electrode spacing, and cooling rate mentioned, but exact values not provided",
     "otherNote": "The study focuses on a thermally driven phase-transition actuator rather than direct thermal feedback to the user, so thermal transfer mode is kept as N/A. Current through the conductive silicone layer heats embedded ethanol above its 78.4°C boiling point, creating vapour bubbles and internal pressure that expands the silicone matrix. The 50V drive requirement may limit practical deployment. Replication is difficult because the sensing algorithm integrating capacitive and resistive material responses is not clearly described and no source/demo code is provided.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "The paper does not report a formal study of thermal perception on specific body parts.",
     "bodySites": [],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "87",
@@ -4639,8 +4458,6 @@
     "temporalParameters": "Each season: ~30s; full experience: 120s",
     "otherNote": "Two Peltier elements were mounted on heatsinks and worn on the back of the user’s neck as a thermal collar. Summer used heating, winter used cooling, and spring/autumn used no thermal stimulus. Room temperature during the study was 24°C. Original transfer mode included Convection, but the described neck-worn Peltier contact mechanism is mainly Conduction. Peltier was chosen because it is lightweight for wearable HMD use, supports precise and low-latency heating/cooling, and can be safely applied directly to the skin.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Back of the user's neck. They explained why there, by referenced a work [38] stating that that body location can produce the whole body thermal experience.",
     "bodySites": [
       {
@@ -4649,7 +4466,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "88",
@@ -4686,11 +4504,10 @@
     "temporalParameters": null,
     "otherNote": "Peltier device was embedded in the Phase-change Control Module to directly heat the reservoir dish of the Pouch Module and trigger phase change. Round-shaped TEC1-050031026 and square-shaped TEC1-07103 Peltier elements were used for freedom of placement. Gas volume increased linearly with the amount of Novec 7000 injected. Peltier was chosen for short heating rise time and rapid controlled phase-change triggering. Future work proposed using reversible Peltier heating/cooling surfaces for cooling or deflation without extra components.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": null,
     "bodySites": [],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "89",
@@ -4729,8 +4546,6 @@
     "temporalParameters": "Maximum cooling speed: 6.2°C/s; maximum heating speed: 5.5°C/s; cooling times: wood 500ms, polyacrylate 600ms, rubber 1000ms, glass 1200ms, aluminium 3200ms; inter-trial reheating break: minimum 2s",
     "otherNote": "The Peltier element was used to simulate thermal material characteristics for five materials. Two KTY81-210 analogue temperature sensors were fitted near the touching area. Each material had 11 trials per participant, plus 5 calibration trials not measured. The authors referenced prior use of Peltier devices for simulating thermal material properties.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Index finger tip.\n \n In two experimental conditions:\n Index finger of the dominant hand: used in the stand-alone condition, where the participant rests this finger directly on the Peltier actuator to receive thermal stimuli\n Index finger of the non-dominant hand: used in the supplemental condition, where this finger rests on the actuator to receive thermal material information while the dominant hand touches the virtual element on the touchscreen",
     "bodySites": [
       {
@@ -4739,7 +4554,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "90",
@@ -4774,8 +4590,6 @@
     "temporalParameters": "ROC: 1°C/s and 3°C/s in Study 1; ROC: 3°C/s in Study 2; Study 1 stimulus duration: 6s; Study 2 stimulus duration: 3s per phase; adaptation period: 30s between trials",
     "otherNote": "Custom-built two-channel Peltier stimulators were used for thermal perception studies. Study 2 tested four timing techniques: T1 pre-image phase only, T2 first 3s of image display, T3 last 3s of image display, and T4 post-image phase only, plus neutral control. The 3s phase duration was chosen because it was the minimum time needed for the highest-intensity stimuli to reach target temperature at 3°C/s. The choice of Peltier was justified by precedent in prior thermal stimuli perception studies rather than detailed technical rationale.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Palm: thenar eminence",
     "bodySites": [
       {
@@ -4784,7 +4598,8 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "91",
@@ -4820,11 +4635,10 @@
     "temporalParameters": null,
     "otherNote": "A film heater was placed around the robot’s armpits to back area to provide warmth. No temperature range, control method, modulation strategy, temporal parameters, or justification for the actuator choice were reported.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [],
-    "materials": [],
     "bodyPartsInvolved": "Since it's a huggable stuffed-toy robot held close to the user, thermal contact would likely occur wherever the user holds or touches the robot (hands, arms, torso when hugging).",
     "bodySites": [],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": []
   },
   {
     "id": "92",
@@ -4864,14 +4678,6 @@
     "temporalParameters": "Compression begins ~1s after current applied; full compression at 2.5s; pressure easing begins ~3s after current off; full reset at 10s with mechanical spring assist",
     "otherNote": "SMAs provided thermal feedback as a byproduct of resistive heating while primarily generating compression. Flexinol SMA wire was formed into tightly wound spring actuators. Continuous activation over 3 minutes could cause overheating, and bands were temporarily deactivated in two study cases to prevent burns. Neoprene and aramid fabric were used to shield skin from excessive heat. Typical SMA reset without mechanical assist was 30–60s.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "polymers-synthetics",
-      "fabrics-textiles"
-    ],
-    "materials": [
-      "polymers-synthetics",
-      "fabrics-textiles"
-    ],
     "bodyPartsInvolved": "Dominant hand (wrist/hand area) --- one SqueezeBand worn here\nUpper arm --- a second SqueezeBand worn here\nNot clear which side.\nAll participants wore two bands total during experiments.",
     "bodySites": [
       {
@@ -4890,7 +4696,11 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "polymers-synthetics",
+      "fabrics-textiles"
+    ]
   },
   {
     "id": "93",
@@ -4927,12 +4737,6 @@
     "temporalParameters": "Response time: 0.5–1s; breathing animation: 1–1.5s per cycle; moving animation: 7s; internal succession: 5s",
     "otherNote": "X-Silver silver-coated nylon conductive yarn was used as the primary heating material because of its flexibility and durability compared with alternatives such as silver ink and conductive ink. Conductive yarn resistance: 6Ω/cm. The system was used to actuate thermochromic colour-change patterns.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "silicone-based"
-    ],
-    "materials": [
-      "silicone-based"
-    ],
     "bodyPartsInvolved": "Back of hand (4 participants wore for 6 hours)\n Forearm (4 participants wore for 6 hours) --- not clear where on the forearm",
     "bodySites": [
       {
@@ -4946,7 +4750,10 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "silicone-based"
+    ]
   },
   {
     "id": "94",
@@ -4983,12 +4790,6 @@
     "temporalParameters": null,
     "otherNote": "Conductive yarn was woven into pajama fabric and used as a resistive/Joule heating element. The system actuated thermochromic ink: leuco dye 1 changed from dark brown to orange at ~31°C, and leuco dye 2 plus normal dye became yellow at 38°C. No specific temperature target was reported for the warmth/hug feedback function. No explanation was given for choosing conductive yarn.",
     "technicalSummary": null,
-    "materialsInContactWithSkin": [
-      "fabrics-textiles"
-    ],
-    "materials": [
-      "fabrics-textiles"
-    ],
     "bodyPartsInvolved": "Twelve upper body locations (front and back of the torso, arms), shown in fig 10.",
     "bodySites": [
       {
@@ -5002,6 +4803,9 @@
         "side": null
       }
     ],
-    "powerEnergyConsumption": null
+    "powerEnergyConsumption": null,
+    "materialsInContactWithSkin": [
+      "fabrics-textiles"
+    ]
   }
 ]

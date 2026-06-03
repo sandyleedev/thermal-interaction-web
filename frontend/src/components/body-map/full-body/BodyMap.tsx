@@ -147,7 +147,7 @@ export function BodyMap({
     [selectedBodyMapChips],
   );
   const isWholeBodyChipSelected = useCallback(
-    () => isRegionChipSelected("wholeBody"),
+    () => isRegionChipSelected("whole-body"),
     [isRegionChipSelected],
   );
   const uid = useId().replace(/:/g, "");
@@ -332,7 +332,7 @@ export function BodyMap({
   );
 
   const handleWholeBodyRingClick = useCallback(() => {
-    onPartClick?.("wholeBody");
+    onPartClick?.("whole-body");
   }, [onPartClick]);
 
   const handlePartEnter = useCallback(

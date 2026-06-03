@@ -68,7 +68,7 @@ export function getSelectableSubpartIds(
       return ["general", ...HAND_DETAIL_HIT_IDS];
     case "leg":
       return ["general", ...LEG_DETAIL_HIT_IDS];
-    case "wholeBody":
+    case "whole-body":
       return ["general"];
     default:
       return BODY_MAP_L2_SUBREGIONS_BY_PARENT[parent];
@@ -99,7 +99,7 @@ export function paperMatchesBodyMapChip(
   paper: BodySitesCarrier,
   chip: BodyMapChipSelection,
 ): boolean {
-  if (chip.parent === "wholeBody") {
+  if (chip.parent === "whole-body") {
     const sub = normalizeBodyMapSubpart(chip.subpart);
     if (!sub || sub === "general") return paperHasWholeBodyGeneralSite(paper);
     return false;

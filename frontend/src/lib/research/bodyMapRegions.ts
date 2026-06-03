@@ -2,7 +2,7 @@
  * Canonical body-map region types (three layers).
  *
  * 1. `BodyMapRegion` — merged SVG hit targets on the L1 map (hover / selection).
- *    Excludes `wholeBody` (no silhouette path; whole-body UX uses outline + tint).
+ *    Excludes `whole-body` (no silhouette path; whole-body UX uses outline + tint).
  *
  * 2. `BodyMapPlacementRegion` — partition for dots / density / heatmap marks on the L1 SVG.
  *    Finer than merged hit targets where needed (torso, arm, leg); each placement maps to
@@ -11,7 +11,7 @@
  * 3. `BodyMapDetailRegion` — finest grain in `bodySites`: L1 parent (`BodyMapParentRegion`) + L2 slug.
  */
 
-/** Main SVG regions (silhouette parts), stable UI / iteration order. Excludes `wholeBody`. */
+/** Main SVG regions (silhouette parts), stable UI / iteration order. Excludes `whole-body`. */
 export const BODY_MAP_REGIONS = [
   "head",
   "neck",
@@ -27,9 +27,9 @@ export const BODY_MAP_REGIONS = [
 
 export type BodyMapRegion = (typeof BODY_MAP_REGIONS)[number];
 
-/** Values allowed in `bodySites.region`, including `wholeBody`. */
+/** Values allowed in `bodySites.region`, including `whole-body`. */
 export const BODY_MAP_PARENT_REGIONS = [
-  "wholeBody",
+  "whole-body",
   ...BODY_MAP_REGIONS,
 ] as const;
 
@@ -102,7 +102,7 @@ export type BodyMapDetailRegion = {
  * Extend when new L2 art or data columns appear.
  */
 export const BODY_MAP_L2_SUBREGIONS_BY_PARENT = {
-  wholeBody: ["general"],
+  "whole-body": ["general"],
   head: ["general", "ear", "forehead", "nose", "cheek", "lip", "tongue"],
   neck: ["general", "posterior", "anterior"],
   torso: ["general", "shoulder", "chest", "abdomen", "back"],

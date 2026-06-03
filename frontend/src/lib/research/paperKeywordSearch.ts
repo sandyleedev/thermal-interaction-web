@@ -77,9 +77,8 @@ function buildPaperDetailsSearchText(paper: ResearchPaper): string {
   pushText(parts, paper.minDurationSec);
   pushText(parts, paper.maxDurationSec);
   pushList(parts, paper.senses, titleCaseOption);
-  pushList(parts, paper.materials, titleCaseOption);
+  pushList(parts, paper.materialsInContactWithSkin, titleCaseOption);
   pushList(parts, paper.thermalTransferModes, titleCaseOption);
-  pushList(parts, paper.materialsInContactWithSkin);
   pushText(parts, display.temperatureRange);
   pushText(parts, display.duration);
   pushText(parts, display.transferMode);

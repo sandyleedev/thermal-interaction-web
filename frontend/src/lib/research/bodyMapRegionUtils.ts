@@ -81,7 +81,7 @@ export function resolveBodySite(site: {
 /** True when the site is the product “Whole body → General” row (no per-region dots). */
 export function isResolvedWholeBodyGeneral(site: BodyMapDetailRegion): boolean {
   return (
-    site.parent === "wholeBody" &&
+    site.parent === "whole-body" &&
     site.subregion.trim().toLowerCase() === "general"
   );
 }
@@ -137,7 +137,7 @@ export function countPapersWithBodySubregion(
 export function bodyMapPlacementRegionsForDetail(
   site: BodyMapDetailRegion,
 ): BodyMapPlacementRegion[] {
-  if (site.parent === "wholeBody") return [];
+  if (site.parent === "whole-body") return [];
 
   if (site.parent === "arm") {
     const sub = site.subregion.trim().toLowerCase();
@@ -174,12 +174,12 @@ export const WHOLE_BODY_GENERAL_COUNT_KEY = "wholeBodyGeneral" as const;
 
 /**
  * Which `BodyMapParentRegion` count keys one site increments for aggregate maps.
- * Whole-body sites contribute only `wholeBody` here (not +1 on every physical region).
+ * Whole-body sites contribute only `whole-body` here (not +1 on every physical region).
  */
 export function parentKeysForBodyMapAggregatedCounts(
   site: BodyMapDetailRegion,
 ): readonly BodyMapParentRegion[] {
-  if (site.parent === "wholeBody") return ["wholeBody"];
+  if (site.parent === "whole-body") return ["whole-body"];
   return [site.parent];
 }
 
@@ -204,7 +204,7 @@ export type BodySitesCarrier = {
 
 /**
  * True if the paper should stay visible when the user picks one L1 region on the map.
- * Whole-body outline selection (`wholeBody`) matches sites whose resolved parent is `wholeBody`.
+ * Whole-body outline selection (`whole-body`) matches sites whose resolved parent is `whole-body`.
  * Physical regions (head, arm, …) match only sites that resolve to that same parent — a
  * whole-body-only site does not satisfy those filters.
  */

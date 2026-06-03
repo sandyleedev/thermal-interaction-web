@@ -17,7 +17,7 @@ export const BODY_MAP_DETAIL_REGIONS = new Set<BodyMapParentRegion>([
 ]);
 
 const PARENT_CHIP_LABEL: Record<BodyMapParentRegion, string> = {
-  wholeBody: "General",
+  "whole-body": "General",
   head: "Head",
   neck: "Neck",
   torso: "Torso",
@@ -125,6 +125,6 @@ export function isBodyMapChipRegion(
 
 /** @deprecated Use selection-order chips; kept for tests or migrations. */
 export const BODY_MAP_CHIP_ORDER: readonly BodyMapParentRegion[] = [
-  "wholeBody",
+  "whole-body",
   ...BODY_MAP_REGIONS,
 ];

@@ -2,12 +2,12 @@
 
 export type OtherFilterCategory =
   | "senses"
-  | "materials"
+  | "materialsInContactWithSkin"
   | "thermalTransferModes";
 
 export const OTHER_FILTER_CATEGORY_ORDER: OtherFilterCategory[] = [
   "senses",
-  "materials",
+  "materialsInContactWithSkin",
   "thermalTransferModes",
 ];
 
@@ -16,7 +16,7 @@ export type FilterOption = { id: string; label: string };
 export const OTHER_FILTER_SECTION_TITLES: Record<OtherFilterCategory, string> =
   {
     senses: "Senses",
-    materials: "Materials in contact with skin",
+    materialsInContactWithSkin: "Materials in contact with skin",
     thermalTransferModes: "Thermal transfer modes",
   };
 
@@ -34,7 +34,7 @@ export const OTHER_FILTER_OPTIONS: Record<OtherFilterCategory, FilterOption[]> =
       { id: "gustatory", label: "Gustatory" },
       { id: "body-general", label: "Body (general)" },
     ],
-    materials: [
+    materialsInContactWithSkin: [
       { id: "metal", label: "Metal" },
       { id: "ceramic", label: "Ceramic" },
       { id: "fabrics-textiles", label: "Fabrics & Textiles" },
@@ -59,7 +59,7 @@ export function emptyOtherFilterSelections(): Record<
 > {
   return {
     senses: [],
-    materials: [],
+    materialsInContactWithSkin: [],
     thermalTransferModes: [],
   };
 }

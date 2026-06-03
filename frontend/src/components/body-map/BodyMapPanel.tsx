@@ -87,8 +87,8 @@ export function BodyMapPanel() {
         navigateToBodyMapDetail(region);
         return;
       }
-      if (region === "wholeBody") {
-        toggleBodyMapChip("wholeBody", "general");
+      if (region === "whole-body") {
+        toggleBodyMapChip("whole-body", "general");
         return;
       }
       toggleBodyMapChip(region);

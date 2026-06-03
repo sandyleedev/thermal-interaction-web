@@ -103,7 +103,7 @@ function formatDurationRangeDisplay(p: ResearchPaper): string {
 
 /**
  * Convert body-map region keys into readable labels.
- * e.g. "arm" → "Arm", "wholeBody" → "Whole body"
+ * e.g. "arm" → "Arm", "whole-body" → "Whole body"
  */
 function taxonomyRegionLabel(region: string): string {
   const map: Record<string, string> = {
@@ -115,7 +115,7 @@ function taxonomyRegionLabel(region: string): string {
     hand: "Hand",
     leg: "Leg",
     ankle: "Ankle",
-    wholeBody: "Whole body",
+    "whole-body": "Whole body",
     foot: "Foot",
   };
   return map[region] ?? titleCaseOption(region);
@@ -157,7 +157,7 @@ function buildPaperDisplay(p: ResearchPaper): PaperDisplay {
   const bodySiteKeywords = normalizeBodySites(p).map(formatBodySiteLine);
   const tagCandidates = [
     ...p.senses.map(titleCaseOption),
-    ...p.materials.map(titleCaseOption),
+    ...p.materialsInContactWithSkin.map(titleCaseOption),
     ...bodySiteKeywords,
     ...p.thermalTransferModes.map(titleCaseOption),
   ];

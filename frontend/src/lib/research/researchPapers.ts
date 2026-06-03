@@ -84,7 +84,7 @@ export type { BodySiteSide } from "@/lib/research/bodyMapSiteSide";
 
 /**
  * One measured / stimulated location on the body.
- * - `region` should be an L1 parent (`head`, `arm`, …) or `wholeBody`.
+ * - `region` should be an L1 parent (`head`, `arm`, …) or `whole-body`.
  * - `subregion` is the L2 slug (`forearm`, `palm`, …); use `general` when unknown.
  * - `side` is `left`, `right`, or `null` when laterality is unknown.
  */
@@ -127,8 +127,7 @@ export type ResearchPaper = {
   otherNote?: string | null;
   technicalSummary?: string | null;
 
-  materialsInContactWithSkin?: string[];
-  materials: string[];
+  materialsInContactWithSkin: string[];
 
   bodyPartsInvolved?: string | null;
   bodySites: BodySite[];
@@ -172,8 +171,8 @@ export function paperFieldForCategory(
   switch (cat) {
     case "senses":
       return paper.senses;
-    case "materials":
-      return paper.materials;
+    case "materialsInContactWithSkin":
+      return paper.materialsInContactWithSkin;
     case "thermalTransferModes":
       return paper.thermalTransferModes;
     default:
