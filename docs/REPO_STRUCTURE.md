@@ -110,7 +110,8 @@ thermal-interaction-web/
     ├── sync_research_papers_from_csv.py   # CSV full replace → JSON
     ├── add_research_papers_with_csv.py    # Append new DOIs only
     ├── export_research_papers_to_import_csv.py
-    └── papers.sample.csv
+    ├── README.md
+    └── papers.csv (optional local export)
 ```
 
 ---
@@ -136,7 +137,7 @@ Local dev: `cd frontend && npm install && npm run dev`. Production builds set `V
 
 ### `scripts/` — maintain the dataset
 
-CSV tools sync or append `researchPapers.json` (header-row CSV; see `PAPERS_IMPORT_FORMAT.md`). The **thumbnail-collector** is a small Node utility that downloads preview images into `output/`; those files are committed under `frontend/public/paper-thumbnails/`. None of this runs when someone opens the website.
+CSV tools sync or append `researchPapers.json` (see `scripts/README.md`). The **thumbnail-collector** is a small Node utility that downloads preview images into `output/`; those files are committed under `frontend/public/paper-thumbnails/`. None of this runs when someone opens the website.
 
 ### `.github/workflows/`
 
