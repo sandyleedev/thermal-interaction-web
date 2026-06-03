@@ -5,13 +5,14 @@ import { Header } from "@/components/landing/Header";
 import { OtherFilterCategoryPanel } from "@/components/landing/OtherFiltersPanel";
 import { OTHER_FILTER_CATEGORY_ORDER } from "@/lib/research/otherFilterVocab";
 import { consumeLandingScrollRestore } from "@/lib/navigation/landingScrollRestore";
+import { LandingKeywordSearch } from "@/components/landing/LandingKeywordSearch";
 import { ResultsPanel } from "@/components/landing/ResultsPanel";
 import { ScrollToTopButton } from "@/components/landing/ScrollToTopButton";
 import { TemperaturePanel } from "@/components/temperature-panel/TemperaturePanel";
 import "@/pages/LandingPage.css";
 
 /**
- * Main landing layout: three-column view (body map | filters | results).
+ * Main layout: desktop 3 columns; tablet sidebar | results; mobile stack with search on top.
  */
 export function LandingPage() {
   useEffect(() => {
@@ -29,20 +30,25 @@ export function LandingPage() {
     <div className="landing-root">
       <Header />
       <div className="landing-main landing-layout-main" id="main">
-        <div className="landing-layout-col landing-layout-col-left">
-          <BodyMapPanel />
+        <div className="landing-layout-keyword-top">
+          <LandingKeywordSearch />
         </div>
-        <div className="landing-layout-col landing-layout-col-center">
-          <div className="landing-filters-scroll">
-            <TemperaturePanel />
-            <DurationPanel />
-            {OTHER_FILTER_CATEGORY_ORDER.map((category, index) => (
-              <OtherFilterCategoryPanel
-                key={category}
-                category={category}
-                showFilterLogicInfo={index === 0}
-              />
-            ))}
+        <div className="landing-layout-sidebar">
+          <div className="landing-layout-col landing-layout-col-left">
+            <BodyMapPanel />
+          </div>
+          <div className="landing-layout-col landing-layout-col-center">
+            <div className="landing-filters-scroll">
+              <TemperaturePanel />
+              <DurationPanel />
+              {OTHER_FILTER_CATEGORY_ORDER.map((category, index) => (
+                <OtherFilterCategoryPanel
+                  key={category}
+                  category={category}
+                  showFilterLogicInfo={index === 0}
+                />
+              ))}
+            </div>
           </div>
         </div>
         <div className="landing-layout-col landing-layout-col-right">
