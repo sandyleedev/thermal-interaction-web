@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Import research papers from ACM CSV into researchPapers.json (full rebuild)."""
+"""Import research papers from CSV into researchPapers.json (full rebuild)."""
 
 from __future__ import annotations
 
@@ -7,7 +7,6 @@ import argparse
 import csv
 import json
 import re
-import subprocess
 import sys
 from pathlib import Path
 
@@ -497,9 +496,6 @@ def main() -> None:
         json.dumps(ordered, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
-
-    infer_script = ROOT / "scripts" / "infer_body_site_sides.py"
-    subprocess.run([sys.executable, str(infer_script)], check=True)
 
     skipped = max(0, 94 - len(csv_rows))
     print(f"CSV source: {csv_path}")

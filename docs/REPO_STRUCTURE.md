@@ -107,10 +107,6 @@ thermal-interaction-web/
 │
 └── scripts/                  # Offline data prep (not part of the runtime app)
     ├── import_research_papers_from_tsv.py
-    ├── merge_bulk_research_papers.py
-    ├── infer_body_site_sides.py
-    ├── body_parts_involved_data.py
-    ├── thermal_perception_measures_data.py
     └── thumbnail-collector/  # Node tool to fetch paper thumbnail images
         ├── package.json
         ├── process.js
@@ -146,7 +142,7 @@ Local dev: `cd frontend && npm install && npm run dev`. Production builds set `V
 
 ### `scripts/` — maintain the dataset
 
-Python scripts import and merge TSV exports, infer left/right body sites, and generate vocabulary used in filters. The **thumbnail-collector** is a small Node utility that downloads preview images into `output/`; those files are committed under `frontend/public/paper-thumbnails/`. None of this runs when someone opens the website.
+Python import rebuilds `researchPapers.json` from a spreadsheet TSV export. The **thumbnail-collector** is a small Node utility that downloads preview images into `output/`; those files are committed under `frontend/public/paper-thumbnails/`. None of this runs when someone opens the website.
 
 ### `.github/workflows/`
 
