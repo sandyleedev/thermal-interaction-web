@@ -53,9 +53,13 @@ export function DistributionViolinPlot({
     padding.right,
   );
   const violinVisualIds = distributionViolinVisualIds(violinClipId);
+  const selectionLabelLeftPct = (violinLabelX / plotWidth) * 100;
+  const selectionLabelTopPct =
+    ((padding.top + plotInnerHeight * selectionLabelYFactor) / plotHeight) *
+    100;
 
   return (
-    <div className={plotClassName}>
+    <div className={`${plotClassName} distribution-violin-plot`}>
       <svg
         className={svgClassName}
         viewBox={`0 0 ${plotWidth} ${plotHeight}`}
@@ -86,16 +90,17 @@ export function DistributionViolinPlot({
           fill="none"
           stroke={DISTRIBUTION_PINK_VIVID}
         />
-        <text
-          x={violinLabelX}
-          y={padding.top + plotInnerHeight * selectionLabelYFactor}
-          className="distribution-violin-selection-label"
-          textAnchor="middle"
-          dominantBaseline="middle"
-        >
-          {Math.round(selectionRatioPct)}%
-        </text>
       </svg>
+      <span
+        className="distribution-violin-selection-label"
+        style={{
+          left: `${selectionLabelLeftPct}%`,
+          top: `${selectionLabelTopPct}%`,
+        }}
+        aria-hidden
+      >
+        {Math.round(selectionRatioPct)}%
+      </span>
     </div>
   );
 }

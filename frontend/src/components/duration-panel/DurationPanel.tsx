@@ -168,10 +168,15 @@ export function DurationPanel() {
           >
             <div className="duration-slider-track-fill">
               <div className="duration-slider-track-base" />
-              {DURATION_MAJOR_TICKS.map(({ s }) => (
+              {DURATION_MAJOR_TICKS.map(({ s, hideWhenSparse }) => (
                 <div
                   key={`tick-${s}`}
-                  className="duration-slider-minor-tick"
+                  className={[
+                    "duration-slider-minor-tick",
+                    hideWhenSparse && "duration-slider-minor-tick--hide-sparse",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
                   style={{ left: sliderLeftForNorm(durationTickNorm(s)) }}
                   aria-hidden
                 />
@@ -210,13 +215,27 @@ export function DurationPanel() {
             />
           </div>
           <div className="duration-slider-ticks">
-            {DURATION_MAJOR_TICKS.map(({ s, label }) => (
+            {DURATION_MAJOR_TICKS.map(({ s, label, shortLabel, hideWhenSparse }) => (
               <span
                 key={s}
-                className="duration-slider-tick"
+                className={[
+                  "duration-slider-tick",
+                  hideWhenSparse && "duration-slider-tick--hide-sparse",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
                 style={{ left: sliderLeftForNorm(durationTickNorm(s)) }}
+                aria-label={label}
               >
-                {label}
+                <span className="duration-slider-tick-text duration-slider-tick-text--full">
+                  {label}
+                </span>
+                <span
+                  className="duration-slider-tick-text duration-slider-tick-text--short"
+                  aria-hidden
+                >
+                  {shortLabel}
+                </span>
               </span>
             ))}
           </div>

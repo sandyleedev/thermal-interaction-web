@@ -19,14 +19,14 @@ const DURATION_SHORT_VISUAL_FRACTION = 0.05;
 
 /** Major ticks: readable units (5s … 1week; track still starts at 1s). */
 export const DURATION_MAJOR_TICKS = [
-  { s: 5, label: "5s" },
-  { s: 10, label: "10s" },
-  { s: 30, label: "30s" },
-  { s: 60, label: "1min" },
-  { s: 600, label: "10min" },
-  { s: 3600, label: "1h" },
-  { s: 86400, label: "1day" },
-  { s: DURATION_WEEK_S, label: "1week" },
+  { s: 5, label: "5s", shortLabel: "5s", hideWhenSparse: true },
+  { s: 10, label: "10s", shortLabel: "10s", hideWhenSparse: false },
+  { s: 30, label: "30s", shortLabel: "30s", hideWhenSparse: true },
+  { s: 60, label: "1min", shortLabel: "1m", hideWhenSparse: false },
+  { s: 600, label: "10min", shortLabel: "10m", hideWhenSparse: false },
+  { s: 3600, label: "1h", shortLabel: "1h", hideWhenSparse: false },
+  { s: 86400, label: "1day", shortLabel: "1d", hideWhenSparse: false },
+  { s: DURATION_WEEK_S, label: "1week", shortLabel: "1wk", hideWhenSparse: false },
 ] as const;
 
 /** Convert duration seconds to normalized position (0..1) on the piecewise log axis. */
