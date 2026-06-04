@@ -11,6 +11,10 @@ import {
 } from "@/components/range-slider/horizontalRangeSliderLayout";
 import { RangeSliderThumbStack } from "@/components/range-slider/RangeSliderThumbStack";
 import { useWindowPointerRangeDrag } from "@/components/range-slider/useWindowPointerRangeDrag";
+import { FilterPanelInfoButton } from "@/components/landing/FilterPanelInfoButton";
+
+const TEMPERATURE_FILTER_TOOLTIP =
+  "Drag handles for a °C range. Chart uses your other filters. Include unspecified for papers without temperature.";
 import {
   TEMP_AXIS_MAX,
   TEMP_AXIS_MIN,
@@ -110,7 +114,10 @@ export function TemperaturePanel() {
   return (
     <section className="landing-panel landing-panel-top landing-temperature-panel">
       <div className="range-filter-panel-header">
-        <h2 className="panel-title">Temperature</h2>
+        <div className="range-filter-panel-title-cluster">
+          <h2 className="panel-title">Temperature</h2>
+          <FilterPanelInfoButton tooltip={TEMPERATURE_FILTER_TOOLTIP} />
+        </div>
         <button
           type="button"
           className="other-filters-clear-all"

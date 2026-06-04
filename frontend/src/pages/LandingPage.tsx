@@ -41,11 +41,10 @@ export function LandingPage() {
             <div className="landing-filters-scroll">
               <TemperaturePanel />
               <DurationPanel />
-              {OTHER_FILTER_CATEGORY_ORDER.map((category, index) => (
+              {OTHER_FILTER_CATEGORY_ORDER.map((category) => (
                 <OtherFilterCategoryPanel
                   key={category}
                   category={category}
-                  showFilterLogicInfo={index === 0}
                 />
               ))}
             </div>

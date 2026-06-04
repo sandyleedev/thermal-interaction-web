@@ -24,6 +24,10 @@ import {
 } from "@/components/range-slider/horizontalRangeSliderLayout";
 import { RangeSliderThumbStack } from "@/components/range-slider/RangeSliderThumbStack";
 import { useWindowPointerRangeDrag } from "@/components/range-slider/useWindowPointerRangeDrag";
+import { FilterPanelInfoButton } from "@/components/landing/FilterPanelInfoButton";
+
+const DURATION_FILTER_TOOLTIP =
+  "Drag handles for duration (log scale). Chart uses your other filters. Include unspecified for papers without duration.";
 
 const TRACK_H = 22;
 const PLOT_W = 320;
@@ -133,7 +137,10 @@ export function DurationPanel() {
   return (
     <section className="landing-panel landing-panel-top landing-duration-panel">
       <div className="range-filter-panel-header">
-        <h2 className="panel-title">Duration</h2>
+        <div className="range-filter-panel-title-cluster">
+          <h2 className="panel-title">Duration</h2>
+          <FilterPanelInfoButton tooltip={DURATION_FILTER_TOOLTIP} />
+        </div>
         <button
           type="button"
           className="other-filters-clear-all"

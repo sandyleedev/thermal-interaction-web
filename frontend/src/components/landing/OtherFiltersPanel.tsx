@@ -1,10 +1,5 @@
-import {
-  useEffect,
-  useId,
-  useRef,
-  useState,
-} from "react";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
+import { FilterPanelInfoButton } from "@/components/landing/FilterPanelInfoButton";
 import {
   OTHER_FILTER_OPTIONS,
   OTHER_FILTER_SECTION_TITLES,
@@ -13,65 +8,6 @@ import {
 
 const OTHER_FILTERS_LOGIC_TOOLTIP =
   "Select multiple options within a category (OR), and combine categories (AND)";
-
-function OtherFiltersLogicInfoButton() {
-  const tooltipId = useId();
-  const [tipOpen, setTipOpen] = useState(false);
-  const wrapRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!tipOpen) return;
-    const onPointerDown = (e: PointerEvent) => {
-      if (!wrapRef.current?.contains(e.target as Node)) {
-        setTipOpen(false);
-      }
-    };
-    document.addEventListener("pointerdown", onPointerDown, true);
-    return () =>
-      document.removeEventListener("pointerdown", onPointerDown, true);
-  }, [tipOpen]);
-
-  useEffect(() => {
-    if (!tipOpen) return;
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setTipOpen(false);
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [tipOpen]);
-
-  return (
-    <div
-      ref={wrapRef}
-      className={[
-        "other-filters-info-wrap",
-        tipOpen && "other-filters-info-wrap--open",
-      ]
-        .filter(Boolean)
-        .join(" ")}
-    >
-      <button
-        type="button"
-        className="other-filters-info-btn"
-        aria-label="How filtering works"
-        aria-expanded={tipOpen}
-        aria-controls={tooltipId}
-        onClick={() => setTipOpen((v) => !v)}
-      >
-        <span className="other-filters-info-icon" aria-hidden>
-          {"\u24D8"}
-        </span>
-      </button>
-      <div
-        id={tooltipId}
-        role="tooltip"
-        className="other-filters-info-tooltip"
-      >
-        {OTHER_FILTERS_LOGIC_TOOLTIP}
-      </div>
-    </div>
-  );
-}
 
 type FilterChipProps = {
   label: string;
@@ -104,14 +40,11 @@ export function FilterChip({ label, count, selected, onToggle }: FilterChipProps
 
 export type OtherFilterCategoryPanelProps = {
   category: OtherFilterCategory;
-  /** Show OR/AND logic tooltip beside the panel title (first category panel only). */
-  showFilterLogicInfo?: boolean;
   className?: string;
 };
 
 export function OtherFilterCategoryPanel({
   category,
-  showFilterLogicInfo = false,
   className,
 }: OtherFilterCategoryPanelProps) {
   const {
@@ -139,7 +72,10 @@ export function OtherFilterCategoryPanel({
       <div className="other-filter-category-panel-header">
         <div className="other-filter-category-title-cluster">
           <h2 className="panel-title">{title}</h2>
-          {showFilterLogicInfo ? <OtherFiltersLogicInfoButton /> : null}
+          <FilterPanelInfoButton
+            tooltip={OTHER_FILTERS_LOGIC_TOOLTIP}
+            ariaLabel="How category filtering works"
+          />
         </div>
         <button
           type="button"

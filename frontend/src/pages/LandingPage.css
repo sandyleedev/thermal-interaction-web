@@ -1146,11 +1146,14 @@
 }
 
 .range-filter-panel-header {
+  position: relative;
+  z-index: 30;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
   flex-shrink: 0;
+  overflow: visible;
 }
 
 .landing-temperature-panel .range-filter-panel-header {
@@ -1161,11 +1164,26 @@
   margin-bottom: 0.04rem;
 }
 
-.range-filter-panel-header .panel-title {
-  margin: 0;
+.range-filter-panel-title-cluster {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
   flex: 1 1 auto;
   min-width: 0;
+}
+
+.range-filter-panel-header .panel-title,
+.range-filter-panel-title-cluster .panel-title {
+  margin: 0;
+  flex: 0 1 auto;
+  min-width: 0;
   text-align: left;
+}
+
+.landing-temperature-panel .panel-content,
+.landing-duration-panel .panel-content {
+  position: relative;
+  z-index: 0;
 }
 
 .landing-temperature-panel .panel-content {
@@ -1636,18 +1654,21 @@
 }
 
 .landing-other-filter-category-panel .other-filter-category-panel-header {
+  position: relative;
+  z-index: 30;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
   flex-shrink: 0;
   margin: 0 0 0.45rem;
+  overflow: visible;
 }
 
 .other-filter-category-title-cluster {
   display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  align-items: baseline;
+  gap: 0.35rem;
   flex: 1 1 auto;
   min-width: 0;
 }
@@ -1656,15 +1677,23 @@
   .other-filter-category-title-cluster
   .panel-title {
   margin: 0;
+  padding: 0;
   flex: 0 1 auto;
   min-width: 0;
 }
 
 .other-filters-info-wrap {
   position: relative;
-  flex-shrink: 0;
-  display: flex;
+  z-index: 1;
+  flex: 0 0 auto;
+  display: inline-flex;
   align-items: center;
+  transform: translateY(0.05em);
+}
+
+.other-filters-info-wrap.other-filters-info-wrap--open,
+.other-filters-info-wrap:focus-within {
+  z-index: 40;
 }
 
 .other-filters-info-btn {
@@ -1672,7 +1701,7 @@
   align-items: center;
   justify-content: center;
   margin: 0;
-  padding: 0.14rem;
+  padding: 0.12rem;
   font: inherit;
   line-height: 1;
   color: #94a3b8;
@@ -1696,17 +1725,17 @@
 }
 
 .other-filters-info-icon {
-  font-size: 0.72rem;
+  display: block;
+  font-size: 0.8125rem;
   font-weight: 600;
   line-height: 1;
-  vertical-align: middle;
 }
 
 .other-filters-info-tooltip {
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
-  z-index: 1200;
+  z-index: 50;
   box-sizing: border-box;
   width: max-content;
   max-width: min(268px, calc(100vw - 1.5rem));
@@ -1763,12 +1792,20 @@
 }
 
 .landing-other-filter-category-panel .other-filter-category-panel-content {
+  position: relative;
+  z-index: 0;
   flex: 0 0 auto;
   min-height: auto;
   overflow-x: hidden;
   overflow-y: visible;
   padding: 0;
   margin: 0;
+}
+
+.landing-other-filter-category-panel:has(.other-filters-info-wrap--open),
+.landing-other-filter-category-panel:has(.other-filters-info-wrap:focus-within) {
+  position: relative;
+  z-index: 31;
 }
 
 .other-filters-chip-row {
