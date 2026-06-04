@@ -28,6 +28,10 @@ import {
 } from "@/components/body-map/foot/footDetailSampleDots";
 import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
 import { BodyMapHeatmapLegend } from "@/components/body-map/shared/BodyMapHeatmapLegend";
+import {
+  bodyMapDetailLegendCaption,
+  useBodyMapHelpContext,
+} from "@/components/body-map/shared/bodyMapHelpText";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { publicAssetUrl } from "@/lib/publicAssetUrl";
 import { BODY_MAP_DETAIL_SELECTION_MODE } from "@/lib/research/bodyMapDetailSelectionMode";
@@ -187,6 +191,7 @@ export type FootBodyMapDetailProps = {
 };
 
 export function FootBodyMapDetail({ variant, papers }: FootBodyMapDetailProps) {
+  const { prefersHover } = useBodyMapHelpContext();
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
 
@@ -540,11 +545,14 @@ export function FootBodyMapDetail({ variant, papers }: FootBodyMapDetailProps) {
           colorDomain={countColorDomain}
           gradientId={`${uid}-foot-legend-${variant}`}
           className="foot-detail-legend"
-          caption={
-            variant === "countHeatmap"
-              ? `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Hover sole, toes, or the outline for whole-foot (general). Unspecified side is split across left and right feet.`
-              : `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Uses the same d3 density smoothing as the full-body map. Hover subregions or the outline for whole-foot (general). Unspecified side is split across left and right feet.`
-          }
+          caption={bodyMapDetailLegendCaption({
+            variant,
+            colorDomain: countColorDomain,
+            prefersHover,
+            generalScope: "whole-foot (general)",
+            heatmapTargets: "sole, toes, or the outline",
+            trailingNote: "Unspecified side is split across left and right feet.",
+          })}
         />
       ) : null}
 

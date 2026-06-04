@@ -23,6 +23,10 @@ import {
 } from "@/components/body-map/neck/neckDetailSampleDots";
 import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
 import { BodyMapHeatmapLegend } from "@/components/body-map/shared/BodyMapHeatmapLegend";
+import {
+  bodyMapDetailLegendCaption,
+  useBodyMapHelpContext,
+} from "@/components/body-map/shared/bodyMapHelpText";
 import { countToPerceptualNormalized } from "@/components/body-map/bodyMapVisualization";
 import {
   detailAreaContourOpacity,
@@ -129,6 +133,7 @@ export type NeckBodyMapDetailProps = {
 };
 
 export function NeckBodyMapDetail({ variant, papers }: NeckBodyMapDetailProps) {
+  const { prefersHover } = useBodyMapHelpContext();
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
 
@@ -732,11 +737,12 @@ export function NeckBodyMapDetail({ variant, papers }: NeckBodyMapDetailProps) {
           colorDomain={countColorDomain}
           gradientId={`${uid}-neck-legend-${variant}`}
           className="neck-detail-legend"
-          caption={
-            variant === "countHeatmap"
-              ? `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Hover subregions or the outline for whole-neck (general).`
-              : `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Uses the same d3 density smoothing as the full-body map. Hover the outline for whole-neck (general).`
-          }
+          caption={bodyMapDetailLegendCaption({
+            variant,
+            colorDomain: countColorDomain,
+            prefersHover,
+            generalScope: "whole-neck (general)",
+          })}
         />
       ) : null}
 

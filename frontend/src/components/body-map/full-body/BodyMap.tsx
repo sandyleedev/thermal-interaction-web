@@ -54,6 +54,11 @@ import {
   resolveBilateralSubpathSide,
 } from "@/components/body-map/bodyMapSampleDots";
 import { type FullBodyMapPart, useBodyMapPartDots } from "@/components/body-map/full-body/useBodyMapPartDots";
+import {
+  fullBodyMapAriaLabel,
+  fullBodyMapLegendCaption,
+  useBodyMapHelpContext,
+} from "@/components/body-map/shared/bodyMapHelpText";
 
 /**
  * Full-body map (Level 1 only in this file).
@@ -141,6 +146,7 @@ export function BodyMap({
   selectedBodyMapChips = [],
   onPartClick,
 }: BodyMapProps) {
+  const bodyMapHelp = useBodyMapHelpContext();
   const isRegionChipSelected = useCallback(
     (region: BodyMapParentRegion) =>
       bodyMapParentHasChipSelection(selectedBodyMapChips, region),
@@ -441,10 +447,7 @@ export function BodyMap({
     ],
   );
 
-  const ariaLabel =
-    variant === "countHeatmap"
-      ? "Body map: smooth density heatmap — overlapping dots encode paper concentration per region on a fixed full-dataset scale; whole-body general studies use a full-silhouette tint instead of regional dots; hover regions or the outer figure outline for counts, including whole-body (general)."
-      : "Body map: area view draws placement-aware density (e.g. forearm vs upper arm) from filtered papers, then smooths it for display; whole-body general studies use a full-silhouette tint instead of regional dots; hover regions or the outer figure outline for whole-body (general) counts.";
+  const ariaLabel = fullBodyMapAriaLabel(variant, bodyMapHelp.prefersHover);
   const mapTransform = BODY_MAP_UNIFORM_SCALE_TRANSFORM;
   const activeView = BODY_MAP_VIEW;
   const activeClipPath = `url(#${clipPathId})`;
@@ -756,11 +759,7 @@ export function BodyMap({
               ? heatLegendGradientId
               : rawDotsLegendGradientId
           }
-          caption={
-            variant === "countHeatmap"
-              ? `Paper density (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()} papers. Hover regions or the outer outline for counts (outline shows whole-body general).`
-              : `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Dots use d3 density smoothing for visual clustering. Hover the outline for whole-body (general).`
-          }
+          caption={fullBodyMapLegendCaption(variant, countColorDomain, bodyMapHelp)}
         />
       ) : null}
 

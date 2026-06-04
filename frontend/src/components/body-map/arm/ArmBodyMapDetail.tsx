@@ -30,6 +30,10 @@ import {
 } from "@/components/body-map/arm/armDetailSampleDots";
 import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
 import { BodyMapHeatmapLegend } from "@/components/body-map/shared/BodyMapHeatmapLegend";
+import {
+  bodyMapDetailLegendCaption,
+  useBodyMapHelpContext,
+} from "@/components/body-map/shared/bodyMapHelpText";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { publicAssetUrl } from "@/lib/publicAssetUrl";
 import { BODY_MAP_DETAIL_SELECTION_MODE } from "@/lib/research/bodyMapDetailSelectionMode";
@@ -193,6 +197,7 @@ export type ArmBodyMapDetailProps = {
 };
 
 export function ArmBodyMapDetail({ variant, papers }: ArmBodyMapDetailProps) {
+  const { prefersHover } = useBodyMapHelpContext();
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
 
@@ -590,11 +595,14 @@ export function ArmBodyMapDetail({ variant, papers }: ArmBodyMapDetailProps) {
           colorDomain={countColorDomain}
           gradientId={`${uid}-arm-legend-${variant}`}
           className="torso-detail-legend"
-          caption={
-            variant === "countHeatmap"
-              ? `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Hover subregions or the outline for whole-arm (general). Unspecified side is split across left and right panels.`
-              : `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Uses the same d3 density smoothing as the full-body map. Hover the outline for whole-arm (general). Unspecified side is split across left and right panels.`
-          }
+          caption={bodyMapDetailLegendCaption({
+            variant,
+            colorDomain: countColorDomain,
+            prefersHover,
+            generalScope: "whole-arm (general)",
+            trailingNote:
+              "Unspecified side is split across left and right panels.",
+          })}
         />
       ) : null}
 

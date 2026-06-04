@@ -28,6 +28,10 @@ import {
 } from "@/components/body-map/leg/legDetailSampleDots";
 import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
 import { BodyMapHeatmapLegend } from "@/components/body-map/shared/BodyMapHeatmapLegend";
+import {
+  bodyMapDetailLegendCaption,
+  useBodyMapHelpContext,
+} from "@/components/body-map/shared/bodyMapHelpText";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { publicAssetUrl } from "@/lib/publicAssetUrl";
 import {
@@ -156,6 +160,7 @@ export type LegBodyMapDetailProps = {
 };
 
 export function LegBodyMapDetail({ variant, papers }: LegBodyMapDetailProps) {
+  const { prefersHover } = useBodyMapHelpContext();
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
 
@@ -419,11 +424,16 @@ export function LegBodyMapDetail({ variant, papers }: LegBodyMapDetailProps) {
           colorDomain={countColorDomain}
           gradientId={`${uid}-leg-legend-${variant}`}
           className="leg-detail-legend"
-          caption={
-            variant === "countHeatmap"
-              ? `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Hover each leg subregion or the leg outline for whole-leg (general).`
-              : `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Uses the same d3 density smoothing as the full-body map. Hover left/right subregions or the leg outline for whole-leg (general).`
-          }
+          caption={bodyMapDetailLegendCaption({
+            variant,
+            colorDomain: countColorDomain,
+            prefersHover,
+            generalScope: "whole-leg (general)",
+            heatmapTargets: "each leg subregion or the leg outline",
+            areaViewInteract: prefersHover
+              ? "Hover left/right subregions or the leg outline for whole-leg (general)."
+              : "Tap left/right subregions or the leg outline to select whole-leg (general).",
+          })}
         />
       ) : null}
 

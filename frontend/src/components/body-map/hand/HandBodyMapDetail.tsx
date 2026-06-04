@@ -29,6 +29,10 @@ import {
 } from "@/components/body-map/hand/handDetailSampleDots";
 import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
 import { BodyMapHeatmapLegend } from "@/components/body-map/shared/BodyMapHeatmapLegend";
+import {
+  bodyMapDetailLegendCaption,
+  useBodyMapHelpContext,
+} from "@/components/body-map/shared/bodyMapHelpText";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { publicAssetUrl } from "@/lib/publicAssetUrl";
 import { BODY_MAP_DETAIL_SELECTION_MODE } from "@/lib/research/bodyMapDetailSelectionMode";
@@ -265,6 +269,7 @@ export type HandBodyMapDetailProps = {
 };
 
 export function HandBodyMapDetail({ variant, papers }: HandBodyMapDetailProps) {
+  const { prefersHover } = useBodyMapHelpContext();
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
 
@@ -662,11 +667,18 @@ export function HandBodyMapDetail({ variant, papers }: HandBodyMapDetailProps) {
           colorDomain={countColorDomain}
           gradientId={`${uid}-hand-legend-${variant}`}
           className="hand-detail-legend"
-          caption={
-            variant === "countHeatmap"
-              ? `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Top row: palm side (inner). Bottom row: hand back (outer). Hover subregions or the outline for whole-hand (general). Unspecified side is split across left and right columns.`
-              : `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Uses the same d3 density smoothing as the full-body map. Top row: inner; bottom row: outer. Hover subregions or the outline for whole-hand (general). Unspecified side is split across left and right columns.`
-          }
+          caption={bodyMapDetailLegendCaption({
+            variant,
+            colorDomain: countColorDomain,
+            prefersHover,
+            generalScope: "whole-hand (general)",
+            leadingNote:
+              variant === "countHeatmap"
+                ? "Top row: palm side (inner). Bottom row: hand back (outer)."
+                : "Top row: inner; bottom row: outer.",
+            trailingNote:
+              "Unspecified side is split across left and right columns.",
+          })}
         />
       ) : null}
 

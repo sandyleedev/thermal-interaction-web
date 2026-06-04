@@ -29,6 +29,10 @@ import {
   simpleBodyMapTooltip,
 } from "@/lib/research/bodyMapBilateralTooltips";
 import { BodyMapHeatmapLegend } from "@/components/body-map/shared/BodyMapHeatmapLegend";
+import {
+  bodyMapDetailLegendCaption,
+  useBodyMapHelpContext,
+} from "@/components/body-map/shared/bodyMapHelpText";
 import { countToPerceptualNormalized } from "@/components/body-map/bodyMapVisualization";
 import {
   detailAreaContourOpacity,
@@ -183,6 +187,7 @@ export type HeadBodyMapDetailProps = {
 };
 
 export function HeadBodyMapDetail({ variant, papers }: HeadBodyMapDetailProps) {
+  const { prefersHover } = useBodyMapHelpContext();
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
 
@@ -811,11 +816,12 @@ export function HeadBodyMapDetail({ variant, papers }: HeadBodyMapDetailProps) {
           colorDomain={countColorDomain}
           gradientId={`${uid}-head-legend-${variant}`}
           className="head-detail-legend"
-          caption={
-            variant === "countHeatmap"
-              ? `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Hover subregions or the outline for whole-head (general).`
-              : `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Uses the same d3 density smoothing as the full-body map. Hover the outline for whole-head (general).`
-          }
+          caption={bodyMapDetailLegendCaption({
+            variant,
+            colorDomain: countColorDomain,
+            prefersHover,
+            generalScope: "whole-head (general)",
+          })}
         />
       ) : null}
 

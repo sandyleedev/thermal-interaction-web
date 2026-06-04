@@ -24,6 +24,10 @@ import {
 } from "@/components/body-map/torso/torsoDetailSampleDots";
 import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
 import { BodyMapHeatmapLegend } from "@/components/body-map/shared/BodyMapHeatmapLegend";
+import {
+  bodyMapDetailLegendCaption,
+  useBodyMapHelpContext,
+} from "@/components/body-map/shared/bodyMapHelpText";
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { publicAssetUrl } from "@/lib/publicAssetUrl";
 import {
@@ -143,6 +147,7 @@ export function TorsoBodyMapDetail({
   variant,
   papers,
 }: TorsoBodyMapDetailProps) {
+  const { prefersHover } = useBodyMapHelpContext();
   const { toggleBodyMapChip, isBodyMapChipSelected, selectedBodyMapChips } =
     useResearchFilter();
 
@@ -464,11 +469,12 @@ export function TorsoBodyMapDetail({
           colorDomain={countColorDomain}
           gradientId={`${uid}-torso-legend-${variant}`}
           className="torso-detail-legend"
-          caption={
-            variant === "countHeatmap"
-              ? `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Hover subregions or the outline for whole-torso (general).`
-              : `Paper count (low to high): ${countColorDomain[0].toLocaleString()} to ${countColorDomain[1].toLocaleString()}. Uses the same d3 density smoothing as the full-body map. Hover the outline for whole-torso (general).`
-          }
+          caption={bodyMapDetailLegendCaption({
+            variant,
+            colorDomain: countColorDomain,
+            prefersHover,
+            generalScope: "whole-torso (general)",
+          })}
         />
       ) : null}
 

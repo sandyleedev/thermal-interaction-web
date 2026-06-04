@@ -1,0 +1,118 @@
+import { useEffect, useState } from "react";
+import type { BodyMapVariant } from "@/components/body-map/bodyMapVariant";
+
+/** Matches landing desktop 3-column layout; mobile/tablet never show hover copy. */
+const DESKTOP_LAYOUT_MQ = "(min-width: 1024px)";
+const MOBILE_REGION_LIST_MQ = "(max-width: 767px)";
+
+function useMediaQuery(query: string, defaultMatches = false): boolean {
+  const [matches, setMatches] = useState(() =>
+    typeof window !== "undefined"
+      ? window.matchMedia(query).matches
+      : defaultMatches,
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const sync = () => setMatches(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, [query]);
+
+  return matches;
+}
+
+/** PC (≥1024px) vs mobile/tablet help copy. */
+export function useBodyMapHelpContext() {
+  const prefersHover = useMediaQuery(DESKTOP_LAYOUT_MQ, false);
+  const showMobileRegionList = useMediaQuery(MOBILE_REGION_LIST_MQ, false);
+  return { prefersHover, showMobileRegionList };
+}
+
+function formatCountRange(domain: readonly [number, number]): string {
+  return `${domain[0].toLocaleString()} to ${domain[1].toLocaleString()}`;
+}
+
+export function fullBodyMapAriaLabel(
+  variant: BodyMapVariant,
+  prefersHover: boolean,
+): string {
+  if (prefersHover) {
+    return variant === "countHeatmap"
+      ? "Body map: smooth density heatmap for filtered papers on a fixed full-dataset scale; whole-body general studies use a full-silhouette tint. Hover regions or the outer outline for counts. Click a region to open its detail map and select subregions; click the outline for whole-body (general)."
+      : "Body map: area view with placement-aware density from filtered papers. Hover regions or the outer outline for counts. Click a region to open its detail map; click the outline for whole-body (general).";
+  }
+  return variant === "countHeatmap"
+    ? "Body map: smooth density heatmap for filtered papers. Tap regions on the map, or the region buttons below on small screens, to open detail maps and select subregions; tap the outer outline for whole-body (general)."
+    : "Body map: area view with density smoothing. Tap regions on the map to open detail maps; tap the outer outline for whole-body (general).";
+}
+
+export function fullBodyMapLegendCaption(
+  variant: BodyMapVariant,
+  colorDomain: readonly [number, number],
+  ctx: { prefersHover: boolean; showMobileRegionList: boolean },
+): string {
+  const range = formatCountRange(colorDomain);
+  const scale =
+    variant === "countHeatmap"
+      ? `Paper density (low to high): ${range} papers.`
+      : `Paper count (low to high): ${range}. Dots use d3 density smoothing for visual clustering.`;
+
+  if (ctx.prefersHover) {
+    return `${scale} Hover regions or the outer outline for counts. Click a region to open its detail map and select subregions; click the outline for whole-body (general).`;
+  }
+
+  if (ctx.showMobileRegionList) {
+    return `${scale} Tap a region on the map or use the buttons below to open detail maps and select subregions; tap the outline for whole-body (general).`;
+  }
+
+  return `${scale} Tap regions on the map to open detail maps and select subregions; tap the outer outline for whole-body (general).`;
+}
+
+type DetailLegendCaptionOptions = {
+  variant: BodyMapVariant;
+  colorDomain: readonly [number, number];
+  prefersHover: boolean;
+  /** e.g. "whole-head (general)" */
+  generalScope: string;
+  /** Heatmap-only targets before the general scope phrase. */
+  heatmapTargets?: string;
+  /** Optional note before interaction (e.g. hand row layout). */
+  leadingNote?: string;
+  /** Trailing note (e.g. unspecified side split). */
+  trailingNote?: string;
+  /** Overrides default area-view interaction line (after the density-smoothing sentence). */
+  areaViewInteract?: string;
+};
+
+export function bodyMapDetailLegendCaption({
+  variant,
+  colorDomain,
+  prefersHover,
+  generalScope,
+  heatmapTargets = "subregions or the outline",
+  leadingNote,
+  trailingNote,
+  areaViewInteract,
+}: DetailLegendCaptionOptions): string {
+  const range = `Paper count (low to high): ${formatCountRange(colorDomain)}.`;
+  const prefix = leadingNote ? `${leadingNote} ` : "";
+  const suffix = trailingNote ? ` ${trailingNote}` : "";
+
+  if (variant === "countHeatmap") {
+    const interact = prefersHover
+      ? `Hover ${heatmapTargets} for ${generalScope}.`
+      : `Tap ${heatmapTargets} to select ${generalScope}.`;
+    return `${range} ${prefix}${interact}${suffix}`.replace(/\s+/g, " ").trim();
+  }
+
+  const interact =
+    areaViewInteract ??
+    (prefersHover
+      ? `Hover the outline for ${generalScope}.`
+      : `Tap the outline to select ${generalScope}.`);
+  return `${range} Uses the same d3 density smoothing as the full-body map. ${prefix}${interact}${suffix}`
+    .replace(/\s+/g, " ")
+    .trim();
+}
