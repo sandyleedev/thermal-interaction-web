@@ -11,6 +11,28 @@ type ResultsPageSize = (typeof RESULTS_PAGE_SIZE_OPTIONS)[number];
 const DEFAULT_RESULTS_PAGE_SIZE: ResultsPageSize = 10;
 const VISIBLE_PAGE_BUTTONS = 5;
 
+const RESULTS_LAYOUT_OPTIONS = ["list", "gallery"] as const;
+type ResultsLayout = (typeof RESULTS_LAYOUT_OPTIONS)[number];
+const RESULTS_LAYOUT_STORAGE_KEY = "landing-results-layout";
+
+function readStoredResultsLayout(): ResultsLayout {
+  try {
+    const stored = localStorage.getItem(RESULTS_LAYOUT_STORAGE_KEY);
+    if (stored === "list" || stored === "gallery") return stored;
+  } catch {
+    /* private mode / blocked storage */
+  }
+  return "list";
+}
+
+function persistResultsLayout(layout: ResultsLayout): void {
+  try {
+    localStorage.setItem(RESULTS_LAYOUT_STORAGE_KEY, layout);
+  } catch {
+    /* ignore */
+  }
+}
+
 function lastNameOf(author: string): string {
   const name = author.trim();
   if (!name) return "";
@@ -90,10 +112,132 @@ function ResultsPageSizeSelector({
   );
 }
 
+const RESULTS_LAYOUT_TOGGLE: Record<
+  ResultsLayout,
+  { label: string; title: string }
+> = {
+  list: { label: "List layout", title: "List view" },
+  gallery: { label: "Gallery layout", title: "Gallery view (2 columns)" },
+};
+
+function ResultsListLayoutIcon() {
+  return (
+    <svg
+      className="results-layout-toggle-btn__icon"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+    >
+      <path
+        d="M4.25 6h11.5M4.25 10h11.5M4.25 14h7.5"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function ResultsGalleryLayoutIcon() {
+  return (
+    <svg
+      className="results-layout-toggle-btn__icon"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
+    >
+      <rect
+        x="4"
+        y="4"
+        width="5.25"
+        height="5.25"
+        rx="1.1"
+        stroke="currentColor"
+        strokeWidth="1.75"
+      />
+      <rect
+        x="10.75"
+        y="4"
+        width="5.25"
+        height="5.25"
+        rx="1.1"
+        stroke="currentColor"
+        strokeWidth="1.75"
+      />
+      <rect
+        x="4"
+        y="10.75"
+        width="5.25"
+        height="5.25"
+        rx="1.1"
+        stroke="currentColor"
+        strokeWidth="1.75"
+      />
+      <rect
+        x="10.75"
+        y="10.75"
+        width="5.25"
+        height="5.25"
+        rx="1.1"
+        stroke="currentColor"
+        strokeWidth="1.75"
+      />
+    </svg>
+  );
+}
+
+type ResultsLayoutSelectorProps = {
+  layout: ResultsLayout;
+  onLayoutChange: (layout: ResultsLayout) => void;
+};
+
+function ResultsLayoutSelector({
+  layout,
+  onLayoutChange,
+}: ResultsLayoutSelectorProps) {
+  return (
+    <div
+      className="results-layout-toggle"
+      role="group"
+      aria-label="Results layout"
+    >
+      {RESULTS_LAYOUT_OPTIONS.map((mode) => {
+        const { label, title } = RESULTS_LAYOUT_TOGGLE[mode];
+        return (
+          <button
+            key={mode}
+            type="button"
+            className={[
+              "results-layout-toggle-btn",
+              layout === mode && "results-layout-toggle-btn--active",
+            ]
+              .filter(Boolean)
+              .join(" ")}
+            aria-label={label}
+            aria-pressed={layout === mode}
+            title={title}
+            onClick={() => onLayoutChange(mode)}
+          >
+            {mode === "list" ? (
+              <ResultsListLayoutIcon />
+            ) : (
+              <ResultsGalleryLayoutIcon />
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 type ResultsListToolbarProps = {
   rangeStart: number;
   rangeEnd: number;
   totalCount: number;
+  layout: ResultsLayout;
+  onLayoutChange: (layout: ResultsLayout) => void;
   pageSize: ResultsPageSize;
   onPageSizeChange: (size: ResultsPageSize) => void;
 };
@@ -102,6 +246,8 @@ function ResultsListToolbar({
   rangeStart,
   rangeEnd,
   totalCount,
+  layout,
+  onLayoutChange,
   pageSize,
   onPageSizeChange,
 }: ResultsListToolbarProps) {
@@ -111,10 +257,16 @@ function ResultsListToolbar({
         Showing {rangeStart.toLocaleString()}–{rangeEnd.toLocaleString()} of{" "}
         {totalCount.toLocaleString()}
       </p>
-      <ResultsPageSizeSelector
-        pageSize={pageSize}
-        onPageSizeChange={onPageSizeChange}
-      />
+      <div className="results-list-toolbar-controls">
+        <ResultsLayoutSelector
+          layout={layout}
+          onLayoutChange={onLayoutChange}
+        />
+        <ResultsPageSizeSelector
+          pageSize={pageSize}
+          onPageSizeChange={onPageSizeChange}
+        />
+      </div>
     </div>
   );
 }
@@ -211,6 +363,9 @@ export function ResultsPanel() {
   const [pageSize, setPageSize] = useState<ResultsPageSize>(
     DEFAULT_RESULTS_PAGE_SIZE,
   );
+  const [resultsLayout, setResultsLayout] = useState<ResultsLayout>(
+    readStoredResultsLayout,
+  );
   const skipScrollOnMountRef = useRef(true);
   const resultsPanelRef = useRef<HTMLElement>(null);
 
@@ -248,6 +403,11 @@ export function ResultsPanel() {
   const rangeStart = rows.length === 0 ? 0 : pageStartIndex + 1;
   const rangeEnd = Math.min(pageStartIndex + pageSize, rows.length);
 
+  const handleLayoutChange = (layout: ResultsLayout) => {
+    setResultsLayout(layout);
+    persistResultsLayout(layout);
+  };
+
   return (
     <div className="landing-results-column">
       <KeywordSearchPanel
@@ -276,17 +436,29 @@ export function ResultsPanel() {
             )}
           </p>
 
-        {rows.length > 0 ? (
-          <ResultsListToolbar
-            rangeStart={rangeStart}
-            rangeEnd={rangeEnd}
-            totalCount={rows.length}
-            pageSize={pageSize}
-            onPageSizeChange={setPageSize}
-          />
-        ) : null}
+          {rows.length > 0 ? (
+            <ResultsListToolbar
+              rangeStart={rangeStart}
+              rangeEnd={rangeEnd}
+              totalCount={rows.length}
+              layout={resultsLayout}
+              onLayoutChange={handleLayoutChange}
+              pageSize={pageSize}
+              onPageSizeChange={setPageSize}
+            />
+          ) : null}
 
-        <ul className="results-paper-list" aria-label="Matching papers">
+        <ul
+          className={[
+            "results-paper-list",
+            resultsLayout === "gallery"
+              ? "results-paper-list--gallery"
+              : "results-paper-list--list",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+          aria-label="Matching papers"
+        >
           {pageRows.map((paper) => (
             <li key={paper.id} className="results-paper-item">
               <Link

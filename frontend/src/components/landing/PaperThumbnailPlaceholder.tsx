@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 
 type PaperThumbnailPlaceholderProps = {
   /** Accessible label for the decorative thumbnail. */
@@ -20,6 +21,63 @@ function ThumbnailPlaceholderGraphic({ label }: { label: string }) {
         <span className="paper-thumb-placeholder__line" />
         <span className="paper-thumb-placeholder__line paper-thumb-placeholder__line--short" />
         <span className="paper-thumb-placeholder__line paper-thumb-placeholder__line--medium" />
+      </div>
+    </div>
+  );
+}
+
+type PaperThumbLightboxProps = {
+  label: string;
+  src: string;
+  onClose: () => void;
+};
+
+function PaperThumbLightbox({ label, src, onClose }: PaperThumbLightboxProps) {
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+
+    const prevHtmlOverflow = document.documentElement.style.overflow;
+    const prevBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.documentElement.style.overflow = prevHtmlOverflow;
+      document.body.style.overflow = prevBodyOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="paper-thumb-lightbox"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Full thumbnail for ${label}`}
+    >
+      <button
+        type="button"
+        className="paper-thumb-lightbox__backdrop"
+        aria-label="Close thumbnail preview"
+        onClick={onClose}
+      />
+      <button
+        type="button"
+        className="paper-thumb-lightbox__close"
+        aria-label="Close thumbnail preview"
+        onClick={onClose}
+      >
+        Close
+      </button>
+      <div className="paper-thumb-lightbox__stage">
+        <img
+          className="paper-thumb-lightbox__img"
+          src={src}
+          alt={`Full thumbnail for ${label}`}
+        />
       </div>
     </div>
   );
@@ -48,23 +106,6 @@ export function PaperThumbnailPlaceholder({
     uniqueImageUrls.length > 0 && imageIdx < uniqueImageUrls.length
       ? uniqueImageUrls[imageIdx]
       : null;
-
-  useEffect(() => {
-    if (!lightboxOpen) return;
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setLightboxOpen(false);
-    };
-
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", onKeyDown);
-
-    return () => {
-      document.body.style.overflow = prevOverflow;
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [lightboxOpen]);
 
   const frame = (
     <span className="paper-thumb-frame">
@@ -130,30 +171,16 @@ export function PaperThumbnailPlaceholder({
           <span className="paper-thumb-expand-btn__label">View Image</span>
         </span>
       </button>
-      {lightboxOpen ? (
-        <div
-          className="paper-thumb-lightbox"
-          role="dialog"
-          aria-modal="true"
-          aria-label={`Full thumbnail for ${label}`}
-          onClick={() => setLightboxOpen(false)}
-        >
-          <button
-            type="button"
-            className="paper-thumb-lightbox__close"
-            aria-label="Close thumbnail preview"
-            onClick={() => setLightboxOpen(false)}
-          >
-            Close
-          </button>
-          <img
-            className="paper-thumb-lightbox__img"
-            src={activeSrc}
-            alt={`Full thumbnail for ${label}`}
-            onClick={(event) => event.stopPropagation()}
-          />
-        </div>
-      ) : null}
+      {lightboxOpen && typeof document !== "undefined"
+        ? createPortal(
+            <PaperThumbLightbox
+              label={label}
+              src={activeSrc}
+              onClose={() => setLightboxOpen(false)}
+            />,
+            document.body,
+          )
+        : null}
     </>
   );
 }
