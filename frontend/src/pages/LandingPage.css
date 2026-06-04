@@ -2497,25 +2497,36 @@ body.is-range-slider-dragging {
 
 /* Mobile (≤767px): keyword → body map → filters → results */
 @media (max-width: 767px) {
+  .landing-root {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
   .landing-layout-main {
     grid-template-columns: minmax(0, 1fr);
     gap: 0.5rem;
     padding: 0.35rem 0.5rem 0;
     align-items: start;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
   }
 
   .landing-layout-keyword-top {
     display: block;
-    grid-column: 1;
+    grid-column: 1 / -1;
     padding: 0;
     width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
   }
 
   .landing-layout-sidebar,
   .landing-layout-col-right {
-    grid-column: 1;
+    grid-column: 1 / -1;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     box-sizing: border-box;
   }
 
@@ -2822,6 +2833,7 @@ body.is-range-slider-dragging {
     max-width: 100%;
     min-width: 0;
     box-sizing: border-box;
+    grid-column: 1 / -1;
   }
 
   .landing-layout-col-right {
@@ -3242,10 +3254,10 @@ body.is-range-slider-dragging {
   right: 0 !important;
   bottom: 0 !important;
   left: 0 !important;
-  width: 100vw !important;
-  height: 100dvh !important;
-  max-width: none !important;
-  max-height: none !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100dvh !important;
   z-index: 10000;
   box-sizing: border-box;
   margin: 0 !important;
@@ -3923,8 +3935,13 @@ body.is-range-slider-dragging {
     padding-left: 0.55rem;
   }
 
-  .paper-detail__facts {
+  .paper-detail__facts,
+  .paper-detail__quick-facts {
     grid-template-columns: 1fr;
+  }
+
+  .paper-detail-page {
+    overflow-x: clip;
   }
 
   .paper-detail__footer {
