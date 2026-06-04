@@ -99,6 +99,10 @@ function formatSubpartSlug(slug: string): string {
     .join(" ");
 }
 
+export function bodyMapParentRegionLabel(parent: BodyMapParentRegion): string {
+  return PARENT_CHIP_LABEL[parent] ?? parent;
+}
+
 export function bodyMapChipLabel(selection: BodyMapChipSelection): string {
   const sub = selection.subpart?.trim().toLowerCase() ?? "";
   const side = selection.side;

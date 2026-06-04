@@ -728,6 +728,23 @@
   outline-offset: 1px;
 }
 
+/* Full-body map: mobile region picker (hidden on tablet/desktop) */
+.body-map-mobile-region-list {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .body-map-mobile-region-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 100%;
+    margin: 0;
+    padding: 0.4rem var(--body-map-content-inset-x) 0.15rem;
+    box-sizing: border-box;
+  }
+}
+
 .landing-body-map .body-map-svg-wrap {
   position: relative;
   min-height: 0;
@@ -1836,6 +1853,64 @@
 
 .filter-chip--selected .filter-chip-count {
   color: var(--filter-chip-selected-accent);
+}
+
+/* Mobile body-map region picker — full chip styles (after .filter-chip; overrides cascade) */
+@media (max-width: 767px) {
+  .body-map-mobile-region-list .body-map-mobile-region-btn.filter-chip {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0.38rem 0.85rem;
+    margin: 0;
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    color: var(--filter-chip-color);
+    background: var(--filter-chip-bg);
+    border: 1px solid var(--filter-chip-border);
+    border-radius: 999px;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition:
+      background 120ms ease,
+      border-color 120ms ease,
+      color 120ms ease,
+      box-shadow 120ms ease;
+  }
+
+  .body-map-mobile-region-list .body-map-mobile-region-btn.filter-chip:hover {
+    background: #f1f5f9;
+    border-color: rgba(148, 163, 184, 0.85);
+  }
+
+  .body-map-mobile-region-list
+    .body-map-mobile-region-btn.filter-chip.filter-chip--selected {
+    color: var(--filter-chip-selected-color);
+    background: var(--filter-chip-selected-bg);
+    border-color: var(--filter-chip-selected-border);
+    box-shadow: var(--filter-chip-selected-shadow);
+  }
+
+  .body-map-mobile-region-list
+    .body-map-mobile-region-btn.filter-chip.filter-chip--selected:hover {
+    background: rgba(255, 228, 230, 0.78);
+    border-color: rgba(244, 114, 182, 0.58);
+  }
+
+  .body-map-mobile-region-list
+    .body-map-mobile-region-btn.filter-chip:focus-visible {
+    outline: 2px solid rgba(219, 39, 119, 0.38);
+    outline-offset: 2px;
+  }
+
+  .body-map-mobile-region-list .body-map-mobile-region-btn .filter-chip-label {
+    text-align: center;
+  }
 }
 
 .landing-results-inner {

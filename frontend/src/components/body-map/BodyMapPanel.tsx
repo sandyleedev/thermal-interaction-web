@@ -3,6 +3,7 @@ import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { BODY_MAP_DETAIL_REGIONS } from "@/lib/research/bodyMapChipLabels";
 import type { BodyMapParentRegion } from "@/lib/research/bodyMapRegions";
 import BodyMap from "@/components/body-map/full-body/BodyMap";
+import { BodyMapMobileRegionList } from "@/components/body-map/BodyMapMobileRegionList";
 import { BodyMapDetailSelectAll } from "@/components/body-map/BodyMapDetailSelectAll";
 import { BodyMapDetailBackButton } from "@/components/body-map/shared/BodyMapDetailBackButton";
 import { BodyMapSelectionChips } from "@/components/body-map/BodyMapSelectionChips";
@@ -192,14 +193,19 @@ export function BodyMapPanel() {
               papers={legDetailPapers}
             />
           ) : (
-            <BodyMap
-              variant={variant}
-              paperCountsByPart={bodyMapRegionCounts}
-              heatmapDotPapers={bodyMapPaperPool}
-              heatmapScaleReferenceCounts={globalPaperCountsByBodyRegion}
-              selectedBodyMapChips={selectedBodyMapChips}
-              onPartClick={handleFullBodyPartClick}
-            />
+            <>
+              <BodyMap
+                variant={variant}
+                paperCountsByPart={bodyMapRegionCounts}
+                heatmapDotPapers={bodyMapPaperPool}
+                heatmapScaleReferenceCounts={globalPaperCountsByBodyRegion}
+                selectedBodyMapChips={selectedBodyMapChips}
+                onPartClick={handleFullBodyPartClick}
+              />
+              <BodyMapMobileRegionList
+                onRegionPress={handleFullBodyPartClick}
+              />
+            </>
           )}
         </div>
       </div>
