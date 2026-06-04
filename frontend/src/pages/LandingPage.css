@@ -2183,6 +2183,76 @@ body.is-range-slider-dragging {
   overscroll-behavior: none;
 }
 
+/* Mobile: ~44px touch target; visible knob stays smaller via ::after */
+@media (max-width: 767px) {
+  .temperature-slider-row,
+  .duration-slider-row {
+    padding-top: 1.35rem;
+  }
+
+  .landing-temperature-panel .temperature-slider-track {
+    height: 28px !important;
+  }
+
+  .landing-duration-panel .duration-slider-track {
+    min-height: 28px !important;
+  }
+
+  .temperature-slider-row
+    .range-slider-thumb-stack--horizontal
+    > .temperature-slider-handle,
+  .duration-slider-row
+    .range-slider-thumb-stack--horizontal
+    > .temperature-slider-handle {
+    position: relative;
+    width: 2.75rem;
+    height: 2.75rem;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .temperature-slider-row
+    .range-slider-thumb-stack--horizontal
+    > .temperature-slider-handle::after,
+  .duration-slider-row
+    .range-slider-thumb-stack--horizontal
+    > .temperature-slider-handle::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 1.375rem;
+    height: 1.375rem;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .temperature-slider-row
+    .range-slider-thumb-stack--horizontal
+    > .temperature-slider-handle-low::after {
+    border: 2px solid rgba(37, 99, 235, 0.42);
+  }
+
+  .temperature-slider-row
+    .range-slider-thumb-stack--horizontal
+    > .temperature-slider-handle-high::after {
+    border: 2px solid rgba(220, 38, 38, 0.42);
+  }
+
+  .duration-slider-row
+    .range-slider-thumb-stack--horizontal
+    > .duration-slider-handle--neutral.temperature-slider-handle-low::after,
+  .duration-slider-row
+    .range-slider-thumb-stack--horizontal
+    > .duration-slider-handle--neutral.temperature-slider-handle-high::after {
+    border: 2px solid rgba(71, 85, 105, 0.38);
+  }
+}
+
 .temperature-slider-row .range-slider-value-pill {
   bottom: calc(100% + 4px);
 }
