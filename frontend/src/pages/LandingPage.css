@@ -1862,11 +1862,11 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 2.75rem;
-    padding: 0.38rem 0.85rem;
+    min-height: 2rem;
+    padding: 0.28rem 0.62rem;
     margin: 0;
     font: inherit;
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     font-weight: 500;
     line-height: 1.25;
     letter-spacing: -0.015em;
