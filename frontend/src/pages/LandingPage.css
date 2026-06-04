@@ -1,4 +1,5 @@
 .landing-root {
+  --landing-layout-bottom-pad: 0.7rem;
   --range-slider-value-pill-gap: 5px;
   --filter-chip-border: rgba(203, 213, 225, 0.95);
   --filter-chip-bg: #fafafa;
@@ -17,6 +18,9 @@
   display: flex;
   flex-direction: column;
   overflow: visible;
+  background: #fafafa;
+  padding-bottom: var(--landing-layout-bottom-pad);
+  box-sizing: border-box;
 }
 
 .landing-header {
@@ -56,6 +60,13 @@
   min-height: 0;
   overflow: visible;
   background: #fafafa;
+}
+
+/* Landing grid: do not stretch #main to fill the viewport (extra bottom gap on PC) */
+.landing-main.landing-layout-main {
+  flex: 0 1 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .landing-left {
@@ -2351,12 +2362,14 @@ body.is-range-slider-dragging {
 
 /* —— Landing layout: desktop 3-col | tablet sidebar+results | mobile stack —— */
 .landing-layout-main {
+  --landing-layout-col-gap: 0.28rem;
+  --landing-layout-stack-gap: 0.45rem;
   display: grid;
   /* Tablet (768–1023): sidebar (map + filters) | results */
   grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.38fr);
   grid-template-rows: auto;
-  gap: 0.45rem;
-  padding: 0.35rem 0.65rem;
+  gap: var(--landing-layout-col-gap);
+  padding: 0.35rem 0.65rem 0;
   align-items: start;
   width: 100%;
   max-width: 100%;
@@ -2387,7 +2400,7 @@ body.is-range-slider-dragging {
   .landing-layout-main {
     grid-template-columns: minmax(0, 1fr);
     gap: 0.5rem;
-    padding: 0.35rem 0.5rem;
+    padding: 0.35rem 0.5rem 0;
     align-items: start;
   }
 
@@ -2450,7 +2463,7 @@ body.is-range-slider-dragging {
 @media (min-width: 1024px) {
   .landing-layout-main {
     grid-template-columns: minmax(0, 0.72fr) minmax(0, 0.82fr) minmax(0, 1.46fr);
-    align-items: stretch;
+    align-items: start;
   }
 
   .landing-layout-sidebar {
@@ -2485,37 +2498,45 @@ body.is-range-slider-dragging {
 }
 
 .landing-layout-col-left {
-  padding: 0.25rem 0.45rem 0.45rem 0;
+  padding: 0.25rem 0.3rem 0.45rem 0;
   border-right: none;
   border-bottom: 1px solid #e5e5e5;
 }
 
 .landing-layout-col-center {
   gap: 0;
-  padding: 0.25rem 0.45rem 0.45rem;
+  padding: 0.25rem 0.3rem 0.45rem;
   min-height: 0;
 }
 
 /* Tablet (768–1023): sidebar map + filters stack */
 @media (min-width: 768px) and (max-width: 1023px) {
   .landing-layout-main {
+    /* Sidebar | results only — tighter than desktop 3-col */
+    --landing-layout-col-gap: 0.12rem;
     align-items: stretch;
   }
 
-  .landing-layout-col-left,
-  .landing-layout-col-center {
-    /* Match horizontal inset so filter panels align with body map */
-    padding: 0.25rem 0.45rem 0.45rem 0;
+  /* Flatten wrappers so body map + every filter panel share one stack gap */
+  .landing-layout-sidebar {
+    gap: var(--landing-layout-stack-gap);
+    padding: 0.25rem 0.12rem 0 0;
     width: 100%;
     box-sizing: border-box;
+  }
+
+  .landing-layout-col-left,
+  .landing-layout-col-center,
+  .landing-filters-scroll {
+    display: contents;
   }
 
   .landing-layout-col-left {
     border-bottom: none;
   }
 
-  .landing-filters-scroll,
-  .landing-filters-scroll > .landing-panel {
+  .landing-layout-sidebar > .landing-body-map,
+  .landing-layout-sidebar > .landing-panel {
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
@@ -2557,52 +2578,52 @@ body.is-range-slider-dragging {
   }
 
   .landing-layout-col-right {
-    margin-left: calc(-0.45rem / 2);
-    padding-left: calc(0.45rem + 0.45rem / 2);
+    margin-left: 0;
+    padding: 0.25rem 0 0 0.12rem;
     align-self: stretch;
   }
 }
 
 @media (min-width: 1024px) {
   .landing-layout-col-left {
-    padding: 0.25rem 0.45rem 0.45rem 0;
+    padding: 0.25rem 0.3rem 0.45rem 0;
     border-right: 1px solid #e5e5e5;
     border-bottom: none;
     min-height: 0;
-    align-self: stretch;
   }
 
   .landing-layout-col-center {
     padding: 0.25rem 0;
   }
 
+  /* Intrinsic height: flex 1 + % heights collapse when the grid row is content-sized */
   .landing-layout-col-left .landing-body-map,
   .landing-body-map {
-    flex: 1 1 0;
-    min-height: 0;
+    flex: 0 0 auto;
+    min-height: auto;
     overflow: hidden;
   }
 
   .landing-body-map .panel-content,
   .landing-body-map .body-map-panel-stage,
   .landing-body-map .body-map-full-body-stage {
-    flex: 1 1 0;
-    min-height: 0;
+    flex: 0 0 auto;
+    min-height: auto;
     overflow: hidden;
   }
 
   .landing-body-map .body-map-panel-stage > .body-map-root,
   .landing-body-map .body-map-full-body-stage > .body-map-root,
   .landing-body-map .body-map-root {
-    flex: 1 1 0;
-    min-height: 0;
-    height: 100%;
+    flex: 0 1 auto;
+    height: auto;
+    min-height: auto;
     overflow: hidden;
   }
 
   .landing-body-map .body-map-svg-wrap {
-    flex: 1 1 0;
-    min-height: 0;
+    flex: 0 0 auto;
+    min-height: min(52vh, 420px);
     height: auto;
     overflow: hidden;
   }
@@ -2610,9 +2631,9 @@ body.is-range-slider-dragging {
   .landing-body-map .body-map-root .body-map-svg {
     display: block;
     width: 100%;
-    height: 100%;
+    height: auto;
     min-height: 0;
-    max-height: 100%;
+    max-height: min(52vh, 420px);
   }
 }
 
@@ -2623,7 +2644,7 @@ body.is-range-slider-dragging {
   overflow: visible;
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: var(--landing-layout-stack-gap);
 }
 
 .landing-filters-scroll > .landing-panel {
@@ -2664,9 +2685,16 @@ body.is-range-slider-dragging {
 }
 
 .landing-layout-col-right {
-  padding: 0.25rem 0 0.65rem 0.45rem;
+  padding: 0.25rem 0 0 0.3rem;
   border-left: 1px solid #e5e5e5;
   overflow: visible;
+}
+
+/* Tablet: no vertical rule between sidebar and results (must follow rule above) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .landing-layout-col-right {
+    border-left: none;
+  }
 }
 
 /* Mobile stack: equal panel width, no section dividers (must follow col-* rules above) */
