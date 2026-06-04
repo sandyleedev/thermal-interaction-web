@@ -150,7 +150,7 @@ function ResultsPaginationNav({
           disabled={currentPage <= 1}
           onClick={() => onPageChange(currentPage - 1)}
         >
-          Previous
+          Prev
         </button>
         <div
           className="results-pagination-pages"
