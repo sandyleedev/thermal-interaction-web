@@ -212,6 +212,7 @@ export function ResultsPanel() {
     DEFAULT_RESULTS_PAGE_SIZE,
   );
   const skipScrollOnMountRef = useRef(true);
+  const resultsPanelRef = useRef<HTMLElement>(null);
 
   const rows = useMemo(
     () => filteredPapers.map((p) => formatPaperDisplay(p)),
@@ -231,7 +232,15 @@ export function ResultsPanel() {
       skipScrollOnMountRef.current = false;
       return;
     }
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const panel = resultsPanelRef.current;
+    if (!panel) return;
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    panel.scrollIntoView({
+      behavior: reduceMotion ? "auto" : "smooth",
+      block: "start",
+    });
   }, [currentPage]);
 
   const pageStartIndex = (currentPage - 1) * pageSize;
@@ -245,7 +254,10 @@ export function ResultsPanel() {
         search={keywordSearch}
         onSearchChange={setKeywordSearch}
       />
-      <section className="landing-panel landing-results">
+      <section
+        ref={resultsPanelRef}
+        className="landing-panel landing-results"
+      >
         <h2 className="panel-title">Results</h2>
         <div className="panel-content landing-results-inner">
           <p className="landing-results-summary">

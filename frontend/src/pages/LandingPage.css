@@ -1083,6 +1083,7 @@
   display: flex;
   flex-direction: column;
   overflow: visible;
+  scroll-margin-top: 0.35rem;
 }
 
 .landing-results .panel-content {
