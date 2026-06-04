@@ -2434,30 +2434,204 @@ body.is-range-slider-dragging {
 }
 
 /* —— Info page —— */
-.landing-info-main {
-  align-items: center;
-  justify-content: center;
-  padding: 2rem 1.25rem;
+.landing-root--info {
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 42%, #fafafa 100%);
 }
 
-.landing-info-inner {
-  max-width: 36rem;
-  text-align: center;
+.landing-info-main {
+  align-items: center;
+  justify-content: flex-start;
+  padding: 1.5rem 1rem 2.75rem;
+}
+
+.landing-info-card {
+  width: 100%;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 1.35rem 1.4rem 1.5rem;
+  text-align: left;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.04),
+    0 10px 28px rgba(15, 23, 42, 0.06);
+}
+
+@media (min-width: 768px) {
+  .landing-info-card {
+    max-width: 52rem;
+    padding: 1.5rem 1.75rem 1.65rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .landing-info-card {
+    max-width: 58rem;
+    padding: 1.65rem 2rem 1.75rem;
+  }
+}
+
+.landing-info-hero {
+  margin-bottom: 1.35rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid #e8eef4;
+}
+
+.landing-info-eyebrow {
+  margin: 0 0 0.45rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--filter-chip-selected-accent);
 }
 
 .landing-info-title {
-  margin: 0 0 0.75rem;
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  margin: 0 0 0.65rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.25;
   color: #0f172a;
 }
 
-.landing-info-text {
+.landing-info-lead {
   margin: 0;
-  font-size: 0.875rem;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: -0.02em;
+  color: #334155;
+}
+
+.landing-info-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.landing-info-section {
+  margin: 0;
+}
+
+.landing-info-section-title {
+  margin: 0 0 0.45rem;
+  padding-left: 0.62rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.35;
+  color: #0f172a;
+  border-left: 3px solid #e90e5e;
+}
+
+.landing-info-section p {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: -0.01em;
+  color: #475569;
+}
+
+.landing-info-section--highlight {
+  padding: 0.85rem 0.95rem 0.95rem;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 251, 252, 0.98) 0%,
+    rgba(252, 241, 247, 0.55) 100%
+  );
+  border: 1px solid rgba(251, 207, 232, 0.55);
+  border-radius: 10px;
+}
+
+.landing-info-section--highlight .landing-info-section-title {
+  border-left-color: var(--filter-chip-selected-accent);
+}
+
+.landing-info-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.75rem;
+  padding: 0.48rem 0.95rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: #ffffff;
+  text-decoration: none;
+  background: #eb2574;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(190, 24, 93, 0.2);
+  transition:
+    background 140ms ease,
+    box-shadow 140ms ease,
+    transform 140ms ease;
+}
+
+.landing-info-cta:hover {
+  color: #ffffff;
+  text-decoration: none;
+  background: #be185d;
+  box-shadow: 0 4px 12px rgba(190, 24, 93, 0.22);
+}
+
+.landing-info-cta:focus-visible {
+  outline: 2px solid rgba(56, 189, 248, 0.55);
+  outline-offset: 2px;
+}
+
+.landing-info-footer {
+  margin-top: 1.35rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid #e8eef4;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.landing-info-footer p {
+  margin: 0;
+  font-size: 0.8125rem;
   line-height: 1.5;
   color: #64748b;
+}
+
+.landing-info-credits {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.landing-info-placeholder {
+  color: #94a3b8;
+  font-style: italic;
+}
+
+@media (max-width: 767px) {
+  .landing-info-main {
+    padding: 0.85rem 0.55rem 1.65rem;
+  }
+
+  .landing-info-card {
+    padding: 1rem 0.85rem 1.15rem;
+    border-radius: 12px;
+  }
+
+  .landing-info-title {
+    font-size: 1.25rem;
+  }
+
+  .landing-info-lead {
+    font-size: 0.9375rem;
+  }
+
+  .landing-info-section p {
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
 }
 
 /* —— Landing layout: desktop 3-col | tablet sidebar+results | mobile stack —— */
