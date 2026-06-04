@@ -31,6 +31,10 @@ export function useWindowPointerRangeDrag({
 }) {
   const rangeRef = useRef({ low: filterLow, high: filterHigh });
   const dragRef = useRef<DragHandle>(null);
+  const pointerCaptureRef = useRef<{
+    el: HTMLElement;
+    pointerId: number;
+  } | null>(null);
 
   useEffect(() => {
     rangeRef.current = { low: filterLow, high: filterHigh };
@@ -57,7 +61,17 @@ export function useWindowPointerRangeDrag({
   );
 
   const endDrag = useCallback(() => {
+    const capture = pointerCaptureRef.current;
+    if (capture) {
+      try {
+        capture.el.releasePointerCapture(capture.pointerId);
+      } catch {
+        /* capture may already be released */
+      }
+      pointerCaptureRef.current = null;
+    }
     dragRef.current = null;
+    document.body.classList.remove("is-range-slider-dragging");
     document.body.style.cursor = "";
   }, []);
 
@@ -74,17 +88,25 @@ export function useWindowPointerRangeDrag({
     };
   }, [moveDrag, endDrag]);
 
-  const beginLowDrag = useCallback((e: ReactPointerEvent) => {
+  const beginDrag = useCallback((e: ReactPointerEvent, handle: "low" | "high") => {
     e.preventDefault();
-    dragRef.current = "low";
+    const el = e.currentTarget as HTMLElement;
+    el.setPointerCapture(e.pointerId);
+    pointerCaptureRef.current = { el, pointerId: e.pointerId };
+    dragRef.current = handle;
+    document.body.classList.add("is-range-slider-dragging");
     document.body.style.cursor = "grabbing";
   }, []);
 
-  const beginHighDrag = useCallback((e: ReactPointerEvent) => {
-    e.preventDefault();
-    dragRef.current = "high";
-    document.body.style.cursor = "grabbing";
-  }, []);
+  const beginLowDrag = useCallback(
+    (e: ReactPointerEvent) => beginDrag(e, "low"),
+    [beginDrag],
+  );
+
+  const beginHighDrag = useCallback(
+    (e: ReactPointerEvent) => beginDrag(e, "high"),
+    [beginDrag],
+  );
 
   return { beginLowDrag, beginHighDrag };
 }

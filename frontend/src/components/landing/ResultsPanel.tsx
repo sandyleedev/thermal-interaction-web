@@ -232,7 +232,7 @@ export function ResultsPanel() {
       return;
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [currentPage, pageSize]);
+  }, [currentPage]);
 
   const pageStartIndex = (currentPage - 1) * pageSize;
   const pageRows = rows.slice(pageStartIndex, pageStartIndex + pageSize);

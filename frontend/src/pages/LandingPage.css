@@ -2167,6 +2167,20 @@
 .temperature-slider-row,
 .duration-slider-row {
   --range-slider-value-pill-gap: 2px;
+  /* Horizontal drag: avoid vertical page scroll while adjusting thumbs (touch) */
+  touch-action: pan-x;
+}
+
+.temperature-slider-track,
+.duration-slider-track,
+.range-slider-thumb-stack,
+.temperature-slider-handle {
+  touch-action: none;
+}
+
+body.is-range-slider-dragging {
+  touch-action: none;
+  overscroll-behavior: none;
 }
 
 .temperature-slider-row .range-slider-value-pill {
