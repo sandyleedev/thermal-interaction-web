@@ -166,9 +166,9 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
   const [activeDetailRegion, setActiveDetailRegion] =
     useState<BodyMapParentRegion | null>(null);
   const [includeUnspecifiedTemperature, setIncludeUnspecifiedTemperature] =
-    useState(false);
+    useState(true);
   const [includeUnspecifiedDuration, setIncludeUnspecifiedDuration] =
-    useState(false);
+    useState(true);
   const [keywordSearch, setKeywordSearch] =
     useState<KeywordSearchQuery>(DEFAULT_KEYWORD_SEARCH);
 
@@ -201,13 +201,13 @@ export function ResearchFilterProvider({ children }: { children: ReactNode }) {
   const clearTemperatureFilter = useCallback(() => {
     setTempLowC(DEFAULT_TEMP[0]);
     setTempHighC(DEFAULT_TEMP[1]);
-    setIncludeUnspecifiedTemperature(false);
+    setIncludeUnspecifiedTemperature(true);
   }, []);
 
   const clearDurationFilter = useCallback(() => {
     setDurationLowS(DEFAULT_DURATION[0]);
     setDurationHighS(DEFAULT_DURATION[1]);
-    setIncludeUnspecifiedDuration(false);
+    setIncludeUnspecifiedDuration(true);
   }, []);
 
   const toggleOtherChip = useCallback(
