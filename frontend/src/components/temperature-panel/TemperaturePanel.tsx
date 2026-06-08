@@ -12,14 +12,16 @@ import {
 import { RangeSliderThumbStack } from "@/components/range-slider/RangeSliderThumbStack";
 import { useWindowPointerRangeDrag } from "@/components/range-slider/useWindowPointerRangeDrag";
 import { FilterPanelInfoButton } from "@/components/landing/FilterPanelInfoButton";
-
-const TEMPERATURE_FILTER_TOOLTIP =
-  "Drag handles for a °C range. Chart uses your other filters. Include unspecified for papers without temperature.";
 import {
   TEMP_AXIS_MAX,
   TEMP_AXIS_MIN,
   tempToNorm,
 } from "@/components/temperature-panel/temperaturePanelUtils";
+
+const TEMPERATURE_FILTER_TOOLTIP =
+  "Drag handles for a °C range. Chart uses your other filters.";
+const TEMPERATURE_INCLUDE_UNSPECIFIED_TOOLTIP =
+  "Some papers may not report the temperature range, or temperature may not be used as a stimulus in the study. Select this option to include those papers in the results.";
 
 const PLOT_W = 320;
 const PLOT_H = 58;
@@ -197,14 +199,24 @@ export function TemperaturePanel() {
             ))}
           </div>
         </div>
-        <label className="filter-include-unspecified">
-          <input
-            type="checkbox"
-            checked={includeUnspecifiedTemperature}
-            onChange={(e) => setIncludeUnspecifiedTemperature(e.target.checked)}
+        <div className="filter-include-unspecified-row">
+          <label className="filter-include-unspecified">
+            <input
+              type="checkbox"
+              checked={includeUnspecifiedTemperature}
+              onChange={(e) =>
+                setIncludeUnspecifiedTemperature(e.target.checked)
+              }
+            />
+            Include unspecified values
+          </label>
+          <FilterPanelInfoButton
+            tooltip={TEMPERATURE_INCLUDE_UNSPECIFIED_TOOLTIP}
+            ariaLabel="What include unspecified values means"
+            floating
+            tooltipPlacement="above"
           />
-          Include unspecified values
-        </label>
+        </div>
       </div>
     </section>
   );

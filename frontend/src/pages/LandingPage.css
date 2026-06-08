@@ -1460,11 +1460,17 @@
   transform: translateX(-50%);
 }
 
+.filter-include-unspecified-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  margin-top: 0.12rem;
+}
+
 .filter-include-unspecified {
   display: flex;
-  align-items: flex-start;
+  align-items: baseline;
   gap: 0.4rem;
-  margin-top: 0.12rem;
   font-size: 0.75rem;
   line-height: 1.35;
   color: rgba(15, 23, 42, 0.72);
@@ -1473,12 +1479,17 @@
 }
 
 .filter-include-unspecified input[type="checkbox"] {
-  margin: 0.12rem 0 0;
+  margin: 0;
   flex-shrink: 0;
   width: 0.8rem;
   height: 0.8rem;
   cursor: pointer;
   accent-color: var(--filter-chip-selected-accent);
+  transform: translateY(0.08em);
+}
+
+.filter-include-unspecified-row .other-filters-info-wrap {
+  transform: translateY(0.055em);
 }
 
 /* —— Panel 3: duration range (log scale; track tokens on .landing-duration-panel) —— */
@@ -1766,6 +1777,18 @@
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
+}
+
+.other-filters-info-tooltip--floating {
+  position: fixed;
+  z-index: 9999;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.other-filters-info-tooltip--floating.other-filters-info-tooltip--above {
+  transform: translateY(-100%);
 }
 
 .other-filters-clear-all {

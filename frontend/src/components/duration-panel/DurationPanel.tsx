@@ -27,7 +27,9 @@ import { useWindowPointerRangeDrag } from "@/components/range-slider/useWindowPo
 import { FilterPanelInfoButton } from "@/components/landing/FilterPanelInfoButton";
 
 const DURATION_FILTER_TOOLTIP =
-  "Drag handles for duration (log scale). Chart uses your other filters. Include unspecified for papers without duration.";
+  "Drag handles for duration (log scale). Chart uses your other filters.";
+const DURATION_INCLUDE_UNSPECIFIED_TOOLTIP =
+  "Some papers may not report the stimulation duration. Select this option to include those papers in the results.";
 
 const TRACK_H = 22;
 const PLOT_W = 320;
@@ -247,14 +249,22 @@ export function DurationPanel() {
             ))}
           </div>
         </div>
-        <label className="filter-include-unspecified">
-          <input
-            type="checkbox"
-            checked={includeUnspecifiedDuration}
-            onChange={(e) => setIncludeUnspecifiedDuration(e.target.checked)}
+        <div className="filter-include-unspecified-row">
+          <label className="filter-include-unspecified">
+            <input
+              type="checkbox"
+              checked={includeUnspecifiedDuration}
+              onChange={(e) => setIncludeUnspecifiedDuration(e.target.checked)}
+            />
+            Include unspecified values
+          </label>
+          <FilterPanelInfoButton
+            tooltip={DURATION_INCLUDE_UNSPECIFIED_TOOLTIP}
+            ariaLabel="What include unspecified values means"
+            floating
+            tooltipPlacement="above"
           />
-          Include unspecified values
-        </label>
+        </div>
       </div>
     </section>
   );
