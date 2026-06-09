@@ -11,9 +11,11 @@
 *.sln
 *.sw?
 
-# Import sources (keep exports outside the repo; JSON is the app source of truth)
-scripts/*.csv
-scripts/*.tsv
+# Import/export sources
+scripts/**/*.csv
+scripts/**/*.tsv
+!scripts/abstract-collector/input/.gitkeep
+!scripts/abstract-collector/output/.gitkeep
 
 # Python
 __pycache__/
