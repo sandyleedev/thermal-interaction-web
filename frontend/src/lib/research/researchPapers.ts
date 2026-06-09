@@ -102,10 +102,13 @@ export type ResearchPaper = {
   publicationVenue?: string;
   doi?: string;
   url?: string;
+  abstract?: string | null;
+  temperatureNotes?: string | null;
 
   ambientTempC?: number | null;
   minTempC: number | null;
   maxTempC: number | null;
+  durationNotes?: string | null;
   minDurationSec: number | null;
   maxDurationSec: number | null;
   senses: string[];
