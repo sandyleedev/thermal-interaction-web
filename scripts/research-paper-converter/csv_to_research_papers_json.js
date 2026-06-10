@@ -411,6 +411,9 @@ const convertRowToPaper = (row, id) => ({
   }),
 
   powerEnergyConsumption: parseString(getValue(row, "powerEnergyConsumption")),
+  materialsInContactWithSkinNotes: parseString(
+    getValue(row, "materialsInContactWithSkinNotes"),
+  ),
   materialsInContactWithSkin: parseMaterialsInContactWithSkin(
     getValue(row, "materialsInContactWithSkin"),
     {
@@ -480,15 +483,10 @@ const main = async () => {
     }));
 
   if (missingColumns.length > 0) {
-    console.warn("Missing mapped CSV columns:");
+    console.warn("⚠️ Missing mapped CSV columns:");
     missingColumns.forEach(({ jsonKey, expectedColumns }) => {
       console.warn(`- ${jsonKey}: ${expectedColumns.join(" OR ")}`);
     });
-  }
-
-  if (missingColumns.length > 0) {
-    console.warn("⚠️ Missing mapped CSV columns:");
-    missingColumns.forEach((column) => console.warn(`- ${column}`));
   }
 
   const papers = [];

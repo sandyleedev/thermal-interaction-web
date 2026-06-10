@@ -42,10 +42,8 @@ import {
 import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { publicAssetUrl } from "@/lib/publicAssetUrl";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
-import {
-  paperMatchesNeckFineSelection,
-  type ResearchPaper,
-} from "@/lib/research/researchPapers";
+import type { ResearchPaper } from "@/type/researchPaper";
+import { paperMatchesNeckFineSelection } from "@/lib/research/researchPapers";
 
 /** Smaller than full-body dots so subregions on the neck SVG read more clearly. */
 const HEATMAP_DOT_RADIUS = 18;

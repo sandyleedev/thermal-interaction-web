@@ -39,10 +39,8 @@ import {
   explicitSideBilateralTooltip,
   simpleBodyMapTooltip,
 } from "@/lib/research/bodyMapBilateralTooltips";
-import {
-  paperMatchesTorsoFineSelection,
-  type ResearchPaper,
-} from "@/lib/research/researchPapers";
+import type { ResearchPaper } from "@/type/researchPaper";
+import { paperMatchesTorsoFineSelection } from "@/lib/research/researchPapers";
 
 /** Smaller than full-body dots so subregions on the torso SVG read more clearly. */
 const HEATMAP_DOT_RADIUS = 50;

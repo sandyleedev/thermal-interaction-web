@@ -4,10 +4,8 @@ import {
   normalizeBodySiteSide,
   siteAssignsToLateralHitForDots,
 } from "@/lib/research/bodyMapSiteSide";
-import {
-  normalizeBodySites,
-  type ResearchPaper,
-} from "@/lib/research/researchPapers";
+import type { ResearchPaper } from "@/type/researchPaper";
+import { normalizeBodySites } from "@/lib/research/researchPapers";
 import {
   type HeadShapeSampleOptions,
   type HeadShapeSpec,

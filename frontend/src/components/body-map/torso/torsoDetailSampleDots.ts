@@ -1,9 +1,7 @@
 import type { BodyMapDetailRegion } from "@/lib/research/bodyMapRegions";
 import { resolveBodySite } from "@/lib/research/bodyMapRegionUtils";
-import {
-  normalizeBodySites,
-  type ResearchPaper,
-} from "@/lib/research/researchPapers";
+import type { ResearchPaper } from "@/type/researchPaper";
+import { normalizeBodySites } from "@/lib/research/researchPapers";
 import {
   maxHitTargetCount,
   resolveAreaDensitySampleCount,

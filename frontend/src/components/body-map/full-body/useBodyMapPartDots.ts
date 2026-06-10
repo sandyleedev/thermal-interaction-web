@@ -11,7 +11,8 @@ import {
   areaDotsLruPut,
   areaDotsLruTouch,
 } from "@/components/body-map/shared/bodyMapAreaDotsCache";
-import type { BodyMapRegion, ResearchPaper } from "@/lib/research/researchPapers";
+import type { BodyMapRegion } from "@/lib/research/researchPapers";
+import type { ResearchPaper } from "@/type/researchPaper";
 
 export type FullBodyMapPart = {
   id: BodyMapRegion;

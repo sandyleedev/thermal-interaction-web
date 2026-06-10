@@ -52,6 +52,7 @@ const CSV_COLUMNS = {
   bodySites: "Body parts (Main > Sub)",
 
   powerEnergyConsumption: "Power/Energy Consumption",
+  materialsInContactWithSkinNotes: "Material(s) in contact with skin",
   materialsInContactWithSkin: "Material(s) in contact with skin - for filter",
 };
 

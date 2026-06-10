@@ -1,5 +1,5 @@
 import type { BodyMapParentRegion } from "@/lib/research/bodyMapRegions";
-import type { BodySiteSide } from "@/lib/research/bodyMapSiteSide";
+import type { BodySiteSide } from "@/type/bodySiteSide";
 import type { BodyMapChipSelection } from "@/lib/research/bodyMapChipSelection";
 
 /** Detail selection modes.

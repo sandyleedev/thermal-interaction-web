@@ -52,11 +52,11 @@ import {
   mergedHoverPairHitIds,
 } from "@/lib/research/bodyMapDetailSelectionMode";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
+import type { ResearchPaper } from "@/type/researchPaper";
 import {
   paperMatchesHeadFineSelection,
   paperMatchesHeadFineSelectionForSideDots,
   paperMatchesHeadFineSelectionForSideAreaView,
-  type ResearchPaper,
 } from "@/lib/research/researchPapers";
 
 /** Smaller than full-body dots so subregions on the head SVG read more clearly. */

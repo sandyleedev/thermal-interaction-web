@@ -3,9 +3,7 @@ import {
   resolveBodySite,
   type BodySitesCarrier,
 } from "@/lib/research/bodyMapRegionUtils";
-
-/** Stored in JSON: explicit laterality, or null when unknown. */
-export type BodySiteSide = "left" | "right" | null;
+import type { BodySiteSide } from "@/type/bodySiteSide";
 
 /** Resolved side for matching / dot placement (null in data → unspecified). */
 export type ResolvedBodySiteSide = "left" | "right" | "unspecified";

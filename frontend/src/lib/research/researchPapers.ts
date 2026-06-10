@@ -3,8 +3,9 @@ import {
   type OtherFilterCategory,
   OTHER_FILTER_OPTIONS,
 } from "@/lib/research/otherFilterVocab";
-import type { BodySiteSide } from "@/lib/research/bodyMapSiteSide";
 import researchPapersJson from "@/data/researchPapers.json";
+import type { BodySite } from "@/type/bodySite";
+import type { ResearchPaper } from "@/type/researchPaper";
 
 export type {
   BodyMapDetailRegion,
@@ -79,65 +80,6 @@ export {
   resolveBodySite,
   WHOLE_BODY_GENERAL_COUNT_KEY,
 } from "@/lib/research/bodyMapRegionUtils";
-
-export type { BodySiteSide } from "@/lib/research/bodyMapSiteSide";
-
-/**
- * One measured / stimulated location on the body.
- * - `region` should be an L1 parent (`head`, `arm`, …) or `whole-body`.
- * - `subregion` is the L2 slug (`forearm`, `palm`, …); use `general` when unknown.
- * - `side` is `left`, `right`, or `null` when laterality is unknown.
- */
-export type BodySite = {
-  region: string;
-  subregion: string;
-  side?: BodySiteSide;
-};
-
-export type ResearchPaper = {
-  id: string;
-  title: string;
-  authors?: string;
-  publicationYear?: number;
-  /** ISO date (YYYY-MM-DD) for sorting by publication date. */
-  publicationSortDate?: string;
-  publicationVenue?: string;
-  doi?: string;
-  url?: string;
-  abstract?: string | null;
-  temperatureNotes?: string | null;
-
-  ambientTempC?: number | null;
-  minTempC: number | null;
-  maxTempC: number | null;
-  durationNotes?: string | null;
-  minDurationSec: number | null;
-  maxDurationSec: number | null;
-  senses: string[];
-  thermalPerceptionMeasure?: string | null;
-  thermalCuePurpose?: string | null;
-  thermalTransferModes: string[];
-
-  /** Technical related fields */
-  mainActuatorForTemperatureSensation?: string | null;
-  mainActuatorModel?: string | null;
-  mainActuatorSize?: string | null;
-  overallDeviceSize?: string | null;
-  mainActuatorPossibleTemperatureRange?: string | null;
-  otherSensoryActuators?: string[];
-  auxiliaryHardware?: string[];
-  heatControlMethod?: string | null;
-  powerConsumption?: string | null;
-  temporalParameters?: string | null;
-  otherNote?: string | null;
-
-  materialsInContactWithSkin: string[];
-
-  bodyPartsInvolved?: string | null;
-  bodySites: BodySite[];
-
-  powerEnergyConsumption?: string | null;
-};
 
 const THERMAL_ALONE_SENSE = "thermal-alone";
 

@@ -13,12 +13,12 @@ import {
   type BodyMapParentRegion,
   type BodyMapPlacementRegion,
 } from "@/lib/research/bodyMapRegions";
+import type { BodySiteSide } from "@/type/bodySiteSide";
 import {
   normalizeBodySiteSide,
   siteAssignsToPanelSideForDots,
   siteAssignsToPanelSideForAreaView,
   subregionMatches,
-  type BodySiteSide,
 } from "@/lib/research/bodyMapSiteSide";
 
 export type {

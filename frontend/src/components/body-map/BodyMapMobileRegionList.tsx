@@ -10,7 +10,7 @@ import {
   type BodyMapChipSelection,
 } from "@/lib/research/bodyMapChipSelection";
 import type { BodyMapParentRegion } from "@/lib/research/bodyMapRegions";
-import type { BodySiteSide } from "@/lib/research/bodyMapSiteSide";
+import type { BodySiteSide } from "@/type/bodySiteSide";
 
 type BodyMapMobileRegionListProps = {
   onRegionPress: (region: BodyMapParentRegion) => void;

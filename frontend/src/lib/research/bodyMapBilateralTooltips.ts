@@ -6,10 +6,10 @@ import {
   countPapersWithExplicitSideForSite,
   type BodyMapHoverTooltipLine,
 } from "@/lib/research/bodyMapSiteSide";
+import type { ResearchPaper } from "@/type/researchPaper";
 import {
   countPapersWithBodySubregion,
   paperMatchesLegFineSelection,
-  type ResearchPaper,
 } from "@/lib/research/researchPapers";
 
 type BilateralTooltipParent =

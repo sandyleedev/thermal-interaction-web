@@ -39,11 +39,11 @@ import {
   mergedHoverPairHitIds,
 } from "@/lib/research/bodyMapDetailSelectionMode";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
+import type { ResearchPaper } from "@/type/researchPaper";
 import {
   LEG_DETAIL_HIT_IDS,
   paperMatchesLegFineSelectionForSideDots,
   paperMatchesLegFineSelectionForSideAreaView,
-  type ResearchPaper,
 } from "@/lib/research/researchPapers";
 
 const HEATMAP_DOT_RADIUS = 80;

@@ -1,4 +1,4 @@
-import type { ResearchPaper } from "@/lib/research/researchPapers";
+import type { ResearchPaper } from "@/type/researchPaper";
 
 export type PaperDetailFieldKey = keyof ResearchPaper;
 
@@ -159,6 +159,8 @@ export const PRESERVE_LINE_BREAKS_FIELD_KEYS = new Set<PaperDetailFieldKey>([
   "thermalCuePurpose",
   "temperatureNotes",
   "durationNotes",
+  "bodyPartsInvolved",
+  "materialsInContactWithSkinNotes",
   "temporalParameters",
   "otherNote",
 ]);

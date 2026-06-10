@@ -38,13 +38,13 @@ import { useResearchFilter } from "@/context/ResearchFilterContext";
 import { publicAssetUrl } from "@/lib/publicAssetUrl";
 import { BODY_MAP_DETAIL_SELECTION_MODE } from "@/lib/research/bodyMapDetailSelectionMode";
 import { normalizeBodyMapSubpart } from "@/lib/research/bodyMapChipSelection";
+import type { ResearchPaper } from "@/type/researchPaper";
 import {
   ARM_DETAIL_HIT_IDS,
   paperMatchesArmFineSelection,
   paperMatchesArmFineSelectionForSideDots,
   paperMatchesArmFineSelectionForSideAreaView,
   type ArmDetailSide,
-  type ResearchPaper,
 } from "@/lib/research/researchPapers";
 
 const HEATMAP_DOT_RADIUS = 50;

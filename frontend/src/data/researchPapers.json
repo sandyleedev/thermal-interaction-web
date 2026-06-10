@@ -40,6 +40,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Study 1 - Not specified. Possibly the peltier surface (ceramic) or Velcro straps --- based on the image.\nStudy 2 - no report.\nStudy 3 - no report.\nGiven the rapid heating (1 second to 64°C temperature difference), direct skin contact with bare Peltier seems concerning, but they don't document the interface.",
     "materialsInContactWithSkin": []
   },
   {
@@ -83,6 +84,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Hot steams - from a sauna.",
     "materialsInContactWithSkin": ["air-gas"]
   },
   {
@@ -126,6 +128,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not explicitly stated. Maybe the rubber belt on neck, deduced from fig 4.",
     "materialsInContactWithSkin": []
   },
   {
@@ -174,6 +177,7 @@
       }
     ],
     "powerEnergyConsumption": "Not reported.\nAuthors acknowledge \"lower energy consumption compared to traditional methods\" but provide no quantitative data",
+    "materialsInContactWithSkinNotes": "Not reported - Possibly the peltier surface, material unclear.",
     "materialsInContactWithSkin": []
   },
   {
@@ -225,6 +229,7 @@
       }
     ],
     "powerEnergyConsumption": "100W LED lights (per unit): --- page 5\n6W peak during inhalation, \nBattery life: ~22 min continuous use (300mAh battery)\n\nCool-White LED --- page 7\nTested at multiple intensities\nBatter life: Dependent on duty cycle\n\nPeltier comparison (control) --- page 5\n0.35W (restricted) vs 11.55W (rated)\nBatter life: 0.2 hours at rated power",
+    "materialsInContactWithSkinNotes": "25 °C water.",
     "materialsInContactWithSkin": ["liquids-gels"]
   },
   {
@@ -271,6 +276,7 @@
       }
     ],
     "powerEnergyConsumption": "Not reported.",
+    "materialsInContactWithSkinNotes": "air flow and nose clip material - the material is not reported, but looks like plastic from the photo.",
     "materialsInContactWithSkin": ["air-gas"]
   },
   {
@@ -316,6 +322,7 @@
       }
     ],
     "powerEnergyConsumption": "Fan only: --- page 5\n0.35W\nBattery life: 5.7 hours (400mAh)\nNote: Primary cooling actuator\n\nPeltier comparison (20mm) --- page 5\n0.35W (tested) vs 11.55W (rated)\nBattery life:0.2 hours at rated power\n Note: ALCool achieves stronger cooling at 0.35W than Peltier at same power\n\nPeltier comparison (30mm) --- page 5\n0.35W (tested) vs 28.28W (rated)\nBattery life: <0.1 hours at rated power\nNote: Larger Peltier still underperforms ALCool at equal power",
+    "materialsInContactWithSkinNotes": "gauz with alcohol.",
     "materialsInContactWithSkin": ["fabrics-textiles", "chemical"]
   },
   {
@@ -359,6 +366,7 @@
       }
     ],
     "powerEnergyConsumption": "Extensively, as power efficiency is a PRIMARY contribution.\n\nPage 2:\n\"our approach uses low-power electronics (only uses 0.25W), and, thus, enables the miniaturization of simple warm or cool sensations.\"\n\nPage 4 - Detailed power comparison:\n\"Our complete prototype uses only 0.25W of power, which is 20 times less than generating actual temperature changes with typical Peltier elements, as these use at least 5W (e.g., the TEFC1-03112).\"\n\nBattery life (page 4):\n0.25W operation: ~18 hours (1200mAh battery)\nScent reservoir life: 5.84 hours per 1mL vial (three vials total)\nLimiting factor: Scent depletion, not battery\n\nComparison to prior work (page 4):\nAmbiotherm: Up to 13W (two Peltiers)\nHutchison et al.: 4× TEFC1-03112 = 20W\nShoichi et al.: 4× KSMH029 = 27.2W\nThis work: \"20-52 times more efficient\"",
+    "materialsInContactWithSkinNotes": "scented air",
     "materialsInContactWithSkin": ["air-gas", "chemical"]
   },
   {
@@ -407,6 +415,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Peltier surface, figure 1",
     "materialsInContactWithSkin": []
   },
   {
@@ -459,6 +468,7 @@
       }
     ],
     "powerEnergyConsumption": "Not explicitly reported - No specific power, voltage, current, or energy consumption data provided.",
+    "materialsInContactWithSkinNotes": "NOT directly stated - The paper does not explicitly state what material is in direct contact with the skin.\n\nMaybe participants' own cloth: Reference: Page 6, Study Setup and Apparatus section: \"Each participant also had to wear a provided long-sleeve (100% cotton, 140 g/m²) without any other clothing below to mitigate any effects of different clothing and fabrics between our system and the participant's skin. We also ensured the shirts fit tightly but not constrain the participants in any way\"",
     "materialsInContactWithSkin": []
   },
   {
@@ -507,6 +517,7 @@
       }
     ],
     "powerEnergyConsumption": "Not explicitly reported in terms of numerical values. However, the paper emphasizes low power consumption as a key advantage:\n\nPage 1, Introduction: \"Electrical stimulation generates a sensation during the presentation and consumes relatively small energy\"\nPage 1, Introduction, comparing to Peltier: \"Using Peltier device for coldness presentation requires high-power consumption\"",
+    "materialsInContactWithSkinNotes": "Study 1 - a gel layer (Sekisui Kasei, G-grade gel)\nElectrode material: Gold-coated electrodes",
     "materialsInContactWithSkin": ["liquids-gels", "metal"]
   },
   {
@@ -560,6 +571,7 @@
       }
     ],
     "powerEnergyConsumption": "NOT explicitly reported. Paper mentions Peltier-only systems have \"significant power consumption\" as a limitation.",
+    "materialsInContactWithSkinNotes": "Reported as copper and silicone: Page 4, Section 3.1 \"Flexible silicone-copper tube segments\":\n\"We covered the finger skin on the dorsal side using copper tubes for heat conductivity\", \"and the knuckles with silicone tubes for flexible finger movement\".\n\nHowever, the real material in contact with skin seems like epoxy potting compound - cover the cooper and silicon tube, --- fig 2. Note: not sure how would this intermediate layer would reduce thermal transfer efficiency.",
     "materialsInContactWithSkin": ["metal", "silicone-based"]
   },
   {
@@ -603,6 +615,7 @@
       }
     ],
     "powerEnergyConsumption": "N/A\nNot applicable as no device was built.",
+    "materialsInContactWithSkinNotes": "Discussed material qualities in thermal experience, and demonstrated with design cases, but no specific material implementation on materials.\n\nExamples of materials mentioned in poetry analysis:\n\nSnow (soft texture)\nFabric (cold pillow, bamboo mat)\nWater (liquid warmth)\nAir/wind (flowing)\n\nExamples in case studies:\n\nCase 1: Heat mat (soft), water tubes (rigid), heating pads\nCase 2: Point contact devices (unspecified material)\nCase 3: Wrist-worn devices (unspecified material)\n\nThe framework suggests considering:\n\nThermal conductivity\nTexture (smooth, rough)\nDirectionality (radiant vs. enveloping)\nContact area",
     "materialsInContactWithSkin": []
   },
   {
@@ -650,6 +663,7 @@
       }
     ],
     "powerEnergyConsumption": "Partially reported.\n\nPower per TEC module:\nReference - Page 5, Section 3.2: \"Each Peltier module draws a maximum of 400mA at 6V when activated\"\nCalculation:\nPower per module: 6V × 0.4A = 2.4 Watts\nMaximum total power: 5 modules × 2.4W = 12 Watts (if all activated simultaneously)\n\nMaximum refrigerating capacity:\nReference - Page 4, Section 3.1: \"maximum refrigerating capacity Qmax = 7.51W\"\nThis is the thermal power (heat pumping capacity), not electrical power.\n\nEnergy per activation:\nNot explicitly calculated, but can be derived:\n\nDuration = 3.5 seconds\nPower = 2.4W per module\nEnergy per activation per module: 2.4W × 3.5s = 8.4 Joules",
+    "materialsInContactWithSkinNotes": "Not clear, some ambiguity --- Page 4 --- Velcro strap attach the thermal electrical module (peltier) on fingertip - the photo shows it's metal/alloy, but the reported module TES1-03103 has ceremic cover.",
     "materialsInContactWithSkin": []
   },
   {
@@ -707,6 +721,7 @@
       }
     ],
     "powerEnergyConsumption": "The device operates at 1.2W per peltier element (2.0V, 0.6A), totaling 9.6W for controlling eight elements. Powered by 3.7V, 2200 mAh Li-Po battery allowing approximately 51 minutes of operation (Page 4, Section 3.2.2).",
+    "materialsInContactWithSkinNotes": "peltier surface\n\nA 3mm thick silicone layer acts as a barrier preventing direct heat conduction to the skin for user safety (Page 3, Section 3.1).\n\nThe ceramic side of the peltier element contacts the skin, NOT the silicone side, (Page 3-4, Section 3.1, Figure 3b).",
     "materialsInContactWithSkin": ["ceramic"]
   },
   {
@@ -769,6 +784,7 @@
       }
     ],
     "powerEnergyConsumption": "Not reported.",
+    "materialsInContactWithSkinNotes": "Not explicitly reported. The authors mention the Peltier elements are \"housed in 3D-printed holders\" (Page 3, Section 3.3), but do not specify what material directly contacts the skin. The ceramic side of the Peltier element appears to be in direct contact with the skin based on standard Peltier element design.",
     "materialsInContactWithSkin": []
   },
   {
@@ -806,6 +822,7 @@
     "bodyPartsInvolved": null,
     "bodySites": [],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": null,
     "materialsInContactWithSkin": []
   },
   {
@@ -849,6 +866,7 @@
     "bodyPartsInvolved": "Not specific. The paper mentions that heated air is directed \"towards the user's body parts\" (Page 1, Section 1) and specifically references \"the user's hands or other body parts\" (Page 2, Section 1). However, no specific body parts are identified for testing or evaluation.",
     "bodySites": [],
     "powerEnergyConsumption": "The total power of the heating circuit is 2.5W (Page 3, Section 3.1).",
+    "materialsInContactWithSkinNotes": "air and cloth\n\nThe thermal sensation is conveyed through heated air directed by ultrasonic beams, not through physical material contact.",
     "materialsInContactWithSkin": ["air-gas", "fabrics-textiles"]
   },
   {
@@ -904,6 +922,7 @@
       }
     ],
     "powerEnergyConsumption": "Not reported.",
+    "materialsInContactWithSkinNotes": "Not reported.",
     "materialsInContactWithSkin": []
   },
   {
@@ -941,6 +960,7 @@
     "bodyPartsInvolved": null,
     "bodySites": [],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "N/A\na non-contact, visual-only study",
     "materialsInContactWithSkin": []
   },
   {
@@ -998,6 +1018,7 @@
       }
     ],
     "powerEnergyConsumption": "Total power consumption: 2600W\nBreakdown:\n\nPeltier plates: 72W × 24 = 1728W maximum\nWater pumps: 4W × 6 = 24W\nAxial fans: 0.96W × 6 = 5.76W\nUltrasound haptic display: ~4-5W (estimated)\nOther components and power supplies: remainder\n\n(Page 6, Section 3.2)",
+    "materialsInContactWithSkinNotes": "cold air flow",
     "materialsInContactWithSkin": ["air-gas"]
   },
   {
@@ -1035,6 +1056,7 @@
     "bodyPartsInvolved": null,
     "bodySites": [],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": null,
     "materialsInContactWithSkin": []
   },
   {
@@ -1091,6 +1113,7 @@
       }
     ],
     "powerEnergyConsumption": "Cold component: 133W\nOverall power consumption of all haptic modules: 1683W\nHeat light: 250W\nHeat blower: 1300W",
+    "materialsInContactWithSkinNotes": "The thermal feedback is primarily non-contact (radiative heat, air flow, mist). Direct skin contact appears minimal except through the controller housing.\n\nFor station installation: light, mist, air flow;\nFor hand-held: light, force, mist.\nExcept force, others are mediated through air.",
     "materialsInContactWithSkin": ["air-gas", "liquids-gels"]
   },
   {
@@ -1140,6 +1163,7 @@
       }
     ],
     "powerEnergyConsumption": "Not reported.",
+    "materialsInContactWithSkinNotes": "No report.\nMaybe peltier surface based on the fig they presented.",
     "materialsInContactWithSkin": []
   },
   {
@@ -1188,6 +1212,7 @@
       }
     ],
     "powerEnergyConsumption": "Partially reported.\nWhat is reported:\nMaximum power specifications: Thermal actuator can operate at 2.2V and 6A (maximum: 13.2W per actuator)\n\nWhat is NOT reported:\nActual power consumption at the 3°C temperature increase used in studies\nTotal system power consumption\nPower consumption of the complete glove system (with all actuators active)\nBattery specifications or battery life\nEnergy efficiency metrics",
+    "materialsInContactWithSkinNotes": "Not reported.\n\n---\nWhat can be inferred:\n\nThe glove itself is made of leather (HydraHyde, R3267M model)\nThermal actuators are embedded into the glove\n3D-printed housings (material: likely PLA, standard for 3D printing) used to hold actuators:\n\n10mm diameter cylinders for vibrotactile actuators\nVarying heights: 5mm (finger phalanx, palm-side columns), 10mm (palm center column)\n\nVelcro straps used for securing actuators in User Studies 1 & 2\nThe thermal actuator model (TEGWAY S017A026026) is described as \"flexible\" but surface material not specified\n\nCannot definitively determine the exact material in direct contact with skin for thermal feedback.",
     "materialsInContactWithSkin": []
   },
   {
@@ -1225,6 +1250,7 @@
     "bodyPartsInvolved": "Not reported in the paper, but by common sense of mid-air haptic display, it's palm and ventral side of fingers.",
     "bodySites": [],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "air - mid-air ultrasonic haptics",
     "materialsInContactWithSkin": ["air-gas"]
   },
   {
@@ -1278,6 +1304,7 @@
       }
     ],
     "powerEnergyConsumption": "**Partially reported.**\n\n**What IS reported:**\n\n**Heating elements:**\n\n- **Rated power:** 250W per element (at 110V)\n- **Total heating power:** 500W (two elements)\n- **Relationship:** Power ∝ (Voltage)²\n- **Voltage range:** 0V to 110V\n\n**What is NOT reported:**\n\n- Actual power consumption at different voltage levels\n- Fan power consumption\n- Ultrasound haptic display power consumption\n- Total system power consumption\n- Battery specifications (if any)\n- Energy efficiency metrics\n- Operating cost\n\n**Page/Section Reference:** Page 2 (Section 2.1 Design)",
+    "materialsInContactWithSkinNotes": "Mid-air delivery: Heated air flows through open space\n\n---\n**Materials near (but not touching) skin:**\n\n- **Air:** Heated air is the medium carrying thermal energy\n- **Ultrasound:** Acoustic radiation pressure (contactless)",
     "materialsInContactWithSkin": ["air-gas"]
   },
   {
@@ -1326,6 +1353,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Silicone (EcoFlex 0010, Dragon skin FX-Pro) ABS plastic, Aluminum.\n---\n\n### **Experiment 1 - Softness:**\n\n**Three handle types:**\n\n1. **Rigid:** ABS-A100 plastic (3D-printed)\n2. **Soft:** Dragon skin FX-Pro silicone (Shore 2A)\n3. **Very soft:** EcoFlex 0010 silicone (Shore 00-10)\n\n------\n\n### **Experiment 2 - Thermal Conductivity:**\n\n**Two handle types:**\n\n1. **Low conductivity:** ABS plastic\n2. **High conductivity:** Aluminum (cylindrical cover) + ABS core\n\n------\n\n### **Experiment 3 - Texture:**\n\n**One material, four textures:**\n\n- **Material:** ABS plastic (3D-printed)\n- **Textures:** Flat, medium bumps, small-width bumps, large-height bumps",
     "materialsInContactWithSkin": [
       "silicone-based",
       "polymers-synthetics",
@@ -1373,6 +1401,7 @@
     "bodyPartsInvolved": "Not reported. But there were mentions of diff body parts: forehead, stomach, chest, back (section 5.3).",
     "bodySites": [],
     "powerEnergyConsumption": "Not reported.\n\n**Implied power consumption:**\n\n- At 5V: P = 5²/3.7 ≈ **6.76 Watts**\n- But actual usage with 10s on / 15s off cycling\n- **Duty cycle:** 10/(10+15) = 40% active\n- **Average power:** ~2.7W (approximate)",
+    "materialsInContactWithSkinNotes": "Participants' own clothing.",
     "materialsInContactWithSkin": ["fabrics-textiles"]
   },
   {
@@ -1416,6 +1445,7 @@
       }
     ],
     "powerEnergyConsumption": "Yes, Maximum 400mA at 6V per Peltier module during stimulation (page 3)",
+    "materialsInContactWithSkinNotes": "Not explicitly reported. The Peltier modules appear to be in direct contact with skin based on the device design.",
     "materialsInContactWithSkin": []
   },
   {
@@ -1466,6 +1496,7 @@
       }
     ],
     "powerEnergyConsumption": "Not reported.",
+    "materialsInContactWithSkinNotes": "Cloth pouches, no mention of the material.\n---\nWater pouches (material not specified, appears to be sealed plastic/polymer)",
     "materialsInContactWithSkin": ["fabrics-textiles"]
   },
   {
@@ -1514,6 +1545,7 @@
       }
     ],
     "powerEnergyConsumption": "Not reported.",
+    "materialsInContactWithSkinNotes": "Silk with elastane (page 553 - 554)\n\n---\n\"silk with elastane\" with \"thermal conductivity of our silk fabric ranged between 0.08-0.1 (W/mK)\" (Page 4, \"Fabric Construction and Material\")",
     "materialsInContactWithSkin": ["fabrics-textiles"]
   },
   {
@@ -1557,6 +1589,7 @@
       }
     ],
     "powerEnergyConsumption": "Nor reported",
+    "materialsInContactWithSkinNotes": "Not directly reported. Based on the description of the techical part, the surface of the Peltier element itself (typically a ceramic plate)",
     "materialsInContactWithSkin": []
   },
   {
@@ -1594,6 +1627,7 @@
     "bodyPartsInvolved": "N/A\nIN the survey, participants could select from: torso, shoulders, upper arms, hands, and neck. (Section 3.1.1)",
     "bodySites": [],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": null,
     "materialsInContactWithSkin": []
   },
   {
@@ -1645,6 +1679,7 @@
       }
     ],
     "powerEnergyConsumption": "The total power consumption is reported as 10 W when using the Peltier, fan, and micro-pump together. Battery capacity: four LiPo batteries (3.7V, 3400mAh) enable 1.5 hours of continuous operation at 40°C. The maximum current is not reported for the Peltier alone.",
+    "materialsInContactWithSkinNotes": "A wrist band, a flexible PDMS (polydimethylsiloxane), also microfluidic channel layer, described as a \"chemical delivery layer\" and \"flexible layer that contacts skin, measured 2.60 mm in thickness.\" \nThe band which release capsaicin liquid. It also has a peltier surface seems in touch of the skin (from the photo on page 10), but the authro did not report further details about the peltier, so we don't know the material.",
     "materialsInContactWithSkin": ["silicone-based", "chemical", "liquids-gels"]
   },
   {
@@ -1704,6 +1739,7 @@
       }
     ],
     "powerEnergyConsumption": "Not reported.",
+    "materialsInContactWithSkinNotes": "stainless steel band and peltier surface (by the look of it in the photo on page 1 and 6).",
     "materialsInContactWithSkin": []
   },
   {
@@ -1747,6 +1783,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not reported. Probably ppl's own clothes.",
     "materialsInContactWithSkin": []
   },
   {
@@ -1795,6 +1832,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not reported.",
     "materialsInContactWithSkin": []
   },
   {
@@ -1847,6 +1885,7 @@
       }
     ],
     "powerEnergyConsumption": "Not reported.",
+    "materialsInContactWithSkinNotes": "sponge cushion",
     "materialsInContactWithSkin": ["foam-cushioning"]
   },
   {
@@ -1898,6 +1937,7 @@
       }
     ],
     "powerEnergyConsumption": "The full device consumes 0.52W at full intensity (two channels active), compared to 4–13W per small Peltier. This ~10× efficiency advantage is highlighted as a key benefit.",
+    "materialsInContactWithSkinNotes": "DragonSkinFX-Prosilicone and chemical liquids.",
     "materialsInContactWithSkin": ["silicone-based", "chemical", "liquids-gels"]
   },
   {
@@ -1959,6 +1999,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not reported. \n Peltiers were mounted on which material, what cloth participants wearing during the study?",
     "materialsInContactWithSkin": []
   },
   {
@@ -2011,6 +2052,7 @@
       }
     ],
     "powerEnergyConsumption": "Partially. The motor driver for the thermal module consumes approximately 7 Watts. No other energy consumption figures are reported.",
+    "materialsInContactWithSkinNotes": "silver metal",
     "materialsInContactWithSkin": ["metal"]
   },
   {
@@ -2066,6 +2108,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not mentioned, seems like peltier surface from the photo.",
     "materialsInContactWithSkin": []
   },
   {
@@ -2119,6 +2162,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "The Peltier module surface directly contacts the skin. No intermediary material is currently used. The authors acknowledge this as a limitation. Some participants found the hard surface of the Peltier modules occasionally uncomfortable during stimulations, and note that future versions will introduce a thin soft material to transfer thermal stimulation more comfortably. (p.5453, Implementation; p.5454, Limitations and Future Work)",
     "materialsInContactWithSkin": []
   },
   {
@@ -2165,6 +2209,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not specifically mentioned, but indicated that people touch the surface of the peltier directly.",
     "materialsInContactWithSkin": []
   },
   {
@@ -2202,6 +2247,7 @@
     "bodyPartsInvolved": null,
     "bodySites": [],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": null,
     "materialsInContactWithSkin": []
   },
   {
@@ -2245,6 +2291,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Cold air, cloth --- The paper notes that participants wore gloves, padded trousers, overalls, thick boots, and woolly hats, and that removing gloves exposed bare hands to the cold air and accelerated heat loss. Skin contact with the cold was thus mediated by winter clothing rather than any designed interface material (p. 11, Section 4.3.1).",
     "materialsInContactWithSkin": ["air-gas", "fabrics-textiles"]
   },
   {
@@ -2294,6 +2341,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Latex.\n Thin, flexible latex tube, 9mm wide and 0.1mm thick, stretched over the fingertip. Looks like the material of surgical gloves)",
     "materialsInContactWithSkin": ["latex"]
   },
   {
@@ -2349,6 +2397,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not specified. Maybe the surface of the peltier.",
     "materialsInContactWithSkin": []
   },
   {
@@ -2391,6 +2440,7 @@
     "bodyPartsInvolved": null,
     "bodySites": [],
     "powerEnergyConsumption": "At 1V: 0.05W (silver ink), 0.2W (carbon nano)\n At 3V: 0.2W (silver ink), 1.8W–2.5W (carbon nano)\n At 6V: 0.9W (silver ink), 7.4W–9.4W (carbon nano)\n At 9V: 2.4W (silver ink), 8.8W–10.7W (carbon nano)\n PID control at 3V: I = 674mA, P = 2W (Fig. 8 caption)\n H-beam: 8V, 326mA (Section 6, p.11)\n (Mostly in section 3.3)",
+    "materialsInContactWithSkinNotes": null,
     "materialsInContactWithSkin": []
   },
   {
@@ -2439,6 +2489,7 @@
       }
     ],
     "powerEnergyConsumption": "Not reported.",
+    "materialsInContactWithSkinNotes": "N/A Not explicitly stated as a material property. \n ---\n Maybe robot shell (not sure, should be plastic).",
     "materialsInContactWithSkin": []
   },
   {
@@ -2491,6 +2542,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "In study 1: The TEC plate itself — described as having a ceramic surface — is in direct contact with the participant's index fingertip.\n In study 2: Copper plates (one on each side of the device) serve as the contact surface.",
     "materialsInContactWithSkin": ["ceramic", "metal"]
   },
   {
@@ -2554,6 +2606,7 @@
       }
     ],
     "powerEnergyConsumption": "Partially reported. Power is given as 8.8–9.0V at 1.03A for Heat and Cool (Fig. 2)",
+    "materialsInContactWithSkinNotes": "Peltier surface --- The exposed surface of the Peltier (thermoelectric) module is in direct contact with skin. The case housing the Peltier is 3D printed in PLA, but the active surface is left exposed. No intermediate material, gel, or skin interface layer is described. Participants wore a cotton t-shirt between the badge and the outer clothing, but the badge itself (and its Peltier surface) contacted bare skin directly.",
     "materialsInContactWithSkin": []
   },
   {
@@ -2606,6 +2659,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Two silver electrodes (95% silver purity), each 40mm × 15mm × 0.2mm, are in direct contact with the tongue --- fig 6.",
     "materialsInContactWithSkin": ["metal"]
   },
   {
@@ -2654,6 +2708,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Peltier surface --- The skin-contact material is silicone (the inflatable bubble) with the Peltier module surface on top.",
     "materialsInContactWithSkin": ["silicone-based"]
   },
   {
@@ -2707,6 +2762,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "The Soft-Warm condition used layers of foam, cotton, and purple fluffy polyester, with heating cords sewn into channels between cotton layers (fig 2), which could be touched by users' hands.",
     "materialsInContactWithSkin": ["foam-cushioning", "fabrics-textiles"]
   },
   {
@@ -2753,6 +2809,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not reported.",
     "materialsInContactWithSkin": []
   },
   {
@@ -2799,6 +2856,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "The authors do not explicitly name the contact material. But it's clearly the peltier (cube) surface.",
     "materialsInContactWithSkin": []
   },
   {
@@ -2845,6 +2903,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Aluminum cylinder.",
     "materialsInContactWithSkin": ["metal"]
   },
   {
@@ -2888,6 +2947,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "The authors do not explicitly name the contact material. \n Could be the peltier (cube) surface.",
     "materialsInContactWithSkin": []
   },
   {
@@ -2941,6 +3001,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "N/A - no user study in this work. \n The LCE fiber itself integrated into a textile garment - can contacts human (or animal) skin.",
     "materialsInContactWithSkin": []
   },
   {
@@ -3000,6 +3061,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Thin cotton suit during the user study.\n The heat pads were covered with a thin layer of cotton fabric before being placed under participants. All participants wore a standardized common outfit of thin cotton shirt and trousers. The cotton fabric layer served as an intentional mediating material to reduce burning sensations and make the thermal experience more pleasanant.",
     "materialsInContactWithSkin": ["fabrics-textiles"]
   },
   {
@@ -3048,6 +3110,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not explicitly named.",
     "materialsInContactWithSkin": []
   },
   {
@@ -3099,6 +3162,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "The Peltier TEC's ceramic tiles (15×15mm) are the direct contact surface.",
     "materialsInContactWithSkin": ["ceramic"]
   },
   {
@@ -3145,6 +3209,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "The authors do not explicitly report any material in contact with participants' skin for thermal purposes.",
     "materialsInContactWithSkin": []
   },
   {
@@ -3188,6 +3253,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not mentioned.",
     "materialsInContactWithSkin": []
   },
   {
@@ -3252,6 +3318,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not reported.\n \n In the study 1, it seems like peltier surface. In study 2, the peltier directly touch the skin.",
     "materialsInContactWithSkin": []
   },
   {
@@ -3300,6 +3367,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "The surface of the 3D printed object, made from common FDM materials: \n PLA (Polylactic Acid), ABS (Acrylonitrile Butadiene Styrene), or TPU (Thermoplastic Polyurethane) for flexible/wearable applications (Sections 3.1, 7.3, pp. 102:5, 102:21). For the wearable ID use case (Figure 24, p. 102:21), TPU is the material directly against the skin when worn as a band.",
     "materialsInContactWithSkin": ["polymers-synthetics"]
   },
   {
@@ -3343,6 +3411,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Gel layer (described as skin-like in stiffness and texture). (p. 148): the mouse surface was \"covered with a gel, which is closed stiffness and texture to the human skin\" .",
     "materialsInContactWithSkin": ["liquids-gels"]
   },
   {
@@ -3386,6 +3455,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "a thin cloth glove over urethane gel. The cloth glove was chosen because the urethane's \"surface has a sticky rubber-like texture, which is very different from the texture of human skin\" (Section 3.3, p. 6).",
     "materialsInContactWithSkin": [
       "fabrics-textiles",
       "liquids-gels",
@@ -3437,6 +3507,7 @@
     "bodyPartsInvolved": "Not reported. I can not figure out through the rest of the description in the paper.",
     "bodySites": [],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Air (wind).",
     "materialsInContactWithSkin": ["air-gas"]
   },
   {
@@ -3484,6 +3555,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Players' own cloth - \"ordinary T-shirt\". (p. 3, Fig. 2c caption: \"The heating pad is made of flexible conductive yarn\").",
     "materialsInContactWithSkin": ["fabrics-textiles"]
   },
   {
@@ -3537,6 +3609,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not reported.\n \n Based on the fig 1., it might be the peltier coating surface --- ceremic.",
     "materialsInContactWithSkin": []
   },
   {
@@ -3591,6 +3664,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Peltier surface attached to the back of the neck. \n The Peltier elements \"require direct contact with the skin\" (p. 1733, Delivery Method).",
     "materialsInContactWithSkin": []
   },
   {
@@ -3634,6 +3708,7 @@
     "bodyPartsInvolved": "N/A\n This is a fabrication support tool, not specific to particular interfaces.",
     "bodySites": [],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "N/A\n This is a fabrication support tool, not specific to particular interfaces.",
     "materialsInContactWithSkin": []
   },
   {
@@ -3686,6 +3761,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Class 1: Thermochromic Materials. \"a) liquid crystal sheet b) rub-and-reveal sheets c) thermochromic paints\".\n Class 2: Heating material: \"heating pad (Figure 1d) [95], nichrome wire (Figure 1e) [96], conductive fabric (Figure 1f) [97], and Peltier element (Figure 1g) [98]\".",
     "materialsInContactWithSkin": []
   },
   {
@@ -3735,6 +3811,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "a pair of pure (95%) silver electrodes",
     "materialsInContactWithSkin": ["metal"]
   },
   {
@@ -3778,6 +3855,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not reported. They purchased a commercial wrist worn device, material unclear.",
     "materialsInContactWithSkin": []
   },
   {
@@ -3826,6 +3904,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not reported, but they mentioned the skin directly contact the device (material unknown. From what I can tell in the photo, the peltier surface.)",
     "materialsInContactWithSkin": []
   },
   {
@@ -3874,6 +3953,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not reported.\n What we know from the paper: the peltier elements without ceramic insulation are the surfaces in direct contact with the participant's palm skin during handshake gripping.",
     "materialsInContactWithSkin": []
   },
   {
@@ -3917,6 +3997,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not reported. \n \n My guess: the Peltier module pressing against the outside of the glove at the wrist.",
     "materialsInContactWithSkin": []
   },
   {
@@ -3961,6 +4042,7 @@
     "bodyPartsInvolved": null,
     "bodySites": [],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "N/A. No contact with human.",
     "materialsInContactWithSkin": []
   },
   {
@@ -4014,6 +4096,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "User's own clothe.",
     "materialsInContactWithSkin": ["fabrics-textiles"]
   },
   {
@@ -4064,6 +4147,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Each mitt is made from neoprene (1.5 mm thickness) --- details on page 8. The very few of the many papers that talk about the material in contact with skin and the associated qualities - page 8.",
     "materialsInContactWithSkin": ["polymers-synthetics"]
   },
   {
@@ -4121,6 +4205,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Three conditions with three materials situations:\n \n No material — direct Peltier surface contact with skin\n Cotton — thermal conductivity of approximately 0.04 W·m−1·K−1\n Nylon — thermal conductivity of approximately 0.25 W·m−1·K−1",
     "materialsInContactWithSkin": ["fabrics-textiles"]
   },
   {
@@ -4170,6 +4255,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not specified. \n Probabily the ceramic or metal surface of the TEC module is in direct skin contact.",
     "materialsInContactWithSkin": []
   },
   {
@@ -4233,6 +4319,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not specifically reported.",
     "materialsInContactWithSkin": []
   },
   {
@@ -4273,6 +4360,7 @@
     "bodyPartsInvolved": "N/A.\n The paper does not report a formal study of thermal perception on specific body parts.",
     "bodySites": [],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "N/A\n The paper does not explicitly address skin contact in the context of thermal feedback delivery to users. \n Silicone (Tuball 602)",
     "materialsInContactWithSkin": []
   },
   {
@@ -4321,6 +4409,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not reported for the thermal module. \n \n By inference, the ceramic or metal surface of the Peltier element is in direct contact with the skin at the back of the neck",
     "materialsInContactWithSkin": []
   },
   {
@@ -4364,6 +4453,7 @@
     "bodyPartsInvolved": null,
     "bodySites": [],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": null,
     "materialsInContactWithSkin": []
   },
   {
@@ -4413,6 +4503,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Peltier element surface.",
     "materialsInContactWithSkin": []
   },
   {
@@ -4456,6 +4547,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not reported.",
     "materialsInContactWithSkin": []
   },
   {
@@ -4498,6 +4590,7 @@
     "bodyPartsInvolved": "Not specified. Since it's a huggable stuffed-toy robot held close to the user, thermal contact would likely occur wherever the user holds or touches the robot (hands, arms, torso when hugging).",
     "bodySites": [],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "The specific material composition is not mentioned. \nThe robot is covered with a bear-like stuffed toy exterior.",
     "materialsInContactWithSkin": []
   },
   {
@@ -4556,6 +4649,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Neoprene + aramid fabric (protects from excessive heat, distributes pressure) --- \"both neoprene and aramid fabric are used to protect the user from excessive heat. The layer also distributes pressure across a larger area of the hand or upper arm\" (System section 3.1.2, p.6)",
     "materialsInContactWithSkin": ["polymers-synthetics", "fabrics-textiles"]
   },
   {
@@ -4608,6 +4702,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Silicone substrate - medical-grade body-safe silicone",
     "materialsInContactWithSkin": ["silicone-based"]
   },
   {
@@ -4660,6 +4755,7 @@
       }
     ],
     "powerEnergyConsumption": null,
+    "materialsInContactWithSkinNotes": "Not directly stated, but implecit: the pajama is a wearable garment worn directly on the child's body, so the materials in contact with skin are the pajama fabric layers themselves.",
     "materialsInContactWithSkin": ["fabrics-textiles"]
   }
 ]

@@ -3,10 +3,8 @@ import {
   formatPaperDisplay,
   titleCaseOption,
 } from "@/lib/research/formatPaperDisplay";
-import {
-  normalizeBodySites,
-  type ResearchPaper,
-} from "@/lib/research/researchPapers";
+import type { ResearchPaper } from "@/type/researchPaper";
+import { normalizeBodySites } from "@/lib/research/researchPapers";
 
 export const KEYWORD_SEARCH_FIELD_OPTIONS = [
   { id: "all", label: "All fields" },

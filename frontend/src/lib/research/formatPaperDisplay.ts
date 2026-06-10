@@ -4,12 +4,9 @@
 
 import { paperHasReportedDurationRange } from "@/lib/research/filterResearchPapers";
 import { publicAssetUrl } from "@/lib/publicAssetUrl";
-import {
-  ALL_RESEARCH_PAPERS,
-  normalizeBodySites,
-  type BodySite,
-  type ResearchPaper,
-} from "@/lib/research/researchPapers";
+import type { BodySite } from "@/type/bodySite";
+import type { ResearchPaper } from "@/type/researchPaper";
+import { ALL_RESEARCH_PAPERS, normalizeBodySites } from "@/lib/research/researchPapers";
 
 /**
  * Display fields used by paper cards in the result panel.

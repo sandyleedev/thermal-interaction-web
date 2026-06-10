@@ -5,10 +5,8 @@ import {
   type HandDetailSurface,
 } from "@/lib/research/bodyMapRegionUtils";
 import { siteAssignsToPanelSideForDots, siteAssignsToPanelSideForAreaView } from "@/lib/research/bodyMapSiteSide";
-import {
-  normalizeBodySites,
-  type ResearchPaper,
-} from "@/lib/research/researchPapers";
+import type { ResearchPaper } from "@/type/researchPaper";
+import { normalizeBodySites } from "@/lib/research/researchPapers";
 import {
   type HeadShapeSampleOptions,
   type HeadShapeSpec,

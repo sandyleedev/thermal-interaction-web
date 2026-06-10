@@ -1,10 +1,10 @@
 import type { ReactNode, SVGProps } from "react";
 import { useEffect } from "react";
 import { Link, Navigate, useParams } from "react-router-dom";
+import type { ResearchPaper } from "@/type/researchPaper";
 import {
   getResearchPaperById,
   normalizeBodySites,
-  type ResearchPaper,
 } from "@/lib/research/researchPapers";
 import {
   formatBodySiteLine,
@@ -398,13 +398,41 @@ function DetailAmbientTemp({ value }: { value: number | null | undefined }) {
 
 function DetailBodySites({ paper }: { paper: ResearchPaper }) {
   const sites = normalizeBodySites(paper);
-  if (sites.length === 0) return <DetailDash />;
+  const notes = trimText(paper.bodyPartsInvolved);
+  const showNotes = notes != null && !isDetailNa(notes);
+
   return (
-    <DetailPillRow
-      items={sites.map((site) => formatBodySiteLine(site))}
-      rawLabels
-      variant="teal"
-    />
+    <>
+      {sites.length === 0 ? (
+        <DetailDash />
+      ) : (
+        <DetailPillRow
+          items={sites.map((site) => formatBodySiteLine(site))}
+          rawLabels
+          variant="teal"
+        />
+      )}
+      {showNotes ? (
+        <DetailTextValue text={notes} preserveLineBreaks />
+      ) : null}
+    </>
+  );
+}
+
+function DetailMaterialsInContactWithSkin({ paper }: { paper: ResearchPaper }) {
+  const notes = trimText(paper.materialsInContactWithSkinNotes);
+  const showNotes = notes != null && !isDetailNa(notes);
+
+  return (
+    <>
+      <DetailPillRow
+        items={paper.materialsInContactWithSkin}
+        variant={pillVariantForKey("materialsInContactWithSkin")}
+      />
+      {showNotes ? (
+        <DetailTextValue text={notes} preserveLineBreaks />
+      ) : null}
+    </>
   );
 }
 
@@ -433,6 +461,9 @@ function renderFieldValue(
   }
   if (key === "bodySites") {
     return <DetailBodySites paper={paper} />;
+  }
+  if (key === "materialsInContactWithSkin") {
+    return <DetailMaterialsInContactWithSkin paper={paper} />;
   }
   if (key === "auxiliaryHardware") {
     const text = (value as string[] | undefined)

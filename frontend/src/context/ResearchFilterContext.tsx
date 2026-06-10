@@ -17,12 +17,13 @@ import {
   type OtherFilterSelections,
   type RangeFilterOptions,
 } from "@/lib/research/filterResearchPapers";
-import type { BodySiteSide } from "@/lib/research/bodyMapSiteSide";
+import type { BodySiteSide } from "@/type/bodySiteSide";
 import {
   type BodyMapChipSelection,
   bodyMapChipKey,
   getSelectableChipsForParent,
 } from "@/lib/research/bodyMapChipSelection";
+import type { ResearchPaper } from "@/type/researchPaper";
 import {
   ALL_RESEARCH_PAPERS,
   bodyMapParentKeysForPaper,
@@ -30,7 +31,6 @@ import {
   sortPapersByPublicationDateDesc,
   WHOLE_BODY_GENERAL_COUNT_KEY,
   type BodyMapParentRegion,
-  type ResearchPaper,
 } from "@/lib/research/researchPapers";
 import {
   DURATION_MAX_S,

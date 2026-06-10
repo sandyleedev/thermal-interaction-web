@@ -43,11 +43,11 @@ import {
   bodyMapParentHasChipSelection,
   type BodyMapChipSelection,
 } from "@/lib/research/bodyMapChipSelection";
+import type { ResearchPaper } from "@/type/researchPaper";
 import {
   WHOLE_BODY_GENERAL_COUNT_KEY,
   type BodyMapParentRegion,
   type BodyMapRegion,
-  type ResearchPaper,
 } from "@/lib/research/researchPapers";
 import {
   REQUIRE_DOTS_INSIDE_BODY_OUTLINE,

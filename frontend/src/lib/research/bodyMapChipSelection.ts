@@ -2,7 +2,7 @@ import {
   BODY_MAP_L2_SUBREGIONS_BY_PARENT,
   type BodyMapParentRegion,
 } from "@/lib/research/bodyMapRegions";
-import type { BodySiteSide } from "@/lib/research/bodyMapSiteSide";
+import type { BodySiteSide } from "@/type/bodySiteSide";
 import {
   ARM_DETAIL_HIT_IDS,
   HAND_DETAIL_HIT_IDS,

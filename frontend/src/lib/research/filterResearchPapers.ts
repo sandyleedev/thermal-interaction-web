@@ -12,9 +12,9 @@ import {
   paperMatchesBodyMapChip,
 } from "@/lib/research/bodyMapChipSelection";
 import type { BodyMapParentRegion } from "@/lib/research/bodyMapRegions";
+import type { ResearchPaper } from "@/type/researchPaper";
 import {
   OPTION_IDS_BY_CATEGORY,
-  type ResearchPaper,
   paperFieldForCategory,
 } from "@/lib/research/researchPapers";
 
