@@ -6,7 +6,7 @@ Converts a curated CSV spreadsheet into `researchPapers.json` for the web app.
 
 Typical pipeline:
 
-1. [abstract-collector](../abstract-collector/) — fetch missing abstracts (CSV or JSON)
+1. [abstract-collector](../abstract-collector/) — fetch missing abstracts into CSV
 2. Convert CSV → JSON
 3. Copy output to `frontend/src/data/researchPapers.json`
 
