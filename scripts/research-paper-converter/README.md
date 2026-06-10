@@ -2,7 +2,7 @@
 
 Converts a curated CSV spreadsheet into `researchPapers.json` for the web app.
 
-**CSV writing guide (handover):** [CSV_WRITING_GUIDE.md](CSV_WRITING_GUIDE.md)
+**CSV writing guide (handover):** [CSV_WRITING_GUIDE.md](../../docs/CSV_WRITING_GUIDE.md)
 
 Typical pipeline:
 
@@ -82,7 +82,7 @@ Arm > Forearm (left); Hand > Palm (right)
 Arm > Forearm (left), Hand > Palm (right)
 ```
 
-See [CSV_WRITING_GUIDE.md](CSV_WRITING_GUIDE.md) for allowed regions and subregions.
+See [CSV_WRITING_GUIDE.md](../../docs/CSV_WRITING_GUIDE.md) for allowed regions and subregions.
 
 ## Console output
 

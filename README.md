@@ -36,7 +36,7 @@ You will work with:
 
 | Area                                    | What you do there                                                                                      |
 | --------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Spreadsheet / CSV                       | Curate paper metadata (see [CSV writing guide](scripts/research-paper-converter/CSV_WRITING_GUIDE.md)) |
+| Spreadsheet / CSV                       | Curate paper metadata (see [CSV writing guide](docs/CSV_WRITING_GUIDE.md)) |
 | `scripts/`                              | Run converters and abstract fetchers                                                                   |
 | `frontend/src/data/researchPapers.json` | Dataset the website reads (updated by the converter)                                                   |
 | `frontend/public/paper-thumbnails/`     | Optional preview images per paper (see [thumbnail guide](docs/PAPER_THUMBNAILS.md))                    |
@@ -83,7 +83,7 @@ In the terminal, press `Ctrl + C`.
 
 Typical workflow when adding or editing papers:
 
-1. **Edit the spreadsheet** — follow [CSV_WRITING_GUIDE.md](scripts/research-paper-converter/CSV_WRITING_GUIDE.md) for column formats (DOI, body sites, filters, dates, etc.).
+1. **Edit the spreadsheet** — follow [CSV_WRITING_GUIDE.md](docs/CSV_WRITING_GUIDE.md) for column formats (DOI, body sites, filters, dates, etc.).
 2. **Fetch missing abstracts (optional)** — [abstract-collector README](scripts/abstract-collector/README.md): put one CSV in `scripts/abstract-collector/input/`, run the script, use the output CSV in the next step.
 3. **Convert CSV → JSON** — [research-paper-converter README](scripts/research-paper-converter/README.md): put one CSV in `scripts/research-paper-converter/input/`, then from the **repo root**:
 
@@ -140,6 +140,6 @@ See [research-paper-converter README — Troubleshooting](scripts/research-paper
 
 ## Further reading
 
-- [CSV_WRITING_GUIDE.md](scripts/research-paper-converter/CSV_WRITING_GUIDE.md) — how to fill the spreadsheet
+- [CSV_WRITING_GUIDE.md](docs/CSV_WRITING_GUIDE.md) — how to fill the spreadsheet
 - [PUBLISHING.md](docs/PUBLISHING.md) — commit, push, and deploy to the live site
 - [PAPER_THUMBNAILS.md](docs/PAPER_THUMBNAILS.md) — add preview images (DOI filename, download or screenshot)

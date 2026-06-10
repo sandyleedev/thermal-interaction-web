@@ -1,3 +1,5 @@
+// Maps JSON field names (left) to CSV column headers (right).
+// If the spreadsheet renames a column, update the string here — do not rename the keys.
 const CSV_COLUMNS = {
   publicationYear: ["Publication Year"],
   publicationSortDate: ["Publication Sort Date"],

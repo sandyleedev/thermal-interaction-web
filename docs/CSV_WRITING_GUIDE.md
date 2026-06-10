@@ -2,7 +2,7 @@
 
 Guide for editing the research paper spreadsheet. Follow these examples so the web app filters, body map, and paper list work correctly.
 
-To run the converter, see [README.md](README.md).
+To run the converter, see [research-paper-converter README](../scripts/research-paper-converter/README.md).
 
 ---
 
@@ -270,4 +270,4 @@ Two filter keywords separated by comma; notes explain the layered interface. `(l
 - [ ] **Material for filter** — keywords in the filter column; long text in the notes column
 - [ ] After conversion, check the terminal for **WARN** messages
 
-If a spreadsheet column is renamed, ask a developer to update `column_mapping.js`.
+If a spreadsheet column is renamed, update `column_mapping.js` — see [Updating columns](../scripts/research-paper-converter/README.md#updating-columns).

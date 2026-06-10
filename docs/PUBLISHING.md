@@ -16,7 +16,7 @@ https://sandyleedev.github.io/thermal-interaction-web/
 
 Complete the data workflow first:
 
-1. Edit the spreadsheet and export CSV (see [CSV_WRITING_GUIDE.md](../scripts/research-paper-converter/CSV_WRITING_GUIDE.md)).
+1. Edit the spreadsheet and export CSV (see [CSV_WRITING_GUIDE.md](CSV_WRITING_GUIDE.md)).
 2. Run the converter and copy output to `frontend/src/data/researchPapers.json` (see [README — Update the research dataset](../README.md#update-the-research-dataset)).
 3. Preview locally with `npm run dev` — check search, filters, body map, and the changed paper’s detail page.
 4. (Optional) Add thumbnails under `frontend/public/paper-thumbnails/` ([PAPER_THUMBNAILS.md](PAPER_THUMBNAILS.md)).
@@ -157,5 +157,5 @@ You need **write access** to the GitHub repository. Ask the repo owner to add yo
 ## Related
 
 - [README.md](../README.md) — local setup and dataset workflow
-- [CSV_WRITING_GUIDE.md](../scripts/research-paper-converter/CSV_WRITING_GUIDE.md) — spreadsheet formats
+- [CSV_WRITING_GUIDE.md](CSV_WRITING_GUIDE.md) — spreadsheet formats
 - [PAPER_THUMBNAILS.md](PAPER_THUMBNAILS.md) — preview images
