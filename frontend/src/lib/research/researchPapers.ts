@@ -99,6 +99,8 @@ export type ResearchPaper = {
   title: string;
   authors?: string;
   publicationYear?: number;
+  /** ISO date (YYYY-MM-DD) for sorting by publication date. */
+  publicationSortDate?: string;
   publicationVenue?: string;
   doi?: string;
   url?: string;
@@ -157,6 +159,27 @@ export const ALL_RESEARCH_PAPERS: ResearchPaper[] = (
 
 export function getResearchPaperById(id: string): ResearchPaper | undefined {
   return ALL_RESEARCH_PAPERS.find((p) => p.id === id);
+}
+
+const PUBLICATION_SORT_DATE_FALLBACK = "0000-01-01";
+
+export function publicationSortDateKey(paper: ResearchPaper): string {
+  const date = paper.publicationSortDate?.trim();
+  return date || PUBLICATION_SORT_DATE_FALLBACK;
+}
+
+/** Newest publication first. */
+export function comparePapersByPublicationDateDesc(
+  a: ResearchPaper,
+  b: ResearchPaper,
+): number {
+  return publicationSortDateKey(b).localeCompare(publicationSortDateKey(a));
+}
+
+export function sortPapersByPublicationDateDesc(
+  papers: readonly ResearchPaper[],
+): ResearchPaper[] {
+  return [...papers].sort(comparePapersByPublicationDateDesc);
 }
 
 export function normalizeBodySites(paper: ResearchPaper): BodySite[] {

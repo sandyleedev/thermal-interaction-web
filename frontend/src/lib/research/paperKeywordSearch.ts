@@ -61,6 +61,7 @@ function buildAuthorsSearchText(paper: ResearchPaper): string {
 function buildPublicationSearchText(paper: ResearchPaper): string {
   const parts: string[] = [];
   pushText(parts, paper.publicationYear);
+  pushText(parts, paper.publicationSortDate);
   pushText(parts, paper.publicationVenue);
   pushText(parts, paper.doi);
   pushText(parts, paper.url);

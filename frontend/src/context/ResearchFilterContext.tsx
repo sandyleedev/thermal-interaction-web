@@ -27,6 +27,7 @@ import {
   ALL_RESEARCH_PAPERS,
   bodyMapParentKeysForPaper,
   paperHasWholeBodyGeneralSite,
+  sortPapersByPublicationDateDesc,
   WHOLE_BODY_GENERAL_COUNT_KEY,
   type BodyMapParentRegion,
   type ResearchPaper,
@@ -51,7 +52,9 @@ function applyKeywordFilter(
   papers: readonly ResearchPaper[],
   keywordSearch: KeywordSearchQuery,
 ): ResearchPaper[] {
-  return filterPapersByKeyword(papers, keywordSearch);
+  return sortPapersByPublicationDateDesc(
+    filterPapersByKeyword(papers, keywordSearch),
+  );
 }
 
 type ResearchFilterContextValue = {

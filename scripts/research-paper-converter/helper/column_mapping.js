@@ -1,5 +1,6 @@
 const CSV_COLUMNS = {
   publicationYear: "Publication Year",
+  publicationSortDate: "Publication Sort Date",
   publicationVenue: "Venue",
   authors: "Author",
   title: "Title",

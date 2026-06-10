@@ -338,12 +338,25 @@ const getValue = (row, jsonKey) => {
   return undefined;
 };
 
+const resolvePublicationSortDate = (row) => {
+  const explicit = parseString(getValue(row, "publicationSortDate"));
+  if (explicit) return explicit;
+
+  const year = parseNumber(getValue(row, "publicationYear"));
+  if (year != null) {
+    return `${Math.trunc(year)}-01-01`;
+  }
+
+  return "0000-01-01";
+};
+
 const convertRowToPaper = (row, id) => ({
   id: String(id),
 
   title: parseString(getValue(row, "title")),
   authors: parseString(getValue(row, "authors")),
   publicationYear: parseNumber(getValue(row, "publicationYear")),
+  publicationSortDate: resolvePublicationSortDate(row),
   publicationVenue: parseString(getValue(row, "publicationVenue")),
   doi: normaliseDoi(getValue(row, "doi")),
   url: parseString(getValue(row, "url")),
