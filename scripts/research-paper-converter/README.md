@@ -72,6 +72,19 @@ authors: ["Authors", "Author"],
 minDurationSec: ["Duration min (sec)", "Duration min", "DurationMin"],
 ```
 
+### Body sites format
+
+Source column: `Body parts (Main > Sub)`
+
+Each site uses `Region > Subregion (side)`. Separate multiple sites with `,` or `;`:
+
+```
+Arm > Forearm (left); Hand > Palm (right)
+Arm > Forearm (left), Hand > Palm (right)
+```
+
+See [CSV_WRITING_GUIDE.md](CSV_WRITING_GUIDE.md) for allowed regions and subregions.
+
 ## Console output
 
 At the end the script prints:

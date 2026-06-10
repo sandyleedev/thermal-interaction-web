@@ -295,7 +295,7 @@ const parseBodySites = (value, context = {}) => {
   }
 
   return text
-    .split(";")
+    .split(/[;,]/)
     .map((item) => item.trim())
     .filter(Boolean)
     .map((item) => parseBodySiteItem(item, context))
