@@ -1,21 +1,49 @@
-// scripts/abstract-collector/collect_abstracts_from_csv.js
-
 const fs = require("node:fs/promises");
 const path = require("node:path");
 
-const DEFAULT_INPUT_PATH = "scripts/abstract-collector/input/papers.csv";
+const INPUT_DIR = "scripts/abstract-collector/input";
 const OUTPUT_FULL_CSV_PATH =
   "scripts/abstract-collector/output/papers-with-abstracts.csv";
-const OUTPUT_ABSTRACTS_ONLY_PATH =
-  "scripts/abstract-collector/output/abstracts-from-csv.csv";
 
 const REQUEST_DELAY_MS = 300;
 
-const DOI_COLUMN_CANDIDATES = new Set(["doi", "DOI"]);
-
-const ABSTRACT_COLUMN_CANDIDATES = new Set(["abstract", "Abstract"]);
+const DOI_COLUMN_CANDIDATES = new Set(["doi"]);
+const ABSTRACT_COLUMN_CANDIDATES = new Set(["abstract"]);
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const findSingleCsvInputFile = async () => {
+  const files = await fs.readdir(INPUT_DIR);
+
+  const csvFiles = files.filter((file) => file.toLowerCase().endsWith(".csv"));
+
+  if (csvFiles.length === 0) {
+    throw new Error(
+      [
+        `No CSV file was found in:`,
+        `  ${INPUT_DIR}`,
+        ``,
+        `Please add one CSV file to this folder, then run the script again.`,
+      ].join("\n"),
+    );
+  }
+
+  if (csvFiles.length > 1) {
+    throw new Error(
+      [
+        `More than one CSV file was found in:`,
+        `  ${INPUT_DIR}`,
+        ``,
+        `Please keep only one CSV file in this folder, then run the script again.`,
+        ``,
+        `Found files:`,
+        ...csvFiles.map((file) => `  - ${file}`),
+      ].join("\n"),
+    );
+  }
+
+  return path.join(INPUT_DIR, csvFiles[0]);
+};
 
 const normaliseDoi = (value) =>
   String(value ?? "")
@@ -47,7 +75,10 @@ const repairMojibake = (value) =>
     .replace(/â€“/g, "–")
     .replace(/â€”/g, "—")
     .replace(/â€¦/g, "…")
-    .replace(/\s+/g, " ")
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n")
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
     .trim();
 
 const stripTags = (value) =>
@@ -277,55 +308,140 @@ const writeCsv = async (outputPath, headers, rows) => {
   await fs.writeFile(outputPath, `\uFEFF${lines.join("\n")}`, "utf-8");
 };
 
+const printSummary = ({
+  results,
+  filledCount,
+  preservedCount,
+  emptyCount,
+  missingDoiCount,
+}) => {
+  const foundResults = results.filter((result) => result.status === "found");
+  const notFoundResults = results.filter(
+    (result) => result.status === "not-found",
+  );
+  const invalidDoiResults = results.filter(
+    (result) => result.status === "invalid-doi",
+  );
+  const failedResults = results.filter((result) => result.status === "failed");
+
+  const warningResults = [
+    ...notFoundResults,
+    ...invalidDoiResults,
+    ...failedResults,
+  ];
+
+  console.log("");
+  console.log("========================================");
+  console.log("📊 Abstract Collection Summary");
+  console.log("========================================");
+  console.log(`✅ Found from APIs: ${foundResults.length}`);
+  console.log(`❌ Not found: ${notFoundResults.length}`);
+  console.log(`❌ Invalid DOI: ${invalidDoiResults.length}`);
+  console.log(`❌ Failed: ${failedResults.length}`);
+  console.log("----------------------------------------");
+  console.log(`✅ Rows filled with abstract: ${filledCount}`);
+  console.log(`🔒 Rows preserved existing abstract: ${preservedCount}`);
+  console.log(`⚠️ Rows left empty: ${emptyCount}`);
+  console.log(`⚠️ Rows missing DOI: ${missingDoiCount}`);
+  console.log("----------------------------------------");
+  console.log(`📄 Full CSV output: ${OUTPUT_FULL_CSV_PATH}`);
+  console.log("========================================");
+
+  if (warningResults.length === 0 && missingDoiCount === 0) {
+    console.log("");
+    console.log("✅ No missing abstracts or DOI issues found.");
+    return;
+  }
+
+  console.log("");
+  console.log("========================================");
+  console.log("⚠️ Items Requiring Review");
+  console.log("========================================");
+
+  warningResults.forEach((result) => {
+    console.log(`- DOI: ${result.doi}`);
+    console.log(`  Status: ${result.status}`);
+    console.log(`  Warning: ${result.warning || "No additional warning."}`);
+
+    if (result.title) {
+      console.log(`  Title: ${result.title}`);
+    }
+  });
+
+  if (missingDoiCount > 0) {
+    console.log(`- ${missingDoiCount} row(s) had no DOI.`);
+    console.log("  Check the terminal warnings above for row numbers.");
+  }
+
+  console.log("========================================");
+};
+
 const main = async () => {
   const args = process.argv.slice(2);
   const overwrite = args.includes("--overwrite");
   const inputPath =
-    args.find((arg) => !arg.startsWith("--")) ?? DEFAULT_INPUT_PATH;
+    args.find((arg) => !arg.startsWith("--")) ??
+    (await findSingleCsvInputFile());
 
   const content = await fs.readFile(inputPath, "utf-8");
   const { headers, rows } = parseCsv(content);
 
   if (rows.length === 0) {
-    console.error("The CSV file is empty.");
-    process.exit(1);
+    throw new Error("The CSV file is empty.");
   }
 
   const doiColumn = findDoiColumn(headers);
 
   if (!doiColumn) {
-    console.error(
+    throw new Error(
       `Could not find DOI column. Available columns: ${headers.join(", ")}`,
     );
-    process.exit(1);
   }
 
   const existingAbstractColumn = findAbstractColumn(headers);
   const abstractColumn = existingAbstractColumn ?? "Abstract";
   const outputHeaders = ensureColumns(headers, [abstractColumn]);
 
-  const uniqueDois = Array.from(
-    new Set(rows.map((row) => normaliseDoi(row[doiColumn])).filter(Boolean)),
+  const doisToFetch = Array.from(
+    new Set(
+      rows
+        .filter((row) => {
+          const doi = normaliseDoi(row[doiColumn]);
+          if (!doi) return false;
+
+          const existingAbstract = repairMojibake(row[abstractColumn] ?? "");
+          const hasExistingAbstract = existingAbstract.trim() !== "";
+
+          return overwrite || !hasExistingAbstract;
+        })
+        .map((row) => normaliseDoi(row[doiColumn])),
+    ),
   );
 
+  console.log("========================================");
+  console.log("🔍 Abstract Collector");
+  console.log("========================================");
   console.log(`Input file: ${inputPath}`);
   console.log(`Detected DOI column: ${doiColumn}`);
   console.log(
-    `Detected Abstract column: ${existingAbstractColumn ?? "none, will add Abstract"}`,
+    `Detected Abstract column: ${
+      existingAbstractColumn ?? "none, will add Abstract"
+    }`,
   );
   console.log(`Rows read: ${rows.length}`);
-  console.log(`Unique DOIs: ${uniqueDois.length}`);
+  console.log(`DOIs to fetch: ${doisToFetch.length}`);
   console.log(`Overwrite existing abstracts: ${overwrite ? "yes" : "no"}`);
+  console.log("========================================");
 
   const abstractByDoi = new Map();
 
-  for (const [index, doi] of uniqueDois.entries()) {
-    console.log(`[${index + 1}/${uniqueDois.length}] Fetching ${doi}`);
+  for (const [index, doi] of doisToFetch.entries()) {
+    console.log(`⏳ [${index + 1}/${doisToFetch.length}] Fetching ${doi}`);
     const result = await collectAbstract(doi);
     abstractByDoi.set(doi, result);
 
     if (result.status !== "found") {
-      console.warn(`[WARN] ${doi}: ${result.status} - ${result.warning}`);
+      console.warn(`⚠️ [WARN] ${doi}: ${result.status} - ${result.warning}`);
     }
   }
 
@@ -346,7 +462,7 @@ const main = async () => {
       missingDoiCount += 1;
       nextRow[abstractColumn] = existingAbstract;
       console.warn(
-        `[WARN] Row ${index + 2}: missing DOI. Abstract left blank/preserved.`,
+        `⚠️ [WARN] Row ${index + 2}: missing DOI. Abstract left blank/preserved.`,
       );
       return nextRow;
     }
@@ -370,52 +486,26 @@ const main = async () => {
 
   await writeCsv(OUTPUT_FULL_CSV_PATH, outputHeaders, updatedRows);
 
-  const abstractsOnlyHeaders = [
-    "doi",
-    "title",
-    "abstract",
-    "source",
-    "status",
-    "warning",
-  ];
-
-  const abstractsOnlyRows = Array.from(abstractByDoi.values()).map(
-    (result) => ({
-      doi: result.doi,
-      title: result.title,
-      abstract: result.abstract,
-      source: result.source,
-      status: result.status,
-      warning: result.warning,
-    }),
-  );
-
-  await writeCsv(
-    OUTPUT_ABSTRACTS_ONLY_PATH,
-    abstractsOnlyHeaders,
-    abstractsOnlyRows,
-  );
-
   const results = Array.from(abstractByDoi.values());
 
-  console.log("Done.");
-  console.log(
-    `Found from APIs: ${results.filter((result) => result.status === "found").length}`,
-  );
-  console.log(
-    `Not found: ${results.filter((result) => result.status === "not-found").length}`,
-  );
-  console.log(
-    `Invalid DOI: ${results.filter((result) => result.status === "invalid-doi").length}`,
-  );
-  console.log(
-    `Failed: ${results.filter((result) => result.status === "failed").length}`,
-  );
-  console.log(`Rows filled with abstract: ${filledCount}`);
-  console.log(`Rows preserved existing abstract: ${preservedCount}`);
-  console.log(`Rows left empty: ${emptyCount}`);
-  console.log(`Full CSV output: ${OUTPUT_FULL_CSV_PATH}`);
-  console.log(`Abstracts only output: ${OUTPUT_ABSTRACTS_ONLY_PATH}`);
+  console.log("");
+  console.log("✅ Done.");
+
+  printSummary({
+    results,
+    filledCount,
+    preservedCount,
+    emptyCount,
+    missingDoiCount,
+  });
 };
 
-main();
+main().catch((error) => {
+  console.error("");
+  console.error("========================================");
+  console.error("❌ Failed to collect abstracts");
+  console.error("========================================");
+  console.error(error instanceof Error ? error.message : String(error));
+  console.error("========================================");
+  process.exit(1);
+});

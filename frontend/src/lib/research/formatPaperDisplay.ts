@@ -25,7 +25,6 @@ export type PaperDisplay = {
   temperatureRange: string;
   duration: string;
   keywords: string[];
-  technicalSummary?: string;
   thumbnailUrls: string[];
 };
 
@@ -181,9 +180,6 @@ function buildPaperDisplay(p: ResearchPaper): PaperDisplay {
     duration: formatDurationRangeDisplay(p),
     keywords,
     thumbnailUrls: thumbnailUrlsForDoi(p.doi),
-    technicalSummary:
-      p.technicalSummary?.trim() ||
-      "No summary has been provided for this paper yet.",
   };
 }
 

@@ -105,7 +105,6 @@ function buildPaperDetailsSearchText(paper: ResearchPaper): string {
 
   pushText(parts, paper.thermalPerceptionMeasure);
   pushText(parts, paper.thermalCuePurpose);
-  pushText(parts, paper.technicalSummary);
   pushText(parts, paper.otherNote);
   pushList(parts, display.keywords);
 

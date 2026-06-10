@@ -128,7 +128,6 @@ export type ResearchPaper = {
   powerConsumption?: string | null;
   temporalParameters?: string | null;
   otherNote?: string | null;
-  technicalSummary?: string | null;
 
   materialsInContactWithSkin: string[];
 
