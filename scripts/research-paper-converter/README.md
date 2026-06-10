@@ -29,7 +29,7 @@ cp scripts/research-paper-converter/output/researchPapers.json \
 scripts/research-paper-converter/
 ├── csv_to_research_papers_json.js   # Main script
 ├── column_mapping.js                # CSV column ↔ JSON field mapping (edit this)
-├── helper/
+├── lib/
 │   ├── sense_mapping.js             # Sense label → filter slug
 │   ├── material_mapping.js          # Material label → filter slug
 │   └── thermal_transfer_mode_mapping.js
@@ -52,7 +52,6 @@ Writes: `scripts/research-paper-converter/output/researchPapers.json`
 ### Partial update (add or fix a few papers)
 
 Keep `frontend/src/data/researchPapers.json` as-is. Put a CSV with only the rows you want to add or update in `input/`, then run the script.
-
 
 ### Updating columns
 
@@ -100,12 +99,12 @@ Check warnings for missing columns, invalid body sides, or unmapped sense/materi
 
 ## Troubleshooting
 
-| Problem                            | What to do                                                                                      |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `No CSV file was found`            | Add one `.csv` to `input/`                                                                      |
-| `More than one CSV file was found` | Keep only one file in `input/`                                                                  |
-| `Missing mapped CSV columns`       | Update `column_mapping.js` to match your header names                                           |
-| Rows skipped (missing DOI)         | Fill in the DOI column                                                                          |
-| Wrong filter slugs in app          | Check `sense_mapping.js`, `material_mapping.js`, or `thermal_transfer_mode_mapping.js`          |
-| Paper IDs changed unexpectedly     | Check `--existing` path; ensure `frontend/src/data/researchPapers.json` exists when updating    |
-| Old papers still in output         | For full rebuild, delete/rename existing JSON before running (see above)                        |
+| Problem                            | What to do                                                                                   |
+| ---------------------------------- | -------------------------------------------------------------------------------------------- |
+| `No CSV file was found`            | Add one `.csv` to `input/`                                                                   |
+| `More than one CSV file was found` | Keep only one file in `input/`                                                               |
+| `Missing mapped CSV columns`       | Update `column_mapping.js` to match your header names                                        |
+| Rows skipped (missing DOI)         | Fill in the DOI column                                                                       |
+| Wrong filter slugs in app          | Check `sense_mapping.js`, `material_mapping.js`, or `thermal_transfer_mode_mapping.js`       |
+| Paper IDs changed unexpectedly     | Check `--existing` path; ensure `frontend/src/data/researchPapers.json` exists when updating |
+| Old papers still in output         | For full rebuild, delete/rename existing JSON before running (see above)                     |

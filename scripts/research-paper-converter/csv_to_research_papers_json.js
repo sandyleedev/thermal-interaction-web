@@ -1,13 +1,11 @@
 const fs = require("node:fs/promises");
 const path = require("node:path");
 const { CSV_COLUMNS } = require("./column_mapping");
-const { parseSenses } = require("./helper/sense_mapping");
-const {
-  parseMaterialsInContactWithSkin,
-} = require("./helper/material_mapping");
+const { parseSenses } = require("./lib/sense_mapping");
+const { parseMaterialsInContactWithSkin } = require("./lib/material_mapping");
 const {
   parseThermalTransferModes,
-} = require("./helper/thermal_transfer_mode_mapping");
+} = require("./lib/thermal_transfer_mode_mapping");
 
 const INPUT_DIR = "scripts/research-paper-converter/input";
 
@@ -376,10 +374,7 @@ const resolveAbstract = (row, existingPaper) => {
   const fromCsv = parseString(getValue(row, "abstract"));
   if (fromCsv) return fromCsv;
 
-  if (
-    existingPaper?.abstract &&
-    String(existingPaper.abstract).trim() !== ""
-  ) {
+  if (existingPaper?.abstract && String(existingPaper.abstract).trim() !== "") {
     return existingPaper.abstract;
   }
 
@@ -580,8 +575,11 @@ const mergeWithExistingJson = (papersFromCsv, seenDois, existingPapers) => {
 };
 
 const main = async () => {
-  const { existingPath, inputPath: inputArg, outputPath: outputArg } =
-    parseCliArgs(process.argv);
+  const {
+    existingPath,
+    inputPath: inputArg,
+    outputPath: outputArg,
+  } = parseCliArgs(process.argv);
 
   const inputPath = inputArg ?? (await findSingleCsvInputFile());
   const outputPath = outputArg ?? DEFAULT_OUTPUT_PATH;
@@ -598,7 +596,9 @@ const main = async () => {
   console.log("📄 Research Paper Converter");
   console.log("========================================");
   console.log(`Input file: ${inputPath}`);
-  console.log(`Existing JSON: ${existingPath} (${existingPapers.length} papers)`);
+  console.log(
+    `Existing JSON: ${existingPath} (${existingPapers.length} papers)`,
+  );
   console.log(`Output: ${outputPath}`);
   console.log("========================================");
 
@@ -650,7 +650,9 @@ const main = async () => {
   console.log(`🔍 Input rows: ${rows.length}`);
   console.log(`🔍 Papers updated from CSV (matched DOI): ${updatedCount}`);
   console.log(`🔍 New papers from CSV: ${newCount}`);
-  console.log(`🔍 Abstracts preserved from existing JSON: ${abstractPreservedCount}`);
+  console.log(
+    `🔍 Abstracts preserved from existing JSON: ${abstractPreservedCount}`,
+  );
   console.log(`🔍 Papers preserved from existing JSON: ${preservedCount}`);
   console.log(`🔍 Total papers in output: ${papers.length}`);
   console.log(`🔍 Rows skipped: ${skippedRows}`);
