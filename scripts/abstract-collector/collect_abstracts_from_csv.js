@@ -377,12 +377,7 @@ const printSummary = ({
 };
 
 const main = async () => {
-  const args = process.argv.slice(2);
-  const overwrite = args.includes("--overwrite");
-  const inputPath =
-    args.find((arg) => !arg.startsWith("--")) ??
-    (await findSingleCsvInputFile());
-
+  const inputPath = process.argv[2] ?? (await findSingleCsvInputFile());
   const content = await fs.readFile(inputPath, "utf-8");
   const { headers, rows } = parseCsv(content);
 
@@ -412,7 +407,7 @@ const main = async () => {
           const existingAbstract = repairMojibake(row[abstractColumn] ?? "");
           const hasExistingAbstract = existingAbstract.trim() !== "";
 
-          return overwrite || !hasExistingAbstract;
+          return !hasExistingAbstract;
         })
         .map((row) => normaliseDoi(row[doiColumn])),
     ),
@@ -430,7 +425,6 @@ const main = async () => {
   );
   console.log(`Rows read: ${rows.length}`);
   console.log(`DOIs to fetch: ${doisToFetch.length}`);
-  console.log(`Overwrite existing abstracts: ${overwrite ? "yes" : "no"}`);
   console.log("========================================");
 
   const abstractByDoi = new Map();
@@ -467,7 +461,7 @@ const main = async () => {
       return nextRow;
     }
 
-    if (hasExistingAbstract && !overwrite) {
+    if (hasExistingAbstract) {
       preservedCount += 1;
       nextRow[abstractColumn] = existingAbstract;
       return nextRow;
