@@ -1,10 +1,6 @@
 const fs = require("node:fs/promises");
 const path = require("node:path");
-const {
-  CSV_COLUMNS,
-  ARRAY_FIELDS,
-  NUMBER_FIELDS,
-} = require("./helper/column_mapping");
+const { CSV_COLUMNS } = require("./column_mapping");
 const { parseSenses } = require("./helper/sense_mapping");
 const {
   parseMaterialsInContactWithSkin,
@@ -51,7 +47,40 @@ const findSingleCsvInputFile = async () => {
 const DEFAULT_OUTPUT_PATH =
   "scripts/research-paper-converter/output/researchPapers.json";
 
-const EXISTING_JSON_PATH = "src/data/researchPapers.json";
+const EXISTING_JSON_PATH = "frontend/src/data/researchPapers.json";
+
+const parseCliArgs = (argv) => {
+  const args = argv.slice(2);
+  const replace = args.includes("--replace");
+  const merge = args.includes("--merge");
+
+  if (replace && merge) {
+    throw new Error("Use either --replace or --merge, not both.");
+  }
+
+  let existingPath = EXISTING_JSON_PATH;
+  const existingFlagIndex = args.indexOf("--existing");
+  if (existingFlagIndex !== -1) {
+    const candidate = args[existingFlagIndex + 1];
+    if (!candidate || candidate.startsWith("--")) {
+      throw new Error("--existing requires a file path.");
+    }
+    existingPath = candidate;
+  }
+
+  const positional = args.filter(
+    (arg, index) =>
+      !arg.startsWith("--") &&
+      !(existingFlagIndex !== -1 && index === existingFlagIndex + 1),
+  );
+
+  return {
+    merge: merge || !replace,
+    existingPath,
+    inputPath: positional[0],
+    outputPath: positional[1],
+  };
+};
 
 const repairMojibake = (value) =>
   String(value ?? "")
@@ -350,7 +379,26 @@ const resolvePublicationSortDate = (row) => {
   return "0000-01-01";
 };
 
-const convertRowToPaper = (row, id) => ({
+const resolveAbstract = (row, existingPaper, preserveExistingAbstract) => {
+  const fromCsv = parseString(getValue(row, "abstract"));
+  if (fromCsv) return fromCsv;
+
+  if (
+    preserveExistingAbstract &&
+    existingPaper?.abstract &&
+    String(existingPaper.abstract).trim() !== ""
+  ) {
+    return existingPaper.abstract;
+  }
+
+  return null;
+};
+
+const convertRowToPaper = (
+  row,
+  id,
+  { existingPaper, preserveExistingAbstract = false } = {},
+) => ({
   id: String(id),
 
   title: parseString(getValue(row, "title")),
@@ -361,7 +409,7 @@ const convertRowToPaper = (row, id) => ({
   doi: normaliseDoi(getValue(row, "doi")),
   url: parseString(getValue(row, "url")),
 
-  abstract: parseString(getValue(row, "abstract")),
+  abstract: resolveAbstract(row, existingPaper, preserveExistingAbstract),
 
   temperatureNotes: parseString(getValue(row, "temperatureNotes")),
   ambientTempC: parseNumber(getValue(row, "ambientTempC")),
@@ -423,20 +471,22 @@ const convertRowToPaper = (row, id) => ({
   ),
 });
 
-const readExistingJsonByDoi = async () => {
+const readExistingJson = async (jsonPath) => {
   try {
-    const content = await fs.readFile(EXISTING_JSON_PATH, "utf-8");
+    const content = await fs.readFile(jsonPath, "utf-8");
     const papers = JSON.parse(content);
-
-    return new Map(
-      papers
-        .filter((paper) => paper.doi)
-        .map((paper) => [normaliseDoi(paper.doi), paper]),
-    );
+    return Array.isArray(papers) ? papers : [];
   } catch {
-    return new Map();
+    return [];
   }
 };
+
+const existingJsonByDoi = (papers) =>
+  new Map(
+    papers
+      .filter((paper) => paper.doi)
+      .map((paper) => [normaliseDoi(paper.doi), paper]),
+  );
 
 const getNextId = (existingByDoi) =>
   Math.max(
@@ -456,46 +506,15 @@ const sortByIdAsc = (papers) =>
     return String(a.id).localeCompare(String(b.id));
   });
 
-const main = async () => {
-  const inputPath = process.argv[2] ?? (await findSingleCsvInputFile());
-  const outputPath = process.argv[3] ?? DEFAULT_OUTPUT_PATH;
-
-  const content = await fs.readFile(inputPath, "utf-8");
-  const { headers, rows } = parseCsv(content);
-
-  resolveColumnName = createColumnResolver(headers);
-
-  const existingByDoi = await readExistingJsonByDoi();
-
-  const missingColumns = Object.entries(CSV_COLUMNS)
-    .filter(([, columnConfig]) => {
-      const candidateColumns = Array.isArray(columnConfig)
-        ? columnConfig
-        : [columnConfig];
-
-      return !candidateColumns.some((column) => resolveColumnName(column));
-    })
-    .map(([jsonKey, columnConfig]) => ({
-      jsonKey,
-      expectedColumns: Array.isArray(columnConfig)
-        ? columnConfig
-        : [columnConfig],
-    }));
-
-  if (missingColumns.length > 0) {
-    console.warn("⚠️ Missing mapped CSV columns:");
-    missingColumns.forEach(({ jsonKey, expectedColumns }) => {
-      console.warn(`- ${jsonKey}: ${expectedColumns.join(" OR ")}`);
-    });
-  }
-
+const convertCsvRowsToPapers = (rows, existingByDoi, preserveExistingAbstract) => {
   const papers = [];
   const seenDois = new Set();
 
   let skippedRows = 0;
   let duplicateRows = 0;
-  let existingCount = 0;
+  let updatedCount = 0;
   let newCount = 0;
+  let abstractPreservedCount = 0;
   let nextId = getNextId(existingByDoi);
 
   rows.forEach((row, index) => {
@@ -519,12 +538,23 @@ const main = async () => {
     seenDois.add(doi);
 
     const existingPaper = existingByDoi.get(doi);
+    const paper = convertRowToPaper(row, existingPaper?.id ?? nextId, {
+      existingPaper,
+      preserveExistingAbstract,
+    });
 
-    const paper = convertRowToPaper(row, existingPaper?.id ?? nextId);
+    if (
+      preserveExistingAbstract &&
+      !parseString(getValue(row, "abstract")) &&
+      existingPaper?.abstract &&
+      String(existingPaper.abstract).trim() !== ""
+    ) {
+      abstractPreservedCount += 1;
+    }
 
     if (existingPaper?.id) {
       paper.id = existingPaper.id;
-      existingCount += 1;
+      updatedCount += 1;
     } else {
       paper.id = String(nextId);
       nextId += 1;
@@ -534,16 +564,117 @@ const main = async () => {
     papers.push(paper);
   });
 
+  return {
+    papers,
+    seenDois,
+    skippedRows,
+    duplicateRows,
+    updatedCount,
+    newCount,
+    abstractPreservedCount,
+  };
+};
+
+const mergeWithExistingJson = (papersFromCsv, seenDois, existingPapers) => {
+  const merged = [...papersFromCsv];
+  let preservedCount = 0;
+
+  for (const existingPaper of existingPapers) {
+    const doi = normaliseDoi(existingPaper.doi);
+
+    if (doi) {
+      if (seenDois.has(doi)) continue;
+    }
+
+    merged.push(existingPaper);
+    preservedCount += 1;
+  }
+
+  return { papers: merged, preservedCount };
+};
+
+const main = async () => {
+  const { merge, existingPath, inputPath: inputArg, outputPath: outputArg } =
+    parseCliArgs(process.argv);
+
+  const inputPath = inputArg ?? (await findSingleCsvInputFile());
+  const outputPath = outputArg ?? DEFAULT_OUTPUT_PATH;
+
+  const content = await fs.readFile(inputPath, "utf-8");
+  const { headers, rows } = parseCsv(content);
+
+  resolveColumnName = createColumnResolver(headers);
+
+  const existingPapers = await readExistingJson(existingPath);
+  const existingByDoi = existingJsonByDoi(existingPapers);
+
+  console.log("========================================");
+  console.log("📄 Research Paper Converter");
+  console.log("========================================");
+  console.log(`Input file: ${inputPath}`);
+  console.log(`Existing JSON: ${existingPath} (${existingPapers.length} papers)`);
+  console.log(`Mode: ${merge ? "merge (keep JSON papers not in CSV)" : "replace (CSV rows only)"}`);
+  console.log(`Output: ${outputPath}`);
+  console.log("========================================");
+
+  const missingColumns = Object.entries(CSV_COLUMNS)
+    .filter(([, columnConfig]) => {
+      const candidateColumns = Array.isArray(columnConfig)
+        ? columnConfig
+        : [columnConfig];
+
+      return !candidateColumns.some((column) => resolveColumnName(column));
+    })
+    .map(([jsonKey, columnConfig]) => ({
+      jsonKey,
+      expectedColumns: Array.isArray(columnConfig)
+        ? columnConfig
+        : [columnConfig],
+    }));
+
+  if (missingColumns.length > 0) {
+    console.warn("⚠️ Missing mapped CSV columns:");
+    missingColumns.forEach(({ jsonKey, expectedColumns }) => {
+      console.warn(`- ${jsonKey}: ${expectedColumns.join(" OR ")}`);
+    });
+  }
+
+  const {
+    papers: papersFromCsv,
+    seenDois,
+    skippedRows,
+    duplicateRows,
+    updatedCount,
+    newCount,
+    abstractPreservedCount,
+  } = convertCsvRowsToPapers(rows, existingByDoi, merge);
+
+  let papers = papersFromCsv;
+  let preservedCount = 0;
+
+  if (merge) {
+    ({ papers, preservedCount } = mergeWithExistingJson(
+      papersFromCsv,
+      seenDois,
+      existingPapers,
+    ));
+  }
+
   sortByIdAsc(papers);
 
   await fs.mkdir(path.dirname(outputPath), { recursive: true });
   await fs.writeFile(outputPath, JSON.stringify(papers, null, 2), "utf-8");
 
+  console.log("");
   console.log("✅ Done.");
   console.log(`🔍 Input rows: ${rows.length}`);
-  console.log(`🔍 Existing papers updated/kept by DOI: ${existingCount}`);
-  console.log(`🔍 New papers assigned new ids: ${newCount}`);
-  console.log(`🔍 Papers converted: ${papers.length}`);
+  console.log(`🔍 Papers updated from CSV (matched DOI): ${updatedCount}`);
+  console.log(`🔍 New papers from CSV: ${newCount}`);
+  if (merge) {
+    console.log(`🔍 Abstracts preserved from existing JSON: ${abstractPreservedCount}`);
+    console.log(`🔍 Papers preserved from existing JSON: ${preservedCount}`);
+  }
+  console.log(`🔍 Total papers in output: ${papers.length}`);
   console.log(`🔍 Rows skipped: ${skippedRows}`);
   console.log(`🔍 Duplicate DOI rows skipped: ${duplicateRows}`);
   console.log(`🔍 Output: ${outputPath}`);
