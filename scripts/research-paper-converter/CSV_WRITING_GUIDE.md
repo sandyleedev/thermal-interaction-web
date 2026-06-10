@@ -21,7 +21,10 @@ Related files:
       frontend/src/data/researchPapers.json
    ```
 
-**Merge is the default mode.** Only rows in the CSV are added or updated (matched by DOI); papers that exist only in JSON are kept. Use `--replace` to rebuild the full dataset from the CSV alone.
+The converter **merges** CSV rows into existing JSON (matched by DOI). Papers in JSON but not in the CSV are kept.
+
+- Partial update: keep `frontend/src/data/researchPapers.json` and run with a CSV of changed rows only.
+- Full rebuild: delete or rename `frontend/src/data/researchPapers.json` first, then run — output contains CSV rows only.
 
 ---
 

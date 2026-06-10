@@ -7,10 +7,21 @@ Converts a curated CSV spreadsheet into `researchPapers.json` for the web app.
 Typical pipeline:
 
 1. [abstract-collector](../abstract-collector/) — fetch missing abstracts (CSV or JSON)
-2. **this script** — CSV → JSON
+2. Convert CSV → JSON
 3. Copy output to `frontend/src/data/researchPapers.json`
 
-You can also backfill abstracts directly on JSON with `fill_abstracts_from_json.js` — see [abstract-collector README](../abstract-collector/README.md).
+Run from the **repository root**:
+
+```bash
+node scripts/research-paper-converter/csv_to_research_papers_json.js
+```
+
+Review the output at `scripts/research-paper-converter/output/researchPapers.json`, then copy it to `frontend/src/data/researchPapers.json`:
+
+```bash
+cp scripts/research-paper-converter/output/researchPapers.json \
+   frontend/src/data/researchPapers.json
+```
 
 ## Folder layout
 
@@ -29,40 +40,19 @@ scripts/research-paper-converter/
 
 ## Usage
 
-Run from the **repository root**.
-
-### 1. Default — merge (add / update papers)
-
-```bash
-node scripts/research-paper-converter/csv_to_research_papers_json.js
-```
-
 Reads the single CSV in `input/` and merges into existing `frontend/src/data/researchPapers.json`:
 
-- CSV row with matching DOI → **replaces** that paper (same `id` kept)
+- CSV row with matching DOI → **updates** that paper (same `id` kept)
 - CSV row with new DOI → **appended** with next numeric `id`
 - Paper in JSON but **not** in CSV → **unchanged**, kept in output
 - CSV **Abstract** empty for a matched DOI → **keeps existing JSON abstract** (not wiped)
 
 Writes: `scripts/research-paper-converter/output/researchPapers.json`
 
-### 2. Replace — full rebuild (CSV rows only)
+### Partial update (add or fix a few papers)
 
-Use when the CSV is the complete paper list and papers not in the CSV should be removed.
+Keep `frontend/src/data/researchPapers.json` as-is. Put a CSV with only the rows you want to add or update in `input/`, then run the script.
 
-```bash
-node scripts/research-paper-converter/csv_to_research_papers_json.js --replace
-```
-
-Papers in `frontend/src/data/researchPapers.json` that are **not** in the CSV are **not** included in the output.
-
-### When to use which mode
-
-| Task                                     | Command                           |
-| ---------------------------------------- | --------------------------------- |
-| Add a few new papers                     | default (partial CSV)             |
-| Fix fields on existing papers            | default (CSV rows for those DOIs) |
-| Regenerate entire corpus from master CSV | `--replace`                       |
 
 ### Updating columns
 
@@ -82,27 +72,14 @@ authors: ["Authors", "Author"],
 minDurationSec: ["Duration min (sec)", "Duration min", "DurationMin"],
 ```
 
-### Body sites format
-
-Source column: `Body parts (Main > Sub)`
-
-Each site is semicolon-separated:
-
-```
-Arm > Forearm; Hand > Palm (right)
-```
-
-- `Region > Subregion` — converted to kebab-case slugs
-- Optional `(left)` / `(right)` side suffix
-- Missing subregion → `general`
-
 ## Console output
 
 At the end the script prints:
 
 - Input row count
 - Existing papers updated vs new papers added
-- Abstracts preserved from existing JSON (merge mode)
+- Abstracts preserved from existing JSON
+- Papers preserved from existing JSON (not in CSV)
 - Skipped / duplicate rows
 - Output file path
 
@@ -117,4 +94,5 @@ Check warnings for missing columns, invalid body sides, or unmapped sense/materi
 | `Missing mapped CSV columns`       | Update `column_mapping.js` to match your header names                                           |
 | Rows skipped (missing DOI)         | Fill in the DOI column                                                                          |
 | Wrong filter slugs in app          | Check `sense_mapping.js`, `material_mapping.js`, or `thermal_transfer_mode_mapping.js`          |
-| Paper IDs changed unexpectedly     | Check `--existing` path; ensure `frontend/src/data/researchPapers.json` exists when using merge |
+| Paper IDs changed unexpectedly     | Check `--existing` path; ensure `frontend/src/data/researchPapers.json` exists when updating    |
+| Old papers still in output         | For full rebuild, delete/rename existing JSON before running (see above)                        |

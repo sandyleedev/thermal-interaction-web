@@ -51,12 +51,6 @@ const EXISTING_JSON_PATH = "frontend/src/data/researchPapers.json";
 
 const parseCliArgs = (argv) => {
   const args = argv.slice(2);
-  const replace = args.includes("--replace");
-  const merge = args.includes("--merge");
-
-  if (replace && merge) {
-    throw new Error("Use either --replace or --merge, not both.");
-  }
 
   let existingPath = EXISTING_JSON_PATH;
   const existingFlagIndex = args.indexOf("--existing");
@@ -75,7 +69,6 @@ const parseCliArgs = (argv) => {
   );
 
   return {
-    merge: merge || !replace,
     existingPath,
     inputPath: positional[0],
     outputPath: positional[1],
@@ -379,12 +372,11 @@ const resolvePublicationSortDate = (row) => {
   return "0000-01-01";
 };
 
-const resolveAbstract = (row, existingPaper, preserveExistingAbstract) => {
+const resolveAbstract = (row, existingPaper) => {
   const fromCsv = parseString(getValue(row, "abstract"));
   if (fromCsv) return fromCsv;
 
   if (
-    preserveExistingAbstract &&
     existingPaper?.abstract &&
     String(existingPaper.abstract).trim() !== ""
   ) {
@@ -394,11 +386,7 @@ const resolveAbstract = (row, existingPaper, preserveExistingAbstract) => {
   return null;
 };
 
-const convertRowToPaper = (
-  row,
-  id,
-  { existingPaper, preserveExistingAbstract = false } = {},
-) => ({
+const convertRowToPaper = (row, id, { existingPaper } = {}) => ({
   id: String(id),
 
   title: parseString(getValue(row, "title")),
@@ -409,7 +397,7 @@ const convertRowToPaper = (
   doi: normaliseDoi(getValue(row, "doi")),
   url: parseString(getValue(row, "url")),
 
-  abstract: resolveAbstract(row, existingPaper, preserveExistingAbstract),
+  abstract: resolveAbstract(row, existingPaper),
 
   temperatureNotes: parseString(getValue(row, "temperatureNotes")),
   ambientTempC: parseNumber(getValue(row, "ambientTempC")),
@@ -506,7 +494,7 @@ const sortByIdAsc = (papers) =>
     return String(a.id).localeCompare(String(b.id));
   });
 
-const convertCsvRowsToPapers = (rows, existingByDoi, preserveExistingAbstract) => {
+const convertCsvRowsToPapers = (rows, existingByDoi) => {
   const papers = [];
   const seenDois = new Set();
 
@@ -540,11 +528,9 @@ const convertCsvRowsToPapers = (rows, existingByDoi, preserveExistingAbstract) =
     const existingPaper = existingByDoi.get(doi);
     const paper = convertRowToPaper(row, existingPaper?.id ?? nextId, {
       existingPaper,
-      preserveExistingAbstract,
     });
 
     if (
-      preserveExistingAbstract &&
       !parseString(getValue(row, "abstract")) &&
       existingPaper?.abstract &&
       String(existingPaper.abstract).trim() !== ""
@@ -594,7 +580,7 @@ const mergeWithExistingJson = (papersFromCsv, seenDois, existingPapers) => {
 };
 
 const main = async () => {
-  const { merge, existingPath, inputPath: inputArg, outputPath: outputArg } =
+  const { existingPath, inputPath: inputArg, outputPath: outputArg } =
     parseCliArgs(process.argv);
 
   const inputPath = inputArg ?? (await findSingleCsvInputFile());
@@ -613,7 +599,6 @@ const main = async () => {
   console.log("========================================");
   console.log(`Input file: ${inputPath}`);
   console.log(`Existing JSON: ${existingPath} (${existingPapers.length} papers)`);
-  console.log(`Mode: ${merge ? "merge (keep JSON papers not in CSV)" : "replace (CSV rows only)"}`);
   console.log(`Output: ${outputPath}`);
   console.log("========================================");
 
@@ -647,18 +632,13 @@ const main = async () => {
     updatedCount,
     newCount,
     abstractPreservedCount,
-  } = convertCsvRowsToPapers(rows, existingByDoi, merge);
+  } = convertCsvRowsToPapers(rows, existingByDoi);
 
-  let papers = papersFromCsv;
-  let preservedCount = 0;
-
-  if (merge) {
-    ({ papers, preservedCount } = mergeWithExistingJson(
-      papersFromCsv,
-      seenDois,
-      existingPapers,
-    ));
-  }
+  const { papers, preservedCount } = mergeWithExistingJson(
+    papersFromCsv,
+    seenDois,
+    existingPapers,
+  );
 
   sortByIdAsc(papers);
 
@@ -670,10 +650,8 @@ const main = async () => {
   console.log(`🔍 Input rows: ${rows.length}`);
   console.log(`🔍 Papers updated from CSV (matched DOI): ${updatedCount}`);
   console.log(`🔍 New papers from CSV: ${newCount}`);
-  if (merge) {
-    console.log(`🔍 Abstracts preserved from existing JSON: ${abstractPreservedCount}`);
-    console.log(`🔍 Papers preserved from existing JSON: ${preservedCount}`);
-  }
+  console.log(`🔍 Abstracts preserved from existing JSON: ${abstractPreservedCount}`);
+  console.log(`🔍 Papers preserved from existing JSON: ${preservedCount}`);
   console.log(`🔍 Total papers in output: ${papers.length}`);
   console.log(`🔍 Rows skipped: ${skippedRows}`);
   console.log(`🔍 Duplicate DOI rows skipped: ${duplicateRows}`);
