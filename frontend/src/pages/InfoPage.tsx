@@ -9,7 +9,9 @@ export function InfoPage() {
       <main className="landing-main landing-info-main" id="main">
         <article className="landing-info-card">
           <header className="landing-info-hero">
-            <p className="landing-info-eyebrow">Thermal Interaction Paper Explorer</p>
+            <p className="landing-info-eyebrow">
+              Thermal Interaction Paper Explorer
+            </p>
             <h1 className="landing-info-title">About This Visualisation</h1>
             <p className="landing-info-lead">
               Welcome to this interactive visualisation of research on thermal
@@ -20,20 +22,23 @@ export function InfoPage() {
           </header>
 
           <div className="landing-info-body">
-            <section className="landing-info-section" aria-labelledby="info-overview">
+            <section
+              className="landing-info-section"
+              aria-labelledby="info-overview"
+            >
               <h2 id="info-overview" className="landing-info-section-title">
                 Overview
               </h2>
               <p>
                 The visualisation brings together a wide range of projects that
                 employ thermal feedback in different contexts. These include,
-                for example, wearable devices and smart garments that communicate
-                affective information, extended reality (XR) applications that
-                enhance immersive experiences, and care technologies that support
-                healthcare, wellbeing, and companionship. By mapping and analysing
-                these projects, the platform provides an overview of how thermal
-                interactions are being designed and applied across different
-                domains.
+                for example, wearable devices and smart garments that
+                communicate affective information, extended reality (XR)
+                applications that enhance immersive experiences, and care
+                technologies that support healthcare, wellbeing, and
+                companionship. By mapping and analysing these projects, the
+                platform provides an overview of how thermal interactions are
+                being designed and applied across different domains.
               </p>
             </section>
 
@@ -56,7 +61,10 @@ export function InfoPage() {
               </Link>
             </section>
 
-            <section className="landing-info-section" aria-labelledby="info-audience">
+            <section
+              className="landing-info-section"
+              aria-labelledby="info-audience"
+            >
               <h2 id="info-audience" className="landing-info-section-title">
                 Who it is for
               </h2>
@@ -72,15 +80,16 @@ export function InfoPage() {
           <footer className="landing-info-footer">
             <p>
               Questions, suggestions, or feedback? Contact{" "}
-              <span className="landing-info-placeholder">Crow Black (placeholder)</span>
-              .
+              <a
+                className="landing-info-placeholder"
+                href="mailto:thermal.interaction@gmail.com"
+              >
+                thermal.interaction@gmail.com
+              </a>
             </p>
             <p className="landing-info-credits">
               Designed and implemented by{" "}
-              <span className="landing-info-placeholder">
-                XXX, XXX, and XXX (placeholder)
-              </span>
-              .
+              <span className="landing-info-placeholder">FF, HK ,SL</span>
             </p>
           </footer>
         </article>
